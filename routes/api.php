@@ -110,8 +110,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [TeamApiController::class, 'attendance']);
         Route::post('/check-in', [TeamApiController::class, 'checkIn']);
         Route::post('/check-out', [TeamApiController::class, 'checkOut']);
-        Route::post('/{user_id}/mark', [TeamApiController::class, 'markAttendance']);
         Route::get('/summary', [TeamApiController::class, 'attendanceSummary']);
+        Route::post('/{user_id}/mark', [TeamApiController::class, 'markAttendance']);
     });
 
     // ===== EMAIL MANAGEMENT ROUTES =====
