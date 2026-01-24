@@ -410,7 +410,7 @@ class UserController extends Controller
             'country' => 'nullable|string|max:100',
             'subscription' => 'nullable|string|max:100',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'pdf_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
         
         $taxRates = implode(',', $request->tax_rates ?? []);
@@ -451,10 +451,10 @@ class UserController extends Controller
             $request->logo->move(public_path('/assets/images/company/logos'), $fileName);
             $company->logo = $fileName;
         }
-        if ($request->hasFile('img')) {
-            $fileName = time().'.'.$request->img->extension();
-            $request->img->move(public_path('/assets/images/company'), $fileName);
-            $company->img = $fileName;
+        if ($request->hasFile('pdf_logo')) {
+            $fileName = time().'.'.$request->pdf_logo->extension();
+            $request->pdf_logo->move(public_path('/assets/images/company'), $fileName);
+            $company->pdf_logo = $fileName;
         }
         
         $company->save();

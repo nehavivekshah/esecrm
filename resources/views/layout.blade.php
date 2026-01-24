@@ -68,7 +68,14 @@
             body.loaded {
                 overflow: auto;
             }
-        </style>
+            
+            .response-msg {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                min-width: 300px;
+            }
         
         <script src="https://cdn.tiny.cloud/1/wa5nrulndxu7i9yumfv1j52xb09r488mk492qb9qku6w4zvp/tinymce/8/tinymce.min.js" referrerpolicy="origin" crossorigin="anonymous"></script>
     </head>

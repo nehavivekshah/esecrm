@@ -176,7 +176,7 @@
                         </div>
                         @endif
                         
-                        <div class="col-md-12 text-right mb-2">
+                        <div class="col-md-12 text-end mb-2">
                             <button type="submit" class="btn btn-primary px-4">Submit</button>
                             <button type="reset" class="btn btn-outline-secondary border px-4">Reset</button>
                         </div>

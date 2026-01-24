@@ -1054,7 +1054,7 @@ class ClientController extends Controller
         // Fetch the invoice with client details
         $invoice = Invoices::leftJoin('clients', 'invoices.client_id', '=', 'clients.id')
             ->leftJoin('companies', 'clients.cid', '=', 'companies.id')
-            ->select('companies.name as cn', 'companies.mob as cm', 'companies.email as ce', 'companies.img', 'companies.gst as cgst', 'companies.vat as cvat', 'companies.address', 'companies.city', 'companies.state', 'companies.zipcode', 'companies.country', 'companies.bank_details', 'clients.name', 'clients.company', 'clients.email', 'clients.mob', 'clients.location', 'invoices.*')
+            ->select('companies.name as cn', 'companies.mob as cm', 'companies.email as ce', 'companies.img', 'companies.pdf_logo', 'companies.gst as cgst', 'companies.vat as cvat', 'companies.address', 'companies.city', 'companies.state', 'companies.zipcode', 'companies.country', 'companies.bank_details', 'clients.name', 'clients.company', 'clients.email', 'clients.mob', 'clients.location', 'invoices.*')
             ->where('invoices.id', '=', $id)
             ->first();
         
@@ -1075,7 +1075,7 @@ class ClientController extends Controller
         // Fetch the invoice with client details
         $invoice = Invoices::leftJoin('clients', 'invoices.client_id', '=', 'clients.id')
             ->leftJoin('companies', 'clients.cid', '=', 'companies.id')
-            ->select('companies.name as cn', 'companies.mob as cm', 'companies.email as ce', 'companies.img', 'companies.gst as cgst', 'companies.vat as cvat', 'companies.address', 'companies.city', 'companies.state', 'companies.zipcode', 'companies.country', 'companies.bank_details', 'clients.name', 'clients.company', 'clients.email', 'clients.mob', 'clients.location', 'invoices.*')
+            ->select('companies.name as cn', 'companies.mob as cm', 'companies.email as ce', 'companies.img', 'companies.pdf_logo', 'companies.gst as cgst', 'companies.vat as cvat', 'companies.address', 'companies.city', 'companies.state', 'companies.zipcode', 'companies.country', 'companies.bank_details', 'clients.name', 'clients.company', 'clients.email', 'clients.mob', 'clients.location', 'invoices.*')
             ->where('invoices.id', '=', $id)
             ->first();
         
@@ -1083,7 +1083,8 @@ class ClientController extends Controller
         $invoice_items = Invoice_items::where('invoice_id', '=', $id)->get();
     
         // Get company logo in base64
-        $imagePath = public_path('assets/images/company/'.$invoice->img); // Local path
+        $logoFile = $invoice->pdf_logo ?? $invoice->img;
+        $imagePath = public_path('assets/images/company/'.$logoFile); // Local path
         $type = pathinfo($imagePath, PATHINFO_EXTENSION);
         $data = file_get_contents($imagePath);
         $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
@@ -1103,14 +1104,15 @@ class ClientController extends Controller
         // Fetch the invoice with client details
         $invoice = Invoices::leftJoin('clients', 'invoices.client_id', '=', 'clients.id')
             ->leftJoin('companies', 'clients.cid', '=', 'companies.id')
-            ->select('companies.name as cn', 'companies.mob as cm', 'companies.email as ce', 'companies.img', 'companies.gst as cgst', 'companies.vat as cvat', 'companies.address', 'companies.city', 'companies.state', 'companies.zipcode', 'companies.country', 'companies.bank_details', 'clients.name', 'clients.company', 'clients.email', 'clients.mob', 'clients.location', 'invoices.*')
+            ->select('companies.name as cn', 'companies.mob as cm', 'companies.email as ce', 'companies.img', 'companies.pdf_logo', 'companies.gst as cgst', 'companies.vat as cvat', 'companies.address', 'companies.city', 'companies.state', 'companies.zipcode', 'companies.country', 'companies.bank_details', 'clients.name', 'clients.company', 'clients.email', 'clients.mob', 'clients.location', 'invoices.*')
             ->where('invoices.id', '=', $id)
             ->first();
         
         // Fetch the invoice items
         $invoice_items = Invoice_items::where('invoice_id', '=', $id)->get();
     
-        $imagePath = public_path('assets/images/company/'.$invoice->img); // Local path
+        $logoFile = $invoice->pdf_logo ?? $invoice->img;
+        $imagePath = public_path('assets/images/company/'.$logoFile); // Local path
         $type = pathinfo($imagePath, PATHINFO_EXTENSION);
         $data = file_get_contents($imagePath);
         $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);

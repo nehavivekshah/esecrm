@@ -163,6 +163,14 @@
                         </div>
                         <div class="form-text">Type of Discount to apply</div>
                     </div>
+                    <div class="col-md-4 form-group">
+                        <label for="tags" class="form-label">Tags</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class='bx bx-tag'></i></span>
+                            <input type="text" name="tags" id="tags" class="form-control" placeholder="Enter Tags (comma separated)" value="{{ $proposal->tags ?? '' }}">
+                        </div>
+                        <div class="form-text">e.g. urgent, website, design</div>
+                    </div>
                     <div class="col-12 form-group">
                         <label for="notes" class="form-label">Proposal Notes</label>
                         <textarea name="notes" id="editor" class="form-control " rows="2" placeholder="Add proposal notes here...">{{ $proposal->notes ?? '' }}</textarea>
@@ -378,7 +386,7 @@
                     </div>
                 
                     <!-- Actions Section -->
-                    <div class="col-md-12 text-right">
+                    <div class="col-md-12 text-end">
                         <button type="submit" class="btn btn-success text-white bg-success border me-2">Save</button>
                         <input type="submit" class="btn btn-primary" name="submit" value="Save & Send">
                     </div>

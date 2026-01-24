@@ -65,16 +65,6 @@
         </li>
         @endif
         
-        @if(in_array('proposals',$roleArray) || (in_array('All',$roleArray) && in_array(($company->plan ?? ''),$premium)))
-        <li>
-            <a href="/proposals" @if(Request::segment(1) == 'proposals' || Request::segment(1) == 'manage-proposal') class="active" @endif>
-                <i class="bx bx-briefcase"></i>
-                <span class="link_name">Proposals</span>
-            </a>
-            <span class="tooltip">Proposals</span>
-        </li>
-        @endif
-        
         @if(in_array('leads',$roleArray) || (in_array('All',$roleArray) && in_array(($company->plan ?? ''),$standard)) || (Auth::user()->role == 'master'))
         <li>
             <a href="/leads" @if(Request::segment(1) == 'leads' || Request::segment(1) == 'manage-lead') class="active" @endif>
@@ -85,65 +75,42 @@
         </li>
         @endif
         
-        @if(in_array('clients',$roleArray) || (in_array('All',$roleArray) && in_array(($company->plan ?? ''),$premium)) || (Auth::user()->role == 'master'))
         <li>
-            <a href="/clients" @if(Request::segment(1) == 'clients' || Request::segment(1) == 'manage-client') class="active" @endif>
-                <i class="bx bx-group"></i>
-                <span class="link_name">Customers</span>
-            </a>
-            <span class="tooltip">Customers</span>
+            <span class="divider" data-bs-toggle="collapse" data-bs-target="#salesSubmenu"><label>Sales</label> <i class="bx bx-chevron-down-circle"></i></span>
+            <div id="salesSubmenu" class="collapse @if(Request::segment(1) == 'proposals' || Request::segment(1) == 'manage-proposal' || Request::segment(1) == 'invoices' || Request::segment(1) == 'manage-invoice' || Request::segment(1) == 'contracts' || Request::segment(1) == 'manage-contract') show @endif" data-bs-parent="#accordion">
+                <ul class="sb_submenu">
+                    @if(in_array('proposals',$roleArray) || (in_array('All',$roleArray) && in_array(($company->plan ?? ''),$premium)))
+                    <li>
+                        <a href="/proposals" @if(Request::segment(1) == 'proposals' || Request::segment(1) == 'manage-proposal') class="active" @endif>
+                            <i class="bx bx-briefcase"></i>
+                            <span class="link_name">Proposals</span>
+                        </a>
+                        <span class="tooltip">Proposals</span>
+                    </li>
+                    @endif
+                    
+                    @if(in_array('invoice',$roleArray) || (in_array('All',$roleArray) && in_array(($company->plan ?? ''),$premium)))
+                    <li>
+                        <a href="/invoices" @if(Request::segment(1) == 'invoices' || Request::segment(1) == 'manage-invoice') class="active" @endif>
+                            <i class="bx bx-file"></i>
+                            <span class="link_name">Invoices</span>
+                        </a>
+                        <span class="tooltip">Invoices</span>
+                    </li>
+                    @endif
+                    
+                    @if(in_array('contracts',$roleArray) || (in_array('All',$roleArray) && in_array(($company->plan ?? ''),$premium)) || (Auth::user()->role == 'master'))
+                    <li>
+                        <a href="/contracts" @if(Request::segment(1) == 'contracts' || Request::segment(1) == 'manage-contract') class="active" @endif>
+                            <i class="bx bx-box"></i>
+                            <span class="link_name">Contracts</span>
+                        </a>
+                        <span class="tooltip">Contracts</span>
+                    </li>
+                    @endif
+                </ul>
+            </div>
         </li>
-        @endif
-        
-        @if(in_array('projects',$roleArray) || (in_array('All',$roleArray) && in_array(($company->plan ?? ''),$premium)) || (Auth::user()->role == 'master'))
-        <li>
-            <a href="/projects" @if(Request::segment(1) == 'projects' || Request::segment(1) == 'manage-project') class="active" @endif>
-                <i class="bx bx-box"></i>
-                <span class="link_name">Projects</span>
-            </a>
-            <span class="tooltip">Projects</span>
-        </li>
-        @endif
-        
-        @if(in_array('contracts',$roleArray) || (in_array('All',$roleArray) && in_array(($company->plan ?? ''),$premium)) || (Auth::user()->role == 'master'))
-        <li>
-            <a href="/contracts" @if(Request::segment(1) == 'contracts' || Request::segment(1) == 'manage-contract') class="active" @endif>
-                <i class="bx bx-box"></i>
-                <span class="link_name">Contracts</span>
-            </a>
-            <span class="tooltip">Contracts</span>
-        </li>
-        @endif
-        
-        @if(in_array('recoveries',$roleArray) || (in_array('All',$roleArray) && in_array(($company->plan ?? ''),$premium)))
-        <li>
-            <a href="/recoveries" @if(Request::segment(1) == 'recoveries' || Request::segment(1) == 'manage-recovery') class="active" @endif>
-                <i class="bx bx-money"></i>
-                <span class="link_name">Recovery</span>
-            </a>
-            <span class="tooltip">Recovery</span>
-        </li>
-        @endif
-        
-        @if(in_array('users',$roleArray) || (in_array('All',$roleArray) && in_array(($company->plan ?? ''),$premium)) || (Auth::user()->role == 'master'))
-        <li>
-            <a href="/users" @if(Request::segment(1) == 'users' || Request::segment(1) == 'manage-user') class="active" @endif>
-                <i class="bx bx-group"></i>
-                <span class="link_name">Users</span>
-            </a>
-            <span class="tooltip">Users</span>
-        </li>
-        @endif
-        
-        @if(in_array('invoice',$roleArray) || (in_array('All',$roleArray) && in_array(($company->plan ?? ''),$premium)))
-        <li>
-            <a href="/invoices" @if(Request::segment(1) == 'invoices' || Request::segment(1) == 'manage-invoice') class="active" @endif>
-                <i class="bx bx-file"></i>
-                <span class="link_name">Invoices</span>
-            </a>
-            <span class="tooltip">Invoices</span>
-        </li>
-        @endif
         
         @if(Auth::user()->role == 'master')
         <li>

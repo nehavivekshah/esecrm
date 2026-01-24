@@ -544,7 +544,7 @@
                          <label for="terms">Terms & Conditions</label>
                          <textarea class="form-control" name="terms" id="terms" rows="3" placeholder="Terms and conditions">{{ old('terms', $invoice->terms ?? '') }}</textarea>
                      </div>
-                    <div class="col-md-12 text-right mt-4">
+                    <div class="col-md-12 text-end mt-4">
                         <button type="button" class="btn btn-info me-2" id="previewInvoiceBtn"><i class='bx bx-show'></i> Preview</button>
                         <button type="submit" class="btn btn-primary bg-primary text-white px-4"><i class='bx bx-save'></i> Save Invoice</button>
                         <!--<button type="reset" class="btn btn-outline-secondary border px-4">Reset</button>-->

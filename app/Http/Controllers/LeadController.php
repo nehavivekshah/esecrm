@@ -677,8 +677,10 @@ class LeadController extends Controller
         $proposal->client_city            = $validatedData['client_city'] ?? null;
         $proposal->client_state           = $validatedData['client_state'] ?? null;
         $proposal->client_zip             = $validatedData['client_zip'] ?? null;
+        $proposal->client_zip             = $validatedData['client_zip'] ?? null;
         $proposal->client_country         = $validatedData['client_country'] ?? null;
-    
+        $proposal->tags                   = $request->tags ?? null;
+
         // Store numeric values after conversion
         $proposal->sub_total              = $subTotal;
         $proposal->discount_amount_calculated = $discountAmountCalculated;

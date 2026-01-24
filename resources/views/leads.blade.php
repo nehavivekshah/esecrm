@@ -92,6 +92,7 @@
                             <th class="checkbox-column pr-0"><input type="checkbox" id="checkall" value="all"></th>
                             <th>Name</th>
                             <th class="m-none">Company</th>
+                            <th class="m-none">GST No.</th>
                             <th class="m-none mw80">Mobile No.</th>
                             <th class="m-none mw60">Status</th>
                             <th class="m-none mw80">Since</th>
@@ -401,6 +402,7 @@
                     { data:'checkbox', orderable:false, searchable:false },
                     { data:'name' },
                     { data:'company' },
+                    { data:'gstno' },
                     { data:'mobile' },
                     { data:'status' },
                     { data:'since' },
@@ -416,15 +418,16 @@
                     { targets: 0, className: 'checkbox-column pr-0' },
                     { targets: 1, className: 'mw150' },
                     { targets: 2, className: 'm-none' },
-                    { targets: 3, className: 'm-none mw80' },
-                    { targets: 4, className: 'm-none mw60' },
-                    { targets: 5, className: 'm-none mw80' },
+                    { targets: 3, className: 'm-none' },
+                    { targets: 4, className: 'm-none mw80' },
+                    { targets: 5, className: 'm-none mw60' },
                     { targets: 6, className: 'm-none mw80' },
-                    { targets: 7, className: 'm-none mw60' },
-                    { targets: 8, className: 'm-none mw70 tm' },
-                    { targets: 9, className: 'm-none mw150' },
-                    { targets: 10, className: 'm-none mw60' },
-                    { targets: 11, className: 'position-sticky end-0 bg-default mw60' }
+                    { targets: 7, className: 'm-none mw80' },
+                    { targets: 8, className: 'm-none mw60' },
+                    { targets: 9, className: 'm-none mw70 tm' },
+                    { targets: 10, className: 'm-none mw150' },
+                    { targets: 11, className: 'm-none mw60' },
+                    { targets: 12, className: 'position-sticky end-0 bg-default mw60' }
                 ],
             
                 createdRow: function(row, data, dataIndex) { 

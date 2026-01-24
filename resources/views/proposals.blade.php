@@ -58,7 +58,7 @@
                             @foreach($proposals as $k=>$proposal)
                             <tr>
                                 <td width="100px" class="m-none">PRO-{{ str_pad($proposal->id, 6, '0', STR_PAD_LEFT) }}</td>
-                                <td>{{ $proposal->client_name ?? '' }}</td>
+                                <td>{{ $proposal->lead_name ?? $proposal->client_name ?? '' }}</td>
                                 <td class="m-none">{!! substr(($proposal->company ?? ''),0,15) !!}..</td>
                                 <td>{{ $proposal->grand_total ?? '' }} {{ $proposal->currency ?? '' }}</td>
                                 <td width="100px" class="m-none">{!! date_format(date_create($proposal->proposal_date ?? null),'d M, Y') !!}</td>
@@ -71,7 +71,15 @@
                                     @elseif($proposal->status == 'Expired')<span class="badge bg-danger">Expired</span>
                                     @else<span class="badge bg-dark">Draft</span>@endif
                                 </td>
-                                <td width="100px" class="m-none">..</td>
+                                <td width="100px" class="m-none">
+                                    @if(!empty($proposal->tags))
+                                        @foreach(explode(',', $proposal->tags) as $tag)
+                                            <span class="badge bg-secondary mb-1">{{ trim($tag) }}</span>
+                                        @endforeach
+                                    @else
+                                        -
+                                    @endif
+                                </td>
                                 @if(in_array('proposals_edit',$roleArray) || in_array('proposals_delete',$roleArray) || in_array('All',$roleArray))
                                 <td class="actionWidth position-sticky end-0">
                                     <div class="table-btn">
@@ -93,4 +101,20 @@
             </div>
         </div>
     </section>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#lists').DataTable({
+                "order": [],
+                "pageLength": 50,
+                "language": {
+                    "search": "Search:",
+                    "searchPlaceholder": "Search proposals..."
+                }
+            });
+        });
+    </script>
 @endsection
