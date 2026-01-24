@@ -45,6 +45,26 @@
         </li>
         @endif
         
+        @if(in_array('leads',$roleArray) || (in_array('All',$roleArray) && in_array(($company->plan ?? ''),$standard)))
+        <li>
+            <a href="/leads" @if(Request::segment(1) == 'leads') class="active" @endif>
+                <i class="bx bx-user-pin"></i> 
+                <span class="link_name">Leads</span>
+            </a>
+            <span class="tooltip">Leads</span>
+        </li>
+        @endif
+        
+        @if(in_array('clients',$roleArray) || (in_array('All',$roleArray) && in_array(($company->plan ?? ''),$standard)))
+        <li>
+            <a href="/clients" @if(Request::segment(1) == 'clients') class="active" @endif>
+                <i class="bx bx-user"></i> 
+                <span class="link_name">Customers</span>
+            </a>
+            <span class="tooltip">Customers</span>
+        </li>
+        @endif
+        
         @if(in_array('attendances',$roleArray) || (in_array('All',$roleArray) && in_array(($company->plan ?? ''),$standard)))
         <li>
             <a href="/attendances" @if(Request::segment(1) == 'attendances') class="active" @endif>
