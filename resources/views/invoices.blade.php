@@ -81,6 +81,13 @@
                                                     <i class="bx bx-edit"></i>
                                                 </a>
                                             @endif
+                                            
+                                            <!-- Send Invoice -->
+                                            <a href="mailto:{{ $invoice->client_email ?? '' }}?subject=Invoice INV-{{ $invoice->invoice_number }}&body=Please find attached invoice." 
+                                               class="btn btn-warning btn-sm send-invoice-btn" 
+                                               title="Send Email">
+                                                <i class="bx bx-envelope"></i>
+                                            </a>
 
                                             @if(in_array('invoice_delete', $roleArray) || in_array('All', $roleArray))
                                                 <a href="javascript:void(0)" 
@@ -101,4 +108,35 @@
             </div>
         </div>
     </section>
-@endsection
+
+    <!-- Client Filter Logic & Send Action -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // 1. Add Filter Dropdown
+            const table = $('#lists').DataTable();
+            
+            // Create filter container
+            const filterContainer = $('<div class="d-flex gap-2 mb-3"></div>').insertBefore('#lists_wrapper');
+            
+            // Client Filter
+            const clientSelect = $('<select class="form-select form-select-sm" style="width: 200px;"><option value="">All Clients</option></select>')
+                .appendTo(filterContainer)
+                .on('change', function () {
+                    const val = $.fn.dataTable.util.escapeRegex($(this).val());
+                    table.column(2).search(val ? '^' + val + '$' : '', true, false).draw();
+                });
+ 
+            // Populate Client Filter
+            table.column(2).data().unique().sort().each(function (d, j) {
+                // Strip HTML if present (though client name usually plain text)
+                const cleanData = $('<div>').html(d).text(); 
+                if(cleanData) clientSelect.append('<option value="' + cleanData + '">' + cleanData + '</option>');
+            });
+
+            // 2. Add Send Logic (Placeholder)
+            /*$('.send-invoice-btn').click(function(e) {
+                e.preventDefault();
+                alert('Send Invoice functionality to be implemented.');
+            });*/
+        });
+    </script>

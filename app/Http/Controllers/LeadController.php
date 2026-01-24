@@ -1274,7 +1274,7 @@ class LeadController extends Controller
         // Counters and trackers for success/fail
         $uploadedCount = 0;
         $notUploadedCount = 0;
-        $notUploadedRows = []; // Store row numbers (or keys) that fail
+        $notUploadedRows = []; 
     
         try {
             // Open the file and read its contents
@@ -1295,25 +1295,43 @@ class LeadController extends Controller
                      |     - else => 0
                      |------------------------------------------------------------------------------
                      */
+                    // Indexes shifted by 1 after company (index 4)
+                    // 0: name, 1: email, 2: mob, 3: whatsapp, 4: company, 5: gst_no, 6: position ...
+                    
                     $name   = $data[0] ?? null;
                     $name = mb_convert_encoding($name, 'UTF-8', 'UTF-8, ISO-8859-1, Windows-1252');
                     $name = mb_substr($name, 0, 230);
-                    $company   = $data[4] ?? null;
-                    $company = mb_convert_encoding($company, 'UTF-8', 'UTF-8, ISO-8859-1, Windows-1252');
-                    $location = json_encode(explode(',',($data[7])));
+                    $email  = $data[1] ?? null;
                     $mob    = $data[2] ?? null;
-                    $status = 0; // default
-    
-                    // If there's a 14th index, interpret its value
-                    if (!empty($data[14])) {
-                        if ($data[14] === 'lost') {
-                            $status = 9;
-                        } elseif ($data[14] === 'converted') {
-                            // We'll handle the 'converted' logic below, but just note it here
-                            $status = 0;  // or whatever you want as default for converted
-                        } else {
-                            $status = 0; // default for everything else
-                        }
+                    $whatsapp = $data[3] ?? null;
+                    $company = $data[4] ?? null;
+                    $company = mb_convert_encoding($company, 'UTF-8', 'UTF-8, ISO-8859-1, Windows-1252');
+                    $gst_no  = $data[5] ?? null; // New Field
+
+                    // Shifted indexes
+                    $position = $data[6] ?? null;
+                    $industry = $data[7] ?? null;
+                    $location = json_encode(explode(',',($data[8] ?? '')));
+                    $website  = $data[9] ?? null;
+                    $source   = $data[10] ?? null; // source/assigned?
+                    $assigned = $data[10] ?? null; // Assuming source/assigned same index
+                    $purpose  = $data[11] ?? null;
+                    $values   = $data[12] ?? null;
+                    $language = $data[13] ?? null;
+                    $poc      = $data[14] ?? null;
+                    $statusStr= $data[15] ?? null; // "status" column
+                    
+                    // Date fields shifted
+                    $last_talk_idx = 16;
+                    $created_at_idx = 17;
+                    $reminder_idx = 18;
+                    $note_idx     = 19;
+
+                    $status = 0;
+                    if (!empty($statusStr)) {
+                        if ($statusStr === 'lost') $status = 9;
+                        elseif ($statusStr === 'converted') $status = 0; // handled logic
+                        else $status = 0;
                     }
     
                     // If required fields are missing, skip row
@@ -1329,14 +1347,12 @@ class LeadController extends Controller
                     // Parse date fields using Carbon (optional fields)
                     // We'll safely check if index is set or not
                     try {
-                        $last_talk  = isset($data[15]) ? Carbon::parse($data[15])->format('Y-m-d H:i:s') : now();
-                        $created_at = isset($data[16]) ? Carbon::parse($data[16])->format('Y-m-d H:i:s') : now();
-                        $reminder   = isset($data[17]) ? Carbon::parse($data[17])->format('Y-m-d H:i:s') : now();
+                        $last_talk  = isset($data[$last_talk_idx]) ? Carbon::parse($data[$last_talk_idx])->format('Y-m-d H:i:s') : now();
+                        $created_at = isset($data[$created_at_idx]) ? Carbon::parse($data[$created_at_idx])->format('Y-m-d H:i:s') : now();
+                        $reminder   = isset($data[$reminder_idx]) ? Carbon::parse($data[$reminder_idx])->format('Y-m-d H:i:s') : now();
                     } catch (\Exception $e) {
                         // Fallback if date parsing fails
-                        $last_talk  = now();
-                        $created_at = now();
-                        $reminder   = now();
+                        $last_talk = now(); $created_at = now(); $reminder = now();
                     }
     
                     /*
@@ -1345,11 +1361,11 @@ class LeadController extends Controller
                      |    Otherwise, insert/update in `leads` table
                      |------------------------------------------------------------------------------
                      */
-                    if (!empty($data[14]) && $data[14] === 'converted') {
+                    if (!empty($statusStr) && $statusStr === 'converted') {
                         // 2A. If lead is converted, insert/update in 'clients'
                         $existingClient = DB::table('clients')
-                            ->where('email', '=', ($data[1] ?? ''))
-                            ->orWhere('mob', '=', ($data[2] ?? ''))
+                            ->where('email', '=', $email)
+                            ->orWhere('mob', '=', $mob)
                             ->first();
     
                         if ($existingClient) {
@@ -1358,19 +1374,20 @@ class LeadController extends Controller
                                 ->where('id', $existingClient->id)
                                 ->update([
                                     'name'       => $name,
-                                    'email'      => $data[1] ?? '',
+                                    'email'      => $email,
                                     'mob'        => '+91' . $mob,
-                                    'whatsapp'   => $data[3] ?? '',
-                                    'company'    => $company ?? '',
-                                    'position'   => $data[5] ?? '',
-                                    'industry'   => $data[6] ?? '',
-                                    'location'   => $location ?? '',
-                                    'website'    => $data[8] ?? '',
-                                    'assigned'     => $data[9] ?? '',
-                                    'purpose'    => $data[10] ?? '',
-                                    'values'     => $data[11] ?? '',
-                                    'language'   => $data[12] ?? '',
-                                    'poc'        => $data[13] ?? '',
+                                    'whatsapp'   => $whatsapp,
+                                    'company'    => $company,
+                                    'gstno'      => $gst_no, // New Field
+                                    'position'   => $position,
+                                    'industry'   => $industry,
+                                    'location'   => $location,
+                                    'website'    => $website,
+                                    'assigned'     => $assigned,
+                                    'purpose'    => $purpose,
+                                    'values'     => $values,
+                                    'language'   => $language,
+                                    'poc'        => $poc,
                                     'status'     => '0', // up to you how you define "converted"
                                     'updated_at' => now(),
                                 ]);
@@ -1380,54 +1397,56 @@ class LeadController extends Controller
                                 'cid'           => Auth::user()->cid ?? '',
                                 'commentLeadID' => 0,
                                 'name'          => $name,
-                                'email'         => $data[1] ?? '',
+                                'email'         => $email,
                                 'mob'           => $mob,
-                                'whatsapp'      => $data[3] ?? '',
-                                'company'       => $company ?? '',
-                                'position'      => $data[5] ?? '',
-                                'industry'      => $data[6] ?? '',
-                                'location'      => $location ?? '',
-                                'website'       => $data[8] ?? '',
-                                'assigned'        => $data[9] ?? '',
-                                'purpose'       => $data[10] ?? '',
-                                'values'        => $data[11] ?? '',
-                                'language'      => $data[12] ?? '',
-                                'poc'           => $data[13] ?? '',
+                                'whatsapp'      => $whatsapp,
+                                'company'       => $company,
+                                'gstno'         => $gst_no, // New Field
+                                'position'      => $position,
+                                'industry'      => $industry,
+                                'location'      => $location,
+                                'website'       => $website,
+                                'assigned'        => $assigned,
+                                'purpose'       => $purpose,
+                                'values'        => $values,
+                                'language'      => $language,
+                                'poc'           => $poc,
                                 'status'        => '0',
                                 'created_at'    => $created_at,
                             ]);
                         }
                     } else {
                         // 2B. Insert/Update "leads" table
-                        $checkLeads = Leads::where('mob', '=', ($mob))->first();
+                        $checkLeads = Leads::where('mob', '=', $mob)->first();
     
                         if ($checkLeads) {
                             // Update the existing lead
                             $checkLeads->update([
                                 'cid'       => Auth::user()->cid ?? '',
                                 'name'      => $name,
-                                'email'     => $data[1] ?? '',
+                                'email'     => $email,
                                 'mob'       => $mob,
-                                'whatsapp'  => $data[3] ?? '',
-                                'company'   => $company ?? '',
-                                'position'  => $data[5] ?? '',
-                                'industry'  => $data[6] ?? '',
-                                'location'  => $location ?? '',
-                                'website'   => $data[8] ?? '',
-                                'assigned'    => $data[9] ?? '',
-                                'purpose'   => $data[10] ?? '',
-                                'values'    => $data[11] ?? '',
-                                'language'  => $data[12] ?? '',
-                                'poc'       => $data[13] ?? '',
+                                'whatsapp'  => $whatsapp,
+                                'company'   => $company,
+                                'gst_no'    => $gst_no, // New Field
+                                'position'  => $position,
+                                'industry'  => $industry,
+                                'location'  => $location,
+                                'website'   => $website,
+                                'assigned'    => $assigned,
+                                'purpose'   => $purpose,
+                                'values'    => $values,
+                                'language'  => $language,
+                                'poc'       => $poc,
                                 'status'    => $status,
                                 'updated_at'=> now(),
                             ]);
     
                             // Insert comment if last_talk is provided
-                            if (!empty($data[15])) {
+                            if (!empty($data[$note_idx])) {
                                 DB::table('lead_comments')->insert([
                                     'lead_id'    => $checkLeads->id,
-                                    'msg'        => $data[18] ?? 'Updated Data',
+                                    'msg'        => $data[$note_idx] ?? 'Updated Data',
                                     'next_date'  => $reminder,
                                     'created_at' => $last_talk,
                                 ]);
@@ -1437,28 +1456,29 @@ class LeadController extends Controller
                             $lead_id = DB::table('leads')->insertGetId([
                                 'cid'        => Auth::user()->cid ?? '',
                                 'name'       => $name,
-                                'email'      => $data[1] ?? '',
+                                'email'      => $email,
                                 'mob'        => $mob,
-                                'whatsapp'   => $data[3] ?? '',
-                                'company'    => $company ?? '',
-                                'position'   => $data[5] ?? '',
-                                'industry'   => $data[6] ?? '',
-                                'location'   => $location ?? '',
-                                'website'    => $data[8] ?? '',
-                                'assigned'     => $data[9] ?? '',
-                                'purpose'    => $data[10] ?? '',
-                                'values'     => $data[11] ?? '',
-                                'language'   => $data[12] ?? '',
-                                'poc'        => $data[13] ?? '',
+                                'whatsapp'   => $whatsapp,
+                                'company'    => $company,
+                                'gst_no'     => $gst_no, // New Field
+                                'position'   => $position,
+                                'industry'   => $industry,
+                                'location'   => $location,
+                                'website'    => $website,
+                                'assigned'     => $assigned,
+                                'purpose'    => $purpose,
+                                'values'     => $values,
+                                'language'   => $language,
+                                'poc'        => $poc,
                                 'status'     => $status,
                                 'created_at' => $created_at,
                             ]);
     
                             // Add initial comment if last_talk is provided
-                            if (!empty($data[15])) {
+                            if (!empty($data[$note_idx])) {
                                 DB::table('lead_comments')->insert([
                                     'lead_id'    => $lead_id,
-                                    'msg'        => $data[18] ?? 'Import Data',
+                                    'msg'        => $data[$note_idx] ?? 'Import Data',
                                     'next_date'  => $reminder,
                                     'created_at' => $last_talk,
                                 ]);
@@ -1518,7 +1538,7 @@ class LeadController extends Controller
             $file = fopen('php://output', 'w');
     
             // Write the column headers in the first row (matching the columns in the import)
-            fputcsv($file, ['CID', 'Name', 'Email', 'Mobile', 'WhatsApp', 'Company', 'Position', 'Industry', 'Location', 'Website', 'assigned', 'Purpose', 'Values', 'Language', 'POC', 'Status', 'Last Talk Date', 'Created Date', 'Next Rimder Date', 'Note']);
+            fputcsv($file, ['CID', 'Name', 'Email', 'Mobile', 'WhatsApp', 'Company', 'GST No', 'Position', 'Industry', 'Location', 'Website', 'assigned', 'Purpose', 'Values', 'Language', 'POC', 'Status', 'Last Talk Date', 'Created Date', 'Next Rimder Date', 'Note']);
     
             // Fetch data from the database
             $leads = DB::table('leads')
@@ -1540,6 +1560,7 @@ class LeadController extends Controller
                     $lead->mob,
                     $lead->whatsapp,
                     $lead->company,
+                    $lead->gst_no ?? $lead->gstno, // GST No
                     $lead->position,
                     $lead->industry,
                     $lead->location,
@@ -1583,7 +1604,7 @@ class LeadController extends Controller
             $file = fopen('php://output', 'w');
     
             // Write the column headers in the first row (matching the columns in the import)
-            fputcsv($file, ['CID', 'Name', 'Email', 'Mobile', 'WhatsApp', 'Company', 'Position', 'Industry', 'Location', 'Website', 'Assigned', 'Purpose', 'Values', 'Language', 'POC', 'Status']);
+            fputcsv($file, ['CID', 'Name', 'Email', 'Mobile', 'WhatsApp', 'Company', 'GST No', 'Position', 'Industry', 'Location', 'Website', 'Assigned', 'Purpose', 'Values', 'Language', 'POC', 'Status']);
     
             // Fetch data from the database
             $leads = DB::table('leads')->get();
@@ -1597,6 +1618,7 @@ class LeadController extends Controller
                     $lead->mob,
                     $lead->whatsapp,
                     $lead->company,
+                    $lead->gst_no ?? $lead->gstno, // GST No
                     $lead->position,
                     $lead->industry,
                     $lead->location,

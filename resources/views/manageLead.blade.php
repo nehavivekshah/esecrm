@@ -54,6 +54,12 @@
                                 <input type="text" class="form-control" id="whatsapp" name="whatsapp" placeholder="Enter Whatsapp Number" value="{{ $leads->whatsapp ?? '91' }}">
                             </div>
                         </div>
+                            <label for="gstno">GST No</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class='bx bx-hash'></i></span>
+                                <input type="text" class="form-control" id="gstno" name="gstno" placeholder="Enter GST Number" value="{{ $leads->gst_no ?? '' }}">
+                            </div>
+                        </div>
                         <div class="col-md-3 col-sm-6 form-group">
                             <label for="company">Company</label>
                             <div class="input-group">

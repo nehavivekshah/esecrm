@@ -56,16 +56,18 @@
 
                     {{-- Company logo --}}
                     <div class="form-group col-md-3 col-sm-6">
-                        <label for="img">PDF Logo</label>
+                    {{-- Company logo --}}
+                    <div class="form-group col-md-3 col-sm-6">
+                        <label for="pdf_logo">PDF Logo</label>
                         <div class="input-group">
-                            @if(!empty($company->img))
+                            @if(!empty($company->pdf_logo))
                                 <span class="input-group-text" style="padding:5px;">
-                                    <img src="{{ asset('public/assets/images/company/'.$company->img) }}" style="width:30px;border-radius:30px">
+                                    <img src="{{ asset('public/assets/images/company/'.$company->pdf_logo) }}" style="width:30px;border-radius:30px">
                                 </span>
                             @else
                                 <span class="input-group-text"><i class="bx bx-image"></i></span>
                             @endif
-                            <input type="file" class="form-control" id="img" name="img">
+                            <input type="file" class="form-control" id="pdf_logo" name="pdf_logo">
                         </div>
                     </div>
 

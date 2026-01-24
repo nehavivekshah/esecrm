@@ -88,17 +88,17 @@
         @yield('content')
         
         @if (Session::has('success'))
-        <div class="response-msg auto-hide">
+        <div class="response-msg auto-hide" style="position: fixed; top: 20px; right: 20px; z-index: 1050; min-width: 300px;">
             <div class="alert alert-success shadow alert-dismissible" role="alert">
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                {{ Session::get('success') }}
+                <i class='bx bx-check-circle me-2'></i> {{ Session::get('success') }}
             </div>
         </div>
         @elseif (Session::has('error'))
-        <div class="response-msg auto-hide">
+        <div class="response-msg auto-hide" style="position: fixed; top: 20px; right: 20px; z-index: 1050; min-width: 300px;">
             <div class="alert alert-danger shadow alert-dismissible" role="alert">
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                {{ Session::get('error') }}
+                <i class='bx bx-error-circle me-2'></i> {{ Session::get('error') }}
             </div>
         </div>
         @endif

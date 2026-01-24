@@ -13,6 +13,6 @@ class Leads extends Model
         'cid', 'uid', 'name', 'company', 'email', 'mob', 'gstno', 
         'location', 'purpose', 'assigned', 'poc', 'status', 
         'whatsapp', 'position', 'industry', 'website', 'values', 
-        'language', 'tags'
+        'language', 'tags', 'gst_no'
     ];
 }

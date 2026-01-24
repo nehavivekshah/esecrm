@@ -57,7 +57,7 @@
                                         @if(!empty($client->email))<a href="mailto:{{ $client->email }}" class="btn btn-info text-white btn-sm" title="Email"><i class="bx bx-envelope"></i></a>@endif
                                         @if(!empty($client->mob))<a href="tel:{{ $client->mob }}" class="btn btn-warning text-dark btn-sm" title="Call"><i class="bx bx-phone"></i></a>@endif
                                         @if(in_array('client_edit',$roleArray) || in_array('All',$roleArray))
-                                        <a href="javascript:void(0)" class="btn btn-primary text-white btn-sm edit"  data-view-id="{{ $client->id ?? '' }}" title="Call"><i class="bx bx-pencil"></i></a>
+                                        <a href="/manage-client?id={{ $client->id ?? '' }}" class="btn btn-primary text-white btn-sm edit"  title="Edit"><i class="bx bx-pencil"></i></a>
                                         @endif
                                         @if(in_array('client_delete',$roleArray) || in_array('All',$roleArray))
                                         <a href="javascript:void(0)" class="btn btn-danger btn-sm delete" id="{{ $client->id }}" date-page="clientDelete" title="Delete"><i class="bx bx-trash"></i></a>

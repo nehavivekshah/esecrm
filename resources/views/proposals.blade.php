@@ -41,7 +41,8 @@
                         <thead>
                             <tr>
                                 <th width="100px" class="m-none">#</th>
-                                <th class="m-none">Name</th>
+                                <th>Subject</th>
+                                <th class="m-none">Client Name</th>
                                 <th>Company</th>
                                 <th>Amount</th>
                                 <th width="100px" class="m-none">Created Date</th>
@@ -58,6 +59,7 @@
                             @foreach($proposals as $k=>$proposal)
                             <tr>
                                 <td width="100px" class="m-none">PRO-{{ str_pad($proposal->id, 6, '0', STR_PAD_LEFT) }}</td>
+                                <td>{{ $proposal->subject ?? '' }}</td>
                                 <td>{{ $proposal->client_name ?? '' }}</td>
                                 <td class="m-none">{!! substr(($proposal->company ?? ''),0,15) !!}..</td>
                                 <td>{{ $proposal->grand_total ?? '' }} {{ $proposal->currency ?? '' }}</td>
@@ -71,7 +73,7 @@
                                     @elseif($proposal->status == 'Expired')<span class="badge bg-danger">Expired</span>
                                     @else<span class="badge bg-dark">Draft</span>@endif
                                 </td>
-                                <td width="100px" class="m-none">..</td>
+                                <td width="100px" class="m-none">{{ $proposal->tags ?? '' }}</td>
                                 @if(in_array('proposals_edit',$roleArray) || in_array('proposals_delete',$roleArray) || in_array('All',$roleArray))
                                 <td class="actionWidth position-sticky end-0">
                                     <div class="table-btn">
