@@ -4,7 +4,7 @@
 @section('content')
 @php
     $roles = session('roles');
-    $roleArray = explode(',',($roles->permissions ?? ''));
+    $roleArray = explode(',', (optional($roles)->permissions ?? ''));
 @endphp
 <section class="task__section">
     <div class="text">
