@@ -11,208 +11,266 @@
     <section class="task__section">
         <div class="text">
             <i class="bx bx-menu" id="mbtn"></i>
-            Leads
+            @if(!empty($_GET['id'])) Edit Lead @else New Lead @endif
             <a href="/signout" class="logoutbtn"><i class="bx bx-log-out"></i></a>
         </div>
-        <div class="container-fluid">
-            <div class="board-title board-title-flex mb-4">
-                <a href="/leads" class="btn btn-primary btn-sm back-btn"><i class="bx bx-arrow-back"></i></a>
-                @if(!empty($_GET['id']))
-                <h1>Edit Lead Details</h1> @else <h1>Add New Lead</h1> @endif
-                <!--<a href="/manage-lead" class="btn btn-primary btn-sm">Add New</a>-->
+        <div class="container-fluid py-4">
+            <div class="d-flex align-items-center gap-3 mb-4">
+                <a href="/leads" class="btn btn-light border-0 shadow-sm rounded-circle p-2"
+                    style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                    <i class="bx bx-arrow-back" style="font-size: 1.2rem; color: var(--color-default);"></i>
+                </a>
+                <h1 class="h4 fw-bold mb-0">@if(!empty($_GET['id'])) Edit Lead Details @else Add New Lead @endif</h1>
             </div>
 
-            <div class="row">
-                <div class="col-md-12 csp-3">
-                    <form action="manage-lead" method="post" class="row g-3 bg-white p-3 rounded">
-                        @csrf
-                        <div class="col-md-3 col-sm-6 form-group">
-                            <label for="name">Name*</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-user'></i></span>
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name*"
-                                    value="{{ $leads->name ?? '' }}" required>
-                                <input type="hidden" name="id" value="{{ $_GET['id'] ?? '' }}">
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6 form-group">
-                            <label for="email">Email Address</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-envelope-open'></i></span>
-                                <input type="email" class="form-control" id="email" name="email"
-                                    placeholder="Enter Email Id" value="{{ $leads->email ?? '' }}">
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6 form-group">
-                            <label for="mobile">Mobile Number*</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-phone'></i></span>
-                                <input type="text" class="form-control" id="mob" name="mob"
-                                    placeholder="Enter Mobile Number*" value="{{ $leads->mob ?? '91' }}" required>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6 form-group">
-                            <label for="whatsapp">Whatsapp</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bxl-whatsapp'></i></span>
-                                <input type="text" class="form-control" id="whatsapp" name="whatsapp"
-                                    placeholder="Enter Whatsapp Number" value="{{ $leads->whatsapp ?? '91' }}">
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6 form-group">
-                            <label for="gstno">GST No</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-hash'></i></span>
-                                <input type="text" class="form-control" id="gstno" name="gstno"
-                                    placeholder="Enter GST Number" value="{{ $leads->gstno ?? '' }}">
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6 form-group">
-                            <label for="company">Company</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-briefcase'></i></span>
-                                <input type="text" class="form-control" id="company" name="company"
-                                    placeholder="Enter Company" value="{{ $leads->company ?? '' }}">
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6 form-group">
-                            <label for="position">Position</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-user'></i></span>
-                                <input type="text" class="form-control" id="position" name="position"
-                                    placeholder="Enter Position" value="{{ $leads->position ?? '' }}">
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6 form-group">
-                            <label for="industry">Industry</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-building'></i></span>
-                                <input type="text" class="form-control" id="industry" name="industry"
-                                    placeholder="Enter Industry" value="{{ $leads->industry ?? '' }}">
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6 form-group">
-                            <label for="address">Address</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-home'></i></span>
-                                <input type="text" class="form-control" id="address" name="address[address]"
-                                    placeholder="Enter Address" value="{{ $location['address'] ?? '' }}">
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6 form-group">
-                            <label for="city">City</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-map'></i></span>
-                                <input type="text" class="form-control" id="city" name="address[city]"
-                                    placeholder="Enter City" value="{{ $location['city'] ?? '' }}">
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6 form-group">
-                            <label for="state">State</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-map-pin'></i></span>
-                                <input type="text" class="form-control" id="state" name="address[state]"
-                                    placeholder="Enter State" value="{{ $location['state'] ?? '' }}">
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6 form-group">
-                            <label for="country">Country</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-globe'></i></span>
-                                <input type="text" class="form-control" id="country" name="address[country]"
-                                    placeholder="Enter Country" value="{{ $location['country'] ?? 'India' }}">
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6 form-group">
-                            <label for="zip">Zip/Postal Code</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-pin'></i></span>
-                                <input type="text" class="form-control" id="clientZip" name="address[zip]"
-                                    placeholder="Enter Zip/Postal Code" value="{{ $location['zip'] ?? '' }}">
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6 form-group">
-                            <label for="website">Website</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-link'></i></span>
-                                <input type="url" class="form-control" id="country" name="website"
-                                    placeholder="Enter Website Link" value="{{ $leads->website ?? '' }}">
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6 form-group">
-                            <label for="source">Assigned</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-share-alt'></i></span>
-                                <input type="text" class="form-control" id="source" name="source" placeholder="Enter Source"
-                                    value="{{ $leads->source ?? '' }}">
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6 form-group">
-                            <label for="source">Purpose</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-target-lock'></i></span>
-                                <input type="text" class="form-control" id="purpose" name="purpose"
-                                    placeholder="Enter Purpose" value="{{ $leads->purpose ?? '' }}">
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6 form-group">
-                            <label for="values">Lead Value</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-rupee'></i></span>
-                                <input type="number" class="form-control" id="value" name="value" placeholder="Enter Values"
-                                    value="{{ $leads->values ?? '' }}">
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6 form-group">
-                            <label for="source">Language</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-world'></i></span>
-                                <input type="text" class="form-control" id="language" name="language"
-                                    placeholder="Enter Language" value="{{ $leads->language ?? 'EN' }}">
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6 form-group">
-                            <label for="source">POC</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-user-check'></i></span>
-                                <input type="text" class="form-control" id="poc" name="poc"
-                                    placeholder="Enter Point of Contact" value="{{ $leads->poc ?? '' }}">
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6 form-group">
-                            <label for="source">Tags</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-user-check'></i></span>
-                                <input type="text" class="form-control" id="tags" name="tags"
-                                    placeholder="Enter Tags (Search Keywords, K2)" value="{{ $leads->tags ?? '' }}">
-                            </div>
-                        </div>
+            <form action="manage-lead" method="post" class="row g-4">
+                @csrf
+                <input type="hidden" name="id" value="{{ $_GET['id'] ?? '' }}">
 
-                        @if(empty($_GET['id']))
-                            <div class="col-md-3 col-sm-6 form-group">
-                                <label for="source">Next Date</label>
+                <!-- Primary Information -->
+                <div class="col-lg-6">
+                    <div class="form-card">
+                        <div class="section-title">
+                            <i class='bx bx-user'></i> Primary Information
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="name">Name*</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class='bx bx-calendar'></i></span>
-                                    <input type="datetime-local" class="form-control" id="nxtDate" name="nxtDate">
+                                    <span class="input-group-text"><i class='bx bx-user'></i></span>
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Full Name"
+                                        value="{{ $leads->name ?? '' }}" required>
                                 </div>
                             </div>
-                            <div class="col-md-12 form-group">
-                                <div class="form-group">
-                                    <label for="message">Message</label>
-                                    <textarea class="form-control" rows="5" id="message" name="message"
-                                        placeholder="Write Here..."></textarea>
+                            <div class="col-md-6">
+                                <label for="email">Email Address</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class='bx bx-envelope'></i></span>
+                                    <input type="email" class="form-control" id="email" name="email"
+                                        placeholder="email@example.com" value="{{ $leads->email ?? '' }}">
                                 </div>
                             </div>
-                        @endif
-
-                        <div class="col-md-12 text-right mb-2">
-                            <button type="submit" class="btn btn-primary px-4">Submit</button>
-                            <button type="reset" class="btn btn-outline-secondary border px-4">Reset</button>
+                            <div class="col-md-6">
+                                <label for="mobile">Mobile Number*</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class='bx bx-phone'></i></span>
+                                    <input type="text" class="form-control" id="mob" name="mob" placeholder="91XXXXXXXXXX"
+                                        value="{{ $leads->mob ?? '91' }}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="whatsapp">Whatsapp</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class='bx bxl-whatsapp'></i></span>
+                                    <input type="text" class="form-control" id="whatsapp" name="whatsapp"
+                                        placeholder="91XXXXXXXXXX" value="{{ $leads->whatsapp ?? '91' }}">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label for="gstno">GST No.</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class='bx bx-id-card'></i></span>
+                                    <input type="text" class="form-control" id="gstno" name="gstno"
+                                        placeholder="GSTIN Number" value="{{ $leads->gstno ?? '' }}">
+                                </div>
+                            </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
+
+                <!-- Business Details -->
+                <div class="col-lg-6">
+                    <div class="form-card">
+                        <div class="section-title">
+                            <i class='bx bx-briefcase'></i> Business Details
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label for="company">Company Name</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class='bx bx-buildings'></i></span>
+                                    <input type="text" class="form-control" id="company" name="company"
+                                        placeholder="Enter Company" value="{{ $leads->company ?? '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="position">Position</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class='bx bx-user-pin'></i></span>
+                                    <input type="text" class="form-control" id="position" name="position"
+                                        placeholder="Job Title" value="{{ $leads->position ?? '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="industry">Industry</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class='bx bx-cog'></i></span>
+                                    <input type="text" class="form-control" id="industry" name="industry"
+                                        placeholder="e.g. IT, Healthcare" value="{{ $leads->industry ?? '' }}">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label for="website">Website</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class='bx bx-globe'></i></span>
+                                    <input type="url" class="form-control" name="website" placeholder="https://example.com"
+                                        value="{{ $leads->website ?? '' }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Location Details -->
+                <div class="col-lg-6">
+                    <div class="form-card">
+                        <div class="section-title">
+                            <i class='bx bx-map'></i> Location Details
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="address">Full Address</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class='bx bx-home'></i></span>
+                                    <input type="text" class="form-control" id="address" name="address[address]"
+                                        placeholder="Street, Building" value="{{ $location['address'] ?? '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="city">City</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class='bx bx-map-alt'></i></span>
+                                    <input type="text" class="form-control" id="city" name="address[city]"
+                                        placeholder="City" value="{{ $location['city'] ?? '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="state">State</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class='bx bx-map-pin'></i></span>
+                                    <input type="text" class="form-control" id="state" name="address[state]"
+                                        placeholder="State" value="{{ $location['state'] ?? '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="country">Country</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class='bx bx-globe-alt'></i></span>
+                                    <input type="text" class="form-control" name="address[country]" placeholder="Country"
+                                        value="{{ $location['country'] ?? 'India' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="zip">Zip/Postal Code</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class='bx bx-pin'></i></span>
+                                    <input type="text" class="form-control" name="address[zip]" placeholder="Zip Code"
+                                        value="{{ $location['zip'] ?? '' }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lead Intelligence -->
+                <div class="col-lg-6">
+                    <div class="form-card">
+                        <div class="section-title">
+                            <i class='bx bx-brain'></i> Lead Intelligence
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="source">Assigned To</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class='bx bx-user-plus'></i></span>
+                                    <input type="text" class="form-control" id="source" name="source" placeholder="Assignee"
+                                        value="{{ $leads->source ?? '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="purpose">Purpose</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class='bx bx-target-lock'></i></span>
+                                    <input type="text" class="form-control" id="purpose" name="purpose"
+                                        placeholder="e.g. Sales, Query" value="{{ $leads->purpose ?? '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="values">Lead Value</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class='bx bx-rupee'></i></span>
+                                    <input type="number" class="form-control" id="value" name="value"
+                                        placeholder="Price/Value" value="{{ $leads->values ?? '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="language">Language</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class='bx bx-world'></i></span>
+                                    <input type="text" class="form-control" id="language" name="language"
+                                        placeholder="EN/HI" value="{{ $leads->language ?? 'EN' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="poc">Point of Contact (POC)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class='bx bx-user-check'></i></span>
+                                    <input type="text" class="form-control" id="poc" name="poc" placeholder="SPOK"
+                                        value="{{ $leads->poc ?? '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="tags">Keywords / Tags</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class='bx bx-purchase-tag-alt'></i></span>
+                                    <input type="text" class="form-control" id="tags" name="tags"
+                                        placeholder="e.g. K2, Hot, VIP" value="{{ $leads->tags ?? '' }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Optional Next Action (New Leads Only) -->
+                @if(empty($_GET['id']))
+                    <div class="col-12">
+                        <div class="form-card" style="border-left: 5px solid var(--color-default);">
+                            <div class="section-title">
+                                <i class='bx bx-calendar-event'></i> Next Action & Follow up
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="nxtDate">Reminder Date & Time</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class='bx bx-time'></i></span>
+                                        <input type="datetime-local" class="form-control" id="nxtDate" name="nxtDate">
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <label for="message">Closing Message / Note</label>
+                                    <textarea class="form-control" rows="3" id="message" name="message"
+                                        placeholder="Summary of the conversation..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                <!-- Form Controls -->
+                <div class="col-12 mt-2 mb-5">
+                    <div class="d-flex align-items-center justify-content-end gap-3 p-3 bg-white rounded shadow-sm border">
+                        <button type="reset" class="btn btn-outline-secondary">
+                            <i class='bx bx-reset me-1'></i> Reset Form
+                        </button>
+                        <button type="submit" class="btn btn-primary d-flex align-items-center gap-2">
+                            <i class='bx bx-check-circle' style="font-size: 1.2rem;"></i>
+                            @if(!empty($_GET['id'])) Update Lead Details @else Save New Lead @endif
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
     </section>
+
 
 @endsection
