@@ -246,32 +246,53 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // REVENUE CHART (Existing)
+        // REVENUE CHART (Dynamic)
         const ctx = document.getElementById('revenueChart').getContext('2d');
+        const monthlyRevenue = {!! json_encode($monthlyRevenue) !!}; // Passed from Controller
+
         new Chart(ctx, {
             type: 'line',
             data: {
                 labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                 datasets: [
-                    { label: 'Marketing Sale', data: [50, 75, 100, 125, 175, 200, 225, 275, 250, 300, 280, 240], borderColor: '#f39c12', fill: false },
-                    { label: 'Comparison', data: [30, 50, 80, 100, 150, 170, 200, 220, 210, 250, 230, 200], borderColor: '#3498db', fill: false }
+                    { 
+                        label: 'Total Revenue ({{ date("Y") }})', 
+                        data: monthlyRevenue, 
+                        borderColor: '#2ecc71', 
+                        backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }
                 ]
             },
-            options: { responsive: true, maintainAspectRatio: false }
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) { return '₹' + value; }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'Revenue: ₹' + context.raw;
+                            }
+                        }
+                    }
+                }
+            }
         });
 
         // ACTIVITY MONITOR FLOW CHART (User-wise count)
         const activityCtx = document.getElementById('activityFlowChart').getContext('2d');
         
-        @php
-            // Calculate User Wise Counts for Chart
-            $userCounts = collect($activities ?? [])->groupBy('user_name')->map->count();
-            $chartLabels = $userCounts->keys()->toArray();
-            $chartData = $userCounts->values()->toArray();
-        @endphp
-
-        const activityLabels = {!! json_encode($chartLabels) !!};
-        const activityData = {!! json_encode($chartData) !!};
+        const activityLabels = {!! json_encode($activityChartLabels) !!};
+        const activityData = {!! json_encode($activityChartData) !!};
 
         new Chart(activityCtx, {
             type: 'bar',
