@@ -338,11 +338,7 @@ class LeadController extends Controller
 
             $leadSingle = new Leads();
 
-            // Check if the mobile number already exists
-            $existingLead = Leads::where('mob', $request->mob)->first();
-            if ($existingLead) {
-                return back()->with('error', 'Mobile number already exists in the leads table.');
-            }
+
 
             $leadSingle->cid = (Auth::user()->cid ?? '');
             $leadSingle->name = ($request->name ?? '');
