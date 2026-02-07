@@ -12,12 +12,6 @@ return new class extends Migration {
     {
         Schema::create('customer_departments', function (Blueprint $table) {
             $table->id();
-            $table->integer('client_id'); // Using integer to match likely Clients id type, or use unsignedBigInteger if Clients uses bigIncrements
-            $table->string('name');
-            $table->string('gst_no')->nullable();
-            $table->string('email')->nullable();
-            $table->string('phone')->nullable();
-            $table->text('address')->nullable();
             $table->timestamps();
         });
     }

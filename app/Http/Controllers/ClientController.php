@@ -24,7 +24,6 @@ use App\Models\Lead_comments;
 use App\Models\Recoveries;
 use App\Models\Invoices;
 use App\Models\Invoice_items;
-use App\Models\CustomerDepartment;
 
 class ClientController extends Controller
 {
@@ -752,8 +751,6 @@ class ClientController extends Controller
             $client->tags = $request->tags ?? '';
 
             if ($client->save()) {
-                // Save Departments
-                $this->saveClientDepartments($client->id, $request->input('departments', []));
                 return redirect('clients')->with('success', 'New customer successfully added.');
             } else {
                 return back()->with('error', 'Failed to list new client.');
@@ -789,8 +786,6 @@ class ClientController extends Controller
             $leadSingle->tags = $request->tags ?? '';
 
             if ($leadSingle->update()) {
-                // Save Departments
-                $this->saveClientDepartments($leadSingle->id, $request->input('departments', []));
                 return back()->with('success', 'client successfully updated.');
             } else {
                 return back()->with('error', 'Failed to update lead.');

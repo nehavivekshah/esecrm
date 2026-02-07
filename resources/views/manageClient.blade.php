@@ -135,94 +135,14 @@
                                     placeholder="Enter Zip/Postal Code">
                             </div>
                         </div>
-                        <div class="col-md-12 mt-4">
-                            <h5 class="mb-3">Departments / Branches</h5>
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="departmentTable">
-                                    <thead>
-                                        <tr>
-                                            <th>Name*</th>
-                                            <th>GST No.</th>
-                                            <th>Email</th>
-                                            <th>Phone</th>
-                                            <th>Address</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!-- Existing Departments -->
-                                        @if(isset($clients) && $clients->departments->count() > 0)
-                                            @foreach($clients->departments as $index => $dept)
-                                                <tr>
-                                                    <td><input type="text" name="departments[{{$index}}][name]" class="form-control"
-                                                            value="{{ $dept->name }}" required>
-                                                        <input type="hidden" name="departments[{{$index}}][id]"
-                                                            value="{{ $dept->id }}">
-                                                    </td>
-                                                    <td><input type="text" name="departments[{{$index}}][gst_no]"
-                                                            class="form-control" value="{{ $dept->gst_no }}"></td>
-                                                    <td><input type="email" name="departments[{{$index}}][email]"
-                                                            class="form-control" value="{{ $dept->email }}"></td>
-                                                    <td><input type="text" name="departments[{{$index}}][phone]"
-                                                            class="form-control" value="{{ $dept->phone }}"></td>
-                                                    <td><textarea name="departments[{{$index}}][address]" class="form-control"
-                                                            rows="1">{{ $dept->address }}</textarea></td>
-                                                    <td><button type="button" class="btn btn-danger btn-sm remove-dept"><i
-                                                                class="bx bx-trash"></i></button></td>
-                                                </tr>
-                                            @endforeach
-                                        @else
-                                            <!-- Default Empty Row -->
-                                            <tr>
-                                                <td><input type="text" name="departments[0][name]" class="form-control"
-                                                        placeholder="Main Branch" required></td>
-                                                <td><input type="text" name="departments[0][gst_no]" class="form-control"
-                                                        placeholder="GST"></td>
-                                                <td><input type="email" name="departments[0][email]" class="form-control"
-                                                        placeholder="Email"></td>
-                                                <td><input type="text" name="departments[0][phone]" class="form-control"
-                                                        placeholder="Phone"></td>
-                                                <td><textarea name="departments[0][address]" class="form-control" rows="1"
-                                                        placeholder="Address"></textarea></td>
-                                                <td><button type="button" class="btn btn-danger btn-sm remove-dept"><i
-                                                            class="bx bx-trash"></i></button></td>
-                                            </tr>
-                                        @endif
-                                    </tbody>
-                                </table>
-                                <button type="button" class="btn btn-success btn-sm" id="addDeptRow"><i
-                                        class="bx bx-plus"></i> Add Department</button>
+                        <div class="col-md-6 form-group">
+                            <label for="website">Website</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class='bx bx-link'></i></span>
+                                <input type="url" class="form-control" id="country" name="website"
+                                    placeholder="Enter Website Link" value="{{ $clients->website ?? '' }}">
                             </div>
                         </div>
-
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function () {
-                                let deptIndex = {{ isset($clients) ? $clients->departments->count() : 1 }};
-                                if (deptIndex === 0) deptIndex = 1;
-
-                                document.getElementById('addDeptRow').addEventListener('click', function () {
-                                    const tableBody = document.querySelector('#departmentTable tbody');
-                                    const newRow = `
-                                            <tr>
-                                                <td><input type="text" name="departments[${deptIndex}][name]" class="form-control" required></td>
-                                                <td><input type="text" name="departments[${deptIndex}][gst_no]" class="form-control"></td>
-                                                <td><input type="email" name="departments[${deptIndex}][email]" class="form-control"></td>
-                                                <td><input type="text" name="departments[${deptIndex}][phone]" class="form-control"></td>
-                                                <td><textarea name="departments[${deptIndex}][address]" class="form-control" rows="1"></textarea></td>
-                                                <td><button type="button" class="btn btn-danger btn-sm remove-dept"><i class="bx bx-trash"></i></button></td>
-                                            </tr>
-                                        `;
-                                    tableBody.insertAdjacentHTML('beforeend', newRow);
-                                    deptIndex++;
-                                });
-
-                                document.querySelector('#departmentTable').addEventListener('click', function (e) {
-                                    if (e.target.closest('.remove-dept')) {
-                                        e.target.closest('tr').remove();
-                                    }
-                                });
-                            });
-                        </script>
 
                         <div class="col-md-12 text-center mt-4">
                             <button type="submit" class="btn btn-primary px-4">Submit</button>
