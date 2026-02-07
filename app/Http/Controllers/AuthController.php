@@ -25,31 +25,33 @@ use App\Models\Eselicenses;
 
 class AuthController extends Controller
 {
-    public function register() {
+    public function register()
+    {
         return view('register');
     }
-    
-    public function registerPost(Request $request) {
-        
-        if($request->captcha != $request->captcha_answer){
+
+    public function registerPost(Request $request)
+    {
+
+        if ($request->captcha != $request->captcha_answer) {
             return back()->withErrors(['captcha' => 'Incorrect captcha answer.']);
         }
-        
+
         try {
-            
+
             $to = $request->reg_email ?? '';
             $subject = 'Welcome to Our ESECRM!';
-            
+
             $message = "Thank you for registering with us. We are excited to have you on board!<br><br><b>Below are your panel login details:</b><br>
-            <b>Username:</b> ".($request->reg_email ?? '')."<br>
-            <b>Password:</b> ".($request->reg_password ?? '')."<br><br>
+            <b>Username:</b> " . ($request->reg_email ?? '') . "<br>
+            <b>Password:</b> " . ($request->reg_password ?? '') . "<br><br>
             If you have any questions or need assistance, feel free to reach out to our support team.<br><br>
             Thank you for your interest.<br><br>
             <b>Best regards,</b><br>Webbrella Global";
-            
+
             $viewName = 'emails.welcome';
             $viewData = ["name" => ($request->reg_name ?? 'User'), "messages" => $message];
-    
+
             $companies = new Companies();
             $companies->name = $request->reg_company ?? '';
             $companies->mob = $request->reg_mob ?? '';
@@ -57,7 +59,7 @@ class AuthController extends Controller
             $companies->gst = $request->reg_gst ?? '';
             $companies->status = '1';
             $companies->save();
-            
+
             $roles = new Roles();
             $roles->cid = $companies->id ?? '';
             $roles->title = 'Admin';
@@ -66,10 +68,10 @@ class AuthController extends Controller
             $roles->permissions = 'All';
             $roles->status = '1';
             $roles->save();
-            
+
             $user = new User();
-            $username = explode('@',$request->reg_email);
-            $user->username = substr($request->reg_company,0,3).$username[0];
+            $username = explode('@', $request->reg_email);
+            $user->username = substr($request->reg_company, 0, 3) . $username[0];
             $user->name = $request->reg_name ?? '';
             $user->cid = $companies->id ?? '';
             $user->mob = $request->reg_mob ?? '';
@@ -80,7 +82,7 @@ class AuthController extends Controller
 
             $fromAddress = "info@esecrm.com"; // Get from DB if available
             $fromName = "eseCRM";       // Get from DB if available
-            
+
             $mailable = new CustomMailable(
                 $subject,
                 $viewName,
@@ -88,70 +90,71 @@ class AuthController extends Controller
                 $fromAddress, // Pass DB value or null
                 $fromName     // Pass DB value or null
             );
-    
+
             Mail::to($to)->send($mailable);
-            
+
             return redirect('/login')->with('success', 'Successfully registered your business on our platform! To complete the setup, please verify your email and fill out your business profile to start reaching potential customers.');
-    
+
             return back()->with('error', 'Oops, Somethings went worng.');
-            
-        } catch (Illuminate\Database\QueryException $e){
-            
+
+        } catch (Illuminate\Database\QueryException $e) {
+
             $errorCode = $e->errorInfo[1];
-            
-            if($errorCode == 1062){
+
+            if ($errorCode == 1062) {
                 return back()->with('error', 'Duplicate Entry.');
             }
-            
+
             return back()->with('error', 'Oops, Somethings went worng.');
-            
+
         }
-        
+
     }
-    
-    public function login() {
+
+    public function login()
+    {
         return view('login');
     }
-    
+
     public function loginPost(Request $request)
     {
         $credentials = [
             'email' => $request->login_email,
             'password' => $request->login_password,
         ];
-    
+
         if (Auth::attempt($credentials)) {
-    
+
             // Get the authenticated user
             $user = Auth::user();
-    
+
             // Check if the user account is active
             if ($user->status != 1) {
                 Auth::logout();
                 return back()->with('error', 'Your account has been deactivated. Please contact the support team for assistance.');
             }
-    
+
             // Retrieve related company and role information
             $company = Companies::find($user->cid);
             $role = Roles::find($user->role);
-    
+
             // Store information in session
             session([
                 'companies' => $company,
                 'roles' => $role,
             ]);
-    
+
             // Start PHP session if not already started and store credentials (not recommended for passwords)
             if (session_status() == PHP_SESSION_NONE) {
                 session_start();
             }
-    
+
             $_SESSION['loginEmail'] = $request->login_email ?? '';
-            $_SESSION['loginPassword'] = $request->login_password ?? ''; // ⚠️ Storing plaintext passwords is insecure
-    
+            // Plaintext password storage removed for security.
+
             return redirect('/home')->with('success', 'Successfully logged in.');
         }
-    
+
         return back()->with('error', 'Invalid login credentials.');
     }
 
@@ -159,38 +162,38 @@ class AuthController extends Controller
     {
         return view('forgotPassword');
     }
-    
+
     public function forgotPasswordPost(Request $request)
     {
-        
+
         $to = $request->forgot_email;
-        
+
         $getUser = User::where('email', '=', $to)->first();
-        
+
         if (!$getUser) {
             return back()->with('error', 'No user found with this email address.');
         }
-    
+
         $getSociety = Companies::where('id', '=', $getUser->cid)->first();
-        
+
         $subject = 'Reset Your Password for Your CRM Account';
-        
-        $message = "Dear ".$getUser->name.",<br><br>
+
+        $message = "Dear " . $getUser->name . ",<br><br>
         We received a request to reset your password for your CRM account. If you did not make this request, please ignore this email. Otherwise, follow the instructions below to reset your password.<br><br>
         <b>Reset Your Password:</b><br>
         <ul>
-            <li>Click on the following link or copy and paste it into your browser: <a href='https://esecrm.com/new-password?token=".$getUser->id."crm".$getUser->password."'>Password Reset Link</a></li>
+            <li>Click on the following link or copy and paste it into your browser: <a href='https://esecrm.com/new-password?token=" . $getUser->id . "crm" . $getUser->password . "'>Password Reset Link</a></li>
             <li>Enter your new password in the provided field.</li>
             <li>Confirm your new password by re-entering it.</li>
             <li>Click the <b>Submit</b> button to complete the process.</li>
         </ul><br>
         For your security, this link will expire in 24 hours. If you need a new link, you can request another password reset through the Webbrella website.<br><br>
         Thank you for being a valued member of the Webbrella community!<br><br>
-        <b>Best regards,</b><br>".($getSociety->name ?? 'ESECRM');
-        
+        <b>Best regards,</b><br>" . ($getSociety->name ?? 'ESECRM');
+
         $viewName = 'emails.welcome';
         $viewData = ["name" => $getUser->first_name, "messages" => $message];
-    
+
         $smtpSettings = SmtpSettings::where('user_id', $getUser->id)->first();
 
         // 2. Fallback: If no user-specific settings found AND the user has a company ID (cid)
@@ -202,7 +205,7 @@ class AuthController extends Controller
 
         $fromAddress = $smtpSettings?->from_address; // Get from DB if available
         $fromName = $smtpSettings?->from_name;       // Get from DB if available
-        
+
         $mailable = new CustomMailable(
             $subject,
             $viewName,
@@ -212,40 +215,40 @@ class AuthController extends Controller
         );
 
         Mail::to($to)->send($mailable);
-    
+
         return back()->with('success', 'Reset password link has been sent to your registered email address!');
-        
+
     }
 
     public function newPassword(Request $request)
     {
-        
-        $token = explode('crm',($request->token ?? ''));
-        
+
+        $token = explode('crm', ($request->token ?? ''));
+
         $getUser = User::where('id', '=', $token[0])->first();
-        
+
         $id = $token[0] ?? '';
-        
+
         if (!$getUser) {
             return back()->with('error', 'No user found with this email address.');
         }
-        
-        return view('newPassword',['id'=>$id]);
-        
+
+        return view('newPassword', ['id' => $id]);
+
     }
-    
+
     public function newPasswordPost(Request $request)
     {
-        
+
         $id = $request->uid ?? '';
         $password = User::find($id);
         $password->password = Hash::make(($request->new_password ?? ''));
         $password->update();
-    
+
         return redirect('login')->with('success', 'Your password has been successfully updated! You can now log in using your new password.');
-        
+
     }
-    
+
     public function logout(Request $request)
     {
         // 1. Clear specific custom session data you added during login
@@ -266,17 +269,17 @@ class AuthController extends Controller
         return redirect('/login') // Or route('login') if you use named routes
             ->with('info', 'You have been successfully logged out.'); // Use 'info' or 'success'
     }
-    
+
     public function triggerCurl(Request $request)
     {
-        
+
         $ese = Eselicenses::leftJoin('projects', 'eselicenses.project_id', '=', 'projects.id')
             ->select('projects.deployment_url', 'eselicenses.*')
             ->where('eselicenses.id', $request->id ?? '')
             ->first();
 
         // URL to trigger the action-core/index.php with cURL
-        $url = ($ese->deployment_url ?? '').'vendor/coreoptions/index.php';
+        $url = ($ese->deployment_url ?? '') . 'vendor/coreoptions/index.php';
 
         // Data to send with the request 
         $data = [

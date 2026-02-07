@@ -642,35 +642,45 @@ h2 {
 .scrum-task-success, .scrum-task-primary {
   position: relative;
   display: block;
-  padding: 10px;
-  border: 0px solid #dddddd;
-  border-left: 6px solid #ccc;
-  margin-bottom: 6px;
-  border-radius: 5px;
-  background-color: #f1f1f1;
+  padding: 12px 15px;
+  border: 1px solid var(--color-lightgray);
+  border-left: 8px solid #ccc;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  background-color: var(--color-white);
   cursor: all-scroll;
   color: #202020;
   text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.scrum-task:hover, .scrum-task-argent:hover,
+.scrum-task-warning:hover, .scrum-task-info:hover,
+.scrum-task-success:hover, .scrum-task-primary:hover {
+    border-color: #6f42c1; /* Purple hover border */
+    box-shadow: 0 4px 8px rgba(111, 66, 193, 0.2);
+    transform: translateY(-2px);
 }
 
 .scrum-task-argent {
-    border-left: 5px solid #ff0202;
+    border-left-color: #ff0202;
 }
 
 .scrum-task-warning {
-    border-left: 5px solid #ffae02;
+    border-left-color: #ffae02;
 }
 
 .scrum-task-info {
-    border-left: 5px solid #02d1d7;
+    border-left-color: #02d1d7;
 }
 
 .scrum-task-success {
-    border-left: 5px solid #06d702;
+    border-left-color: #06d702;
 }
 
 .scrum-task-primary {
-    border-left: 5px solid #0227d7;
+    border-left-color: #0227d7;
 }
 
 .scrum-task.over {

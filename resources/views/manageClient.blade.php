@@ -3,7 +3,7 @@
 
 @section('content')
 
-    @php $location = explode(',', ($clients->location ?? '')); @endphp
+    @php $location = json_decode(($clients->location ?? '[]'), true); @endphp
     <section class="task__section">
         <div class="text">
             <i class="bx bx-menu" id="mbtn"></i>
@@ -100,7 +100,7 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class='bx bx-home'></i></span>
                                 <input type="text" class="form-control" id="address" name="address[address]"
-                                    placeholder="Enter Address" value="{{ $location[0] ?? '' }}">
+                                    placeholder="Enter Address" value="{{ $location['address'] ?? '' }}">
                             </div>
                         </div>
                         <div class="col-md-6 form-group">
@@ -108,7 +108,7 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class='bx bx-map'></i></span>
                                 <input type="text" class="form-control" id="city" name="address[city]"
-                                    placeholder="Enter City" value="{{ $location[1] ?? '' }}">
+                                    placeholder="Enter City" value="{{ $location['city'] ?? '' }}">
                             </div>
                         </div>
                         <div class="col-md-6 form-group">
@@ -116,7 +116,7 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class='bx bx-map-pin'></i></span>
                                 <input type="text" class="form-control" id="state" name="address[state]"
-                                    placeholder="Enter State" value="{{ $location[2] ?? '' }}">
+                                    placeholder="Enter State" value="{{ $location['state'] ?? '' }}">
                             </div>
                         </div>
                         <div class="col-md-6 form-group">
@@ -124,7 +124,7 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class='bx bx-globe'></i></span>
                                 <input type="text" class="form-control" id="country" name="address[country]"
-                                    placeholder="Enter Country" value="{{ $location[3] ?? 'India' }}">
+                                    placeholder="Enter Country" value="{{ $location['country'] ?? 'India' }}">
                             </div>
                         </div>
                         <div class="col-md-6 form-group">
@@ -132,7 +132,7 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class='bx bx-pin'></i></span>
                                 <input type="text" class="form-control" id="m_zip" name="address[zip]"
-                                    placeholder="Enter Zip/Postal Code">
+                                    placeholder="Enter Zip/Postal Code" value="{{ $location['zip'] ?? '' }}">
                             </div>
                         </div>
                         <div class="col-md-6 form-group">
