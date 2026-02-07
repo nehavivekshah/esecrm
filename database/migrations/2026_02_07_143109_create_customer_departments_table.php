@@ -12,7 +12,13 @@ return new class extends Migration {
     {
         Schema::create('customer_departments', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('client_id');
+            $table->string('name')->nullable(); // Department Name
+            $table->string('location')->nullable(); // Branch Location
+            $table->string('poc')->nullable(); // Contact Person
             $table->timestamps();
+
+            // $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
         });
     }
 

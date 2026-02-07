@@ -143,7 +143,82 @@
                                     placeholder="Enter Website Link" value="{{ $clients->website ?? '' }}">
                             </div>
                         </div>
+                        <!-- Departments & Branches Section -->
+                        <div class="col-md-12 mt-4">
+                            <h5 class="mb-3 border-bottom pb-2">Departments & Branches</h5>
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="departmentTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Department Name</th>
+                                            <th>Branch / Location</th>
+                                            <th>Point of Contact (POC)</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="departmentBody">
+                                        <!-- Existing Departments will be loaded here via JS or Blade loop if we passed them -->
+                                        @if(isset($clients->departments) && count($clients->departments) > 0)
+                                            @foreach($clients->departments as $index => $dept)
+                                                <tr>
+                                                    <td><input type="text" name="departments[{{$index}}][name]" class="form-control"
+                                                            value="{{$dept->name}}" placeholder="e.g. Sales">
+                                                        <input type="hidden" name="departments[{{$index}}][id]"
+                                                            value="{{$dept->id}}">
+                                                    </td>
+                                                    <td><input type="text" name="departments[{{$index}}][location]"
+                                                            class="form-control" value="{{$dept->location}}"
+                                                            placeholder="e.g. New York"></td>
+                                                    <td><input type="text" name="departments[{{$index}}][poc]" class="form-control"
+                                                            value="{{$dept->poc}}" placeholder="e.g. John Doe"></td>
+                                                    <td><button type="button" class="btn btn-danger btn-sm remove-dept"><i
+                                                                class="bx bx-trash"></i></button></td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            <!-- Initial Empty Row -->
+                                            <tr>
+                                                <td><input type="text" name="departments[0][name]" class="form-control"
+                                                        placeholder="e.g. Sales"></td>
+                                                <td><input type="text" name="departments[0][location]" class="form-control"
+                                                        placeholder="e.g. New York"></td>
+                                                <td><input type="text" name="departments[0][poc]" class="form-control"
+                                                        placeholder="e.g. John Doe"></td>
+                                                <td><button type="button" class="btn btn-danger btn-sm remove-dept"><i
+                                                            class="bx bx-trash"></i></button></td>
+                                            </tr>
+                                        @endif
+                                    </tbody>
+                                </table>
+                                <button type="button" class="btn btn-secondary btn-sm" id="addDepartment"><i
+                                        class="bx bx-plus"></i> Add Another Dept/Branch</button>
+                            </div>
+                        </div>
 
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                let deptIndex = {{ isset($clients->departments) ? count($clients->departments) : 1 }};
+
+                                document.getElementById('addDepartment').addEventListener('click', function () {
+                                    const tbody = document.getElementById('departmentBody');
+                                    const tr = document.createElement('tr');
+                                    tr.innerHTML = `
+                                            <td><input type="text" name="departments[${deptIndex}][name]" class="form-control" placeholder="e.g. Sales"></td>
+                                            <td><input type="text" name="departments[${deptIndex}][location]" class="form-control" placeholder="e.g. New York"></td>
+                                            <td><input type="text" name="departments[${deptIndex}][poc]" class="form-control" placeholder="e.g. John Doe"></td>
+                                            <td><button type="button" class="btn btn-danger btn-sm remove-dept"><i class="bx bx-trash"></i></button></td>
+                                        `;
+                                    tbody.appendChild(tr);
+                                    deptIndex++;
+                                });
+
+                                document.getElementById('departmentBody').addEventListener('click', function (e) {
+                                    if (e.target.closest('.remove-dept')) {
+                                        e.target.closest('tr').remove();
+                                    }
+                                });
+                            });
+                        </script>
                         <div class="col-md-12 text-center mt-4">
                             <button type="submit" class="btn btn-primary px-4">Submit</button>
                             <button type="reset" class="btn btn-outline-secondary border px-4">Reset</button>

@@ -16,15 +16,26 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\SmtpSettings;
 use App\Models\Activity;
 use App\Models\Invoices;
+use App\Models\Proposals;
+use App\Models\Task;
 
-class HomeController extends Controller
-{
-    function index()
+    public function index()
     {
         return view('landingpg.index');
     }
+
     public function send(Request $request)
     {
+        // ... (Send logic is fine, but I need to make sure I don't delete it if I am replacing the whole file content or a large chunk)
+        // actually the previous view_file showed lines 1-99 and it was VERY truncated.
+        // It seems the previous replace_file_content REPLACED lines 16-177 with a truncated version because I didn't provide the full content in ReplacementContent? 
+        // No, I provided a lot of content but maybe I missed the middle part.
+        
+        // Let's just fix the `home` method and `store` method.
+        // The previous file content shows `index`, `send` (truncated in view?), and `home` (truncated) and `store`.
+        
+        // I will replace from line 22 to the end of the file with the CORRECT full content.
+        
         $validatedData = $request->validate([
             'name' => 'required|string',
             'email' => 'required|email',
@@ -36,7 +47,7 @@ class HomeController extends Controller
         $fromName = 'asdasd';
 
         $viewData = [
-            'name' => $validatedData['name'], // Mapped from request
+            'name' => $validatedData['name'],
             'phone' => $validatedData['phone'],
             'email' => $validatedData['email'],
             'services' => $validatedData['services'],
@@ -44,29 +55,14 @@ class HomeController extends Controller
         ];
 
         $subject = 'NEW ENQUIRY';
-        $viewName = 'emails.welcome'; // You need to create this blade file
-        $to = 'iwebbrella@gmail.com'; // Or an admin email, depending on logic
+        $viewName = 'emails.welcome'; 
+        $to = 'iwebbrella@gmail.com'; 
 
-        // 5. Send Email using Laravel Mail Facade
-        // try {
-        $mailable = new CustomMailable(
-            $subject,
-            $viewName,
-            $viewData,
-            $fromAddress,
-            $fromName
-        );
-
+        $mailable = new CustomMailable($subject, $viewName, $viewData, $fromAddress, $fromName);
         $m = Mail::to($to)->send($mailable);
         dd($m);
-        // return back()->with('success', 'Proposal sent successfully!');
-
-        // } catch (\Exception $e) {
-        //     // Log the error for debugging
-        //     \Log::error('Mail Send Error: ' . $e->getMessage());
-        //     return back()->withErrors(['msg' => 'Message could not be sent. Please try again later.']);
-        // }
     }
+
     public function home()
     {
         $auth_cid = Auth::user()->cid ?? '';
@@ -94,8 +90,13 @@ class HomeController extends Controller
             ->groupBy('project_id')
             ->get();
 
+        /* --- DASHBOARD WIDGETS DATA --- */
+        $outstandingInvoices = Invoices::where('cid', $auth_cid)->where('status', '!=', 'Paid')->sum('total_amount');
+        $pendingProposals = Proposals::where('cid', $auth_cid)->whereIn('status', ['Open', 'Sent'])->count();
+        $myPendingTasks = Task::where('uid', $auth_uid)->where('status', '!=', '4')->count();
+        $totalLeads = Leads::where('cid', $auth_cid)->count();
+
         /* --- REVENUE CHART LOGIC (Dynamic) --- */
-        // Calculate monthly revenue for the current year
         $revenueData = Invoices::select(
             \DB::raw('SUM(total_amount) as total'),
             \DB::raw('MONTH(issue_date) as month')
@@ -108,19 +109,12 @@ class HomeController extends Controller
             ->pluck('total', 'month')
             ->all();
 
-        // Fill missing months with 0
         $monthlyRevenue = [];
         for ($i = 1; $i <= 12; $i++) {
             $monthlyRevenue[] = $revenueData[$i] ?? 0;
         }
 
         /* --- ACTIVITY MONITOR LOGIC --- */
-
-        // 1. Get the raw activity flow for the company (Last 10 days) -- CORRECTED to use User-wise count if that's what the view wants
-        // BUT wait, the view chart is labelled "Activity Monitor Flow (User-wise)" but the code was doing Date-wise. 
-        // Let's stick to the VIEW'S INTENT which seems to be User-wise Contribution.
-
-        // Calculate User Wise Counts for Chart (Global count, not just last 15)
         $userActivityCounts = \DB::table('activities')
             ->join('users', 'activities.user_id', '=', 'users.id')
             ->where('users.cid', $auth_cid)
@@ -151,9 +145,14 @@ class HomeController extends Controller
             'activities' => $activities,
             'activityChartLabels' => $activityChartLabels,
             'activityChartData' => $activityChartData,
-            'monthlyRevenue' => $monthlyRevenue // Pass revenue data to view
+            'monthlyRevenue' => $monthlyRevenue,
+            'outstandingInvoices' => $outstandingInvoices,
+            'pendingProposals' => $pendingProposals,
+            'myPendingTasks' => $myPendingTasks,
+            'totalLeads' => $totalLeads
         ]);
     }
+
     public function store(Request $request)
     {
         try {
@@ -163,13 +162,12 @@ class HomeController extends Controller
                 'description' => 'nullable|string'
             ]);
 
-            $validated['user_id'] = auth()->id(); // Or null if guest
+            $validated['user_id'] = auth()->id(); 
 
             Activity::create($validated);
 
             return response()->json(['success' => true], 200);
         } catch (\Exception $e) {
-            // Return error for debugging
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }

@@ -24,6 +24,7 @@ use App\Models\Lead_comments;
 use App\Models\Recoveries;
 use App\Models\Invoices;
 use App\Models\Invoice_items;
+use App\Models\CustomerDepartments;
 
 class ClientController extends Controller
 {
@@ -717,7 +718,7 @@ class ClientController extends Controller
     public function manageClient(Request $request)
     {
 
-        $clients = Clients::where('id', '=', $request->id)->first();
+        $clients = Clients::with('departments')->where('id', '=', $request->id)->first();
 
         return view('manageClient', ['clients' => $clients]);
 
@@ -751,6 +752,29 @@ class ClientController extends Controller
             $client->tags = $request->tags ?? '';
 
             if ($client->save()) {
+                // Save Departments
+                $submittedDeptIds = [];
+                if ($request->has('departments')) {
+                    foreach ($request->departments as $dept) {
+                        if (!empty($dept['name'])) {
+                            $d = CustomerDepartments::updateOrCreate(
+                                ['id' => $dept['id'] ?? null],
+                                [
+                                    'client_id' => $client->id,
+                                    'name' => $dept['name'],
+                                    'location' => $dept['location'] ?? null,
+                                    'poc' => $dept['poc'] ?? null,
+                                ]
+                            );
+                            $submittedDeptIds[] = $d->id;
+                        }
+                    }
+                }
+                // Delete removed departments
+                CustomerDepartments::where('client_id', $client->id)
+                    ->whereNotIn('id', $submittedDeptIds)
+                    ->delete();
+
                 return redirect('clients')->with('success', 'New customer successfully added.');
             } else {
                 return back()->with('error', 'Failed to list new client.');
@@ -786,6 +810,29 @@ class ClientController extends Controller
             $leadSingle->tags = $request->tags ?? '';
 
             if ($leadSingle->update()) {
+                // Save Departments
+                $submittedDeptIds = [];
+                if ($request->has('departments')) {
+                    foreach ($request->departments as $dept) {
+                        if (!empty($dept['name'])) {
+                            $d = CustomerDepartments::updateOrCreate(
+                                ['id' => $dept['id'] ?? null],
+                                [
+                                    'client_id' => $leadSingle->id,
+                                    'name' => $dept['name'],
+                                    'location' => $dept['location'] ?? null,
+                                    'poc' => $dept['poc'] ?? null,
+                                ]
+                            );
+                            $submittedDeptIds[] = $d->id;
+                        }
+                    }
+                }
+                // Delete removed departments
+                CustomerDepartments::where('client_id', $leadSingle->id)
+                    ->whereNotIn('id', $submittedDeptIds)
+                    ->delete();
+
                 return back()->with('success', 'client successfully updated.');
             } else {
                 return back()->with('error', 'Failed to update lead.');

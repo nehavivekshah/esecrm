@@ -96,6 +96,38 @@
         </div>
         
         <div class="container-fluid mb-2">
+            <!-- DASHBOARD WIDGETS -->
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <div class="card p-3 border-0 shadow-sm" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                        <h6 class="mb-1">Outstanding Invoices</h6>
+                        <h3 class="font-weight-bold mb-0">₹{{ number_format($outstandingInvoices, 2) }}</h3>
+                        <small class="text-white-50">Waiting for payment</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card p-3 border-0 shadow-sm" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); color: #555;">
+                        <h6 class="mb-1 text-danger">Pending Proposals</h6>
+                        <h3 class="font-weight-bold mb-0 text-danger">{{ $pendingProposals }}</h3>
+                        <small class="text-muted">Open or Sent</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card p-3 border-0 shadow-sm" style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); color: white;">
+                        <h6 class="mb-1">My Pending Tasks</h6>
+                        <h3 class="font-weight-bold mb-0">{{ $myPendingTasks }}</h3>
+                        <small class="text-white-50">Assigned to you</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                   <div class="card p-3 border-0 shadow-sm" style="background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); color: #333;">
+                        <h6 class="mb-1 text-success">Total Leads</h6>
+                        <h3 class="font-weight-bold mb-0 text-success">{{ $totalLeads }}</h3>
+                        <small class="text-muted">In the pipeline</small>
+                    </div>
+                </div>
+            </div>
+
             <div class="row">
                 <div class="col-md-12">
                     <div class="flex-box">
