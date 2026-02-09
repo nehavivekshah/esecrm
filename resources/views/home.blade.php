@@ -203,47 +203,55 @@
                     <!-- ACTIVITY MONITOR FLOW CHART -->
                     <div class="card p-4 m-none">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="mb-0">Activity Monitor Flow (User-wise)</h5>
-                            <span class="badge bg-light text-dark border">User Contribution Tracking</span>
+                            <h5 class="mb-0">Activity Monitor Flow (Day-wise)</h5>
+                            <select id="activityDateRange" class="form-select form-select-sm" style="width: auto;">
+                                <option value="7" {{ $selectedActivityDays == 7 ? 'selected' : '' }}>Last 7 Days</option>
+                                <option value="30" {{ $selectedActivityDays == 30 ? 'selected' : '' }}>Last 30 Days</option>
+                                <option value="90" {{ $selectedActivityDays == 90 ? 'selected' : '' }}>Last 90 Days</option>
+                            </select>
                         </div>
                         <div class="chart-container">
                             <canvas id="activityFlowChart"></canvas>
                         </div>
                     </div>
                     
-                    <!-- RECENT ACTIVITY LOG TABLE (GROUPED) -->
+                    <!-- RECENT ACTIVITY LOG TABLE (DAY-WISE) -->
                     <div class="card mt-4 p-0 m-none">
                         <div class="card-header bg-white">
-                            <h6 class="mb-0 font-weight-bold">User-wise Activity Type Count</h6>
+                            <h6 class="mb-0 font-weight-bold">Day-wise Activity Breakdown</h6>
                         </div>
                         <div class="table-responsive activity-log">
                             <table class="table table-sm table-hover mb-0" style="font-size: 13px;">
                                 <thead class="bg-light">
                                     <tr>
+                                        <th>Date</th>
                                         <th>User Name</th>
                                         <th>Activity Type</th>
-                                        <th class="text-center">Activity Count</th>
+                                        <th class="text-center">Count</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @php
-                                        // Group activities by user_name AND type to avoid duplicates and show count
+                                        // Group activities by date, user_name AND type
                                         $groupedActivities = collect($activities ?? [])->groupBy(function($item) {
-                                            return $item->user_name . '|||' . $item->type;
-                                        });
+                                            $date = \Carbon\Carbon::parse($item->created_at)->format('Y-m-d');
+                                            return $date . '|||' . $item->user_name . '|||' . $item->type;
+                                        })->sortKeysDesc();
                                     @endphp
                                     @forelse($groupedActivities as $key => $group)
                                         @php 
-                                            $details = explode('|||', $key); 
+                                            $details = explode('|||', $key);
+                                            $date = \Carbon\Carbon::parse($details[0])->format('M j, Y');
                                         @endphp
                                         <tr>
-                                            <td><span class="text-primary font-weight-bold">{{ $details[0] }}</span></td>
-                                            <td><span class="badge bg-info text-white">{{ $details[1] }}</span></td>
+                                            <td><span class="text-muted">{{ $date }}</span></td>
+                                            <td><span class="text-primary font-weight-bold">{{ $details[1] }}</span></td>
+                                            <td><span class="badge bg-info text-white">{{ $details[2] }}</span></td>
                                             <td class="text-center"><strong>{{ count($group) }}</strong></td>
                                         </tr>
                                     @empty
                                     <tr>
-                                        <td colspan="3" class="text-center">No activities recorded yet.</td>
+                                        <td colspan="4" class="text-center">No activities recorded yet.</td>
                                     </tr>
                                     @endforelse
                                 </tbody>
@@ -320,40 +328,87 @@
             }
         });
 
-        // ACTIVITY MONITOR FLOW CHART (User-wise count)
+        // ACTIVITY MONITOR FLOW CHART (Day-wise, stacked by user)
         const activityCtx = document.getElementById('activityFlowChart').getContext('2d');
         
-        const activityLabels = {!! json_encode($activityChartLabels) !!};
-        const activityData = {!! json_encode($activityChartData) !!};
+        const activityLabels = {!! json_encode($activityChartLabels) !!}; // Dates
+        const activityDatasets = {!! json_encode($activityChartDatasets) !!}; // User datasets
+
+        // Generate colors for each user
+        const colors = [
+            'rgba(46, 204, 113, 0.7)',   // Green
+            'rgba(52, 152, 219, 0.7)',   // Blue
+            'rgba(155, 89, 182, 0.7)',   // Purple
+            'rgba(241, 196, 15, 0.7)',   // Yellow
+            'rgba(231, 76, 60, 0.7)',    // Red
+            'rgba(26, 188, 156, 0.7)',   // Teal
+            'rgba(230, 126, 34, 0.7)',   // Orange
+            'rgba(149, 165, 166, 0.7)',  // Gray
+        ];
+
+        const datasets = activityDatasets.map((dataset, index) => ({
+            label: dataset.label,
+            data: dataset.data,
+            backgroundColor: colors[index % colors.length],
+            borderColor: colors[index % colors.length].replace('0.7', '1'),
+            borderWidth: 1
+        }));
 
         new Chart(activityCtx, {
             type: 'bar',
             data: {
                 labels: activityLabels,
-                datasets: [{
-                    label: 'Activities Count',
-                    data: activityData,
-                    backgroundColor: 'rgba(46, 204, 113, 0.6)',
-                    borderColor: '#2ecc71',
-                    borderWidth: 1,
-                    borderRadius: 4
-                }]
+                datasets: datasets
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: false }
+                    legend: { 
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 10,
+                            font: { size: 11 }
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            footer: function(tooltipItems) {
+                                let total = 0;
+                                tooltipItems.forEach(item => total += item.parsed.y);
+                                return 'Total: ' + total;
+                            }
+                        }
+                    }
                 },
                 scales: {
-                    y: { 
-                        beginAtZero: true, 
-                        grid: { color: '#f0f0f0' },
-                        ticks: { stepSize: 1 }
+                    x: { 
+                        stacked: true,
+                        grid: { display: false }
                     },
-                    x: { grid: { display: false } }
+                    y: { 
+                        stacked: true,
+                        beginAtZero: true,
+                        grid: { color: '#f0f0f0' },
+                        ticks: { 
+                            stepSize: 1,
+                            precision: 0
+                        }
+                    }
                 }
             }
+        });
+
+        // Date range selector event listener
+        document.getElementById('activityDateRange').addEventListener('change', function() {
+            const days = this.value;
+            const url = new URL(window.location.href);
+            url.searchParams.set('activity_days', days);
+            window.location.href = url.toString();
         });
     </script>
 

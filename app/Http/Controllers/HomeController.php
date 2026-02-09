@@ -101,16 +101,61 @@ class HomeController extends Controller
             $monthlyRevenue[] = (float) ($revenueDataRaw[$i] ?? 0);
         }
 
-        /* --- ACTIVITY MONITOR LOGIC (Bar Chart) --- */
-        $userActivityCounts = DB::table('activities')
+        /* --- ACTIVITY MONITOR LOGIC (Day-wise Bar Chart) --- */
+        // Get date range (default: last 7 days)
+        $days = request()->get('activity_days', 7);
+        $startDate = Carbon::now()->subDays($days - 1)->startOfDay();
+        $endDate = Carbon::now()->endOfDay();
+
+        // Get all activities within date range, grouped by user and date
+        $activitiesGrouped = DB::table('activities')
             ->join('users', 'activities.user_id', '=', 'users.id')
             ->where('users.cid', $auth_cid)
-            ->select('users.name', DB::raw('count(*) as total'))
-            ->groupBy('users.name')
+            ->whereBetween('activities.created_at', [$startDate, $endDate])
+            ->select(
+                'users.id as user_id',
+                'users.name as user_name',
+                DB::raw('DATE(activities.created_at) as activity_date'),
+                DB::raw('COUNT(*) as count')
+            )
+            ->groupBy('users.id', 'users.name', 'activity_date')
+            ->orderBy('activity_date')
             ->get();
 
-        $activityChartLabels = $userActivityCounts->pluck('name')->toArray();
-        $activityChartData = $userActivityCounts->pluck('total')->toArray();
+        // Build date range array
+        $dateRange = [];
+        for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
+            $dateRange[] = $date->format('Y-m-d');
+        }
+
+        // Get unique users
+        $users = $activitiesGrouped->unique(function ($item) {
+            return $item->user_id;
+        })->pluck('user_name', 'user_id');
+
+        // Build datasets for each user
+        $activityChartDatasets = [];
+        foreach ($users as $userId => $userName) {
+            $userData = [];
+            foreach ($dateRange as $date) {
+                $activity = $activitiesGrouped->first(function ($item) use ($userId, $date) {
+                    return $item->user_id == $userId && $item->activity_date == $date;
+                });
+                $userData[] = $activity ? (int) $activity->count : 0;
+            }
+            $activityChartDatasets[] = [
+                'label' => $userName,
+                'data' => $userData
+            ];
+        }
+
+        // Format dates for display (e.g., "Feb 5")
+        $activityChartLabels = array_map(function ($date) {
+            return Carbon::parse($date)->format('M j');
+        }, $dateRange);
+
+        // Keep selected date range for dropdown
+        $selectedActivityDays = $days;
 
         // Recent Activity List for the Table
         $activities = DB::table('activities')
@@ -136,7 +181,8 @@ class HomeController extends Controller
             'monthlyRevenue',
             'activities',
             'activityChartLabels',
-            'activityChartData'
+            'activityChartDatasets',
+            'selectedActivityDays'
         ));
     }
 
