@@ -189,29 +189,33 @@
 
         <div class="container-fluid mb-3">
             <div class="row">
+                @if(in_array('All',$roleArray))
                 <div class="col-lg-8 pt-2">
-                    <!-- Revenue Growth Card -->
-                    <div class="card p-4 mb-4 m-none">
-                        <h5>Revenue Growth</h5>
-                        <div class="chart-container">
-                            <canvas id="revenueChart"></canvas>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <!-- Revenue Growth Card -->
+                            <div class="card p-4 mb-4 m-none">
+                                <h5>Revenue Growth</h5>
+                                <div class="chart-container">
+                                    <canvas id="revenueChart"></canvas>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    
-                    @if(in_array('All',$roleArray))
-
-                    <!-- ACTIVITY MONITOR FLOW CHART -->
-                    <div class="card p-4 m-none">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="mb-0">Activity Monitor Flow (Day-wise)</h5>
-                            <select id="activityDateRange" class="form-select form-select-sm" style="width: auto;">
-                                <option value="7" {{ $selectedActivityDays == 7 ? 'selected' : '' }}>Last 7 Days</option>
-                                <option value="30" {{ $selectedActivityDays == 30 ? 'selected' : '' }}>Last 30 Days</option>
-                                <option value="90" {{ $selectedActivityDays == 90 ? 'selected' : '' }}>Last 90 Days</option>
-                            </select>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="activityFlowChart"></canvas>
+                        <div class="col-md-6">
+                            <!-- ACTIVITY MONITOR FLOW CHART -->
+                            <div class="card p-4 m-none">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="mb-0">Activity Monitor Flow (Day-wise)</h5>
+                                    <select id="activityDateRange" class="form-select form-select-sm" style="width: auto;">
+                                        <option value="7" {{ $selectedActivityDays == 7 ? 'selected' : '' }}>Last 7 Days</option>
+                                        <option value="30" {{ $selectedActivityDays == 30 ? 'selected' : '' }}>Last 30 Days</option>
+                                        <option value="90" {{ $selectedActivityDays == 90 ? 'selected' : '' }}>Last 90 Days</option>
+                                    </select>
+                                </div>
+                                <div class="chart-container">
+                                    <canvas id="activityFlowChart"></canvas>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
@@ -259,8 +263,8 @@
                         </div>
                     </div>
                     
-                    @endif
                 </div>
+                @endif
 
                 <div class="col-lg-4 pt-2">
                     <div class="card todolist">
