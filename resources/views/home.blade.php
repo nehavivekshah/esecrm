@@ -486,24 +486,94 @@
 
         // Delete Logic
         todoList.addEventListener('click', async (e) => {
-            const btn = e.target.closest('.deleteTask');
-            if (!btn) return;
-            e.preventDefault();
-            const id = btn.dataset.id;
-            swal({
-                title: "Delete this task?",
-                icon: "warning",
-                buttons: ["Cancel", "Yes, delete"],
-                dangerMode: true
-            }).then(async (willDelete) => {
-                if (!willDelete) return;
-                const res = await fetch(`/manage-todolist-item/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ _token: '{{ csrf_token() }}' })
+            // Delete Action
+            const deleteBtn = e.target.closest('.deleteTask');
+            if (deleteBtn) {
+                e.preventDefault();
+                const id = deleteBtn.dataset.id;
+                swal({
+                    title: "Delete this task?",
+                    icon: "warning",
+                    buttons: ["Cancel", "Yes, delete"],
+                    dangerMode: true
+                }).then(async (willDelete) => {
+                    if (!willDelete) return;
+                    const res = await fetch(`/manage-todolist-item/${id}`, {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ _token: '{{ csrf_token() }}' })
+                    });
+                    if (res.ok) { fetchTasks(); }
                 });
-                if (res.ok) { fetchTasks(); }
-            });
+                return;
+            }
+
+            // Edit Action
+            const editBtn = e.target.closest('.editTask');
+            if (editBtn) {
+                e.preventDefault();
+                const li = editBtn.closest('li');
+                const span = li.querySelector('span');
+                const currentText = span.innerText;
+                const id = editBtn.dataset.id;
+                
+                // Avoid double input creation
+                if (li.querySelector('.edit-input')) return;
+
+                // Create input element
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'form-control form-control-sm edit-input';
+                input.value = currentText;
+                input.style.width = '100%';
+                
+                // Replace span with input
+                span.replaceWith(input);
+                input.focus();
+                
+                // Function to save changes
+                const saveEdit = async () => {
+                    const newText = input.value.trim();
+                    if (newText && newText !== currentText) {
+                        try {
+                            const res = await fetch(`/manage-todolist-item/${id}`, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ 
+                                    text: newText, 
+                                    completed: li.querySelector('.toggleTask').checked, 
+                                    _token: '{{ csrf_token() }}' 
+                                })
+                            });
+                            if (res.ok) {
+                                fetchTasks(); // Refresh list to show updated text
+                            } else {
+                                alert('Failed to update task');
+                                renderTasks(); // Revert on error
+                            }
+                        } catch (error) {
+                            console.error('Error updating task:', error);
+                            renderTasks();
+                        }
+                    } else {
+                        renderTasks(); // Revert if empty or unchanged
+                    }
+                };
+
+                // Handle Save on Enter, Cancel on Escape
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault(); // Prevent form submission if inside form
+                        input.blur(); // Trigger blur to save
+                    }
+                    if (e.key === 'Escape') {
+                        renderTasks(); // Revert changes
+                    }
+                });
+                
+                // Save on blur (clicking outside)
+                input.addEventListener('blur', saveEdit);
+            }
         });
 
         fetchTasks();
