@@ -302,13 +302,22 @@ Route::get('/clear-cache', function () {
 Route::get('/debug-send-notif', function (Request $request) {
     try {
         $token = $request->query('token');
+        $source = 'URL Parameter';
+
         if (!$token) {
             $user = \App\Models\User::whereNotNull('fcm_token')->latest()->first();
             $token = $user ? $user->fcm_token : null;
+            $source = $user ? "Database (User ID: {$user->id})" : 'None found in DB';
         }
 
         if (!$token) {
-            return "Error: No FCM token found in query or database.";
+            try {
+                \DB::connection()->getPdo();
+                $dbStatus = "Connected";
+            } catch (\Exception $e) {
+                $dbStatus = "Failed: " . $e->getMessage();
+            }
+            return "Error: No FCM token found. [Source: $source] [DB Status: $dbStatus]";
         }
 
         $factory = (new Factory)
@@ -323,18 +332,25 @@ Route::get('/debug-send-notif', function (Request $request) {
                 'body' => 'This is a test notification from esecrm debug route.',
             ],
             'data' => [
-                'test' => 'true'
+                'test' => 'true',
+                'timestamp' => now()->toDateTimeString()
             ]
         ]);
 
         $report = $messaging->send($message);
         return response()->json([
             'status' => 'Success',
+            'source' => $source,
             'token_used' => $token,
             'report' => $report
         ]);
     } catch (\Exception $e) {
-        return "Error: " . $e->getMessage();
+        return response()->json([
+            'status' => 'Error',
+            'message' => $e->getMessage(),
+            'token_used' => $token ?? 'None',
+            'source' => $source ?? 'None'
+        ]);
     }
 });
 
