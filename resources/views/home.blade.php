@@ -454,7 +454,7 @@
                 let reminderHtml = '';
                 let badgeClass = 'bg-info';
                 if (task.reminder_at) {
-                    const reminderDate = new Date(task.reminder_at);
+                    const reminderDate = new Date(task.reminder_at); // Implicitly treats as local if YYYY-MM-DD HH:MM:SS
                     const now = new Date();
                     const isOverdue = reminderDate < now && !task.completed;
                     const dateStr = reminderDate.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -480,6 +480,8 @@
                         <button class="btn btn-warning btn-sm editTask p-1 me-1" title="Edit" data-id="${task.id}"><i class="bx bx-edit"></i></button>
                         <button class="btn btn-danger btn-sm deleteTask p-1" title="Delete" data-id="${task.id}"><i class="bx bx-trash"></i></button>
                     </div>`;
+
+
                 
                 // Drag and Drop Events
                 li.addEventListener('dragstart', (e) => {
@@ -650,7 +652,10 @@
                 dateInput.className = 'form-control';
                 // Format for datetime-local: YYYY-MM-DDTHH:MM
                 if (currentReminder) {
-                    const d = new Date(currentReminder);
+                    let d = new Date(currentReminder);
+                    if (!currentReminder.endsWith('Z')) {
+                        d = new Date(currentReminder + 'Z'); // Treat server time as UTC
+                    }
                     // Adjust to local ISO string roughly
                    const offset = d.getTimezoneOffset() * 60000;
                    const localISOTime = (new Date(d - offset)).toISOString().slice(0, 16);
@@ -706,8 +711,7 @@
                 // Save Function
                 const saveEdit = async () => {
                     const newText = input.value.trim();
-                    // Fix Timezone issue: Convert local datetime to UTC ISO string before sending
-                    const reminderAt = dateInput.value ? new Date(dateInput.value).toISOString() : null;
+                    const reminderAt = dateInput.value; // Send local time string (e.g. T17:00)
                     
                     if (newText) {
                         try {
