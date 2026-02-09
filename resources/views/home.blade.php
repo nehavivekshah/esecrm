@@ -516,7 +516,8 @@
             projectId: "{{ env('FIREBASE_PROJECT_ID') }}",
             storageBucket: "{{ env('FIREBASE_STORAGE_BUCKET') }}",
             messagingSenderId: "{{ env('FIREBASE_MESSAGING_SENDER_ID') }}",
-            appId: "{{ env('FIREBASE_APP_ID') }}"
+            appId: "{{ env('FIREBASE_APP_ID') }}",
+            measurementId: "{{ env('FIREBASE_MEASUREMENT_ID') }}"
         };
         
         // Initialize Firebase only if config is present
@@ -667,7 +668,8 @@
                 // Save Function
                 const saveEdit = async () => {
                     const newText = input.value.trim();
-                    const reminderAt = dateInput.value;
+                    // Fix Timezone issue: Convert local datetime to UTC ISO string before sending
+                    const reminderAt = dateInput.value ? new Date(dateInput.value).toISOString() : null;
                     
                     if (newText) {
                         try {
