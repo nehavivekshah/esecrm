@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Roles;
 use App\Models\Leads;
 use App\Models\Clients;
 use App\Models\Recoveries;
@@ -60,7 +61,9 @@ class HomeController extends Controller
     {
         $auth_cid = Auth::user()->cid ?? '';
         $auth_uid = Auth::user()->id ?? '';
-        $isAdmin = Auth::user()->role == 'Admin';
+
+        $role = Roles::where('id', Auth::user()->role)->first();
+        $isAdmin = $role->role == 'Admin';
 
         // Basic Counts and Lists
         $users = User::where('cid', $auth_cid)->get();
