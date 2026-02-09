@@ -562,32 +562,50 @@
         
         // Initialize Firebase only if config is present
         if (firebaseConfig.apiKey) {
+            console.log("Initializing Firebase...");
             firebase.initializeApp(firebaseConfig);
             const messaging = firebase.messaging();
             
             // Request Permission
             messaging.requestPermission().then(function() {
+                console.log('Notification permission granted.');
                 return messaging.getToken();
             }).then(function(token) {
+                console.log('FCM Token generated:', token);
                 // Save token to database
                 fetch('/save-token', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token: token, _token: '{{ csrf_token() }}' })
-                }).then(res => console.log('Token saved'));
+                })
+                .then(res => res.json())
+                .then(data => console.log('Token saved to server:', data))
+                .catch(err => console.error('Error saving token:', err));
             }).catch(function(err) {
-                console.log('Unable to get permission to notify.', err);
+                console.error('Unable to get permission to notify.', err);
             });
             
             // Handle incoming messages
             messaging.onMessage(function(payload) {
-                console.log("Message received. ", payload);
+                console.log("Foreground Message received: ", payload);
                 const notificationTitle = payload.notification.title;
                 const notificationOptions = {
                     body: payload.notification.body,
-                    icon: '/favicon.ico'
+                    icon: '/favicon.ico',
+                    data: payload.data
                 };
-                new Notification(notificationTitle, notificationOptions);
+                
+                if (Notification.permission === 'granted') {
+                    // Try using Service Worker for more reliability
+                    navigator.serviceWorker.ready.then(function(registration) {
+                        registration.showNotification(notificationTitle, notificationOptions);
+                    }).catch(function(err) {
+                        console.warn("Service worker not ready, using standard Notification", err);
+                        new Notification(notificationTitle, notificationOptions);
+                    });
+                } else {
+                    console.warn("Notification permission not granted, cannot show notification.");
+                }
             });
         }
 
