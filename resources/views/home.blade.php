@@ -40,7 +40,29 @@
 
         .chart-container {
             position: relative;
-            height: 320px;
+            height: 350px;
+        }
+
+        .activity-log {
+            overflow-y: auto;
+            flex-grow: 1;
+            padding-right: 5px;
+        }
+
+        /* Custom scrollbar */
+        .activity-log::-webkit-scrollbar {
+            width: 5px;
+        }
+        .activity-log::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .activity-log::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 10px;
+        }
+        .activity-log::-webkit-scrollbar-thumb:hover {
+            background: #ccc;
         }
 
         .card-title {
@@ -313,27 +335,27 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-4 d-flex flex-column">
                     <!-- RECENT ACTIVITY FEED -->
-                    <div class="card h-100 p-4">
+                    <div class="card h-100 p-4 d-flex flex-column" style="max-height: 480px;">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h5 class="card-title mb-0">Recent Activities</h5>
                             <a href="#" class="btn btn-link btn-sm text-decoration-none p-0">View all</a>
                         </div>
-                        <div class="activity-log" style="max-height: 680px;">
-                            @forelse(collect($activities ?? [])->take(15) as $activity)
+                        <div class="activity-log">
+                            @forelse(collect($activities ?? [])->take(20) as $activity)
                                 <div class="activity-feed-item">
                                     <div class="d-flex justify-content-between align-items-start mb-1">
-                                        <span class="font-weight-bold text-dark small">{{ $activity->user_name ?? 'System' }}</span>
-                                        <span class="text-muted" style="font-size: 0.7rem;">{{ \Carbon\Carbon::parse($activity->created_at)->diffForHumans() }}</span>
+                                        <span class="font-weight-bold text-dark small" style="font-size: 0.8rem;">{{ $activity->user_name ?? 'System' }}</span>
+                                        <span class="text-muted" style="font-size: 0.65rem;">{{ \Carbon\Carbon::parse($activity->created_at)->diffForHumans() }}</span>
                                     </div>
-                                    <p class="mb-1 text-muted small">{{ $activity->type }} - {{ $activity->description ?? 'Performed an action' }}</p>
+                                    <p class="mb-1 text-muted" style="font-size: 0.75rem; line-height: 1.4;">{{ $activity->type }} - {{ $activity->description ?? 'Performed an action' }}</p>
                                     @if(isset($activity->subject))
-                                        <span class="badge bg-soft-info text-info rounded-pill" style="font-size: 0.65rem;">{{ $activity->subject }}</span>
+                                        <span class="badge bg-soft-info text-info rounded-pill" style="font-size: 0.6rem;">{{ $activity->subject }}</span>
                                     @endif
                                 </div>
                             @empty
-                                <div class="text-center py-5 text-muted">
+                                <div class="text-center py-5 text-muted flex-grow-1 d-flex flex-column justify-content-center">
                                     <i class="bx bx-news mb-2" style="font-size: 2.5rem; opacity: 0.3;"></i>
                                     <p class="small">No recent activity found</p>
                                 </div>
