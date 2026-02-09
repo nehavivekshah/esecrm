@@ -56,6 +56,11 @@
                 text-align: right;
             }
         }
+        .list-group-item.dragging {
+            opacity: 0.5;
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+        }
     </style>
     <section class="task__section">
         <div class="text">
@@ -464,6 +469,7 @@
 
                 li.innerHTML = `
                     <div class="d-flex align-items-center flex-grow-1">
+                        <i class="bx bx-grid-vertical text-muted me-2 handle" style="cursor: grab;"></i>
                         <input type="checkbox" ${task.completed ? 'checked' : ''} data-id="${task.id}" class="me-3 toggleTask form-check-input" style="cursor: pointer; width: 1.2em; height: 1.2em;" />
                         <div class="d-flex flex-column">
                             <span class="${task.completed ? 'text-decoration-line-through text-muted' : 'fw-bold'} task-text">${task.text}</span>
@@ -474,6 +480,38 @@
                         <button class="btn btn-warning btn-sm editTask p-1 me-1" title="Edit" data-id="${task.id}"><i class="bx bx-edit"></i></button>
                         <button class="btn btn-danger btn-sm deleteTask p-1" title="Delete" data-id="${task.id}"><i class="bx bx-trash"></i></button>
                     </div>`;
+                
+                // Drag and Drop Events
+                li.addEventListener('dragstart', (e) => {
+                    li.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', index);
+                });
+
+                li.addEventListener('dragend', () => {
+                    li.classList.remove('dragging');
+                    document.querySelectorAll('.dragging').forEach(el => el.classList.remove('dragging'));
+                    
+                    // Sync new order
+                    const newOrder = [...todoList.querySelectorAll('li')].map(item => item.dataset.id);
+                    fetch('/todo-lists/reorder', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ order: newOrder, _token: '{{ csrf_token() }}' })
+                    });
+                });
+
+                li.addEventListener('dragover', (e) => {
+                    e.preventDefault(); // allow drop
+                    const draggingItem = document.querySelector('.dragging');
+                    // Get all *other* draggable items to determine position
+                    const siblings = [...todoList.querySelectorAll('li:not(.dragging)')];
+                    const nextSibling = siblings.find(sibling => {
+                        return e.clientY <= sibling.getBoundingClientRect().top + sibling.offsetHeight / 2;
+                    });
+                    todoList.insertBefore(draggingItem, nextSibling);
+                });
+                
                 todoList.appendChild(li);
             });
         }
