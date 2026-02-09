@@ -769,92 +769,99 @@
                 });
             }
         });
+    </script>
 
-            <!-- RECENT ACTIVITY LOG MODAL -->
-            <div class="modal fade" id="activityBreakdownModal" tabindex="-1" aria-labelledby="activityBreakdownModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-scrollable">
-                    <div class="modal-content border-0 shadow-lg">
-                        <div class="modal-header bg-white border-bottom-0 pb-0">
-                            <h5 class="modal-title font-weight-bold text-dark" id="activityBreakdownModalLabel">
-                                <i class="bx bx-history me-2 text-primary"></i>Day-wise Activity Breakdown
-                            </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body p-4">
-                            <div class="table-responsive rounded shadow-sm border">
-                                <table class="table table-hover mb-0" style="font-size: 14px;">
-                                    <thead class="bg-light">
-                                        <tr>
-                                            <th class="py-3 px-3">Date</th>
-                                            <th class="py-3 px-3">User Name</th>
-                                            <th class="py-3 px-3">Activity Type</th>
-                                            <th class="py-3 px-3 text-center">Count</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @php
-                                            $groupedActivities = collect($activities ?? [])->groupBy(function ($item) {
-                                                $date = \Carbon\Carbon::parse($item->created_at)->format('Y-m-d');
-                                                return $date . '|||' . $item->user_name . '|||' . $item->type;
-                                            })->sortKeysDesc();
-                                        @endphp
-                                        @forelse($groupedActivities as $key => $group)
-                                            @php 
-                                                                                                                            $details = explode('|||', $key);
-                                                $date = \Carbon\Carbon::parse($details[0])->format('M j, Y');
-                                            @endphp
-                                            <tr>
-                                                <td class="px-3 py-3"><span class="text-muted">{{ $date }}</span></td>
-                                                <td class="px-3 py-3"><span class="text-primary font-weight-bold">{{ $details[1] }}</span></td>
-                                                <td class="px-3 py-3"><span class="badge bg-soft-info text-info border border-info">{{ $details[2] }}</span></td>
-                                                <td class="px-3 py-3 text-center"><strong>{{ count($group) }}</strong></td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="4" class="text-center py-5">No activities recorded yet.</td>
-                                            </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+    <!-- UI MODALS -->
+    <!-- RECENT ACTIVITY LOG MODAL -->
+    <div class="modal fade" id="activityBreakdownModal" tabindex="-1" aria-labelledby="activityBreakdownModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 15px;">
+                <div class="modal-header bg-white border-bottom-0 pb-0">
+                    <h5 class="modal-title font-weight-bold text-dark" id="activityBreakdownModalLabel">
+                        <i class="bx bx-history me-2 text-primary"></i>Day-wise Activity Breakdown
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="table-responsive rounded shadow-sm border">
+                        <table class="table table-hover mb-0" style="font-size: 14px;">
+                            <thead class="bg-light border-bottom">
+                                <tr>
+                                    <th class="py-3 px-3">Date</th>
+                                    <th class="py-3 px-3">User Name</th>
+                                    <th class="py-3 px-3">Activity Type</th>
+                                    <th class="py-3 px-3 text-center">Count</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @php
+                                    $groupedActivities = collect($activities ?? [])->groupBy(function ($item) {
+                                        $date = \Carbon\Carbon::parse($item->created_at)->format('Y-m-d');
+                                        return $date . '|||' . ($item->user_name ?? 'Unknown User') . '|||' . ($item->type ?? 'General');
+                                    })->sortKeysDesc();
+                                @endphp
+                                @forelse($groupedActivities as $key => $group)
+                                    @php 
+                                        $details = explode('|||', $key);
+                                        $date = \Carbon\Carbon::parse($details[0])->format('M j, Y');
+                                    @endphp
+                                    <tr>
+                                        <td class="px-3 py-3 font-weight-bold"><span class="text-muted">{{ $date }}</span></td>
+                                        <td class="px-3 py-3"><span class="text-primary font-weight-bold">{{ $details[1] }}</span></td>
+                                        <td class="px-3 py-3"><span class="badge bg-soft-info text-info border border-info">{{ $details[2] }}</span></td>
+                                        <td class="px-3 py-3 text-center"><span class="h6 font-weight-bold">{{ count($group) }}</span></td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="text-center py-5 text-muted">No activities recorded yet.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-              <!-- MY TODO LIST MODAL -->
-            <div class="modal fade" id="todoListModal" tabindex="-1" aria-labelledby="todoListModalLabel" aria-hidden="true" style="z-index: 99999;">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content shadow-lg border-0" style="border-radius: 12px; background: #fff;">
-                        <div class="modal-header bg-white border-bottom-0 pb-0">
-                            <h5 class="modal-title font-weight-bold text-dark" id="todoListModalLabel">
-                                <i class="bx bx-list-check me-2 text-primary" style="font-size: 1.5rem;"></i>My Todo List
-                            </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body p-4">
-                            <ul class="list-group border-0" id="todoList" style="max-height: 55vh; overflow-y: auto;">
-                                <!-- Tasks dynamically loaded -->
-                            </ul>
-                        </div>
-                        <div class="modal-footer border-top-0 bg-white p-4">
-                            <div class="input-group shadow-sm" style="border-radius: 8px; overflow: hidden; border: 1px solid #dee2e6;">
-                                <input type="text" id="taskInput" class="form-control border-0 px-3" placeholder="Add a new task..." style="height: 45px;" />
-                                <button id="addTask" class="btn btn-primary px-3 border-0"><i class="bx bx-plus" style="font-size: 1.2rem;"></i></button>
-                            </div>
-                        </div>
+    <!-- MY TODO LIST MODAL -->
+    <div class="modal fade" id="todoListModal" tabindex="-1" aria-labelledby="todoListModalLabel" aria-hidden="true" style="z-index: 99999;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow-lg border-0" style="border-radius: 12px; background: #fff;">
+                <div class="modal-header bg-white border-bottom-0 pb-0">
+                    <h5 class="modal-title font-weight-bold text-dark" id="todoListModalLabel">
+                        <i class="bx bx-list-check me-2 text-primary" style="font-size: 1.5rem;"></i>My Todo List
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <ul class="list-group border-0" id="todoList" style="max-height: 55vh; overflow-y: auto;">
+                        <!-- Tasks dynamically loaded -->
+                    </ul>
+                </div>
+                <div class="modal-footer border-top-0 bg-white p-4">
+                    <div class="input-group shadow-sm" style="border-radius: 8px; overflow: hidden; border: 1px solid #dee2e6;">
+                        <input type="text" id="taskInput" class="form-control border-0 px-3" placeholder="Add a new task..." style="height: 45px;" />
+                        <button id="addTask" class="btn btn-primary px-3 border-0"><i class="bx bx-plus" style="font-size: 1.2rem;"></i></button>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <style>
-                .bg-soft-info { background-color: rgba(13, 202, 240, 0.1); }
-                .modal-backdrop { z-index: 99990 !important; }
-                .modal { z-index: 99999 !important; }
-                .modal-content { box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important; }
-            </style>
+    <style>
+        .bg-soft-info { background-color: rgba(13, 202, 240, 0.1); }
+        .modal-backdrop { z-index: 99980 !important; }
+        .modal { z-index: 99999 !important; }
+        .modal-content { box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important; }
+        .badge.bg-soft-info { color: #0dcaf0 !important; }
+    </style>
 
-            <script>
-    fetchTasks();
-            </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof fetchTasks === 'function') {
+                fetchTasks();
+            }
+        });
+    </script>
 @endsection
