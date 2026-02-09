@@ -337,7 +337,7 @@
                 </div>
                 <div class="col-lg-4 d-flex flex-column">
                     <!-- RECENT ACTIVITY FEED -->
-                    <div class="card h-100 p-4 d-flex flex-column" style="max-height: 480px;">
+                    <div class="card h-100 p-4 d-flex flex-column" style="max-height: 455px;">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h5 class="card-title mb-0">Recent Activities</h5>
                             <a href="#" class="btn btn-link btn-sm text-decoration-none p-0">View all</a>
