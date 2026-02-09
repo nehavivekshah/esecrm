@@ -68,7 +68,7 @@
             Dashboard
             <div class="header-right">
                 <div class="position-relative dropdown">
-                    <a href="/notifications" class="text-dark" role="button" data-bs-toggle="dropdown" title="Notifications">
+                    <a href="/notifications" class="text-dark me-3" role="button" data-bs-toggle="dropdown" title="Notifications">
                         <i class="bx bx-bell"></i>
                         @php
                             function formatLeadCount($num) {
@@ -96,6 +96,10 @@
                         @endif
                     </ul>
                 </div>
+                <!-- TODO LIST TRIGGER BUTTON -->
+                <button type="button" class="btn btn-primary btn-sm rounded-pill d-flex align-items-center px-3 me-3" data-bs-toggle="modal" data-bs-target="#todoListModal">
+                    <i class="bx bx-check-double me-1"></i> Todo
+                </button>
                 <a href="/signout" class="logoutbtn"><i class="bx bx-log-out"></i></a>
             </div>
         </div>
@@ -285,22 +289,28 @@
                     
                 </div>
                 @endif
+            </div>
+        </div>
 
-                <div class="col-lg-4 pt-2">
-                    <div class="card todolist">
-                        <div class="card-header bg-default">
-                            <h5 class="text-white font-weight-bold my-1 h6">My Todo List</h5>
-                        </div>
-                        <div class="card-body p-0">
-                            <ul class="list-group" id="todoList" draggable="true">
-                                <!-- Tasks dynamically loaded -->
-                            </ul>
-                        </div>
-                        <div class="card-footer">
-                            <div class="input-group">
-                                <input type="text" id="taskInput" class="form-control" placeholder="Add a new task" />
-                                <button id="addTask" class="btn btn-primary"><i class="bx bx-plus"></i></button>
-                            </div>
+        <!-- MY TODO LIST MODAL -->
+        <div class="modal fade" id="todoListModal" tabindex="-1" aria-labelledby="todoListModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content shadow-lg border-0">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title font-weight-bold" id="todoListModalLabel">
+                            <i class="bx bx-list-check me-2"></i>My Todo List
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-0">
+                        <ul class="list-group border-0" id="todoList" style="height: 50vh; overflow-y: auto;">
+                            <!-- Tasks dynamically loaded -->
+                        </ul>
+                    </div>
+                    <div class="modal-footer bg-light">
+                        <div class="input-group">
+                            <input type="text" id="taskInput" class="form-control" placeholder="What needs to be done?" />
+                            <button id="addTask" class="btn btn-primary px-3"><i class="bx bx-plus"></i></button>
                         </div>
                     </div>
                 </div>
