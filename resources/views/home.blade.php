@@ -441,17 +441,38 @@
             todoList.innerHTML = '';
             tasks.forEach((task, index) => {
                 const li = document.createElement('li');
-                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                li.className = 'list-group-item d-flex justify-content-between align-items-center mb-2 shadow-sm rounded';
                 li.draggable = true;
                 li.dataset.id = task.id;
+                
+                // Reminder Display logic
+                let reminderHtml = '';
+                let badgeClass = 'bg-info';
+                if (task.reminder_at) {
+                    const reminderDate = new Date(task.reminder_at);
+                    const now = new Date();
+                    const isOverdue = reminderDate < now && !task.completed;
+                    const dateStr = reminderDate.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                    
+                    if (isOverdue) badgeClass = 'bg-danger';
+                    else if (task.completed) badgeClass = 'bg-secondary';
+                    
+                    reminderHtml = `<span class="badge ${badgeClass} ms-2" title="Reminder: ${task.reminder_at}">
+                        <i class="bx bx-time"></i> ${dateStr}
+                    </span>`;
+                }
+
                 li.innerHTML = `
-                    <div class="d-flex align-items-center">
-                        <input type="checkbox" ${task.completed ? 'checked' : ''} data-id="${task.id}" class="me-2 toggleTask" />
-                        <span class="${task.completed ? 'text-decoration-line-through' : ''}">${task.text}</span>
+                    <div class="d-flex align-items-center flex-grow-1">
+                        <input type="checkbox" ${task.completed ? 'checked' : ''} data-id="${task.id}" class="me-3 toggleTask form-check-input" style="cursor: pointer; width: 1.2em; height: 1.2em;" />
+                        <div class="d-flex flex-column">
+                            <span class="${task.completed ? 'text-decoration-line-through text-muted' : 'fw-bold'} task-text">${task.text}</span>
+                            <div class="small mt-1">${reminderHtml}</div>
+                        </div>
                     </div>
-                    <div class="row-btn">
-                        <button class="btn btn-warning btn-sm editTask p-1" style="line-height:0;" data-id="${task.id}"><i class="bx bx-edit"></i></button>
-                        <button class="btn btn-danger btn-sm deleteTask p-1" style="line-height:0;" data-id="${task.id}"><i class="bx bx-trash"></i></button>
+                    <div class="row-btn ms-2">
+                        <button class="btn btn-warning btn-sm editTask p-1 me-1" title="Edit" data-id="${task.id}"><i class="bx bx-edit"></i></button>
+                        <button class="btn btn-danger btn-sm deleteTask p-1" title="Delete" data-id="${task.id}"><i class="bx bx-trash"></i></button>
                     </div>`;
                 todoList.appendChild(li);
             });

@@ -62,6 +62,35 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('/manage-todolist-item/clear', [TaskController::class, 'clearAll']); // Clear all tasks
     Route::post('/save-token', [TaskController::class, 'saveToken']); // Save FCM token
 
+    Route::get('/firebase-messaging-sw.js', function () {
+        $content = "importScripts('https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js');
+    importScripts('https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js');
+    
+    firebase.initializeApp({
+        apiKey: '" . env('FIREBASE_API_KEY') . "',
+        authDomain: '" . env('FIREBASE_AUTH_DOMAIN') . "',
+        projectId: '" . env('FIREBASE_PROJECT_ID') . "',
+        storageBucket: '" . env('FIREBASE_STORAGE_BUCKET') . "',
+        messagingSenderId: '" . env('FIREBASE_MESSAGING_SENDER_ID') . "',
+        appId: '" . env('FIREBASE_APP_ID') . "'
+    });
+    
+    const messaging = firebase.messaging();
+    
+    messaging.onBackgroundMessage(function(payload) {
+        console.log('[firebase-messaging-sw.js] Received background message ', payload);
+        const notificationTitle = payload.notification.title;
+        const notificationOptions = {
+            body: payload.notification.body,
+            icon: '/favicon.ico'
+        };
+    
+        self.registration.showNotification(notificationTitle,
+            notificationOptions);
+    });";
+        return response($content)->header('Content-Type', 'application/javascript');
+    });
+
 
 
     /*Task Managment Router*/
