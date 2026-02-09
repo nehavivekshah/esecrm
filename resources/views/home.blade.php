@@ -1,12 +1,12 @@
 @extends('layout')
-@section('title','Dashboard - eseCRM')
+@section('title', 'Dashboard - eseCRM')
 
 @section('content')
 
     @php
         $company = session('companies');
         $roles = session('roles');
-        $roleArray = explode(',',($roles->features ?? ''));
+        $roleArray = explode(',', ($roles->features ?? ''));
     @endphp
     <style>
         .card {
@@ -14,48 +14,59 @@
             box-shadow: 0px 0px 4px #00000014;
             border: 1px solid var(--color-lightgray);
         }
+
         .chart-container {
             position: relative;
             height: 300px;
         }
+
         .summary-item:hover {
             background-color: #f8f9fa;
             border-radius: 8px;
             transition: background-color 0.3s ease;
         }
+
         .card-title {
             font-weight: 600;
             color: #333;
-        }.card .form-select {
+        }
+
+        .card .form-select {
             padding: 4px 35px 4px 15px !important;
             border-left: 1px solid #ddd !important;
         }
-        .list-group{
+
+        .list-group {
             height: 60vh;
             overflow: auto;
             padding: 5px;
             font-size: 14px;
         }
+
         /* Custom scrollbar for activity log */
         .activity-log {
             max-height: 400px;
             overflow-y: auto;
         }
+
         .row-btn {
             width: 58px;
             display: flex;
             gap: 5px;
             justify-content: end;
         }
-        @media (max-width: 767px){
-            .m-none{
+
+        @media (max-width: 767px) {
+            .m-none {
                 display: none;
             }
-            .row-btn{
+
+            .row-btn {
                 min-width: 60px !important;
                 text-align: right;
             }
         }
+
         .list-group-item.dragging {
             opacity: 0.5;
             background: #f8f9fa;
@@ -64,72 +75,80 @@
     </style>
     <section class="task__section">
         <div class="text">
-            <i class="bx bx-menu" id="mbtn"></i> 
+            <i class="bx bx-menu" id="mbtn"></i>
             Dashboard
             <div class="header-right">
                 <div class="position-relative dropdown">
-                    <a href="/notifications" class="text-dark me-3" role="button" data-bs-toggle="dropdown" title="Notifications">
+                    <a href="/notifications" class="text-dark me-3" role="button" data-bs-toggle="dropdown"
+                        title="Notifications">
                         <i class="bx bx-bell"></i>
                         @php
-                            function formatLeadCount($num) {
+                            function formatLeadCount($num)
+                            {
                                 if ($num >= 1000000) {
-                                    return round($num/1000000, 1).'M';
+                                    return round($num / 1000000, 1) . 'M';
                                 } elseif ($num >= 1000) {
-                                    return round($num/1000, 1).'K';
+                                    return round($num / 1000, 1) . 'K';
                                 } elseif ($num >= 99) {
-                                    return round(99, 1).'+';
+                                    return round(99, 1) . '+';
                                 }
                                 return $num;
                             }
                         @endphp
-                        @if(count($leads)>0 && (in_array('leads',$roleArray) || in_array('All',$roleArray) || (Auth::user()->role == '0')))
+                        @if(count($leads) > 0 && (in_array('leads', $roleArray) || in_array('All', $roleArray) || (Auth::user()->role == '0')))
                             <span class="badge position-absolute badge-danger">
                                 {{ formatLeadCount(count($newLeads)) }}
                             </span>
                         @endif
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end npop-up">
-                        @if(count($newLeads)>0 && (in_array('leads',$roleArray) || in_array('All',$roleArray) || (Auth::user()->role == '0')))
-                        <li><a href="/leads">Leads <span class="small text-danger">{{ formatLeadCount(count($newLeads)) }}</span></a></li>
+                        @if(count($newLeads) > 0 && (in_array('leads', $roleArray) || in_array('All', $roleArray) || (Auth::user()->role == '0')))
+                            <li><a href="/leads">Leads <span
+                                        class="small text-danger">{{ formatLeadCount(count($newLeads)) }}</span></a></li>
                         @else
-                        <li class="emptyMsg">No messages found.</li>
+                            <li class="emptyMsg">No messages found.</li>
                         @endif
                     </ul>
                 </div>
                 <!-- TODO LIST TRIGGER BUTTON -->
-                <button type="button" class="btn btn-primary btn-sm rounded-pill d-flex align-items-center px-3 me-3" data-bs-toggle="modal" data-bs-target="#todoListModal">
+                <button type="button" class="btn btn-primary btn-sm rounded-pill d-flex align-items-center px-3 me-3"
+                    data-bs-toggle="modal" data-bs-target="#todoListModal">
                     <i class="bx bx-check-double me-1"></i> Todo
                 </button>
                 <a href="/signout" class="logoutbtn"><i class="bx bx-log-out"></i></a>
             </div>
         </div>
-        
+
         <div class="container-fluid mb-2">
             <!-- DASHBOARD WIDGETS -->
             <div class="row mb-3">
                 <div class="col-md-3">
-                    <div class="card p-3 border-0 shadow-sm" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                    <div class="card p-3 border-0 shadow-sm"
+                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
                         <h6 class="mb-1">Outstanding Invoices</h6>
                         <h3 class="font-weight-bold mb-0">₹{{ number_format($outstandingInvoices, 2) }}</h3>
                         <small class="text-white-50">Waiting for payment</small>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card p-3 border-0 shadow-sm" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); color: #555;">
+                    <div class="card p-3 border-0 shadow-sm"
+                        style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); color: #555;">
                         <h6 class="mb-1 text-danger">Pending Proposals</h6>
                         <h3 class="font-weight-bold mb-0 text-danger">{{ $pendingProposals }}</h3>
                         <small class="text-muted">Open or Sent</small>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card p-3 border-0 shadow-sm" style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); color: white;">
+                    <div class="card p-3 border-0 shadow-sm"
+                        style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); color: white;">
                         <h6 class="mb-1">My Pending Tasks</h6>
                         <h3 class="font-weight-bold mb-0">{{ $myPendingTasks }}</h3>
                         <small class="text-white-50">Assigned to you</small>
                     </div>
                 </div>
                 <div class="col-md-3">
-                   <div class="card p-3 border-0 shadow-sm" style="background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); color: #333;">
+                    <div class="card p-3 border-0 shadow-sm"
+                        style="background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); color: #333;">
                         <h6 class="mb-1 text-success">Total Leads</h6>
                         <h3 class="font-weight-bold mb-0 text-success">{{ $totalLeads }}</h3>
                         <small class="text-muted">In the pipeline</small>
@@ -140,56 +159,56 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="flex-box">
-                        @if(in_array('leads',$roleArray) || in_array('All',$roleArray) || (Auth::user()->role == '0'))
-                        <a class="box td-none" href="/leads">
-                            <div class="flex jsb">
-                                <div class="smallbox-1">
-                                    <span class="small text-success font-weight-bold">Leads</span>
-                                    <h3 class="text-dark">{{ count($leads ?? []) }}</h3>
+                        @if(in_array('leads', $roleArray) || in_array('All', $roleArray) || (Auth::user()->role == '0'))
+                            <a class="box td-none" href="/leads">
+                                <div class="flex jsb">
+                                    <div class="smallbox-1">
+                                        <span class="small text-success font-weight-bold">Leads</span>
+                                        <h3 class="text-dark">{{ count($leads ?? []) }}</h3>
+                                    </div>
+                                    <div class="box-icon"><i class="bx bx-filter-alt"></i></div>
                                 </div>
-                                <div class="box-icon"><i class="bx bx-filter-alt"></i></div>
-                            </div>
-                        </a>
+                            </a>
                         @endif
-                        @if(in_array('clients',$roleArray) || in_array('All',$roleArray) || (Auth::user()->role == '0'))
-                        <a class="box td-none" href="/clients">
-                            <div class="flex jsb">
-                                <div class="smallbox-1">
-                                    <span class="small text-success font-weight-bold">Customers</span>
-                                    <h3 class="text-dark">{{ count($clients ?? []) }}</h3>
+                        @if(in_array('clients', $roleArray) || in_array('All', $roleArray) || (Auth::user()->role == '0'))
+                            <a class="box td-none" href="/clients">
+                                <div class="flex jsb">
+                                    <div class="smallbox-1">
+                                        <span class="small text-success font-weight-bold">Customers</span>
+                                        <h3 class="text-dark">{{ count($clients ?? []) }}</h3>
+                                    </div>
+                                    <div class="box-icon"><i class="bx bx-group"></i></div>
                                 </div>
-                                <div class="box-icon"><i class="bx bx-group"></i></div>
-                            </div>
-                        </a>
-                        <a class="box td-none" href="/projects">
-                            <div class="flex jsb">
-                                <div class="smallbox-1">
-                                    <span class="small text-success font-weight-bold">Projects</span>
-                                    <h3 class="text-dark">{{ count($projects ?? []) }}</h3>
+                            </a>
+                            <a class="box td-none" href="/projects">
+                                <div class="flex jsb">
+                                    <div class="smallbox-1">
+                                        <span class="small text-success font-weight-bold">Projects</span>
+                                        <h3 class="text-dark">{{ count($projects ?? []) }}</h3>
+                                    </div>
+                                    <div class="box-icon"><i class="bx bx-file"></i></div>
                                 </div>
-                                <div class="box-icon"><i class="bx bx-file"></i></div>
-                            </div>
-                        </a>
-                        <a class="box td-none" href="/recoveries">
-                            <div class="flex jsb">
-                                <div class="smallbox-1">
-                                    <span class="small text-success font-weight-bold">Recovery</span>
-                                    <h3 class="text-dark">{{ count($recoveries ?? []) }}</h3>
+                            </a>
+                            <a class="box td-none" href="/recoveries">
+                                <div class="flex jsb">
+                                    <div class="smallbox-1">
+                                        <span class="small text-success font-weight-bold">Recovery</span>
+                                        <h3 class="text-dark">{{ count($recoveries ?? []) }}</h3>
+                                    </div>
+                                    <div class="box-icon"><i class="bx bx-coin-stack"></i></div>
                                 </div>
-                                <div class="box-icon"><i class="bx bx-coin-stack"></i></div>
-                            </div>
-                        </a>
+                            </a>
                         @endif
-                        @if(in_array('users',$roleArray) || in_array('All',$roleArray) || (Auth::user()->role == '0'))
-                        <a class="box td-none" href="/users">
-                            <div class="flex jsb">
-                                <div class="smallbox-1">
-                                    <span class="small text-success font-weight-bold">Users</span>
-                                    <h3 class="text-dark">{{ count($users ?? []) }}</h3>
+                        @if(in_array('users', $roleArray) || in_array('All', $roleArray) || (Auth::user()->role == '0'))
+                            <a class="box td-none" href="/users">
+                                <div class="flex jsb">
+                                    <div class="smallbox-1">
+                                        <span class="small text-success font-weight-bold">Users</span>
+                                        <h3 class="text-dark">{{ count($users ?? []) }}</h3>
+                                    </div>
+                                    <div class="box-icon"><i class="bx bx-user"></i></div>
                                 </div>
-                                <div class="box-icon"><i class="bx bx-user"></i></div>
-                            </div>
-                        </a>
+                            </a>
                         @endif
                     </div>
                 </div>
@@ -198,124 +217,52 @@
 
         <div class="container-fluid mb-3">
             <div class="row">
-                @if(in_array('All',$roleArray))
-                <div class="col-lg-8 pt-2">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <!-- Revenue Growth Card -->
-                            <div class="card p-4 mb-4 m-none">
-                                <h5>Revenue Growth</h5>
-                                <div class="chart-container">
-                                    <canvas id="revenueChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <!-- ACTIVITY MONITOR FLOW CHART -->
-                            <div class="card p-4 m-none">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h5 class="mb-0">Activity Monitor Flow (Day-wise)</h5>
-                                    <div class="d-flex gap-2">
-                                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#activityBreakdownModal">
-                                            <i class="bx bx-list-ul"></i> View Breakdown
-                                        </button>
-                                        <select id="activityDateRange" class="form-select form-select-sm" style="width: auto;">
-                                            <option value="7" {{ $selectedActivityDays == 7 ? 'selected' : '' }}>Last 7 Days</option>
-                                            <option value="30" {{ $selectedActivityDays == 30 ? 'selected' : '' }}>Last 30 Days</option>
-                                            <option value="90" {{ $selectedActivityDays == 90 ? 'selected' : '' }}>Last 90 Days</option>
-                                        </select>
+                @if(in_array('All', $roleArray))
+                    <div class="col-lg-12 pt-2">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <!-- Revenue Growth Card -->
+                                <div class="card p-4 mb-4 m-none">
+                                    <h5>Revenue Growth</h5>
+                                    <div class="chart-container">
+                                        <canvas id="revenueChart"></canvas>
                                     </div>
                                 </div>
-                                <div class="chart-container">
-                                    <canvas id="activityFlowChart"></canvas>
-                                </div>
                             </div>
-                        </div>
-                    </div>
-                    
-                    <!-- RECENT ACTIVITY LOG MODAL -->
-                    <div class="modal fade" id="activityBreakdownModal" tabindex="-1" aria-labelledby="activityBreakdownModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-lg modal-dialog-scrollable">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="activityBreakdownModalLabel">Day-wise Activity Breakdown</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body p-0">
-                                    <div class="table-responsive">
-                                        <table class="table table-sm table-hover mb-0" style="font-size: 13px;">
-                                            <thead class="bg-light">
-                                                <tr>
-                                                    <th>Date</th>
-                                                    <th>User Name</th>
-                                                    <th>Activity Type</th>
-                                                    <th class="text-center">Count</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @php
-                                                    // Group activities by date, user_name AND type
-                                                    $groupedActivities = collect($activities ?? [])->groupBy(function($item) {
-                                                        $date = \Carbon\Carbon::parse($item->created_at)->format('Y-m-d');
-                                                        return $date . '|||' . $item->user_name . '|||' . $item->type;
-                                                    })->sortKeysDesc();
-                                                @endphp
-                                                @forelse($groupedActivities as $key => $group)
-                                                    @php 
-                                                        $details = explode('|||', $key);
-                                                        $date = \Carbon\Carbon::parse($details[0])->format('M j, Y');
-                                                    @endphp
-                                                    <tr>
-                                                        <td><span class="text-muted">{{ $date }}</span></td>
-                                                        <td><span class="text-primary font-weight-bold">{{ $details[1] }}</span></td>
-                                                        <td><span class="badge bg-info text-white">{{ $details[2] }}</span></td>
-                                                        <td class="text-center"><strong>{{ count($group) }}</strong></td>
-                                                    </tr>
-                                                @empty
-                                                <tr>
-                                                    <td colspan="4" class="text-center py-5">No activities recorded yet.</td>
-                                                </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
+                            <div class="col-md-6">
+                                <!-- ACTIVITY MONITOR FLOW CHART -->
+                                <div class="card p-4 m-none">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="mb-0">Activity Monitor Flow (Day-wise)</h5>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#activityBreakdownModal">
+                                                <i class="bx bx-list-ul"></i> View Breakdown
+                                            </button>
+                                            <select id="activityDateRange" class="form-select form-select-sm"
+                                                style="width: auto;">
+                                                <option value="7" {{ $selectedActivityDays == 7 ? 'selected' : '' }}>Last 7 Days
+                                                </option>
+                                                <option value="30" {{ $selectedActivityDays == 30 ? 'selected' : '' }}>Last 30
+                                                    Days</option>
+                                                <option value="90" {{ $selectedActivityDays == 90 ? 'selected' : '' }}>Last 90
+                                                    Days</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="chart-container">
+                                        <canvas id="activityFlowChart"></canvas>
                                     </div>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                </div>
                             </div>
                         </div>
+
+
                     </div>
-                    
-                </div>
                 @endif
             </div>
         </div>
 
-        <!-- MY TODO LIST MODAL -->
-        <div class="modal fade" id="todoListModal" tabindex="-1" aria-labelledby="todoListModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content shadow-lg border-0">
-                    <div class="modal-header bg-primary text-white">
-                        <h5 class="modal-title font-weight-bold" id="todoListModalLabel">
-                            <i class="bx bx-list-check me-2"></i>My Todo List
-                        </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body p-0">
-                        <ul class="list-group border-0" id="todoList" style="height: 50vh; overflow-y: auto;">
-                            <!-- Tasks dynamically loaded -->
-                        </ul>
-                    </div>
-                    <div class="modal-footer bg-light">
-                        <div class="input-group">
-                            <input type="text" id="taskInput" class="form-control" placeholder="What needs to be done?" />
-                            <button id="addTask" class="btn btn-primary px-3"><i class="bx bx-plus"></i></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </section>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -329,31 +276,31 @@
             data: {
                 labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                 datasets: [
-                    { 
-                        label: 'Total Revenue ({{ date("Y") }})', 
-                        data: monthlyRevenue, 
-                        borderColor: '#2ecc71', 
+                    {
+                        label: 'Total Revenue ({{ date("Y") }})',
+                        data: monthlyRevenue,
+                        borderColor: '#2ecc71',
                         backgroundColor: 'rgba(46, 204, 113, 0.1)',
                         fill: true,
                         tension: 0.3
                     }
                 ]
             },
-            options: { 
-                responsive: true, 
+            options: {
+                responsive: true,
                 maintainAspectRatio: false,
                 scales: {
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            callback: function(value) { return '₹' + value; }
+                            callback: function (value) { return '₹' + value; }
                         }
                     }
                 },
                 plugins: {
                     tooltip: {
                         callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                                 return 'Revenue: ₹' + context.raw;
                             }
                         }
@@ -364,7 +311,7 @@
 
         // ACTIVITY MONITOR FLOW CHART (Day-wise, stacked by user)
         const activityCtx = document.getElementById('activityFlowChart').getContext('2d');
-        
+
         const activityLabels = {!! json_encode($activityChartLabels) !!}; // Dates
         const activityDatasets = {!! json_encode($activityChartDatasets) !!}; // User datasets
 
@@ -398,7 +345,7 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { 
+                    legend: {
                         display: true,
                         position: 'top',
                         labels: {
@@ -411,7 +358,7 @@
                         mode: 'index',
                         intersect: false,
                         callbacks: {
-                            footer: function(tooltipItems) {
+                            footer: function (tooltipItems) {
                                 let total = 0;
                                 tooltipItems.forEach(item => total += item.parsed.y);
                                 return 'Total: ' + total;
@@ -420,15 +367,15 @@
                     }
                 },
                 scales: {
-                    x: { 
+                    x: {
                         stacked: true,
                         grid: { display: false }
                     },
-                    y: { 
+                    y: {
                         stacked: true,
                         beginAtZero: true,
                         grid: { color: '#f0f0f0' },
-                        ticks: { 
+                        ticks: {
                             stepSize: 1,
                             precision: 0
                         }
@@ -438,7 +385,7 @@
         });
 
         // Date range selector event listener
-        document.getElementById('activityDateRange').addEventListener('change', function() {
+        document.getElementById('activityDateRange').addEventListener('change', function () {
             const days = this.value;
             const url = new URL(window.location.href);
             url.searchParams.set('activity_days', days);
@@ -457,16 +404,16 @@
         const todoList = document.getElementById('todoList');
         const clearAll = document.getElementById('clearAll');
         let tasks = [];
-        
+
         function fetchTasks() {
             fetch('/todo-lists').then(response => response.json()).then(data => {
                 tasks = data;
                 renderTasks();
             });
         }
-        
+
         taskInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addTaskButton.click(); } });
-        
+
         function renderTasks() {
             todoList.innerHTML = '';
             tasks.forEach((task, index) => {
@@ -474,7 +421,7 @@
                 li.className = 'list-group-item d-flex justify-content-between align-items-center mb-2 shadow-sm rounded';
                 li.draggable = true;
                 li.dataset.id = task.id;
-                
+
                 // Reminder Display logic
                 let reminderHtml = '';
                 let badgeClass = 'bg-info';
@@ -483,31 +430,31 @@
                     const now = new Date();
                     const isOverdue = reminderDate < now && !task.completed;
                     const dateStr = reminderDate.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-                    
+
                     if (isOverdue) badgeClass = 'bg-danger';
                     else if (task.completed) badgeClass = 'bg-secondary';
-                    
+
                     reminderHtml = `<span class="badge ${badgeClass} ms-2" title="Reminder: ${task.reminder_at}">
-                        <i class="bx bx-time"></i> ${dateStr}
-                    </span>`;
+                                <i class="bx bx-time"></i> ${dateStr}
+                            </span>`;
                 }
 
                 li.innerHTML = `
-                    <div class="d-flex align-items-center flex-grow-1">
-                        <i class="bx bx-grid-vertical text-muted me-2 handle" style="cursor: grab;"></i>
-                        <input type="checkbox" ${task.completed ? 'checked' : ''} data-id="${task.id}" class="me-3 toggleTask form-check-input" style="cursor: pointer; width: 1.2em; height: 1.2em;" />
-                        <div class="d-flex flex-column">
-                            <span class="${task.completed ? 'text-decoration-line-through text-muted' : 'fw-bold'} task-text">${task.text}</span>
-                            <div class="small mt-1">${reminderHtml}</div>
-                        </div>
-                    </div>
-                    <div class="row-btn ms-2">
-                        <button class="btn btn-warning btn-sm editTask p-1 me-1" title="Edit" data-id="${task.id}"><i class="bx bx-edit"></i></button>
-                        <button class="btn btn-danger btn-sm deleteTask p-1" title="Delete" data-id="${task.id}"><i class="bx bx-trash"></i></button>
-                    </div>`;
+                            <div class="d-flex align-items-center flex-grow-1">
+                                <i class="bx bx-grid-vertical text-muted me-2 handle" style="cursor: grab;"></i>
+                                <input type="checkbox" ${task.completed ? 'checked' : ''} data-id="${task.id}" class="me-3 toggleTask form-check-input" style="cursor: pointer; width: 1.2em; height: 1.2em;" />
+                                <div class="d-flex flex-column">
+                                    <span class="${task.completed ? 'text-decoration-line-through text-muted' : 'fw-bold'} task-text">${task.text}</span>
+                                    <div class="small mt-1">${reminderHtml}</div>
+                                </div>
+                            </div>
+                            <div class="row-btn ms-2">
+                                <button class="btn btn-warning btn-sm editTask p-1 me-1" title="Edit" data-id="${task.id}"><i class="bx bx-edit"></i></button>
+                                <button class="btn btn-danger btn-sm deleteTask p-1" title="Delete" data-id="${task.id}"><i class="bx bx-trash"></i></button>
+                            </div>`;
 
 
-                
+
                 // Drag and Drop Events
                 li.addEventListener('dragstart', (e) => {
                     li.classList.add('dragging');
@@ -518,7 +465,7 @@
                 li.addEventListener('dragend', () => {
                     li.classList.remove('dragging');
                     document.querySelectorAll('.dragging').forEach(el => el.classList.remove('dragging'));
-                    
+
                     // Sync new order
                     const newOrder = [...todoList.querySelectorAll('li')].map(item => item.dataset.id);
                     fetch('/todo-lists/reorder', {
@@ -538,11 +485,11 @@
                     });
                     todoList.insertBefore(draggingItem, nextSibling);
                 });
-                
+
                 todoList.appendChild(li);
             });
         }
-        
+
         function addTask() {
             const taskValue = taskInput.value.trim();
             if (taskValue) {
@@ -558,9 +505,9 @@
                 });
             }
         }
-        
+
         addTaskButton.addEventListener('click', addTask);
-        
+
         // Completion Toggle
         todoList.addEventListener('change', (e) => {
             if (e.target.classList.contains('toggleTask')) {
@@ -584,12 +531,12 @@
             appId: "{{ env('FIREBASE_APP_ID') }}",
             measurementId: "{{ env('FIREBASE_MEASUREMENT_ID') }}"
         };
-        
+
         // Initialize Firebase only if config is present
         if (firebaseConfig.apiKey) {
             console.log("Firebase config found. Initializing...");
             console.log("Current Permission Status:", Notification.permission);
-            
+
             try {
                 firebase.initializeApp(firebaseConfig);
                 const messaging = firebase.messaging();
@@ -606,9 +553,9 @@
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ token: currentToken, _token: '{{ csrf_token() }}' })
                             })
-                            .then(res => res.json())
-                            .then(data => console.log('Token saved to server:', data))
-                            .catch(err => console.error('Error sending token to server:', err));
+                                .then(res => res.json())
+                                .then(data => console.log('Token saved to server:', data))
+                                .catch(err => console.error('Error sending token to server:', err));
                         } else {
                             console.warn('No registration token available. Request permission to generate one.');
                         }
@@ -633,7 +580,7 @@
                 }
 
                 // Handle incoming messages
-                messaging.onMessage(function(payload) {
+                messaging.onMessage(function (payload) {
                     console.log("Foreground Message received: ", payload);
                     const notificationTitle = payload.notification.title;
                     const notificationOptions = {
@@ -641,11 +588,11 @@
                         icon: '/favicon.ico',
                         data: payload.data
                     };
-                    
+
                     if (Notification.permission === 'granted') {
-                        navigator.serviceWorker.ready.then(function(registration) {
+                        navigator.serviceWorker.ready.then(function (registration) {
                             registration.showNotification(notificationTitle, notificationOptions);
-                        }).catch(function(err) {
+                        }).catch(function (err) {
                             console.warn("Service worker not ready, using standard Notification", err);
                             new Notification(notificationTitle, notificationOptions);
                         });
@@ -690,12 +637,12 @@
                 const textSpan = li.querySelector('.task-text');
                 const currentText = textSpan ? textSpan.innerText : '';
                 const id = editBtn.dataset.id;
-                
+
                 // Find existing reminder date from badge title or dataset if we added it
                 // Better approach: find task in local array 'tasks'
                 const task = tasks.find(t => t.id == id);
                 const currentReminder = task && task.reminder_at ? task.reminder_at : '';
-                
+
                 // Avoid double input creation
                 if (li.querySelector('.edit-container')) return;
 
@@ -709,11 +656,11 @@
                 input.className = 'form-control form-control-sm mb-1';
                 input.value = currentText;
                 input.placeholder = 'Task description';
-                
+
                 // Date Input Group
                 const dateGroup = document.createElement('div');
                 dateGroup.className = 'input-group input-group-sm';
-                
+
                 const dateInput = document.createElement('input');
                 dateInput.type = 'datetime-local';
                 dateInput.className = 'form-control';
@@ -724,11 +671,11 @@
                         d = new Date(currentReminder + 'Z'); // Treat server time as UTC
                     }
                     // Adjust to local ISO string roughly
-                   const offset = d.getTimezoneOffset() * 60000;
-                   const localISOTime = (new Date(d - offset)).toISOString().slice(0, 16);
-                   dateInput.value = localISOTime;
+                    const offset = d.getTimezoneOffset() * 60000;
+                    const localISOTime = (new Date(d - offset)).toISOString().slice(0, 16);
+                    dateInput.value = localISOTime;
                 }
-                
+
                 // Clear Reminder Button
                 const clearBtn = document.createElement('button');
                 clearBtn.className = 'btn btn-outline-secondary';
@@ -743,7 +690,7 @@
                 saveBtn.type = 'button';
                 saveBtn.innerHTML = '<i class="bx bx-check"></i>';
                 saveBtn.title = 'Save';
-                
+
                 // Cancel Button
                 const cancelBtn = document.createElement('button');
                 cancelBtn.className = 'btn btn-danger ms-1';
@@ -756,7 +703,7 @@
 
                 editContainer.appendChild(input);
                 editContainer.appendChild(dateGroup);
-                
+
                 // Action Buttons Container (replace existing buttons)
                 const actionContainer = document.createElement('div');
                 actionContainer.className = 'd-flex';
@@ -766,37 +713,37 @@
                 // Hide original content
                 const originalContent = li.querySelector('.d-flex.align-items-center.flex-grow-1');
                 const originalButtons = li.querySelector('.row-btn');
-                
+
                 originalContent.style.display = 'none';
                 originalButtons.style.display = 'none';
-                
+
                 li.insertBefore(editContainer, originalButtons);
                 li.appendChild(actionContainer);
-                
+
                 input.focus();
-                
+
                 // Save Function
                 const saveEdit = async () => {
                     const newText = input.value.trim();
                     const reminderAt = dateInput.value; // Send local time string (e.g. T17:00)
-                    
+
                     if (newText) {
                         try {
                             const res = await fetch(`/manage-todolist-item/${id}`, {
                                 method: 'PUT',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ 
-                                    text: newText, 
-                                    completed: task.completed, 
+                                body: JSON.stringify({
+                                    text: newText,
+                                    completed: task.completed,
                                     reminder_at: reminderAt,
-                                    _token: '{{ csrf_token() }}' 
+                                    _token: '{{ csrf_token() }}'
                                 })
                             });
                             if (res.ok) {
-                                fetchTasks(); 
+                                fetchTasks();
                             } else {
                                 alert('Failed to update task');
-                                renderTasks(); 
+                                renderTasks();
                             }
                         } catch (error) {
                             console.error('Error updating task:', error);
@@ -810,12 +757,12 @@
                 // Event Listeners
                 saveBtn.onclick = saveEdit;
                 cancelBtn.onclick = renderTasks;
-                
+
                 input.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter') saveEdit();
                     if (e.key === 'Escape') renderTasks();
                 });
-                
+
                 dateInput.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter') saveEdit();
                     if (e.key === 'Escape') renderTasks();
@@ -823,6 +770,91 @@
             }
         });
 
-        fetchTasks();
-    </script>
+            <!-- RECENT ACTIVITY LOG MODAL -->
+            <div class="modal fade" id="activityBreakdownModal" tabindex="-1" aria-labelledby="activityBreakdownModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content border-0 shadow-lg">
+                        <div class="modal-header bg-white border-bottom-0 pb-0">
+                            <h5 class="modal-title font-weight-bold text-dark" id="activityBreakdownModalLabel">
+                                <i class="bx bx-history me-2 text-primary"></i>Day-wise Activity Breakdown
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <div class="table-responsive rounded shadow-sm border">
+                                <table class="table table-hover mb-0" style="font-size: 14px;">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th class="py-3 px-3">Date</th>
+                                            <th class="py-3 px-3">User Name</th>
+                                            <th class="py-3 px-3">Activity Type</th>
+                                            <th class="py-3 px-3 text-center">Count</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @php
+                                            $groupedActivities = collect($activities ?? [])->groupBy(function ($item) {
+                                                $date = \Carbon\Carbon::parse($item->created_at)->format('Y-m-d');
+                                                return $date . '|||' . $item->user_name . '|||' . $item->type;
+                                            })->sortKeysDesc();
+                                        @endphp
+                                        @forelse($groupedActivities as $key => $group)
+                                            @php 
+                                                                                                                            $details = explode('|||', $key);
+                                                $date = \Carbon\Carbon::parse($details[0])->format('M j, Y');
+                                            @endphp
+                                            <tr>
+                                                <td class="px-3 py-3"><span class="text-muted">{{ $date }}</span></td>
+                                                <td class="px-3 py-3"><span class="text-primary font-weight-bold">{{ $details[1] }}</span></td>
+                                                <td class="px-3 py-3"><span class="badge bg-soft-info text-info border border-info">{{ $details[2] }}</span></td>
+                                                <td class="px-3 py-3 text-center"><strong>{{ count($group) }}</strong></td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="4" class="text-center py-5">No activities recorded yet.</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+              <!-- MY TODO LIST MODAL -->
+            <div class="modal fade" id="todoListModal" tabindex="-1" aria-labelledby="todoListModalLabel" aria-hidden="true" style="z-index: 99999;">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content shadow-lg border-0" style="border-radius: 12px; background: #fff;">
+                        <div class="modal-header bg-white border-bottom-0 pb-0">
+                            <h5 class="modal-title font-weight-bold text-dark" id="todoListModalLabel">
+                                <i class="bx bx-list-check me-2 text-primary" style="font-size: 1.5rem;"></i>My Todo List
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <ul class="list-group border-0" id="todoList" style="max-height: 55vh; overflow-y: auto;">
+                                <!-- Tasks dynamically loaded -->
+                            </ul>
+                        </div>
+                        <div class="modal-footer border-top-0 bg-white p-4">
+                            <div class="input-group shadow-sm" style="border-radius: 8px; overflow: hidden; border: 1px solid #dee2e6;">
+                                <input type="text" id="taskInput" class="form-control border-0 px-3" placeholder="Add a new task..." style="height: 45px;" />
+                                <button id="addTask" class="btn btn-primary px-3 border-0"><i class="bx bx-plus" style="font-size: 1.2rem;"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <style>
+                .bg-soft-info { background-color: rgba(13, 202, 240, 0.1); }
+                .modal-backdrop { z-index: 99990 !important; }
+                .modal { z-index: 99999 !important; }
+                .modal-content { box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important; }
+            </style>
+
+            <script>
+    fetchTasks();
+            </script>
 @endsection
