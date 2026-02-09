@@ -134,12 +134,17 @@ class ApiController extends Controller
                     ],
                 ]);
 
-                $this->messaging->send($message);
+                $report = $this->messaging->send($message);
+                Log::info('FCM Send Success (API)', ['report' => $report, 'token' => $fcmreg->regID]);
             }
 
             return response()->json(['status' => 'Message Sent'], 200);
         } catch (\Exception $e) {
-            Log::error('Firebase Notification Error: ' . $e->getMessage());
+            Log::error('FCM Send Error (API)', [
+                'message' => $e->getMessage(),
+                'mono' => $mono,
+                'trace' => $e->getTraceAsString()
+            ]);
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }

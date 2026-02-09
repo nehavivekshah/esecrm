@@ -50,12 +50,18 @@ class FCMController extends Controller
 
         try {
             // Send the notification message
-            $this->messaging->send($message);
+            $report = $this->messaging->send($message);
 
-            return response()->json(['status' => 'Message sent successfully'], 200);
+            \Log::info('FCM Message Sent Success', ['report' => $report, 'token' => $deviceToken]);
+
+            return response()->json(['status' => 'Message sent successfully', 'report' => $report], 200);
         } catch (\Exception $e) {
             // Log any errors
-            \Log::error('FCM Error: ' . $e->getMessage());
+            \Log::error('FCM Send Error', [
+                'message' => $e->getMessage(),
+                'token' => $deviceToken,
+                'trace' => $e->getTraceAsString()
+            ]);
             return response()->json(['error' => 'Unable to send notification: ' . $e->getMessage()], 500);
         }
     }

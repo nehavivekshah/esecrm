@@ -10,6 +10,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\AjaxController;
 use Kreait\Firebase\Factory;
+use Kreait\Firebase\Messaging\CloudMessage;
+use Illuminate\Http\Request;
 use App\Http\Controllers\NewLeadController;
 use App\Http\Controllers\SchedulerTestController;
 
@@ -295,6 +297,45 @@ Route::get('/clear-cache', function () {
     // php artisan route:clear
 
     return 'DONE';
+});
+
+Route::get('/debug-send-notif', function (Request $request) {
+    try {
+        $token = $request->query('token');
+        if (!$token) {
+            $user = \App\Models\User::whereNotNull('fcm_token')->latest()->first();
+            $token = $user ? $user->fcm_token : null;
+        }
+
+        if (!$token) {
+            return "Error: No FCM token found in query or database.";
+        }
+
+        $factory = (new Factory)
+            ->withServiceAccount(base_path(env('FIREBASE_CREDENTIALS')));
+
+        $messaging = $factory->createMessaging();
+
+        $message = CloudMessage::fromArray([
+            'token' => $token,
+            'notification' => [
+                'title' => 'Debug Notification',
+                'body' => 'This is a test notification from esecrm debug route.',
+            ],
+            'data' => [
+                'test' => 'true'
+            ]
+        ]);
+
+        $report = $messaging->send($message);
+        return response()->json([
+            'status' => 'Success',
+            'token_used' => $token,
+            'report' => $report
+        ]);
+    } catch (\Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
 });
 
 Route::get('/test-firebase', function () {
