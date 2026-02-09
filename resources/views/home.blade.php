@@ -529,7 +529,7 @@
             });
         }
 
-        // Delete Logic
+        // Event Listener for Todo List Actions
         todoList.addEventListener('click', async (e) => {
             // Delete Action
             const deleteBtn = e.target.closest('.deleteTask');
@@ -558,92 +558,135 @@
             if (editBtn) {
                 e.preventDefault();
                 const li = editBtn.closest('li');
-                const span = li.querySelector('span');
-                const currentText = span.innerText;
+                const textSpan = li.querySelector('.task-text');
+                const currentText = textSpan ? textSpan.innerText : '';
                 const id = editBtn.dataset.id;
                 
+                // Find existing reminder date from badge title or dataset if we added it
+                // Better approach: find task in local array 'tasks'
+                const task = tasks.find(t => t.id == id);
+                const currentReminder = task && task.reminder_at ? task.reminder_at : '';
+                
                 // Avoid double input creation
-                if (li.querySelector('.edit-input')) return;
+                if (li.querySelector('.edit-container')) return;
 
-                // Create input element
+                // Create container for edit form
+                const editContainer = document.createElement('div');
+                editContainer.className = 'edit-container flex-grow-1 me-2';
+
+                // Text Input
                 const input = document.createElement('input');
                 input.type = 'text';
-                input.className = 'form-control form-control-sm edit-input mb-1';
+                input.className = 'form-control form-control-sm mb-1';
                 input.value = currentText;
-                input.style.width = '100%';
+                input.placeholder = 'Task description';
                 
-                // Create Date Picker for Reminder
+                // Date Input Group
+                const dateGroup = document.createElement('div');
+                dateGroup.className = 'input-group input-group-sm';
+                
                 const dateInput = document.createElement('input');
                 dateInput.type = 'datetime-local';
-                dateInput.className = 'form-control form-control-sm reminder-input mb-1';
-                dateInput.style.width = '100%';
+                dateInput.className = 'form-control';
+                // Format for datetime-local: YYYY-MM-DDTHH:MM
+                if (currentReminder) {
+                    const d = new Date(currentReminder);
+                    // Adjust to local ISO string roughly
+                   const offset = d.getTimezoneOffset() * 60000;
+                   const localISOTime = (new Date(d - offset)).toISOString().slice(0, 16);
+                   dateInput.value = localISOTime;
+                }
                 
-                // Pre-fill existing reminder if available (would need to pass it in data attribute)
-                // For now, let's just show empty or current
+                // Clear Reminder Button
+                const clearBtn = document.createElement('button');
+                clearBtn.className = 'btn btn-outline-secondary';
+                clearBtn.type = 'button';
+                clearBtn.innerHTML = '<i class="bx bx-x"></i>';
+                clearBtn.title = 'Clear Reminder';
+                clearBtn.onclick = () => { dateInput.value = ''; };
+
+                // Save Button
+                const saveBtn = document.createElement('button');
+                saveBtn.className = 'btn btn-success ms-1';
+                saveBtn.type = 'button';
+                saveBtn.innerHTML = '<i class="bx bx-check"></i>';
+                saveBtn.title = 'Save';
                 
-                // Replace span with inputs
-                const container = document.createElement('div');
-                container.appendChild(input);
-                container.appendChild(dateInput);
-                span.replaceWith(container);
+                // Cancel Button
+                const cancelBtn = document.createElement('button');
+                cancelBtn.className = 'btn btn-danger ms-1';
+                cancelBtn.type = 'button';
+                cancelBtn.innerHTML = '<i class="bx bx-x-circle"></i>';
+                cancelBtn.title = 'Cancel';
+
+                dateGroup.appendChild(dateInput);
+                dateGroup.appendChild(clearBtn);
+
+                editContainer.appendChild(input);
+                editContainer.appendChild(dateGroup);
+                
+                // Action Buttons Container (replace existing buttons)
+                const actionContainer = document.createElement('div');
+                actionContainer.className = 'd-flex';
+                actionContainer.appendChild(saveBtn);
+                actionContainer.appendChild(cancelBtn);
+
+                // Hide original content
+                const originalContent = li.querySelector('.d-flex.align-items-center.flex-grow-1');
+                const originalButtons = li.querySelector('.row-btn');
+                
+                originalContent.style.display = 'none';
+                originalButtons.style.display = 'none';
+                
+                li.insertBefore(editContainer, originalButtons);
+                li.appendChild(actionContainer);
+                
                 input.focus();
                 
-                // Function to save changes
+                // Save Function
                 const saveEdit = async () => {
                     const newText = input.value.trim();
                     const reminderAt = dateInput.value;
                     
-                    if (newText && (newText !== currentText || reminderAt)) {
+                    if (newText) {
                         try {
                             const res = await fetch(`/manage-todolist-item/${id}`, {
                                 method: 'PUT',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ 
                                     text: newText, 
-                                    completed: li.querySelector('.toggleTask').checked, 
+                                    completed: task.completed, 
                                     reminder_at: reminderAt,
                                     _token: '{{ csrf_token() }}' 
                                 })
                             });
                             if (res.ok) {
-                                fetchTasks(); // Refresh list to show updated text
+                                fetchTasks(); 
                             } else {
                                 alert('Failed to update task');
-                                renderTasks(); // Revert on error
+                                renderTasks(); 
                             }
                         } catch (error) {
                             console.error('Error updating task:', error);
                             renderTasks();
                         }
                     } else {
-                        renderTasks(); // Revert if empty or unchanged
+                        renderTasks();
                     }
                 };
 
-                // Handle Save on Enter
+                // Event Listeners
+                saveBtn.onclick = saveEdit;
+                cancelBtn.onclick = renderTasks;
+                
                 input.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault(); 
-                        saveEdit(); // Execute save immediately
-                    }
-                    if (e.key === 'Escape') {
-                        renderTasks(); 
-                    }
+                    if (e.key === 'Enter') saveEdit();
+                    if (e.key === 'Escape') renderTasks();
                 });
                 
-                // Save on blur? Maybe complicate with two inputs. 
-                // Let's add a small save button or just rely on Enter/Blur of container?
-                // Blur is tricky with two inputs. Let's add a save button icon.
-                
-                // Actually, let's just bind Enter on date input too
                 dateInput.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault(); 
-                        saveEdit(); 
-                    }
-                    if (e.key === 'Escape') {
-                        renderTasks(); 
-                    }
+                    if (e.key === 'Enter') saveEdit();
+                    if (e.key === 'Escape') renderTasks();
                 });
             }
         });
