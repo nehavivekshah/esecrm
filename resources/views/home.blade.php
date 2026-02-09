@@ -7,259 +7,340 @@
         $company = session('companies');
         $roles = session('roles');
         $roleArray = explode(',', ($roles->features ?? ''));
+
+        if (!function_exists('formatLeadCount')) {
+            function formatLeadCount($num) {
+                if ($num >= 1000000) return round($num / 1000000, 1) . 'M';
+                if ($num >= 1000) return round($num / 1000, 1) . 'K';
+                if ($num >= 99) return '99+';
+                return $num;
+            }
+        }
     @endphp
     <style>
+        :root {
+            --card-radius: 12px;
+            --accent-primary: #4e73df;
+            --accent-success: #1cc88a;
+            --glass-bg: rgba(255, 255, 255, 0.95);
+        }
+
         .card {
-            border-radius: 5px;
-            box-shadow: 0px 0px 4px #00000014;
-            border: 1px solid var(--color-lightgray);
+            border-radius: var(--card-radius);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background: #fff;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
         }
 
         .chart-container {
             position: relative;
-            height: 300px;
-        }
-
-        .summary-item:hover {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
+            height: 320px;
         }
 
         .card-title {
-            font-weight: 600;
-            color: #333;
+            font-weight: 700;
+            color: #2e384d;
+            letter-spacing: -0.01em;
         }
 
-        .card .form-select {
-            padding: 4px 35px 4px 15px !important;
-            border-left: 1px solid #ddd !important;
-        }
-
-        .list-group {
-            height: 60vh;
-            overflow: auto;
-            padding: 5px;
-            font-size: 14px;
-        }
-
-        /* Custom scrollbar for activity log */
-        .activity-log {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .row-btn {
-            width: 58px;
+        .header-right {
             display: flex;
-            gap: 5px;
-            justify-content: end;
+            align-items: center;
+            gap: 15px;
         }
 
+        /* Modern Quick Links View */
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .action-card {
+            background: #fff;
+            padding: 25px 20px;
+            text-align: center;
+            border-radius: var(--card-radius);
+            text-decoration: none !important;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .action-card:hover {
+            background: var(--accent-primary);
+            color: white !important;
+            transform: translateY(-5px);
+        }
+
+        .action-card i {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            display: block;
+            color: var(--accent-primary);
+            transition: color 0.3s ease;
+        }
+
+        .action-card:hover i {
+            color: white;
+        }
+
+        .action-card h6 {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 1.05rem;
+        }
+
+        .action-card span {
+            font-size: 1.25rem;
+            font-weight: 700;
+            opacity: 0.9;
+        }
+
+        /* Widget Refinements */
+        .widget-card {
+            height: 100%;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .widget-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 10px;
+            opacity: 0.85;
+        }
+
+        /* Feed Styles */
+        .activity-feed-item {
+            padding: 15px;
+            border-left: 3px solid #eee;
+            margin-bottom: 10px;
+            background: #fdfdfd;
+            border-radius: 0 8px 8px 0;
+            transition: background 0.2s;
+        }
+
+        .activity-feed-item:hover {
+            background: #f8f9ff;
+            border-left-color: var(--accent-primary);
+        }
+
+        .badge-soft-danger { background: rgba(255, 71, 87, 0.1); color: #ff4757; }
+        .badge-soft-success { background: rgba(46, 213, 115, 0.1); color: #2ed573; }
+        
         @media (max-width: 767px) {
-            .m-none {
-                display: none;
-            }
-
-            .row-btn {
-                min-width: 60px !important;
-                text-align: right;
-            }
-        }
-
-        .list-group-item.dragging {
-            opacity: 0.5;
-            background: #f8f9fa;
-            border: 2px dashed #dee2e6;
+            .quick-actions-grid { grid-template-columns: repeat(2, 1fr); }
+            .header-right .btn span { display: none; }
         }
     </style>
     <section class="task__section">
-        <div class="text">
-            <i class="bx bx-menu" id="mbtn"></i>
-            Dashboard
+        <div class="text d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <i class="bx bx-menu me-3" id="mbtn" style="cursor: pointer; font-size: 1.5rem;"></i>
+                <span class="h4 mb-0 font-weight-bold text-dark">Dashboard</span>
+            </div>
             <div class="header-right">
                 <div class="position-relative dropdown">
-                    <a href="/notifications" class="text-dark me-3" role="button" data-bs-toggle="dropdown"
+                    <a href="/notifications" class="text-dark bg-light p-2 rounded-circle d-flex align-items-center justify-content-center" 
+                       style="width: 40px; height: 40px; transition: all 0.2s;" role="button" data-bs-toggle="dropdown"
                         title="Notifications">
-                        <i class="bx bx-bell"></i>
-                        @php
-                            function formatLeadCount($num)
-                            {
-                                if ($num >= 1000000) {
-                                    return round($num / 1000000, 1) . 'M';
-                                } elseif ($num >= 1000) {
-                                    return round($num / 1000, 1) . 'K';
-                                } elseif ($num >= 99) {
-                                    return round(99, 1) . '+';
-                                }
-                                return $num;
-                            }
-                        @endphp
+                        <i class="bx bx-bell" style="font-size: 1.3rem;"></i>
                         @if(count($leads) > 0 && (in_array('leads', $roleArray) || in_array('All', $roleArray) || (Auth::user()->role == '0')))
-                            <span class="badge position-absolute badge-danger">
+                            <span class="badge position-absolute bg-danger border border-white rounded-circle" 
+                                  style="top: -5px; right: -5px; padding: 4px 6px; font-size: 0.65rem;">
                                 {{ formatLeadCount(count($newLeads)) }}
                             </span>
                         @endif
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end npop-up">
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-3 p-2" style="border-radius: 12px; min-width: 250px;">
                         @if(count($newLeads) > 0 && (in_array('leads', $roleArray) || in_array('All', $roleArray) || (Auth::user()->role == '0')))
-                            <li><a href="/leads">Leads <span
-                                        class="small text-danger">{{ formatLeadCount(count($newLeads)) }}</span></a></li>
+                            <div class="px-3 py-2 border-bottom mb-2">
+                                <h6 class="mb-0 font-weight-bold">Recent Leads</h6>
+                            </div>
+                            <li><a class="dropdown-item rounded-3 py-2" href="/leads">
+                                <i class="bx bx-user-plus me-2 text-primary"></i>New Leads 
+                                <span class="badge bg-soft-danger ms-auto float-end">{{ formatLeadCount(count($newLeads)) }}</span>
+                            </a></li>
                         @else
-                            <li class="emptyMsg">No messages found.</li>
+                            <li class="px-3 py-4 text-center text-muted">
+                                <i class="bx bx-ghost d-block mb-2" style="font-size: 2rem; opacity: 0.5;"></i>
+                                <span class="small">No new notifications</span>
+                            </li>
                         @endif
                     </ul>
                 </div>
                 <!-- TODO LIST TRIGGER BUTTON -->
-                <button type="button" class="btn btn-primary btn-sm rounded-pill d-flex align-items-center px-3 me-3"
-                    data-bs-toggle="modal" data-bs-target="#todoListModal">
-                    <i class="bx bx-check-double me-1"></i> Todo
+                <button type="button" class="btn btn-primary btn-sm rounded-pill d-flex align-items-center px-4 py-2 shadow-sm"
+                    data-bs-toggle="modal" data-bs-target="#todoListModal" style="font-weight: 600; letter-spacing: 0.5px;">
+                    <i class="bx bx-check-double me-2" style="font-size: 1.1rem;"></i> <span>My Todo</span>
                 </button>
-                <a href="/signout" class="logoutbtn"><i class="bx bx-log-out"></i></a>
+                <a href="/signout" class="btn btn-outline-danger btn-sm rounded-circle d-flex align-items-center justify-content-center" 
+                   style="width: 40px; height: 40px;" title="Logout">
+                    <i class="bx bx-log-out" style="font-size: 1.2rem;"></i>
+                </a>
             </div>
         </div>
 
         <div class="container-fluid mb-2">
             <!-- DASHBOARD WIDGETS -->
-            <div class="row mb-3">
+            <div class="row mb-4">
                 <div class="col-md-3">
-                    <div class="card p-3 border-0 shadow-sm"
+                    <div class="card widget-card border-0 shadow-sm"
                         style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                        <h6 class="mb-1">Outstanding Invoices</h6>
-                        <h3 class="font-weight-bold mb-0">₹{{ number_format($outstandingInvoices, 2) }}</h3>
-                        <small class="text-white-50">Waiting for payment</small>
+                        <span class="widget-label">Outstanding Invoices</span>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h2 class="font-weight-bold mb-0">₹{{ number_format($outstandingInvoices, 0) }}</h2>
+                            <i class="bx bx-receipt opacity-50" style="font-size: 2rem;"></i>
+                        </div>
+                        <small class="text-white-50 mt-2">Waiting for payment</small>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card p-3 border-0 shadow-sm"
-                        style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); color: #555;">
-                        <h6 class="mb-1 text-danger">Pending Proposals</h6>
-                        <h3 class="font-weight-bold mb-0 text-danger">{{ $pendingProposals }}</h3>
-                        <small class="text-muted">Open or Sent</small>
+                    <div class="card widget-card border-0 shadow-sm"
+                        style="background: linear-gradient(135deg, #FF5F6D 0%, #FFC371 100%); color: white;">
+                        <span class="widget-label">Pending Proposals</span>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h2 class="font-weight-bold mb-0">{{ $pendingProposals }}</h2>
+                            <i class="bx bx-file-blank opacity-50" style="font-size: 2rem;"></i>
+                        </div>
+                        <small class="text-white-50 mt-2">Open or Sent</small>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card p-3 border-0 shadow-sm"
-                        style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); color: white;">
-                        <h6 class="mb-1">My Pending Tasks</h6>
-                        <h3 class="font-weight-bold mb-0">{{ $myPendingTasks }}</h3>
-                        <small class="text-white-50">Assigned to you</small>
+                    <div class="card widget-card border-0 shadow-sm"
+                        style="background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%); color: white;">
+                        <span class="widget-label">Pending Tasks</span>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h2 class="font-weight-bold mb-0">{{ $myPendingTasks }}</h2>
+                            <i class="bx bx-task opacity-50" style="font-size: 2rem;"></i>
+                        </div>
+                        <small class="text-white-50 mt-2">Assigned to you</small>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card p-3 border-0 shadow-sm"
-                        style="background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); color: #333;">
-                        <h6 class="mb-1 text-success">Total Leads</h6>
-                        <h3 class="font-weight-bold mb-0 text-success">{{ $totalLeads }}</h3>
-                        <small class="text-muted">In the pipeline</small>
+                    <div class="card widget-card border-0 shadow-sm"
+                        style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white;">
+                        <span class="widget-label">Total Leads</span>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h2 class="font-weight-bold mb-0">{{ $totalLeads }}</h2>
+                            <i class="bx bx-pulse opacity-50" style="font-size: 2rem;"></i>
+                        </div>
+                        <small class="text-white-50 mt-2">In the pipeline</small>
                     </div>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="flex-box">
-                        @if(in_array('leads', $roleArray) || in_array('All', $roleArray) || (Auth::user()->role == '0'))
-                            <a class="box td-none" href="/leads">
-                                <div class="flex jsb">
-                                    <div class="smallbox-1">
-                                        <span class="small text-success font-weight-bold">Leads</span>
-                                        <h3 class="text-dark">{{ count($leads ?? []) }}</h3>
-                                    </div>
-                                    <div class="box-icon"><i class="bx bx-filter-alt"></i></div>
-                                </div>
-                            </a>
-                        @endif
-                        @if(in_array('clients', $roleArray) || in_array('All', $roleArray) || (Auth::user()->role == '0'))
-                            <a class="box td-none" href="/clients">
-                                <div class="flex jsb">
-                                    <div class="smallbox-1">
-                                        <span class="small text-success font-weight-bold">Customers</span>
-                                        <h3 class="text-dark">{{ count($clients ?? []) }}</h3>
-                                    </div>
-                                    <div class="box-icon"><i class="bx bx-group"></i></div>
-                                </div>
-                            </a>
-                            <a class="box td-none" href="/projects">
-                                <div class="flex jsb">
-                                    <div class="smallbox-1">
-                                        <span class="small text-success font-weight-bold">Projects</span>
-                                        <h3 class="text-dark">{{ count($projects ?? []) }}</h3>
-                                    </div>
-                                    <div class="box-icon"><i class="bx bx-file"></i></div>
-                                </div>
-                            </a>
-                            <a class="box td-none" href="/recoveries">
-                                <div class="flex jsb">
-                                    <div class="smallbox-1">
-                                        <span class="small text-success font-weight-bold">Recovery</span>
-                                        <h3 class="text-dark">{{ count($recoveries ?? []) }}</h3>
-                                    </div>
-                                    <div class="box-icon"><i class="bx bx-coin-stack"></i></div>
-                                </div>
-                            </a>
-                        @endif
-                        @if(in_array('users', $roleArray) || in_array('All', $roleArray) || (Auth::user()->role == '0'))
-                            <a class="box td-none" href="/users">
-                                <div class="flex jsb">
-                                    <div class="smallbox-1">
-                                        <span class="small text-success font-weight-bold">Users</span>
-                                        <h3 class="text-dark">{{ count($users ?? []) }}</h3>
-                                    </div>
-                                    <div class="box-icon"><i class="bx bx-user"></i></div>
-                                </div>
-                            </a>
-                        @endif
-                    </div>
-                </div>
+        <div class="container-fluid mb-4">
+            <h5 class="mb-3 font-weight-bold text-dark">Quick Actions</h5>
+            <div class="quick-actions-grid">
+                @if(in_array('leads', $roleArray) || in_array('All', $roleArray) || (Auth::user()->role == '0'))
+                    <a href="/leads" class="action-card shadow-sm">
+                        <i class="bx bx-filter-alt"></i>
+                        <h6>Leads</h6>
+                        <span>{{ count($leads ?? []) }}</span>
+                    </a>
+                @endif
+                @if(in_array('clients', $roleArray) || in_array('All', $roleArray) || (Auth::user()->role == '0'))
+                    <a href="/clients" class="action-card shadow-sm">
+                        <i class="bx bx-group"></i>
+                        <h6>Customers</h6>
+                        <span>{{ count($clients ?? []) }}</span>
+                    </a>
+                    <a href="/projects" class="action-card shadow-sm">
+                        <i class="bx bx-file"></i>
+                        <h6>Projects</h6>
+                        <span>{{ count($projects ?? []) }}</span>
+                    </a>
+                    <a href="/recoveries" class="action-card shadow-sm">
+                        <i class="bx bx-coin-stack"></i>
+                        <h6>Recovery</h6>
+                        <span>{{ count($recoveries ?? []) }}</span>
+                    </a>
+                @endif
+                @if(in_array('users', $roleArray) || in_array('All', $roleArray) || (Auth::user()->role == '0'))
+                    <a href="/users" class="action-card shadow-sm">
+                        <i class="bx bx-user"></i>
+                        <h6>Users</h6>
+                        <span>{{ count($users ?? []) }}</span>
+                    </a>
+                @endif
             </div>
-        </div>
 
-        <div class="container-fluid mb-3">
             <div class="row">
-                @if(in_array('All', $roleArray))
-                    <div class="col-lg-12 pt-2">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <!-- Revenue Growth Card -->
-                                <div class="card p-4 mb-4 m-none">
-                                    <h5>Revenue Growth</h5>
-                                    <div class="chart-container">
-                                        <canvas id="revenueChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <!-- ACTIVITY MONITOR FLOW CHART -->
-                                <div class="card p-4 m-none">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <h5 class="mb-0">Activity Monitor Flow (Day-wise)</h5>
-                                        <div class="d-flex gap-2">
-                                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
-                                                data-bs-target="#activityBreakdownModal">
-                                                <i class="bx bx-list-ul"></i> View Breakdown
-                                            </button>
-                                            <select id="activityDateRange" class="form-select form-select-sm"
-                                                style="width: auto;">
-                                                <option value="7" {{ $selectedActivityDays == 7 ? 'selected' : '' }}>Last 7 Days
-                                                </option>
-                                                <option value="30" {{ $selectedActivityDays == 30 ? 'selected' : '' }}>Last 30
-                                                    Days</option>
-                                                <option value="90" {{ $selectedActivityDays == 90 ? 'selected' : '' }}>Last 90
-                                                    Days</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="chart-container">
-                                        <canvas id="activityFlowChart"></canvas>
-                                    </div>
+                <div class="col-lg-8">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <!-- Revenue Growth -->
+                            <div class="card h-100 p-4">
+                                <h5 class="card-title mb-4">Revenue Growth</h5>
+                                <div class="chart-container">
+                                    <canvas id="revenueChart"></canvas>
                                 </div>
                             </div>
                         </div>
-
-
+                        <div class="col-md-6 mb-4">
+                            <!-- Activity monitor -->
+                            <div class="card h-100 p-4">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h5 class="card-title mb-0">Activity Monitor Flow</h5>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-outline-primary btn-sm rounded-pill" data-bs-toggle="modal"
+                                            data-bs-target="#activityBreakdownModal">
+                                            <i class="bx bx-list-ul"></i>
+                                        </button>
+                                        <select id="activityDateRange" class="form-select form-select-sm border-0 bg-light rounded-pill" style="width: auto;">
+                                            <option value="7" {{ $selectedActivityDays == 7 ? 'selected' : '' }}>7D</option>
+                                            <option value="30" {{ $selectedActivityDays == 30 ? 'selected' : '' }}>30D</option>
+                                            <option value="90" {{ $selectedActivityDays == 90 ? 'selected' : '' }}>90D</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="chart-container">
+                                    <canvas id="activityFlowChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                @endif
+                </div>
+                <div class="col-lg-4">
+                    <!-- RECENT ACTIVITY FEED -->
+                    <div class="card h-100 p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="card-title mb-0">Recent Activities</h5>
+                            <a href="#" class="btn btn-link btn-sm text-decoration-none p-0">View all</a>
+                        </div>
+                        <div class="activity-log" style="max-height: 680px;">
+                            @forelse(collect($activities ?? [])->take(15) as $activity)
+                                <div class="activity-feed-item">
+                                    <div class="d-flex justify-content-between align-items-start mb-1">
+                                        <span class="font-weight-bold text-dark small">{{ $activity->user_name ?? 'System' }}</span>
+                                        <span class="text-muted" style="font-size: 0.7rem;">{{ \Carbon\Carbon::parse($activity->created_at)->diffForHumans() }}</span>
+                                    </div>
+                                    <p class="mb-1 text-muted small">{{ $activity->type }} - {{ $activity->description ?? 'Performed an action' }}</p>
+                                    @if(isset($activity->subject))
+                                        <span class="badge bg-soft-info text-info rounded-pill" style="font-size: 0.65rem;">{{ $activity->subject }}</span>
+                                    @endif
+                                </div>
+                            @empty
+                                <div class="text-center py-5 text-muted">
+                                    <i class="bx bx-news mb-2" style="font-size: 2.5rem; opacity: 0.3;"></i>
+                                    <p class="small">No recent activity found</p>
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
