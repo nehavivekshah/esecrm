@@ -690,11 +690,15 @@ class TaskController extends Controller
     {
         $user = Auth::user();
         if ($user) {
-            $user->fcm_token = $request->token;
-            $user->save();
-
-            return response()->json(['message' => 'Token saved']);
+            \Log::info("Saving FCM token for user ID {$user->id}: " . substr($request->token, 0, 20) . "...");
+            DB::table('users')->where('id', $user->id)->update(['fcm_token' => $request->token]);
+            return response()->json([
+                'message' => 'Token saved',
+                'user_id' => $user->id,
+                'token_prefix' => substr($request->token, 0, 10)
+            ]);
         }
+        \Log::warning("Token save attempted but no user is authenticated.");
         return response()->json(['message' => 'User not found'], 404);
     }
 

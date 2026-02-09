@@ -299,6 +299,28 @@ Route::get('/clear-cache', function () {
     return 'DONE';
 });
 
+Route::get('/debug-fcm', function (Request $request) {
+    try {
+        $diag = [
+            'current_auth_user' => Auth::user() ? ['id' => Auth::user()->id, 'name' => Auth::user()->name] : 'Not Logged In',
+            'database_status' => 'Testing...',
+            'users_with_tokens' => []
+        ];
+
+        try {
+            \DB::connection()->getPdo();
+            $diag['database_status'] = 'Connected';
+            $diag['users_with_tokens'] = \App\Models\User::whereNotNull('fcm_token')->get(['id', 'name', 'fcm_token'])->toArray();
+        } catch (\Exception $e) {
+            $diag['database_status'] = 'Failed: ' . $e->getMessage();
+        }
+
+        return response()->json($diag);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()]);
+    }
+});
+
 Route::get('/debug-send-notif', function (Request $request) {
     try {
         $token = $request->query('token');
@@ -307,50 +329,60 @@ Route::get('/debug-send-notif', function (Request $request) {
         if (!$token) {
             $user = \App\Models\User::whereNotNull('fcm_token')->latest()->first();
             $token = $user ? $user->fcm_token : null;
-            $source = $user ? "Database (User ID: {$user->id})" : 'None found in DB';
+            $source = $user ? "Database (User ID: {$user->id}, Name: {$user->name})" : 'None found in DB';
         }
 
         if (!$token) {
-            try {
-                \DB::connection()->getPdo();
-                $dbStatus = "Connected";
-            } catch (\Exception $e) {
-                $dbStatus = "Failed: " . $e->getMessage();
-            }
-            return "Error: No FCM token found. [Source: $source] [DB Status: $dbStatus]";
+            return response()->json(['status' => 'Error', 'message' => 'No token found', 'source' => $source]);
         }
 
-        $factory = (new Factory)
-            ->withServiceAccount(base_path(env('FIREBASE_CREDENTIALS')));
+        \Log::info("Attempting to send FCM to token: " . substr($token, 0, 20) . "... [Source: $source]");
 
+        $factory = (new Factory)->withServiceAccount(base_path(env('FIREBASE_CREDENTIALS')));
         $messaging = $factory->createMessaging();
 
         $message = CloudMessage::fromArray([
             'token' => $token,
             'notification' => [
-                'title' => 'Debug Notification',
-                'body' => 'This is a test notification from esecrm debug route.',
+                'title' => 'Esecrm Test',
+                'body' => 'Test notification from debug route at ' . now()->toDateTimeString(),
             ],
             'data' => [
-                'test' => 'true',
-                'timestamp' => now()->toDateTimeString()
+                'click_action' => url('/home'),
+                'test' => 'true'
+            ],
+            'android' => [
+                'priority' => 'high',
+                'notification' => [
+                    'channel_id' => 'default_channel'
+                ]
+            ],
+            'webpush' => [
+                'headers' => [
+                    'Urgency' => 'high'
+                ]
             ]
         ]);
 
-        $report = $messaging->send($message);
-        return response()->json([
-            'status' => 'Success',
-            'source' => $source,
-            'token_used' => $token,
-            'report' => $report
-        ]);
+        try {
+            $report = $messaging->send($message);
+            return response()->json([
+                'status' => 'Success',
+                'token_source' => $source,
+                'token_used' => $token,
+                'firebase_report' => $report
+            ]);
+        } catch (\Exception $e) {
+            \Log::error("FCM Debug Send Error: " . $e->getMessage());
+            return response()->json([
+                'status' => 'Error',
+                'message' => $e->getMessage(),
+                'token_source' => $source,
+                'token_used' => $token
+            ]);
+        }
     } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'Error',
-            'message' => $e->getMessage(),
-            'token_used' => $token ?? 'None',
-            'source' => $source ?? 'None'
-        ]);
+        return response()->json(['status' => 'Fatal Error', 'message' => $e->getMessage()]);
     }
 });
 
