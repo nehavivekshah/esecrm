@@ -60,6 +60,7 @@ class HomeController extends Controller
     {
         $auth_cid = Auth::user()->cid ?? '';
         $auth_uid = Auth::user()->id ?? '';
+        $isAdmin = Auth::user()->role == '0';
 
         // Basic Counts and Lists
         $users = User::where('cid', $auth_cid)->get();
@@ -110,7 +111,9 @@ class HomeController extends Controller
         // Get all activities within date range, grouped by user and date
         $activitiesGrouped = DB::table('activities')
             ->join('users', 'activities.user_id', '=', 'users.id')
-            ->where('users.cid', $auth_cid)
+            ->when(!$isAdmin, function ($query) use ($auth_cid) {
+                return $query->where('users.cid', $auth_cid);
+            })
             ->whereBetween('activities.created_at', [$startDate, $endDate])
             ->select(
                 'users.id as user_id',
@@ -160,7 +163,9 @@ class HomeController extends Controller
         // Recent Activity List for the Table
         $activities = DB::table('activities')
             ->join('users', 'activities.user_id', '=', 'users.id')
-            ->where('users.cid', $auth_cid)
+            ->when(!$isAdmin, function ($query) use ($auth_cid) {
+                return $query->where('users.cid', $auth_cid);
+            })
             ->select('activities.*', 'users.name as user_name')
             ->orderBy('activities.created_at', 'DESC')
             ->limit(15)
