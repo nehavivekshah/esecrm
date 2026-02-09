@@ -416,6 +416,10 @@
         });
     </script>
 
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js"></script>
+
     <!-- TODO LIST SCRIPTS -->
     <script>
         const taskInput = document.getElementById('taskInput');
@@ -484,6 +488,47 @@
             }
         });
 
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "{{ env('FIREBASE_API_KEY') }}",
+            authDomain: "{{ env('FIREBASE_AUTH_DOMAIN') }}",
+            projectId: "{{ env('FIREBASE_PROJECT_ID') }}",
+            storageBucket: "{{ env('FIREBASE_STORAGE_BUCKET') }}",
+            messagingSenderId: "{{ env('FIREBASE_MESSAGING_SENDER_ID') }}",
+            appId: "{{ env('FIREBASE_APP_ID') }}"
+        };
+        
+        // Initialize Firebase only if config is present
+        if (firebaseConfig.apiKey) {
+            firebase.initializeApp(firebaseConfig);
+            const messaging = firebase.messaging();
+            
+            // Request Permission
+            messaging.requestPermission().then(function() {
+                return messaging.getToken();
+            }).then(function(token) {
+                // Save token to database
+                fetch('/save-token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: token, _token: '{{ csrf_token() }}' })
+                }).then(res => console.log('Token saved'));
+            }).catch(function(err) {
+                console.log('Unable to get permission to notify.', err);
+            });
+            
+            // Handle incoming messages
+            messaging.onMessage(function(payload) {
+                console.log("Message received. ", payload);
+                const notificationTitle = payload.notification.title;
+                const notificationOptions = {
+                    body: payload.notification.body,
+                    icon: '/favicon.ico'
+                };
+                new Notification(notificationTitle, notificationOptions);
+            });
+        }
+
         // Delete Logic
         todoList.addEventListener('click', async (e) => {
             // Delete Action
@@ -523,18 +568,32 @@
                 // Create input element
                 const input = document.createElement('input');
                 input.type = 'text';
-                input.className = 'form-control form-control-sm edit-input';
+                input.className = 'form-control form-control-sm edit-input mb-1';
                 input.value = currentText;
                 input.style.width = '100%';
                 
-                // Replace span with input
-                span.replaceWith(input);
+                // Create Date Picker for Reminder
+                const dateInput = document.createElement('input');
+                dateInput.type = 'datetime-local';
+                dateInput.className = 'form-control form-control-sm reminder-input mb-1';
+                dateInput.style.width = '100%';
+                
+                // Pre-fill existing reminder if available (would need to pass it in data attribute)
+                // For now, let's just show empty or current
+                
+                // Replace span with inputs
+                const container = document.createElement('div');
+                container.appendChild(input);
+                container.appendChild(dateInput);
+                span.replaceWith(container);
                 input.focus();
                 
                 // Function to save changes
                 const saveEdit = async () => {
                     const newText = input.value.trim();
-                    if (newText && newText !== currentText) {
+                    const reminderAt = dateInput.value;
+                    
+                    if (newText && (newText !== currentText || reminderAt)) {
                         try {
                             const res = await fetch(`/manage-todolist-item/${id}`, {
                                 method: 'PUT',
@@ -542,6 +601,7 @@
                                 body: JSON.stringify({ 
                                     text: newText, 
                                     completed: li.querySelector('.toggleTask').checked, 
+                                    reminder_at: reminderAt,
                                     _token: '{{ csrf_token() }}' 
                                 })
                             });
@@ -560,19 +620,31 @@
                     }
                 };
 
-                // Handle Save on Enter, Cancel on Escape
+                // Handle Save on Enter
                 input.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter') {
-                        e.preventDefault(); // Prevent form submission if inside form
-                        input.blur(); // Trigger blur to save
+                        e.preventDefault(); 
+                        saveEdit(); // Execute save immediately
                     }
                     if (e.key === 'Escape') {
-                        renderTasks(); // Revert changes
+                        renderTasks(); 
                     }
                 });
                 
-                // Save on blur (clicking outside)
-                input.addEventListener('blur', saveEdit);
+                // Save on blur? Maybe complicate with two inputs. 
+                // Let's add a small save button or just rely on Enter/Blur of container?
+                // Blur is tricky with two inputs. Let's add a save button icon.
+                
+                // Actually, let's just bind Enter on date input too
+                dateInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault(); 
+                        saveEdit(); 
+                    }
+                    if (e.key === 'Escape') {
+                        renderTasks(); 
+                    }
+                });
             }
         });
 

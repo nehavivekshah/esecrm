@@ -10,13 +10,11 @@ class Kernel extends ConsoleKernel
     /**
      * Define the application's command schedule.
      */
-    protected function schedule(Schedule $schedule)
+    protected function schedule(Schedule $schedule): void
     {
-        // Schedule the email reminder command daily at 8 AM
+        // $schedule->command('inspire')->hourly();
+        $schedule->command('todo:send-reminders')->everyMinute();
         $schedule->command('app:send-scheduled-emails')->dailyAt('09:00');
-
-        // If you want to test every minute, you can uncomment this:
-        // $schedule->command('app:send-scheduled-emails')->everyMinute();
     }
 
     /**
@@ -25,7 +23,7 @@ class Kernel extends ConsoleKernel
     protected function commands(): void
     {
         // Load all commands in app/Console/Commands
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }
