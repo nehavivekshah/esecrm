@@ -13,15 +13,15 @@ class FCMController extends Controller
     public function __construct()
     {
         try {
-            
+
             $factory = (new Factory)
-            ->withServiceAccount(env('FIREBASE_CREDENTIALS'));
-            
+                ->withServiceAccount(base_path(env('FIREBASE_CREDENTIALS')));
+
             $this->messaging = $factory->createMessaging();
-            
+
         } catch (\Exception $e) {
             // Log initialization errors
-            \Log::error('Firebase Initialization Error: ' . $e->getMessage() . ' | Service Account Path: ' . $serviceAccountPath);
+            \Log::error('Firebase Initialization Error: ' . $e->getMessage());
             abort(500, 'Unable to initialize Firebase');
         }
     }

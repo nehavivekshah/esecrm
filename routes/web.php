@@ -300,11 +300,11 @@ Route::get('/clear-cache', function () {
 Route::get('/test-firebase', function () {
     try {
         $factory = (new Factory)
-            ->withServiceAccount(env('FIREBASE_CREDENTIALS'));
+            ->withServiceAccount(base_path(env('FIREBASE_CREDENTIALS')));
 
         $messaging = $factory->createMessaging();
         return "Firebase initialized successfully!";
     } catch (\Exception $e) {
-        return "Error: " . storage_path('esecrm-firebase-adminsdk-35a6t-5892446bc0.json');
+        return "Error: " . $e->getMessage();
     }
 });

@@ -691,15 +691,7 @@ class TaskController extends Controller
         $user = Auth::user();
         if ($user) {
             $user->fcm_token = $request->token;
-            // $user->update(); 
-            // Can't use update() on User model directly if it's not setup for it? 
-            // Just use save(). But wait, User extends Model/Authenticatable, should behave like model.
-            // Let's use direct DB update to be safe or just save.
-            // $user->save();
-            // Actually, User::where('id', Auth::id())->update(['fcm_token' => $request->token]); might be safer if model is strict.
-            // Let's stick to standard Eloquent.
-
-            DB::table('users')->where('id', $user->id)->update(['fcm_token' => $request->token]);
+            $user->save();
 
             return response()->json(['message' => 'Token saved']);
         }
