@@ -60,7 +60,7 @@ class HomeController extends Controller
     {
         $auth_cid = Auth::user()->cid ?? '';
         $auth_uid = Auth::user()->id ?? '';
-        $isAdmin = Auth::user()->role == '0';
+        $isAdmin = Auth::user()->role == 'Admin';
 
         // Basic Counts and Lists
         $users = User::where('cid', $auth_cid)->get();
