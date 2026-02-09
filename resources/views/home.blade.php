@@ -211,11 +211,16 @@
                             <div class="card p-4 m-none">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h5 class="mb-0">Activity Monitor Flow (Day-wise)</h5>
-                                    <select id="activityDateRange" class="form-select form-select-sm" style="width: auto;">
-                                        <option value="7" {{ $selectedActivityDays == 7 ? 'selected' : '' }}>Last 7 Days</option>
-                                        <option value="30" {{ $selectedActivityDays == 30 ? 'selected' : '' }}>Last 30 Days</option>
-                                        <option value="90" {{ $selectedActivityDays == 90 ? 'selected' : '' }}>Last 90 Days</option>
-                                    </select>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#activityBreakdownModal">
+                                            <i class="bx bx-list-ul"></i> View Breakdown
+                                        </button>
+                                        <select id="activityDateRange" class="form-select form-select-sm" style="width: auto;">
+                                            <option value="7" {{ $selectedActivityDays == 7 ? 'selected' : '' }}>Last 7 Days</option>
+                                            <option value="30" {{ $selectedActivityDays == 30 ? 'selected' : '' }}>Last 30 Days</option>
+                                            <option value="90" {{ $selectedActivityDays == 90 ? 'selected' : '' }}>Last 90 Days</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="chart-container">
                                     <canvas id="activityFlowChart"></canvas>
@@ -224,47 +229,57 @@
                         </div>
                     </div>
                     
-                    <!-- RECENT ACTIVITY LOG TABLE (DAY-WISE) -->
-                    <div class="card mt-4 p-0 m-none">
-                        <div class="card-header bg-white">
-                            <h6 class="mb-0 font-weight-bold">Day-wise Activity Breakdown</h6>
-                        </div>
-                        <div class="table-responsive activity-log">
-                            <table class="table table-sm table-hover mb-0" style="font-size: 13px;">
-                                <thead class="bg-light">
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>User Name</th>
-                                        <th>Activity Type</th>
-                                        <th class="text-center">Count</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @php
-                                        // Group activities by date, user_name AND type
-                                        $groupedActivities = collect($activities ?? [])->groupBy(function($item) {
-                                            $date = \Carbon\Carbon::parse($item->created_at)->format('Y-m-d');
-                                            return $date . '|||' . $item->user_name . '|||' . $item->type;
-                                        })->sortKeysDesc();
-                                    @endphp
-                                    @forelse($groupedActivities as $key => $group)
-                                        @php 
-                                            $details = explode('|||', $key);
-                                            $date = \Carbon\Carbon::parse($details[0])->format('M j, Y');
-                                        @endphp
-                                        <tr>
-                                            <td><span class="text-muted">{{ $date }}</span></td>
-                                            <td><span class="text-primary font-weight-bold">{{ $details[1] }}</span></td>
-                                            <td><span class="badge bg-info text-white">{{ $details[2] }}</span></td>
-                                            <td class="text-center"><strong>{{ count($group) }}</strong></td>
-                                        </tr>
-                                    @empty
-                                    <tr>
-                                        <td colspan="4" class="text-center">No activities recorded yet.</td>
-                                    </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
+                    <!-- RECENT ACTIVITY LOG MODAL -->
+                    <div class="modal fade" id="activityBreakdownModal" tabindex="-1" aria-labelledby="activityBreakdownModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="activityBreakdownModalLabel">Day-wise Activity Breakdown</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-hover mb-0" style="font-size: 13px;">
+                                            <thead class="bg-light">
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>User Name</th>
+                                                    <th>Activity Type</th>
+                                                    <th class="text-center">Count</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @php
+                                                    // Group activities by date, user_name AND type
+                                                    $groupedActivities = collect($activities ?? [])->groupBy(function($item) {
+                                                        $date = \Carbon\Carbon::parse($item->created_at)->format('Y-m-d');
+                                                        return $date . '|||' . $item->user_name . '|||' . $item->type;
+                                                    })->sortKeysDesc();
+                                                @endphp
+                                                @forelse($groupedActivities as $key => $group)
+                                                    @php 
+                                                        $details = explode('|||', $key);
+                                                        $date = \Carbon\Carbon::parse($details[0])->format('M j, Y');
+                                                    @endphp
+                                                    <tr>
+                                                        <td><span class="text-muted">{{ $date }}</span></td>
+                                                        <td><span class="text-primary font-weight-bold">{{ $details[1] }}</span></td>
+                                                        <td><span class="badge bg-info text-white">{{ $details[2] }}</span></td>
+                                                        <td class="text-center"><strong>{{ count($group) }}</strong></td>
+                                                    </tr>
+                                                @empty
+                                                <tr>
+                                                    <td colspan="4" class="text-center py-5">No activities recorded yet.</td>
+                                                </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
