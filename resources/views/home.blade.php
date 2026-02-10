@@ -628,10 +628,16 @@
             let tasks = [];
 
             function fetchTasks() {
-                fetch('/todo-lists').then(response => response.json()).then(data => {
-                    tasks = data;
-                    renderTasks();
-                });
+                fetch('/todo-lists')
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        return response.json();
+                    })
+                    .then(data => {
+                        tasks = data;
+                        renderTasks();
+                    })
+                    .catch(error => console.error('Error fetching tasks:', error));
             }
 
             taskInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addTaskButton.click(); } });
@@ -720,10 +726,21 @@
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(task)
-                    }).then(response => response.json()).then(newTask => {
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.text().then(text => { throw new Error(text) });
+                        }
+                        return response.json();
+                    })
+                    .then(newTask => {
                         tasks.unshift(newTask);
                         taskInput.value = '';
                         renderTasks();
+                    })
+                    .catch(error => {
+                        console.error('Error adding task:', error);
+                        alert('Could not add task. Check console for details.');
                     });
                 }
             }

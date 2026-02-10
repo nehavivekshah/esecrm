@@ -638,11 +638,13 @@ class TaskController extends Controller
 
     public function store(Request $request)
     {
+        \Log::info("Attempting to store todo item", ['user_id' => Auth::id(), 'data' => $request->all()]);
         $task = new Todo_lists;
         $task->text = $request->text;
         $task->uid = Auth::id();
         $task->completed = $request->completed ? 1 : 0;
-        $task->position = (Todo_lists::where('uid', Auth::id())->max('position') ?? 0) + 1;
+        $maxPos = Todo_lists::where('uid', Auth::id())->max('position');
+        $task->position = ($maxPos ?? 0) + 1;
 
         if ($request->has('reminder_at')) {
             $task->reminder_at = !empty($request->reminder_at) ? Carbon::parse($request->reminder_at) : null;
@@ -650,6 +652,7 @@ class TaskController extends Controller
         }
 
         $task->save();
+        \Log::info("Todo item saved successfully", ['task_id' => $task->id]);
 
         return response()->json($task);
     }
