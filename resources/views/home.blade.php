@@ -888,14 +888,8 @@
                     dateInput.className = 'form-control';
                     // Format for datetime-local: YYYY-MM-DDTHH:MM
                     if (currentReminder) {
-                        let d = new Date(currentReminder);
-                        if (!currentReminder.endsWith('Z')) {
-                            d = new Date(currentReminder + 'Z'); // Treat server time as UTC
-                        }
-                        // Adjust to local ISO string roughly
-                        const offset = d.getTimezoneOffset() * 60000;
-                        const localISOTime = (new Date(d - offset)).toISOString().slice(0, 16);
-                        dateInput.value = localISOTime;
+                        // Format: YYYY-MM-DD HH:MM:SS -> YYYY-MM-DDTHH:MM
+                        dateInput.value = currentReminder.replace(' ', 'T').slice(0, 16);
                     }
 
                     // Clear Reminder Button

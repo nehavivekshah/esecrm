@@ -641,11 +641,11 @@ class TaskController extends Controller
         $task = new Todo_lists;
         $task->text = $request->text;
         $task->uid = Auth::id();
-        $task->completed = $request->completed;
-        $task->position = Todo_lists::max('position') + 1; // Optional: Assign the next order
+        $task->completed = $request->completed ? 1 : 0;
+        $task->position = (Todo_lists::where('uid', Auth::id())->max('position') ?? 0) + 1;
 
         if ($request->has('reminder_at')) {
-            $task->reminder_at = $request->reminder_at ? Carbon::parse($request->reminder_at) : null;
+            $task->reminder_at = !empty($request->reminder_at) ? Carbon::parse($request->reminder_at) : null;
             $task->is_notified = 0; // Reset notification status
         }
 
@@ -657,19 +657,21 @@ class TaskController extends Controller
     public function update(Request $request, $id)
     {
         $task = Todo_lists::findOrFail($id);
-        if (!empty($request->text)) {
+        if ($request->has('text')) {
             $task->text = $request->text;
         }
-        $task->completed = $request->completed;
+        if ($request->has('completed')) {
+            $task->completed = $request->completed ? 1 : 0;
+        }
 
         if ($request->has('reminder_at')) {
-            $task->reminder_at = $request->reminder_at ? Carbon::parse($request->reminder_at) : null;
+            $task->reminder_at = !empty($request->reminder_at) ? Carbon::parse($request->reminder_at) : null;
             if ($task->reminder_at && $task->reminder_at > Carbon::now()) {
                 $task->is_notified = 0; // Reset notification status if new future date
             }
         }
 
-        $task->update();
+        $task->save();
 
         return response()->json($task);
     }
@@ -677,10 +679,9 @@ class TaskController extends Controller
     public function reorder(Request $request)
     {
         $order = $request->order;
+        $count = count($order);
         foreach ($order as $index => $id) {
-            $task = Todo_lists::findOrFail($id);
-            $task->position = $index + 1; // Set new order
-            $task->save();
+            Todo_lists::where('id', $id)->update(['position' => $count - $index]);
         }
 
         return response()->json(['message' => 'Order updated']);

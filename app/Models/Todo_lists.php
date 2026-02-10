@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Todo_lists extends Model
 {
     use HasFactory;
+    protected $guarded = [];
 }
