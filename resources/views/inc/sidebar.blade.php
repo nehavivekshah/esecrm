@@ -50,11 +50,27 @@
 
         @if(in_array('leads', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
             <li>
-                <a href="/leads" @if(Request::segment(1) == 'leads') class="active" @endif>
-                    <i class="bx bx-user-pin"></i>
-                    <span class="link_name">Leads</span>
-                </a>
-                <span class="tooltip">Leads</span>
+                <span class="divider" data-bs-toggle="collapse" data-bs-target="#leads-menu"><label>Leads</label> <i
+                        class="bx bx-chevron-down-circle"></i></span>
+                <div id="leads-menu"
+                    class="collapse @if(Request::segment(1) == 'leads' || Request::segment(1) == 'leads' && Request::segment(2) == 'kanban') show @endif"
+                    data-bs-parent="#accordion">
+                    <ul class="sb_submenu">
+                        <li>
+                            <a href="/leads" @if(Request::segment(1) == 'leads' && Request::segment(2) == '') class="active"
+                            @endif>
+                                <i class="bx bx-list-ul"></i>
+                                <span class="link_name">List View</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('leads.kanban') }}" @if(Request::segment(1) == 'leads' && Request::segment(2) == 'kanban') class="active" @endif>
+                                <i class="bx bx-grid-alt"></i>
+                                <span class="link_name">Kanban View</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </li>
         @endif
 
@@ -78,13 +94,33 @@
             </li>
         @endif
 
-        @if(in_array('tasks', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
+        @if(in_array('tasks', $roleArray) || in_array('crm_tasks', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
             <li>
-                <a href="/task" @if(Request::segment(1) == 'task' || Request::segment(1) == 'edit-task') class="active" @endif>
-                    <i class="bx bx-calendar-check"></i>
-                    <span class="link_name">Tasks</span>
-                </a>
-                <span class="tooltip">Tasks</span>
+                <span class="divider" data-bs-toggle="collapse" data-bs-target="#tasks-menu"><label>Tasks</label> <i
+                        class="bx bx-chevron-down-circle"></i></span>
+                <div id="tasks-menu"
+                    class="collapse @if(Request::segment(1) == 'task' || Request::segment(1) == 'edit-task' || Request::segment(1) == 'crm-tasks') show @endif"
+                    data-bs-parent="#accordion">
+                    <ul class="sb_submenu">
+                        @if(in_array('crm_tasks', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
+                            <li>
+                                <a href="/crm-tasks" @if(Request::segment(1) == 'crm-tasks') class="active" @endif>
+                                    <i class="bx bx-phone-call"></i>
+                                    <span class="link_name">CRM Follow-ups</span>
+                                </a>
+                            </li>
+                        @endif
+                        @if(in_array('tasks', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
+                            <li>
+                                <a href="/task" @if(Request::segment(1) == 'task' || Request::segment(1) == 'edit-task')
+                                class="active" @endif>
+                                    <i class="bx bx-task"></i>
+                                    <span class="link_name">Project Tasks</span>
+                                </a>
+                            </li>
+                        @endif
+                    </ul>
+                </div>
             </li>
         @endif
 
@@ -92,9 +128,19 @@
             <span class="divider" data-bs-toggle="collapse" data-bs-target="#sales-menu"><label>Sales</label> <i
                     class="bx bx-chevron-down-circle"></i></span>
             <div id="sales-menu"
-                class="collapse @if(Request::segment(1) == 'proposals' || Request::segment(1) == 'invoices' || Request::segment(1) == 'contracts' || Request::segment(1) == 'recoveries' || Request::segment(1) == 'manage-proposal' || Request::segment(1) == 'manage-invoice' || Request::segment(1) == 'manage-contract' || Request::segment(1) == 'manage-recovery') show @endif"
+                class="collapse @if(Request::segment(1) == 'proposals' || Request::segment(1) == 'opportunities' || Request::segment(1) == 'invoices' || Request::segment(1) == 'contracts' || Request::segment(1) == 'recoveries' || Request::segment(1) == 'manage-proposal' || Request::segment(1) == 'manage-invoice' || Request::segment(1) == 'manage-contract' || Request::segment(1) == 'manage-recovery') show @endif"
                 data-bs-parent="#accordion">
                 <ul class="sb_submenu">
+                    @if(in_array('opportunities', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
+                        <li>
+                            <a href="/opportunities" @if(Request::segment(1) == 'opportunities') class="active" @endif>
+                                <i class="bx bx-doughnut-chart"></i>
+                                <span class="link_name">Opportunities</span>
+                            </a>
+                            <span class="tooltip">Opportunities</span>
+                        </li>
+                    @endif
+
                     @if(in_array('proposals', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $premium)))
                         <li>
                             <a href="/proposals" @if(Request::segment(1) == 'proposals' || Request::segment(1) == 'manage-proposal') class="active" @endif>
@@ -138,25 +184,7 @@
             </div>
         </li>
 
-        @if(in_array('opportunities', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
-            <li>
-                <a href="/opportunities" @if(Request::segment(1) == 'opportunities') class="active" @endif>
-                    <i class="bx bx-doughnut-chart"></i>
-                    <span class="link_name">Opportunities</span>
-                </a>
-                <span class="tooltip">Opportunities</span>
-            </li>
-        @endif
 
-        @if(in_array('crm_tasks', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
-            <li>
-                <a href="/crm-tasks" @if(Request::segment(1) == 'crm-tasks') class="active" @endif>
-                    <i class="bx bx-list-check"></i>
-                    <span class="link_name">CRM Tasks</span>
-                </a>
-                <span class="tooltip">CRM Tasks</span>
-            </li>
-        @endif
 
         @if(in_array('campaigns', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
             <li>
