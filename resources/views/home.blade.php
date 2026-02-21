@@ -619,13 +619,18 @@
         <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
         <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js"></script>
 
-        <!-- TODO LIST SCRIPTS -->
         <script>
-            const taskInput = document.getElementById('taskInput');
-            const addTaskButton = document.getElementById('addTask');
-            const todoList = document.getElementById('todoList');
-            const clearAll = document.getElementById('clearAll');
-            let tasks = [];
+            document.addEventListener('DOMContentLoaded', function() {
+                const taskInput = document.getElementById('taskInput');
+                const addTaskButton = document.getElementById('addTask');
+                const todoList = document.getElementById('todoList');
+                const clearAll = document.getElementById('clearAll');
+                let tasks = [];
+
+                if (!taskInput || !addTaskButton || !todoList) {
+                    console.error('Todo list elements not found!');
+                    return;
+                }
 
             function fetchTasks() {
                 fetch('/todo-lists')
@@ -698,8 +703,11 @@
                         const newOrder = [...todoList.querySelectorAll('li')].map(item => item.dataset.id);
                         fetch('/todo-lists/reorder', {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ order: newOrder, _token: '{{ csrf_token() }}' })
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                            },
+                            body: JSON.stringify({ order: newOrder })
                         });
                     });
 
@@ -724,7 +732,10 @@
                     const task = { text: taskValue, _token: '{{ csrf_token() }}', completed: false };
                     fetch('/manage-todolist-item', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
                         body: JSON.stringify(task)
                     })
                     .then(response => {
@@ -754,8 +765,11 @@
                     const completed = e.target.checked;
                     fetch(`/manage-todolist-item/${id}`, {
                         method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ completed, _token: '{{ csrf_token() }}' })
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({ completed })
                     }).then(() => fetchTasks());
                 }
             });
@@ -860,8 +874,10 @@
                         if (!willDelete) return;
                         const res = await fetch(`/manage-todolist-item/${id}`, {
                             method: 'DELETE',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ _token: '{{ csrf_token() }}' })
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                            }
                         });
                         if (res.ok) { fetchTasks(); }
                     });
@@ -964,12 +980,14 @@
                             try {
                                 const res = await fetch(`/manage-todolist-item/${id}`, {
                                     method: 'PUT',
-                                    headers: { 'Content-Type': 'application/json' },
+                                    headers: { 
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                    },
                                     body: JSON.stringify({
                                         text: newText,
                                         completed: task.completed,
-                                        reminder_at: reminderAt,
-                                        _token: '{{ csrf_token() }}'
+                                        reminder_at: reminderAt
                                     })
                                 });
                                 if (res.ok) {
@@ -1002,6 +1020,8 @@
                     });
                 }
             });
+            fetchTasks();
+        });
         </script>
 
         <!-- UI MODALS -->
@@ -1057,11 +1077,4 @@
             }
         </style>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                if (typeof fetchTasks === 'function') {
-                    fetchTasks();
-                }
-            });
-        </script>
 @endsection
