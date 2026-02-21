@@ -8,11 +8,30 @@ use Illuminate\Database\Eloquent\Model;
 class Leads extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
-        'cid', 'uid', 'name', 'company', 'email', 'mob', 'gstno', 
-        'location', 'purpose', 'assigned', 'poc', 'status', 
-        'whatsapp', 'position', 'industry', 'website', 'values', 
-        'language', 'tags', 'gst_no'
+        'cid',
+        'uid',
+        'name',
+        'company',
+        'email',
+        'mob',
+        'gstno',
+        'location',
+        'purpose',
+        'assigned',
+        'poc',
+        'status',
+        'whatsapp',
+        'position',
+        'industry',
+        'website',
+        'values',
+        'language',
+        'tags',
+        'gst_no',
+        'score',
+        'is_duplicate',
+        'source'
     ];
 }
