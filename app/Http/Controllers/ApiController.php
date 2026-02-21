@@ -319,13 +319,19 @@ class ApiController extends Controller
         $location = json_encode($request->address ?? '');
 
         if (empty($request->id)) {
-            // Insert new lead
-            $existingLead = Leads::where('mob', $request->mob)->first();
-            if ($existingLead) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Mobile number already exists in the leads table.',
-                ], 409);
+            // --- Phase 2: Duplicate Detection ---
+            $isDuplicate = 0;
+            if (!empty($request->email) || !empty($request->mob)) {
+                $existingQuery = Leads::where('cid', $company->id ?? '')
+                    ->where(function ($q) use ($request) {
+                        if (!empty($request->email))
+                            $q->orWhere('email', $request->email);
+                        if (!empty($request->mob))
+                            $q->orWhere('mob', $request->mob);
+                    });
+                if ($existingQuery->exists()) {
+                    $isDuplicate = 1;
+                }
             }
 
             $lead = new Leads();
@@ -340,7 +346,41 @@ class ApiController extends Controller
             $lead->industry = $request->industry ?? '';
             $lead->location = $location ?? '';
             $lead->website = '';
-            $lead->assigned = $request->assigned ?? '';
+
+            // --- Phase 2: Auto-Assignment Logic ---
+            $assignee = $request->assigned;
+            if (empty($assignee)) {
+                $leastLoadedUser = \Illuminate\Support\Facades\DB::table('users')
+                    ->leftJoin('leads', 'users.name', '=', 'leads.assigned')
+                    ->where('users.cid', $company->id ?? '')
+                    ->select('users.name', \Illuminate\Support\Facades\DB::raw('COUNT(leads.id) as leads_count'))
+                    ->groupBy('users.id', 'users.name')
+                    ->orderBy('leads_count', 'asc')
+                    ->first();
+                $assignee = $leastLoadedUser ? $leastLoadedUser->name : '';
+            }
+            $lead->assigned = $assignee;
+
+            // --- Phase 2: Lead Scoring Algorithm ---
+            $score = 0;
+            if (!empty($request->name))
+                $score += 10;
+            if (!empty($request->email))
+                $score += 20;
+            if (!empty($request->mob) || !empty($request->whatsapp))
+                $score += 20;
+            if (!empty($request->company))
+                $score += 10;
+            if (!empty($request->position))
+                $score += 10;
+            if (!empty($request->industry))
+                $score += 10;
+            if (!empty($request->value) && is_numeric($request->value) && $request->value > 0)
+                $score += 20;
+
+            $lead->score = min($score, 100);
+            $lead->is_duplicate = $isDuplicate;
+
             $lead->purpose = $request->subject ?? '';
             $lead->values = $request->value ?? '';
             $lead->language = $request->language ?? '';

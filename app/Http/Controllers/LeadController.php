@@ -351,7 +351,54 @@ class LeadController extends Controller
             $leadSingle->industry = ($request->industry ?? '');
             $leadSingle->location = ($location ?? '');
             $leadSingle->website = ($request->website ?? '');
-            $leadSingle->assigned = ($request->assigned ?? Auth::User()->name ?? '');
+            // --- Phase 2: Auto-Assignment Logic ---
+            $assignee = $request->assigned;
+            if (empty($assignee)) {
+                $leastLoadedUser = \Illuminate\Support\Facades\DB::table('users')
+                    ->leftJoin('leads', 'users.name', '=', 'leads.assigned')
+                    ->where('users.cid', Auth::user()->cid)
+                    ->select('users.name', \Illuminate\Support\Facades\DB::raw('COUNT(leads.id) as leads_count'))
+                    ->groupBy('users.id', 'users.name')
+                    ->orderBy('leads_count', 'asc')
+                    ->first();
+                $assignee = $leastLoadedUser ? $leastLoadedUser->name : Auth::user()->name;
+            }
+            $leadSingle->assigned = $assignee;
+
+            // --- Phase 2: Lead Scoring Algorithm ---
+            $score = 0;
+            if (!empty($request->name))
+                $score += 10;
+            if (!empty($request->email))
+                $score += 20;
+            if (!empty($request->mob) || !empty($request->whatsapp))
+                $score += 20;
+            if (!empty($request->company))
+                $score += 10;
+            if (!empty($request->position))
+                $score += 10;
+            if (!empty($request->industry))
+                $score += 10;
+            if (!empty($request->value) && is_numeric($request->value) && $request->value > 0)
+                $score += 20;
+            $leadSingle->score = min($score, 100);
+
+            // --- Phase 2: Duplicate Detection ---
+            $isDuplicate = 0;
+            if (!empty($request->email) || !empty($request->mob)) {
+                $existingQuery = \App\Models\Leads::where('cid', Auth::user()->cid)
+                    ->where(function ($q) use ($request) {
+                        if (!empty($request->email))
+                            $q->orWhere('email', $request->email);
+                        if (!empty($request->mob))
+                            $q->orWhere('mob', $request->mob);
+                    });
+                if ($existingQuery->exists()) {
+                    $isDuplicate = 1;
+                }
+            }
+            $leadSingle->is_duplicate = $isDuplicate;
+
             $leadSingle->purpose = ($request->purpose ?? '');
             $leadSingle->values = ($request->value ?? '');
             $leadSingle->language = ($request->language ?? '');
