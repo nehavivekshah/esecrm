@@ -149,6 +149,30 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/manage-proposal', [LeadController::class, 'manageProposal'])->name('manageProposal');
     Route::post('/manage-proposal', [LeadController::class, 'manageProposalPost'])->name('manageProposal');
 
+    /* Sales Pipeline (Opportunities) */
+    Route::get('/opportunities', [\App\Http\Controllers\OpportunityController::class, 'index'])->name('opportunities.index');
+    Route::get('/opportunities/kanban-data', [\App\Http\Controllers\OpportunityController::class, 'kanbanData'])->name('opportunities.kanban_data');
+    Route::post('/opportunities/store', [\App\Http\Controllers\OpportunityController::class, 'store'])->name('opportunities.store');
+    Route::post('/opportunities/update-stage', [\App\Http\Controllers\OpportunityController::class, 'updateStage'])->name('opportunities.update_stage');
+
+    /* CRM Follow-Up Tasks */
+    Route::get('/crm-tasks', [\App\Http\Controllers\CrmTaskController::class, 'index'])->name('crm_tasks.index');
+    Route::post('/crm-tasks/store', [\App\Http\Controllers\CrmTaskController::class, 'store'])->name('crm_tasks.store');
+    Route::post('/crm-tasks/update-status', [\App\Http\Controllers\CrmTaskController::class, 'updateStatus'])->name('crm_tasks.update_status');
+
+    /* CRM Reports & Analytics */
+    Route::get('/reports', [\App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
+
+    /* Automation Workflows */
+    Route::get('/automations', [\App\Http\Controllers\AutomationController::class, 'index'])->name('automations.index');
+    Route::post('/automations/store', [\App\Http\Controllers\AutomationController::class, 'store'])->name('automations.store');
+    Route::post('/automations/toggle-status', [\App\Http\Controllers\AutomationController::class, 'toggleStatus'])->name('automations.toggle_status');
+
+    /* Marketing Campaigns */
+    Route::get('/campaigns', [\App\Http\Controllers\CampaignController::class, 'index'])->name('campaigns.index');
+    Route::post('/campaigns/store', [\App\Http\Controllers\CampaignController::class, 'store'])->name('campaigns.store');
+    Route::post('/campaigns/launch', [\App\Http\Controllers\CampaignController::class, 'launch'])->name('campaigns.launch');
+
 
     /*Proposal Actions*/
     Route::get('/quotation/{id}/{token}', [LeadController::class, 'proposal']);
@@ -165,6 +189,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/view-single-client', [ClientController::class, 'singleClientGet'])->name('singleClient');
     Route::get('/manage-client', [ClientController::class, 'manageClient'])->name('manageClient');
     Route::post('/manage-client', [ClientController::class, 'manageClientPost'])->name('manageClient');
+    Route::post('/manage-client/interaction', [ClientController::class, 'storeInteraction'])->name('clients.interaction');
 
     /*Client Comments Management Router*/
     Route::get('/client-comments', [LeadController::class, 'clientComments']);

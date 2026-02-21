@@ -717,11 +717,43 @@ class ClientController extends Controller
 
     public function manageClient(Request $request)
     {
-
         $clients = Clients::with('departments')->where('id', '=', $request->id)->first();
+        $interactions = collect();
+        if ($request->id) {
+            $interactions = \App\Models\Interaction::where('rel_type', 'Client')
+                ->where('rel_id', $request->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
 
-        return view('manageClient', ['clients' => $clients]);
+        return view('manageClient', ['clients' => $clients, 'interactions' => $interactions]);
 
+    }
+
+    public function storeInteraction(Request $request)
+    {
+        $request->validate([
+            'client_id' => 'required|exists:clients,id',
+            'type' => 'required|string',
+            'content' => 'required_without:attachment',
+            'attachment' => 'nullable|file|max:10240' // max 10MB
+        ]);
+
+        $path = null;
+        if ($request->hasFile('attachment')) {
+            $path = $request->file('attachment')->store('interactions', 'public');
+        }
+
+        \App\Models\Interaction::create([
+            'user_id' => \Illuminate\Support\Facades\Auth::id(),
+            'rel_type' => 'Client',
+            'rel_id' => $request->client_id,
+            'type' => $request->type,
+            'content' => $request->content,
+            'attachment_path' => $path
+        ]);
+
+        return back()->with('success', 'Interaction/Document added successfully.');
     }
 
     public function manageClientPost(Request $request)
@@ -750,6 +782,7 @@ class ClientController extends Controller
             $client->values = $request->values ?? '';
             $client->language = $request->language ?? '';
             $client->tags = $request->tags ?? '';
+            $client->lifecycle_stage = $request->lifecycle_stage ?? null;
 
             if ($client->save()) {
                 // Save Departments
@@ -808,6 +841,7 @@ class ClientController extends Controller
             $leadSingle->values = $request->values ?? '';
             $leadSingle->language = $request->language ?? '';
             $leadSingle->tags = $request->tags ?? '';
+            $leadSingle->lifecycle_stage = $request->lifecycle_stage ?? null;
 
             if ($leadSingle->update()) {
                 // Save Departments
