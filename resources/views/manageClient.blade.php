@@ -16,8 +16,22 @@
                     style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
                     <i class="bx bx-arrow-back" style="font-size: 1.2rem; color: var(--color-default);"></i>
                 </a>
-                <h1 class="h4 fw-bold mb-0">@if(!empty($_GET['id'])) Edit Customer Details @else Add New Customer @endif
-                </h1>
+                <div class="d-flex align-items-center justify-content-between w-100">
+                    <h1 class="h4 fw-bold mb-0">@if(!empty($_GET['id'])) Edit Customer Details @else Add New Customer @endif</h1>
+                    @if(!empty($_GET['id']))
+                    <div class="d-flex gap-2">
+                        <a href="/manage-proposal?id=&lead_id={{ $clients->id }}&related=2" class="btn btn-indigo btn-sm rounded-pill px-3">
+                            <i class='bx bx-file-blank me-1'></i> Proposal
+                        </a>
+                        <a href="/manage-invoice?id=&client_id={{ $clients->id }}" class="btn btn-success btn-sm rounded-pill px-3">
+                            <i class='bx bx-receipt me-1'></i> Invoice
+                        </a>
+                        <a href="/task" class="btn btn-warning btn-sm rounded-pill px-3">
+                            <i class='bx bx-task me-1'></i> Add Task
+                        </a>
+                    </div>
+                    @endif
+                </div>
             </div>
 
             @if(!empty($_GET['id']))
@@ -32,6 +46,11 @@
                         <button class="nav-link rounded-pill px-4" id="interactions-tab" data-bs-toggle="pill"
                             data-bs-target="#interactions" type="button" role="tab" aria-controls="interactions"
                             aria-selected="false"><i class='bx bx-history me-1'></i> Interaction History</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link rounded-pill px-4" id="journey-tab" data-bs-toggle="pill"
+                            data-bs-target="#journey" type="button" role="tab" aria-controls="journey" aria-selected="false"><i
+                                class='bx bx-map-alt me-1'></i> Client Journey</button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link rounded-pill px-4" id="documents-tab" data-bs-toggle="pill"
@@ -292,15 +311,15 @@
                                     const tbody = document.getElementById('departmentBody');
                                     const tr = document.createElement('tr');
                                     tr.innerHTML = `
-                                            <td class="pb-3"><input type="text" name="departments[${deptIndex}][name]" class="form-control form-control-sm" placeholder="Sales"></td>
-                                            <td class="pb-3"><input type="text" name="departments[${deptIndex}][location]" class="form-control form-control-sm" placeholder="Location"></td>
-                                            <td class="pb-3"><input type="text" name="departments[${deptIndex}][poc]" class="form-control form-control-sm" placeholder="POC"></td>
-                                            <td class="pb-3 text-center align-middle">
-                                                <button type="button" class="btn btn-light text-danger btn-sm rounded-circle remove-dept">
-                                                    <i class="bx bx-trash"></i>
-                                                </button>
-                                            </td>
-                                        `;
+                                                <td class="pb-3"><input type="text" name="departments[${deptIndex}][name]" class="form-control form-control-sm" placeholder="Sales"></td>
+                                                <td class="pb-3"><input type="text" name="departments[${deptIndex}][location]" class="form-control form-control-sm" placeholder="Location"></td>
+                                                <td class="pb-3"><input type="text" name="departments[${deptIndex}][poc]" class="form-control form-control-sm" placeholder="POC"></td>
+                                                <td class="pb-3 text-center align-middle">
+                                                    <button type="button" class="btn btn-light text-danger btn-sm rounded-circle remove-dept">
+                                                        <i class="bx bx-trash"></i>
+                                                    </button>
+                                                </td>
+                                            `;
                                     tbody.appendChild(tr);
                                     deptIndex++;
                                 });
@@ -396,6 +415,96 @@
                         </div>
                     </div><!-- end interactions tab -->
 
+                    <!-- Client Journey Tab -->
+                    <div class="tab-pane fade" id="journey" role="tabpanel" aria-labelledby="journey-tab">
+                        <div class="form-card">
+                            <div class="section-title mb-4"><i class='bx bx-git-commit text-primary'></i> Full Lifecycle Journey
+                            </div>
+                            <div class="timeline">
+                                <!-- Step 1: Lead Stage -->
+                                <div class="timeline-item pb-4 border-start border-primary border-2 ps-4 position-relative">
+                                    <div class="timeline-marker position-absolute start-0 translate-middle bg-primary rounded-circle"
+                                        style="width: 14px; height: 14px; margin-left: -1px;"></div>
+                                    <h6 class="fw-bold mb-1">Lead Acquired</h6>
+                                    @if($leadOrigin)
+                                        <p class="text-muted small mb-0">Original Lead ID: #{{ $leadOrigin->id }} | Created:
+                                            {{ $leadOrigin->created_at->format('d M Y') }}</p>
+                                        <span class="badge bg-soft-success text-success mt-1">Source:
+                                            {{ $leadOrigin->source ?? 'Direct' }}</span>
+                                    @else
+                                        <p class="text-muted small mb-0">Created: {{ $clients->created_at->format('d M Y') }}</p>
+                                    @endif
+                                </div>
+
+                                <!-- Step 2: Proposals Stage -->
+                                @if(count($proposals) > 0)
+                                    <div class="timeline-item pb-4 border-start border-primary border-2 ps-4 position-relative">
+                                        <div class="timeline-marker position-absolute start-0 translate-middle bg-primary rounded-circle"
+                                            style="width: 14px; height: 14px; margin-left: -1px;"></div>
+                                        <h6 class="fw-bold mb-1">Business Proposals ({{ count($proposals) }})</h6>
+                                        <div class="list-group list-group-flush">
+                                            @foreach($proposals as $prop)
+                                                <div class="list-group-item bg-transparent px-0 border-0 py-1">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span class="small"><i class='bx bx-file me-1'></i> {{ $prop->subject }}</span>
+                                                        <span
+                                                            class="badge {{ $prop->status == 'Accepted' ? 'bg-success' : 'bg-info' }} rounded-pill"
+                                                            style="font-size: 0.65rem;">{{ $prop->status }}</span>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+
+                                <!-- Step 3: Projects Stage -->
+                                @if(count($projects) > 0)
+                                    <div class="timeline-item pb-4 border-start border-primary border-2 ps-4 position-relative">
+                                        <div class="timeline-marker position-absolute start-0 translate-middle bg-primary rounded-circle"
+                                            style="width: 14px; height: 14px; margin-left: -1px;"></div>
+                                        <h6 class="fw-bold mb-1">Projects & Execution ({{ count($projects) }})</h6>
+                                        @foreach($projects as $proj)
+                                            <div class="bg-light p-2 rounded mb-2 border-start border-3 border-success">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="small fw-bold">{{ $proj->name }}</span>
+                                                    <span class="small text-muted">₹{{ number_format($proj->amount, 0) }}</span>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif
+
+                                <!-- Step 4: Invoice Stage -->
+                                @if(count($invoices) > 0)
+                                    <div class="timeline-item pb-4 border-start border-primary border-2 ps-4 position-relative">
+                                        <div class="timeline-marker position-absolute start-0 translate-middle bg-primary rounded-circle"
+                                            style="width: 14px; height: 14px; margin-left: -1px;"></div>
+                                        <h6 class="fw-bold mb-1">Billing & Recovery</h6>
+                                        <div class="row g-2">
+                                            @foreach($invoices as $inv)
+                                                <div class="col-md-6">
+                                                    <div class="card bg-transparent border shadow-none p-2 h-100">
+                                                        <div class="d-flex justify-content-between">
+                                                            <small class="text-primary fw-bold">INV#000{{ $inv->id }}</small>
+                                                            <small class="text-muted">{{ $inv->created_at->format('d M') }}</small>
+                                                        </div>
+                                                        <div class="fw-bold">₹{{ number_format($inv->grand_total, 0) }}</div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+
+                                <div class="timeline-item ps-4 position-relative">
+                                    <div class="timeline-marker position-absolute start-0 translate-middle bg-success rounded-circle"
+                                        style="width: 14px; height: 14px; margin-left: -1px;"></div>
+                                    <h6 class="fw-bold mb-0 text-success">Customer Relationship Established</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- end journey tab -->
+
                     <!-- Documents Tab -->
                     <div class="tab-pane fade" id="documents" role="tabpanel" aria-labelledby="documents-tab">
                         <div class="row g-4">
@@ -441,8 +550,8 @@
                                                             <td><i class='bx bx-file text-primary me-2'></i>{{ $doc->content }}</td>
                                                             <td>{{ $doc->created_at->format('d M Y') }}</td>
                                                             <td>
-                                                                <a href="{{ asset('storage/' . $doc->attachment_path) }}" target="_blank"
-                                                                    class="btn btn-sm btn-outline-primary"><i
+                                                                <a href="{{ asset('storage/' . $doc->attachment_path) }}"
+                                                                    target="_blank" class="btn btn-sm btn-outline-primary"><i
                                                                         class='bx bx-download'></i> Download</a>
                                                             </td>
                                                         </tr>

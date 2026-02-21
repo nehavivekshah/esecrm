@@ -409,10 +409,59 @@
                                 <span>{{ count($users ?? []) }}</span>
                             </a>
                         @endif
+                <!-- Action Required Alerts Section -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-12">
+                        <div class="card p-4 border-0 shadow-sm" style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class='bx bxs-zap text-amber-500 h4 me-2 mb-0'></i>
+                                <h5 class="card-title mb-0">Action Required & CRM Alerts</h5>
+                            </div>
+                            <div class="row g-3">
+                                <!-- Overdue Follow-ups -->
+                                <div class="col-lg-6">
+                                    <h6 class="text-slate-500 small font-weight-bold text-uppercase mb-2">Overdue Follow-ups ({{ count($overdueLeadsList) }})</h6>
+                                    <div class="list-group list-group-flush border rounded-3 bg-white">
+                                        @forelse($overdueLeadsList as $olead)
+                                            <a href="/manage-lead?id={{ $olead->id }}" class="list-group-item list-group-item-action border-0 py-3">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <div class="fw-bold text-slate-800">{{ $olead->name }}</div>
+                                                        <small class="text-rose-500"><i class='bx bx-history'></i> Missed: {{ \Carbon\Carbon::parse($olead->next_date)->diffForHumans() }}</small>
+                                                    </div>
+                                                    <i class='bx bx-chevron-right text-slate-300'></i>
+                                                </div>
+                                            </a>
+                                        @empty
+                                            <div class="p-4 text-center text-muted small">No overdue follow-ups! Great job.</div>
+                                        @endforelse
+                                    </div>
+                                </div>
+                                <!-- Expiring Proposals -->
+                                <div class="col-lg-6">
+                                    <h6 class="text-slate-500 small font-weight-bold text-uppercase mb-2">Proposals Near Expiry ({{ count($expiringProposals) }})</h6>
+                                    <div class="list-group list-group-flush border rounded-3 bg-white">
+                                        @forelse($expiringProposals as $eprop)
+                                            <a href="/manage-proposal?id={{ $eprop->id }}" class="list-group-item list-group-item-action border-0 py-3">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <div class="fw-bold text-slate-800">{{ $eprop->subject }}</div>
+                                                        <small class="text-amber-600"><i class='bx bx-time-five'></i> Expires in: {{ \Carbon\Carbon::parse($eprop->open_till)->diffForHumans() }}</small>
+                                                    </div>
+                                                    <i class='bx bx-chevron-right text-slate-300'></i>
+                                                </div>
+                                            </a>
+                                        @empty
+                                            <div class="p-4 text-center text-muted small">All proposals are up to date.</div>
+                                        @endforelse
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                    <div class="row g-4">
+                <div class="row g-4">
                     <div class="col-lg-8">
                         <div class="row g-4">
                             <div class="col-md-6">

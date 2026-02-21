@@ -366,6 +366,17 @@ class LeadController extends Controller
 
             if ($leadSingle->save()) {
 
+                // --- CRM Lifecycle Hook: Auto-create follow-up task ---
+                $task = new \App\Models\Task();
+                $task->cid = $leadSingle->cid;
+                $task->uid = Auth::id();
+                $task->title = "Initial Follow-up: " . $leadSingle->name;
+                $task->msg = "New lead acquired. Please verify details and initiate contact with " . $leadSingle->name . " from " . ($leadSingle->company ?? 'direct source') . ".";
+                $task->status = '1'; // Priority: New/Argent
+                $task->label = '#4e73df'; // Primary Theme
+                $task->save();
+                // -----------------------------------------------------
+
                 if ((!empty($request->nxtDate) && (new DateTime($request->nxtDate) > new DateTime())) || !empty($request->message)) {
                     $leadComment = new Lead_comments();
 
@@ -423,7 +434,8 @@ class LeadController extends Controller
                         $proposal->save();
                     }
 
-                    $leadSingle->delete();
+                    $leadSingle->status = '5'; // Converted
+                    $leadSingle->update();
 
 
                     return redirect('leads?page=' . $currentPage)->with('success', "Successfully converted leads moved to client list.");
@@ -691,7 +703,20 @@ class LeadController extends Controller
         }
 
         // 5) Save to get ID
-        $proposal->save();
+        if ($proposal->save()) {
+            // --- CRM Lifecycle Hook: Auto-task on Proposal Sent ---
+            if ($proposal->status == 'Sent') {
+                $task = new \App\Models\Task();
+                $task->cid = $proposal->cid ?? Auth::user()->cid;
+                $task->uid = Auth::id();
+                $task->title = "Proposal Follow-up: " . $proposal->subject;
+                $task->msg = "Proposal was sent. Coordinate with client for feedback in 48 hours.";
+                $task->status = '3'; // Pending/Follow-up
+                $task->label = '#17a2b8';
+                $task->save();
+            }
+            // ------------------------------------------------------
+        }
 
         // 6) Handle proposal items
         if ($request->has('proposal_items')) {
@@ -1035,6 +1060,48 @@ class LeadController extends Controller
         $proposal->status = 'Accepted';
         $proposal->save();
 
+        // --- CRM Lifecycle Hook: Auto-convert Lead to Client ---
+        if ($proposal->related == 1 && !empty($proposal->lead_id)) {
+            $lead = Leads::find($proposal->lead_id);
+            if ($lead) {
+                // Check if already converted to avoid duplicates
+                $existingClient = Clients::where('commentLeadID', $lead->id)->first();
+                if (!$existingClient) {
+                    $client = new Clients();
+                    $client->cid = $lead->cid;
+                    $client->commentLeadID = $lead->id;
+                    $client->name = $lead->name;
+                    $client->email = $lead->email;
+                    $client->mob = $lead->mob;
+                    $client->gstno = $lead->gstno ?? $lead->gst_no;
+                    $client->whatsapp = $lead->whatsapp;
+                    $client->company = $lead->company;
+                    $client->position = $lead->position;
+                    $client->industry = $lead->industry;
+                    $client->location = $lead->location;
+                    $client->website = $lead->website;
+                    $client->purpose = $lead->purpose;
+                    $client->values = $lead->values;
+                    $client->language = $lead->language;
+                    $client->poc = $lead->poc;
+                    $client->tags = $lead->tags;
+                    $client->status = '0'; // Active Customer
+
+                    if ($client->save()) {
+                        // Update proposal to link to new client
+                        $proposal->lead_id = $client->id;
+                        $proposal->related = 2; // Linked to Client
+                        $proposal->save();
+
+                        // Update Lead status
+                        $lead->status = '5'; // Converted
+                        $lead->update();
+                    }
+                }
+            }
+        }
+        // -------------------------------------------------------
+
         return redirect()->back()->with('success', 'Signature submitted successfully.');
     }
 
@@ -1239,12 +1306,36 @@ class LeadController extends Controller
                     ]);
 
                     // Send the notification
-                    $response = $this->sendNotification($url);
+                    $this->sendNotification($url);
 
                     // Log the result
-                    Log::info("Notification sent to {$lead->email}: {$response}");
+                    Log::info("Notification sent to {$lead->email}");
                 }
             }
+
+            // --- CRM Lifecycle Hook: Auto-reminder for overdue invoices ---
+            $overdueInvoices = \App\Models\Invoices::where('status', '!=', 'Paid')
+                ->where('due_date', '<', now())
+                ->get();
+
+            foreach ($overdueInvoices as $invoice) {
+                $client = \App\Models\Clients::find($invoice->client_id);
+                if ($client) {
+                    $message = "Overdue Invoice #{$invoice->invoice_number}: Balance pending from {$client->name}. Please follow up.";
+                    $notificationLink = "https://esecrm.com/manage-invoice?id={$invoice->id}";
+
+                    $url = "https://esecrm.com/api/v1/send-notification?" . http_build_query([
+                        'title' => 'INVOICE OVERDUE',
+                        'msg' => $message,
+                        'url' => $notificationLink,
+                        'mono' => "msetah@gmail.com",
+                    ]);
+
+                    $this->sendNotification($url);
+                    Log::info("Invoice reminder sent for INV#{$invoice->id}");
+                }
+            }
+            // --------------------------------------------------------------
 
         } catch (\Exception $e) {
             // Handle exceptions

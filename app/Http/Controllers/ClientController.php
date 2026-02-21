@@ -718,15 +718,48 @@ class ClientController extends Controller
     public function manageClient(Request $request)
     {
         $clients = Clients::with('departments')->where('id', '=', $request->id)->first();
-        $interactions = collect();
-        if ($request->id) {
+        $leadOrigin = null;
+        $proposals = collect();
+        $projects = collect();
+        $invoices = collect();
+
+        if ($request->id && $clients) {
             $interactions = \App\Models\Interaction::where('rel_type', 'Client')
                 ->where('rel_id', $request->id)
                 ->orderBy('created_at', 'desc')
                 ->get();
+
+            // Fetch Journey Data
+            if (!empty($clients->commentLeadID)) {
+                $leadOrigin = \App\Models\Leads::find($clients->commentLeadID);
+            }
+
+            // Proposals (related to this client, or the original lead)
+            $leadIds = [$clients->id];
+            if ($leadOrigin)
+                $leadIds[] = $leadOrigin->id;
+
+            $proposals = \App\Models\Proposals::whereIn('lead_id', $leadIds)
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            $projects = \App\Models\Projects::where('client_id', $request->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            $invoices = \App\Models\Invoices::where('client_id', $request->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
         }
 
-        return view('manageClient', ['clients' => $clients, 'interactions' => $interactions]);
+        return view('manageClient', [
+            'clients' => $clients,
+            'interactions' => $interactions,
+            'leadOrigin' => $leadOrigin,
+            'proposals' => $proposals,
+            'projects' => $projects,
+            'invoices' => $invoices
+        ]);
 
     }
 

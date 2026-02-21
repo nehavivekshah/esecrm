@@ -87,6 +87,23 @@ class HomeController extends Controller
         $myPendingTasks = Task::where('uid', $auth_uid)->where('status', '!=', '4')->count();
         $totalLeads = Leads::where('cid', $auth_cid)->count();
 
+        // --- Action Required Alerts ---
+        $overdueLeadsList = Leads::leftJoin('lead_comments', 'leads.id', '=', 'lead_comments.lead_id')
+            ->where('leads.cid', $auth_cid)
+            ->where('leads.status', '!=', '5') // Not converted
+            ->where('lead_comments.next_date', '<', now())
+            ->select('leads.id', 'leads.name', 'lead_comments.next_date')
+            ->orderBy('lead_comments.next_date', 'ASC')
+            ->limit(5)
+            ->get();
+
+        $expiringProposals = Proposals::where('cid', $auth_cid)
+            ->whereIn('status', ['Open', 'Sent'])
+            ->where('open_till', '<', now()->addDays(3))
+            ->orderBy('open_till', 'ASC')
+            ->limit(5)
+            ->get();
+
         /* --- REVENUE CHART LOGIC (Line Chart) --- */
         $revenueDataRaw = Invoices::select(
             DB::raw('SUM(total_amount) as total'),
@@ -190,7 +207,9 @@ class HomeController extends Controller
             'activities',
             'activityChartLabels',
             'activityChartDatasets',
-            'selectedActivityDays'
+            'selectedActivityDays',
+            'overdueLeadsList',
+            'expiringProposals'
         ));
     }
 
