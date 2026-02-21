@@ -82,7 +82,7 @@ class HomeController extends Controller
             ->get(['leads.id']);
 
         /* --- DASHBOARD WIDGETS DATA --- */
-        $outstandingInvoices = Invoices::where('cid', $auth_cid)->where('status', '!=', 'Paid')->sum('total_amount');
+        $outstandingInvoices = Invoices::where('cid', $auth_cid)->where('status', '!=', 'paid')->sum('total_amount');
         $pendingProposals = Proposals::where('cid', $auth_cid)->whereIn('status', ['Open', 'Sent'])->count();
         $myPendingTasks = Task::where('uid', $auth_uid)->where('status', '!=', '4')->count();
         $totalLeads = Leads::where('cid', $auth_cid)->count();
@@ -92,8 +92,9 @@ class HomeController extends Controller
             ->where('leads.cid', $auth_cid)
             ->where('leads.status', '!=', '5') // Not converted
             ->where('lead_comments.next_date', '<', now())
-            ->select('leads.id', 'leads.name', 'lead_comments.next_date')
-            ->orderBy('lead_comments.next_date', 'ASC')
+            ->select('leads.id', 'leads.name', DB::raw('MAX(lead_comments.next_date) as next_date'))
+            ->groupBy('leads.id', 'leads.name')
+            ->orderBy('next_date', 'ASC')
             ->limit(5)
             ->get();
 
