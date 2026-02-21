@@ -409,6 +409,8 @@
                                 <span>{{ count($users ?? []) }}</span>
                             </a>
                         @endif
+                    </div>
+                </div>
                 <!-- Action Required Alerts Section -->
                 <div class="row g-4 mb-4">
                     <div class="col-md-12">
