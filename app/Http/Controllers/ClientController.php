@@ -749,7 +749,7 @@ class ClientController extends Controller
             'rel_type' => 'Client',
             'rel_id' => $request->client_id,
             'type' => $request->type,
-            'content' => $request->content,
+            'content' => $request->input('content'),
             'attachment_path' => $path
         ]);
 
