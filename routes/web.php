@@ -110,6 +110,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     /*Leads Management Router*/
     Route::get('/leads', [LeadController::class, 'leads']);
+    Route::get('/leads/kanban', [\App\Http\Controllers\LeadUIController::class, 'kanbanView'])->name('leads.kanban');
+    Route::get('/leads/kanban-data', [\App\Http\Controllers\LeadUIController::class, 'kanbanData'])->name('leads.kanban_data');
+    Route::post('/leads/update-status', [\App\Http\Controllers\LeadUIController::class, 'updateStatus'])->name('leads.update_status');
     Route::get('/view-single-lead', [LeadController::class, 'singleLeadsGet'])->name('singleLead');
 
     /* Assign Leads Router*/

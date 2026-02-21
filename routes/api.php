@@ -22,14 +22,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::prefix('/v1')->group(function(){
-    
+// Lead Capture API Route
+Route::post('/leads/submit', [\App\Http\Controllers\Api\LeadController::class, 'store']);
+
+Route::prefix('/v1')->group(function () {
+
     //FCM Registration api
     Route::get('/registerfcm', [ApiController::class, 'registerFcm']);
     Route::get('/send-notification', [ApiController::class, 'sendNotification']);
     Route::get('/check-login', [ApiController::class, 'checkLogin']);
-    
+
     Route::post('/enquiry', [ApiController::class, 'enquiryPost']);
     Route::get('/attendance', [ApiController::class, 'attendancePost']);
-    
+
 });
