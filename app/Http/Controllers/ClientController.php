@@ -442,6 +442,7 @@ class ClientController extends Controller
     {
         $clients = Clients::with('departments')->where('id', '=', $request->id)->first();
         $leadOrigin = null;
+        $interactions = collect();
         $proposals = collect();
         $projects = collect();
         $invoices = collect();
