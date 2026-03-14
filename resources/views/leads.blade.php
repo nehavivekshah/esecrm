@@ -66,11 +66,7 @@
     </style>
 
     <section class="task__section">
-        <div class="text">
-            <i class="bx bx-menu" id="mbtn"></i>
-            Leads Board
-            <a href="/signout" class="logoutbtn"><i class="bx bx-log-out"></i></a>
-        </div>
+        @include('inc.header', ['title' => 'Leads Board'])
         <div class="container-fluid">
             <!-- Filter & Assign Bar -->
             <div class="filter-bar d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">

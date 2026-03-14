@@ -22,6 +22,7 @@
         <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
         
         @include('inc.loginHeadLink')
+        <link rel="stylesheet" href="{{ asset('public/assets/css/premium.css') }}">
         
         <style>
             /* Loader Styles */
