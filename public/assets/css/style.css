@@ -1759,7 +1759,7 @@ span.divider {
     font-size: 15px;
     font-weight: 500;
     opacity: .9;
-    padding: 0px 15px !important;
+    padding: 0px 0px !important;
     cursor: pointer;
 }
 
@@ -2638,4 +2638,11 @@ div.dataTables_processing>div:last-child>div {
 
 .sidebar li i.bx.bx-chevron-down {
     text-align: right;
+}
+
+span.divider-left {
+    min-width: 151px;
+    display: flex;
+    justify-content: start;
+    align-items: center;
 }
