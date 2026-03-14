@@ -49,7 +49,7 @@
             </li>
         @endif
 
-        <li class="nav-title">SALES & CRM</li>
+        <li class="nav-title">CRM</li>
         @if(in_array('leads', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
             <li>
                 <span class="divider" data-bs-toggle="collapse" data-bs-target="#leads-menu"><label>Leads</label> <i
@@ -118,6 +118,7 @@
             </li>
         @endif
 
+        <li class="nav-title">SALES</li>
         <li>
             <span class="divider" data-bs-toggle="collapse" data-bs-target="#sales-menu"><label>Sales</label> <i
                     class="bx bx-chevron-down-circle"></i></span>
@@ -180,7 +181,7 @@
 
 
 
-        <li class="nav-title">ENGAGEMENT</li>
+        <li class="nav-title">MARKETING</li>
         @if(in_array('campaigns', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
             <li>
                 <a href="/campaigns" @if(Request::segment(1) == 'campaigns') class="active" @endif>
@@ -211,7 +212,7 @@
             </li>
         @endif
 
-        <li class="nav-title">ADMINISTRATION</li>
+        <li class="nav-title">OPERATIONS</li>
 
         @if(in_array('attendances', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
             <li>
@@ -222,6 +223,8 @@
                 <span class="tooltip">Attendance</span>
             </li>
         @endif
+
+        <li class="nav-title">SYSTEM</li>
 
         @if(Auth::user()->role == 'master')
             <li>
