@@ -26,8 +26,16 @@ use App\Models\Invoices;
 use App\Models\Invoice_items;
 use App\Models\CustomerDepartments;
 
+use App\Services\ClientService;
+
 class ClientController extends Controller
 {
+    protected $clientService;
+
+    public function __construct(ClientService $clientService)
+    {
+        $this->clientService = $clientService;
+    }
     public function getProjects($clientId)
     {
         // Fetch projects for the given client ID
@@ -96,161 +104,15 @@ class ClientController extends Controller
 
     public function recoveryPost(Request $request)
     {
-        $client = Clients::where('id', ($request->client_id ?? ''))->first();
-        if (($request->received ?? '') > 0) {
-            $recoveries = new Recoveries();
-
-            $recoveries->cid = (Auth::user()->cid ?? '');
-            $recoveries->client_id = ($request->client_id ?? '');
-            $recoveries->project_id = ($request->project_id ?? '');
-            $recoveries->paid = ($request->received ?? '');
-            $recoveries->note = ($request->note ?? '');
-            $recoveries->status = ($request->status ?? '0');
-        } else {
-            $recoveries = new Recoveries();
-
-            $recoveries->cid = (Auth::user()->cid ?? '');
-            $recoveries->client_id = ($request->client_id ?? '');
-            $recoveries->project_id = ($request->project_id ?? '');
-            $recoveries->paid = ($request->received ?? '');
-            $recoveries->note = ($request->note ?? '');
-            $recoveries->reminder = ($request->reminderDate ?? '');
-            $recoveries->status = ($request->status ?? '0');
+        if ($this->clientService->recordRecovery($request->all())) {
+            return redirect('recoveries')->with('success', 'Operation completed successfully.');
         }
-
-        if ($recoveries->save()) {
-
-            if (($request->send ?? '') == '1' && ($request->received ?? '') > 0) {
-
-                $to = $client->email ?? '';
-                $subject = 'Thank You !!';
-
-                $message = "<p style='font-weight:bold;'>Payment Received</p>" . ($request->note ?? '');
-
-                $viewName = 'emails.welcome';
-                $viewData = ["name" => ($client->name ?? 'User'), "messages" => $message];
-
-                if (!empty($client->email)) {
-
-                    // 1. Try to find user-specific settings
-                    $smtpSettings = SmtpSettings::where('user_id', Auth::id())->first();
-
-                    // 2. Fallback to company-specific settings (if no user-specific found and user has a cid)
-                    if (!$smtpSettings && Auth::user()->cid) {
-                        $smtpSettings = SmtpSettings::where('cid', Auth::user()->cid)->first();
-                    }
-
-
-                    $fromAddress = $smtpSettings?->from_address; // Get from DB if available
-                    $fromName = $smtpSettings?->from_name;       // Get from DB if available
-
-                    $mailable = new CustomMailable(
-                        $subject,
-                        $viewName,
-                        $viewData,
-                        $fromAddress, // Pass DB value or null
-                        $fromName     // Pass DB value or null
-                    );
-
-                    Mail::to($to)->send($mailable);
-
-                    //Mail::to($to)->send(new CustomMailable($subject, $viewName, $viewData));
-                }
-                return redirect('recoveries')->with('success', 'This recovery details was successfully added to the Recovery Table.');
-
-            } else {
-
-                $to = $client->email ?? '';
-                $subject = 'Payment Reminder Alert!!';
-
-                $message = "<b>Reminder Date:</b> " . (date_format(date_create(($request->reminderDate ?? '')), 'd M, Y')) . "<br><b>Remaining Bal.</b>" . ($request->bal ?? '') . "<br>" . ($request->note ?? '');
-
-                $viewName = 'emails.welcome';
-                $viewData = ["name" => ($client->name ?? 'User'), "messages" => $message];
-
-                if (!empty($client->email)) {
-
-                    // 1. Try to find user-specific settings
-                    $smtpSettings = SmtpSettings::where('user_id', Auth::id())->first();
-
-                    // 2. Fallback to company-specific settings (if no user-specific found and user has a cid)
-                    if (!$smtpSettings && Auth::user()->cid) {
-                        $smtpSettings = SmtpSettings::where('cid', Auth::user()->cid)->first();
-                    }
-
-
-                    $fromAddress = $smtpSettings?->from_address; // Get from DB if available
-                    $fromName = $smtpSettings?->from_name;       // Get from DB if available
-
-                    $mailable = new CustomMailable(
-                        $subject,
-                        $viewName,
-                        $viewData,
-                        $fromAddress, // Pass DB value or null
-                        $fromName     // Pass DB value or null
-                    );
-
-                    Mail::to($to)->send($mailable);
-
-                    //Mail::to($to)->send(new CustomMailable($subject, $viewName, $viewData));
-                }
-
-                return redirect('recoveries')->with('success', 'Payment reminder successfully updated.');
-
-            }
-
-        } else {
-            return back()->with('error', 'Failed to add this Recovery to the Recovery table.');
-        }
+        return back()->with('error', 'Failed to process recovery.');
     }
 
     public function recoveries()
     {
-        $recoveries = Recoveries::leftJoin('clients', 'recoveries.client_id', '=', 'clients.id')
-            ->leftJoin('projects', 'recoveries.project_id', '=', 'projects.id')
-            ->select(
-                'projects.id',
-                'clients.batchNo',
-                'clients.name',
-                'clients.company',
-                'clients.mob',
-                'clients.whatsapp',
-                'clients.industry',
-                'clients.email',
-                'clients.poc',
-                DB::raw('MAX(projects.name) as project'),
-                DB::raw('MAX(projects.amount) as project_amount'),
-                DB::raw('MAX(projects.note) as project_note'),
-                DB::raw('MAX(projects.deployment_url) as deployment_url'),
-                DB::raw('MAX(projects.amount) - SUM(recoveries.paid) as remaining_amount'),
-                DB::raw('MAX(recoveries.reminder) as reminder'),
-                'recoveries.status'
-            )
-            ->where('recoveries.cid', '=', Auth::user()->cid)
-            ->groupBy(
-                'projects.id',
-                'clients.batchNo',
-                'clients.name',
-                'clients.company',
-                'clients.mob',
-                'clients.whatsapp',
-                'clients.industry',
-                'clients.email',
-                'clients.poc',
-                'recoveries.status'
-            )
-            ->orderByRaw("
-                CASE
-                    WHEN MAX(projects.amount) - SUM(recoveries.paid) = 0 THEN 2  -- Rows with remaining_amount 0 go last
-                    WHEN recoveries.status = 0 
-                         AND DATE(MAX(recoveries.reminder)) <= CURDATE() 
-                         AND TIME(MAX(recoveries.reminder)) <= CURTIME() THEN 0 -- Overdue first
-                    ELSE 1 -- Rest of the rows second
-                END,
-                MAX(recoveries.reminder) DESC
-            ")
-            ->get();
-
+        $recoveries = $this->clientService->getRecoveriesSummary(Auth::user()->cid);
         $totalRemaining = $recoveries->sum('remaining_amount');
 
         return view('recoveries', ['totalRemaining' => $totalRemaining, 'recoveries' => $recoveries]);
@@ -292,110 +154,33 @@ class ClientController extends Controller
 
     public function manageRecoveryPost(Request $request)
     {
+        $client = $this->clientService->firstOrCreateClient([
+            'phone' => $request->phone,
+            'name' => $request->name,
+            'company' => $request->company,
+            'email' => $request->email
+        ]);
 
-        $customer = Clients::where('mob', '=', ($request->phone ?? ''))->first();
+        $project = $this->clientService->updateOrCreateProject(array_merge($request->all(), [
+            'client_id' => $client->id,
+            'project_name' => $request->project
+        ]), $request->id);
 
-        if (empty($customer->id)) {
-            $client = new Clients();
-
-            $client->cid = (Auth::user()->cid ?? '');
-            $client->commentLeadID = ($request->commentLeadID ?? '0');
-            $client->batchNo = ($request->btno ?? '');
-            $client->name = ($request->name ?? '');
-            $client->company = ($request->company ?? '');
-            $client->email = ($request->email ?? '');
-            $client->mob = ($request->phone ?? '');
-            $client->location = ($request->location ?? '');
-            $client->purpose = ($request->purpose ?? '');
-            $client->source = ($request->source ?? '');
-            $client->poc = ($request->executive ?? '');
-            $client->whatsapp = ($request->whatsapp ?? '');
-            $client->industry = ($request->industry ?? '');
-            $client->website = ($request->website ?? '');
-            $client->position = ($request->position ?? '');
-            $client->values = ($request->values ?? '');
-            $client->language = ($request->language ?? '');
-            $client->status = ($request->status ?? '0');
-            $client->save();
-        } else {
-            $customer->cid = (Auth::user()->cid ?? '');
-            $customer->commentLeadID = ($request->commentLeadID ?? '0');
-            $customer->batchNo = ($request->btno ?? '');
-            $customer->name = ($request->name ?? '');
-            $customer->company = ($request->company ?? '');
-            $customer->email = ($request->email ?? '');
-            $customer->mob = ($request->phone ?? '');
-            $customer->location = ($request->location ?? '');
-            $customer->purpose = ($request->purpose ?? '');
-            $customer->source = ($request->source ?? '');
-            $customer->poc = ($request->executive ?? '');
-            $customer->whatsapp = ($request->whatsapp ?? '');
-            $customer->industry = ($request->industry ?? '');
-            $customer->website = ($request->website ?? '');
-            $customer->position = ($request->position ?? '');
-            $customer->values = ($request->values ?? '');
-            $customer->language = ($request->language ?? '');
-            $customer->status = ($request->status ?? '0');
-            $customer->save();
-        }
-
-        $client_id = empty($customer->id) ? $client->id : $customer->id;
-        $cp = Projects::where('id', '=', ($request->id ?? ''))->first();
-
-        if (empty($cp->id)) {
-
-            $project = new Projects();
-
-            $project->cid = (Auth::user()->cid ?? '');
-            $project->client_id = ($client_id ?? '');
-            $project->name = ($request->project ?? '');
-            $project->type = ($request->type ?? '');
-            $project->amount = ($request->amount ?? '');
-            $project->note = ($request->note ?? '');
-            $project->deployment_url = ($request->website ?? '');
-            $project->status = ($request->status ?? '0');
-            $project->save();
-
-        } else {
-
-            $cp->cid = (Auth::user()->cid ?? '');
-            $cp->client_id = ($client_id ?? '');
-            $cp->name = ($request->project ?? '');
-            $cp->type = ($request->type ?? '');
-            $cp->amount = ($request->amount ?? '');
-            $cp->note = ($request->note ?? '');
-            $cp->website = ($request->website ?? '');
-            $cp->status = ($request->status ?? '0');
-            $cp->save();
-
-        }
-
-        $project_id = empty($cp->id) ? $project->id : $cp->id;
-        $checkProject = Recoveries::where('project_id', '=', $project_id)->count();
+        $checkProject = Recoveries::where('project_id', '=', $project->id)->count();
 
         if ($checkProject == 0) {
-            $recoveries = new Recoveries();
-
-            $recoveries->cid = (Auth::user()->cid ?? '');
-            $recoveries->client_id = ($client_id ?? '');
-            $recoveries->project_id = ($project_id ?? '');
-            $recoveries->paid = ($request->received ?? '');
-            $recoveries->note = ($request->note ?? '');
-            $recoveries->reminder = $request->reminder ?? NOW();
-            $recoveries->status = ($request->status ?? '0');
-
-            if ($recoveries->save()) {
-                return redirect('recoveries')->with('success', 'This recovery details was successfully added to the Recovery Table.');
-            } else {
-                return back()->with('error', 'Failed to add this Recovery to the Recovery table.');
-            }
-        } else {
-            if (empty($cp->id)) {
-                return back()->with('success', 'This recovery details was successfully added to the Recovery Table..');
-            } else {
-                return back()->with('success', 'This recovery details was successfully updated.');
-            }
+            $this->clientService->recordRecovery([
+                'client_id' => $client->id,
+                'project_id' => $project->id,
+                'received' => $request->received,
+                'note' => $request->note,
+                'reminderDate' => $request->reminder ?: now(),
+                'status' => $request->status ?: '0'
+            ]);
+            return redirect('recoveries')->with('success', 'Operation completed successfully.');
         }
+
+        return back()->with('success', 'Recovery details updated successfully.');
     }
 
     public function contracts()
@@ -597,87 +382,26 @@ class ClientController extends Controller
             'website' => 'required|url|max:255',
             'technology_stack' => 'required|string|max:255',
             'note' => 'nullable|string',
-            'license_key' => 'required|string|max:255|unique:eselicenses,eselicense_key,',
-            'expiry_date' => 'nullable|date',
-            'status' => 'required|in:active,blocked',
+            'license_key' => 'required|string|max:255|unique:eselicenses,eselicense_key,' . ($request->id ?? 'NULL'),
+            'expiry_date' => 'required|date',
         ]);
 
-        // Check for existing client
-        $client = Clients::where('mob', $validatedData['mobile'])
-            ->orWhere('email', $validatedData['email'])
-            ->first();
+        $client = $this->clientService->firstOrCreateClient($validatedData);
+        $project = $this->clientService->updateOrCreateProject(array_merge($validatedData, ['client_id' => $client->id]), $request->project_id);
 
-        if (!$client) {
-            $client = new Clients();
-            $client->cid = Auth::user()->cid;
-            $client->name = $validatedData['name'];
-            $client->company = $validatedData['company'];
-            $client->email = $validatedData['email'];
-            $client->mob = $validatedData['mobile'];
-            $client->location = $validatedData['location'] ?? '';
-            $client->status = '1';
-            $client->save();
-        } else {
-            $client_id = $client->id;
+        $license = $request->id ? Eselicenses::findOrFail($request->id) : new Eselicenses();
+        $license->fill([
+            'project_id' => $project->id,
+            'eselicense_key' => $request->license_key,
+            'expiry_date' => $request->expiry_date,
+            'technology_stack' => $request->technology_stack
+        ]);
 
-            $client = Clients::findOrFail($client_id);
-            $client->cid = Auth::user()->cid;
-            $client->name = $validatedData['name'];
-            $client->company = $validatedData['company'];
-            $client->email = $validatedData['email'];
-            $client->mob = $validatedData['mobile'];
-            $client->location = $validatedData['location'] ?? '';
-            $client->status = '1';
-            $client->update();
+        if ($license->save()) {
+            return redirect('licensing')->with('success', 'License details successfully processed.');
         }
 
-        $client_id = $client->id;
-
-        // Check if project exists or needs to be created
-        if (empty($validatedData['project_id'])) {
-            $project = new Projects();
-            $project->cid = Auth::user()->cid;
-            $project->client_id = $client_id;
-            $project->name = $validatedData['project_name'];
-            $project->type = $validatedData['type'];
-            $project->amount = $validatedData['cost'];
-            $project->note = $validatedData['note'];
-            $project->deployment_url = $validatedData['website'];
-            $project->technology_stack = $validatedData['technology_stack'];
-            $project->status = '1';
-            $project->save();
-
-            $project_id = $project->id;
-        } else {
-            $project_id = $validatedData['project_id'];
-            $project = Projects::findOrFail($project_id);
-            $project->cid = Auth::user()->cid;
-            $project->client_id = $client_id;
-            $project->name = $validatedData['project_name'];
-            $project->type = $validatedData['type'];
-            $project->amount = $validatedData['cost'];
-            $project->note = $validatedData['note'];
-            $project->deployment_url = $validatedData['website'];
-            $project->technology_stack = $validatedData['technology_stack'];
-            $project->status = '1';
-            $project->update();
-        }
-
-        $id = $request->id ?? '';
-        // Save or update license
-        if ($id) {
-            $license = Eselicenses::findOrFail($id);
-        } else {
-            $license = new Eselicenses();
-        }
-
-        $license->eselicense_key = $validatedData['license_key'];
-        $license->project_id = $project_id;
-        $license->expiry_date = $validatedData['expiry_date'];
-        $license->status = $validatedData['status'];
-        $license->save();
-
-        return redirect('licensing')->with('success', $id ? 'License updated successfully.' : 'License added successfully.');
+        return back()->with('error', 'Failed to process license.');
     }
 
     public function clients()

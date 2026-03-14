@@ -28,8 +28,19 @@ use App\Models\Proposal_signatures;
 use Exception;
 use DateTime;
 
+use App\Services\LeadService;
+use App\Services\ProposalService;
+
 class LeadController extends Controller
 {
+    protected $leadService;
+    protected $proposalService;
+
+    public function __construct(LeadService $leadService, ProposalService $proposalService)
+    {
+        $this->leadService = $leadService;
+        $this->proposalService = $proposalService;
+    }
     /*public function leads(Request $request)
     {
         // Build the base query
@@ -172,106 +183,11 @@ class LeadController extends Controller
 
     public function leads(Request $request)
     {
-        $today = Carbon::now()->format('Y-m-d H:i:s'); // include date & time
-
-        // Build the base query
-        $query = Leads::leftJoin('lead_comments', function ($join) {
-            $join->on('leads.id', '=', 'lead_comments.lead_id')
-                ->whereIn('lead_comments.next_date', function ($query) {
-                    $query->select(DB::raw('MAX(next_date)'))
-                        ->from('lead_comments')
-                        ->whereColumn('lead_comments.lead_id', 'leads.id');
-                });
-        })
-            ->select(
-                'leads.id',
-                'leads.cid',
-                'leads.name',
-                'leads.company',
-                'leads.email',
-                'leads.mob',
-                'leads.gstno',
-                'leads.whatsapp',
-                'leads.location',
-                'leads.purpose',
-                'leads.assigned',
-                'leads.values',
-                'leads.poc',
-                'leads.status',
-                'leads.created_at',
-                'leads.updated_at',
-                'lead_comments.msg',
-                DB::raw('MAX(lead_comments.next_date) as next_date'),
-                DB::raw('MAX(lead_comments.created_at) as last_talk'),
-
-                // Priority column
-                DB::raw("
-                    CASE
-                        WHEN leads.status = 1 AND MAX(lead_comments.next_date) <= '$today' THEN 1  -- Urgent Followup
-                        WHEN leads.status = 0 THEN 2                                             -- Fresh
-                        WHEN leads.status = 1 THEN 3                                             -- Normal Followup
-                        WHEN leads.status = 9 THEN 4                                             -- Lost
-                        ELSE 5                                                                   -- Others
-                    END as priority_order
-                ")
-            )
-            ->groupBy(
-                'leads.id',
-                'leads.cid',
-                'leads.name',
-                'leads.company',
-                'leads.email',
-                'leads.mob',
-                'leads.gstno',
-                'leads.whatsapp',
-                'leads.location',
-                'leads.purpose',
-                'leads.assigned',
-                'leads.values',
-                'leads.poc',
-                'leads.status',
-                'leads.created_at',
-                'leads.updated_at',
-                'lead_comments.msg'
-            );
-
-        // Filter by CID if not master
-        if (Auth::user()->role != 'master') {
-            $query->where('leads.cid', '=', Auth::user()->cid);
-        }
-
-        // Apply search
-        $search = $request->input('search');
-        if (!empty($search)) {
-            $query->where(function ($q) use ($search) {
-                $q->where('leads.name', 'like', "%{$search}%")
-                    ->orWhere('leads.company', 'like', "%{$search}%")
-                    ->orWhere('leads.email', 'like', "%{$search}%")
-                    ->orWhere('leads.mob', 'like', "%{$search}%")
-                    ->orWhere('leads.whatsapp', 'like', "%{$search}%")
-                    ->orWhere('leads.location', 'like', "%{$search}%")
-                    ->orWhere('leads.purpose', 'like', "%{$search}%")
-                    ->orWhere('leads.assigned', 'like', "%{$search}%")
-                    ->orWhere('leads.values', 'like', "%{$search}%")
-                    ->orWhere('leads.poc', 'like', "%{$search}%")
-                    ->orWhere('leads.tags', 'like', "%{$search}%")
-                    ->orWhere('lead_comments.msg', 'like', "%{$search}%");
-            });
-        }
-
-        // Apply status filter
-        $status = $request->input('status');
-        if ($status !== null) {
-            $query->where('leads.status', '=', $status);
-        }
-
-        // Order: urgent followup first (priority_order ASC), then by next_date ASC
-        $query->orderBy('priority_order', 'asc')
-            ->orderBy(DB::raw('MAX(lead_comments.next_date)'), 'asc');
-
-        // Pagination
         $perPage = $request->rowcount ?? 50;
-        $leads = $query->paginate($perPage);
+        $search = $request->input('search');
+        $status = $request->input('status');
+
+        $leads = $this->leadService->getPaginatedLeads($search, $status, $perPage);
 
         // Active users of the same company
         $getUsers = User::where('cid', '=', Auth::user()->cid)
@@ -335,12 +251,8 @@ class LeadController extends Controller
         $currentPage = $request->page ?? 1;
 
         if (empty($request->id)) {
-
             $leadSingle = new Leads();
 
-
-
-            $leadSingle->cid = (Auth::user()->cid ?? '');
             $leadSingle->name = ($request->name ?? '');
             $leadSingle->email = ($request->email ?? '');
             $leadSingle->mob = ($request->mob ?? '');
@@ -351,53 +263,15 @@ class LeadController extends Controller
             $leadSingle->industry = ($request->industry ?? '');
             $leadSingle->location = ($location ?? '');
             $leadSingle->website = ($request->website ?? '');
-            // --- Phase 2: Auto-Assignment Logic ---
-            $assignee = $request->assigned;
-            if (empty($assignee)) {
-                $leastLoadedUser = \Illuminate\Support\Facades\DB::table('users')
-                    ->leftJoin('leads', 'users.name', '=', 'leads.assigned')
-                    ->where('users.cid', Auth::user()->cid)
-                    ->select('users.name', \Illuminate\Support\Facades\DB::raw('COUNT(leads.id) as leads_count'))
-                    ->groupBy('users.id', 'users.name')
-                    ->orderBy('leads_count', 'asc')
-                    ->first();
-                $assignee = $leastLoadedUser ? $leastLoadedUser->name : Auth::user()->name;
-            }
-            $leadSingle->assigned = $assignee;
+            
+            // Auto-Assignment Logic
+            $leadSingle->assigned = $request->assigned ?: $this->leadService->getLeastLoadedUser(Auth::user()->cid);
 
-            // --- Phase 2: Lead Scoring Algorithm ---
-            $score = 0;
-            if (!empty($request->name))
-                $score += 10;
-            if (!empty($request->email))
-                $score += 20;
-            if (!empty($request->mob) || !empty($request->whatsapp))
-                $score += 20;
-            if (!empty($request->company))
-                $score += 10;
-            if (!empty($request->position))
-                $score += 10;
-            if (!empty($request->industry))
-                $score += 10;
-            if (!empty($request->value) && is_numeric($request->value) && $request->value > 0)
-                $score += 20;
-            $leadSingle->score = min($score, 100);
+            // Lead Scoring Algorithm
+            $leadSingle->score = $this->leadService->calculateScore($request->all());
 
-            // --- Phase 2: Duplicate Detection ---
-            $isDuplicate = 0;
-            if (!empty($request->email) || !empty($request->mob)) {
-                $existingQuery = \App\Models\Leads::where('cid', Auth::user()->cid)
-                    ->where(function ($q) use ($request) {
-                        if (!empty($request->email))
-                            $q->orWhere('email', $request->email);
-                        if (!empty($request->mob))
-                            $q->orWhere('mob', $request->mob);
-                    });
-                if ($existingQuery->exists()) {
-                    $isDuplicate = 1;
-                }
-            }
-            $leadSingle->is_duplicate = $isDuplicate;
+            // Duplicate Detection
+            $leadSingle->is_duplicate = $this->leadService->isDuplicate($request->email, $request->mob, Auth::user()->cid) ? 1 : 0;
 
             $leadSingle->purpose = ($request->purpose ?? '');
             $leadSingle->values = ($request->value ?? '');
@@ -412,25 +286,14 @@ class LeadController extends Controller
             }
 
             if ($leadSingle->save()) {
-
-                // --- CRM Lifecycle Hook: Auto-create follow-up task ---
-                $task = new \App\Models\Task();
-                $task->cid = $leadSingle->cid;
-                $task->uid = Auth::id();
-                $task->title = "Initial Follow-up: " . $leadSingle->name;
-                $task->msg = "New lead acquired. Please verify details and initiate contact with " . $leadSingle->name . " from " . ($leadSingle->company ?? 'direct source') . ".";
-                $task->status = '1'; // Priority: New/Argent
-                $task->label = '#4e73df'; // Primary Theme
-                $task->save();
-                // -----------------------------------------------------
+                // CRM Lifecycle Hook: Auto-create follow-up task
+                $this->leadService->createFollowUpTask($leadSingle);
 
                 if ((!empty($request->nxtDate) && (new DateTime($request->nxtDate) > new DateTime())) || !empty($request->message)) {
                     $leadComment = new Lead_comments();
-
                     $leadComment->lead_id = ($leadSingle->id ?? '');
                     $leadComment->msg = ($request->message ?? 'Call back at next date');
                     $leadComment->next_date = ($request->nxtDate ?? null);
-
                     $leadComment->save();
                 }
 
@@ -674,7 +537,6 @@ class LeadController extends Controller
             'discount_type' => 'nullable|in:none,before-tax,after-tax',
             'discount_percentage' => 'nullable|numeric|min:0',
             'notes' => 'nullable|string',
-
             'client_name' => 'required|string|max:255',
             'client_email' => 'nullable|email|max:255',
             'client_phone' => 'nullable|string|max:20',
@@ -683,8 +545,7 @@ class LeadController extends Controller
             'client_state' => 'nullable|string|max:100',
             'client_zip' => 'nullable|string|max:20',
             'client_country' => 'nullable|string|max:100',
-
-            'sub_total' => 'nullable|string',  // Allow string to handle formatted amounts
+            'sub_total' => 'nullable|string',
             'discount_amount_calculated' => 'nullable|string',
             'cgst_total' => 'nullable|string',
             'sgst_total' => 'nullable|string',
@@ -693,195 +554,73 @@ class LeadController extends Controller
             'adjustment_amount' => 'nullable|numeric',
             'grand_total' => 'nullable|string',
             'status' => 'nullable|string|in:draft,sent,accepted,rejected',
-
             'id' => 'nullable|integer|exists:proposals,id'
         ]);
 
-        // 2) Convert string amounts to numeric values (strip ₹ and parse as float)
-        $subTotal = $this->convertCurrencyStringToNumber($validatedData['sub_total'] ?? '0');
-        $discountAmountCalculated = $this->convertCurrencyStringToNumber($validatedData['discount_amount_calculated'] ?? '0');
-        $cgst_total = $this->convertCurrencyStringToNumber($validatedData['cgst_total'] ?? '0');
-        $sgst_total = $this->convertCurrencyStringToNumber($validatedData['sgst_total'] ?? '0');
-        $igst_total = $this->convertCurrencyStringToNumber($validatedData['igst_total'] ?? '0');
-        $vat_total = $this->convertCurrencyStringToNumber($validatedData['vat_total'] ?? '0');
-        $grandTotal = $this->convertCurrencyStringToNumber($validatedData['grand_total'] ?? '0');
+        // 2) Convert string amounts to numeric values
+        $subTotal = $this->proposalService->convertCurrencyStringToNumber($validatedData['sub_total'] ?? '0');
+        $discountAmountCalculated = $this->proposalService->convertCurrencyStringToNumber($validatedData['discount_amount_calculated'] ?? '0');
+        $cgst_total = $this->proposalService->convertCurrencyStringToNumber($validatedData['cgst_total'] ?? '0');
+        $sgst_total = $this->proposalService->convertCurrencyStringToNumber($validatedData['sgst_total'] ?? '0');
+        $igst_total = $this->proposalService->convertCurrencyStringToNumber($validatedData['igst_total'] ?? '0');
+        $vat_total = $this->proposalService->convertCurrencyStringToNumber($validatedData['vat_total'] ?? '0');
+        $grandTotal = $this->proposalService->convertCurrencyStringToNumber($validatedData['grand_total'] ?? '0');
 
         // 3) Determine if this is an update or create action
-        if (!empty($validatedData['id'])) {
-            $proposal = Proposals::findOrFail($validatedData['id']);
-        } else {
-            $proposal = new Proposals();
+        $proposal = !empty($validatedData['id']) ? Proposals::findOrFail($validatedData['id']) : new Proposals();
+        if (!$proposal->exists) {
             $proposal->uid = Auth::User()->id ?? null;
         }
 
         // 4) Assign values
-        $proposal->lead_id = $validatedData['lead_id'];
-        $proposal->subject = $validatedData['subject'];
-        $proposal->related = $validatedData['related'] ?? 1;
-        $proposal->proposal_date = $validatedData['proposal_date'];
-        $proposal->open_till = $validatedData['open_till'] ?? null;
-        $proposal->currency = $validatedData['currency'] ?? 'USD';
-        $proposal->discount_type = $validatedData['discount_type'] ?? 'none';
-        $proposal->discount_percentage = $validatedData['discount_percentage'] ?? 0;
-        $proposal->notes = $validatedData['notes'] ?? null;
+        $proposal->fill(array_merge($validatedData, [
+            'sub_total' => $subTotal,
+            'discount_amount_calculated' => $discountAmountCalculated,
+            'cgst_total' => $cgst_total,
+            'sgst_total' => $sgst_total,
+            'igst_total' => $igst_total,
+            'vat_total' => $vat_total,
+            'grand_total' => $grandTotal,
+            'status' => ($request->submit == 'Save & Send') ? ($validatedData['status'] ?? 'Sent') : ($validatedData['status'] ?? 'draft')
+        ]));
 
-        $proposal->client_name = $validatedData['client_name'];
-        $proposal->client_email = $validatedData['client_email'] ?? null;
-        $proposal->client_phone = $validatedData['client_phone'] ?? null;
-        $proposal->client_address = $validatedData['client_address'] ?? null;
-        $proposal->client_city = $validatedData['client_city'] ?? null;
-        $proposal->client_state = $validatedData['client_state'] ?? null;
-        $proposal->client_zip = $validatedData['client_zip'] ?? null;
-        $proposal->client_country = $validatedData['client_country'] ?? null;
-
-        // Store numeric values after conversion
-        $proposal->sub_total = $subTotal;
-        $proposal->discount_amount_calculated = $discountAmountCalculated;
-        $proposal->cgst_total = $cgst_total;
-        $proposal->sgst_total = $sgst_total;
-        $proposal->igst_total = $igst_total;
-        $proposal->vat_total = $vat_total;
-        $proposal->adjustment_amount = $validatedData['adjustment_amount'] ?? 0;
-        $proposal->grand_total = $grandTotal;
-        if ($request->submit == 'Save & Send') {
-            $proposal->status = $validatedData['status'] ?? 'Sent';
-        } else {
-            $proposal->status = $validatedData['status'] ?? 'draft';
-        }
-
-        // 5) Save to get ID
         if ($proposal->save()) {
-            // --- CRM Lifecycle Hook: Auto-task on Proposal Sent ---
+            // CRM Lifecycle Hook: Auto-task on Proposal Sent
             if ($proposal->status == 'Sent') {
-                $task = new \App\Models\Task();
-                $task->cid = $proposal->cid ?? Auth::user()->cid;
-                $task->uid = Auth::id();
-                $task->title = "Proposal Follow-up: " . $proposal->subject;
-                $task->msg = "Proposal was sent. Coordinate with client for feedback in 48 hours.";
-                $task->status = '3'; // Pending/Follow-up
-                $task->label = '#17a2b8';
-                $task->save();
+                $this->proposalService->createProposalFollowUpTask($proposal);
             }
-            // ------------------------------------------------------
+
+            // 5) Handle proposal items via service
+            if ($request->has('proposal_items')) {
+                $this->proposalService->processItems($proposal, $request->input('proposal_items', []));
+            }
+
+            if ($request->submit == 'Save & Send') {
+                $to = $validatedData['client_email'] ?? '';
+                $subject = 'Business Proposal #000' . ($proposal->id ?? '') . ' Received: ' . ($validatedData['subject']);
+                $message = "We have also attached our business proposal for your kind perusal.<br><br>
+                            <b>Proposal ID:</b> #000" . ($proposal->id ?? '') . "<br>
+                            <b>Valid Until:</b> " . (date_format(date_create($proposal->open_till ?? null), 'd M, Y')) . "<br>
+                            You can view the full proposal at the following link: <a href='https://esecrm.com/proposal/" . ($proposal->id ?? '') . "/" . md5($proposal->client_email ?? '') . "'>View Proposal</a><br><br>
+                            If you have any questions or comments, feel free to reach out or comment online. We are here to assist you.<br><br>
+                            Thank you once again for your interest and trust.<br><br>";
+
+                $viewData = [
+                    "name" => ($validatedData['client_name'] ?? 'Sir/Mam'),
+                    "messages" => $message,
+                    "company" => (session('companies')->name ?? ''),
+                    "signature" => nl2br(Auth::User()->esign) ?? "Regards<br>Webbrella Global"
+                ];
+
+                $this->leadService->sendMail($to, $subject, 'emails.proposal', $viewData);
+
+                return back()->with('success', 'Proposal sent successfully!');
+            }
+
+            return back()->with('success', 'Proposal saved successfully!');
         }
 
-        // 6) Handle proposal items
-        if ($request->has('proposal_items')) {
-            if (!empty($validatedData['id'])) {
-                Proposal_items::where('proposal_id', $proposal->id)->delete();
-            }
-
-            foreach ($request->input('proposal_items', []) as $row) {
-
-                $itemName = $row['item_name'] ?? '';
-                $descr = $row['description'] ?? '';
-                $qty = !empty($row['quantity']) ? (int) $row['quantity'] : 1;
-                $rate = !empty($row['rate']) ? (float) $row['rate'] : 0;
-
-                // Skip completely blank rows
-                if (!$itemName && !$descr && $qty <= 0 && $rate <= 0) {
-                    continue;
-                }
-
-                // ---------- 2.  Parse selected taxes ----------
-                $cgst = $sgst = $igst = $vat = 0.0;        // defaults
-                $taxAmountTotal = 0.0;
-
-                foreach ($row['tax_percentage'] ?? [] as $entry) {
-                    [$code, $percent] = explode(':', $entry);
-                    $percent = (float) $percent;
-
-                    // store individual component
-                    switch (strtolower($code)) {
-                        case '0':
-                            $cgst = $percent;
-                            break;
-                        case '1':
-                            $sgst = $percent;
-                            break;
-                        case '2':
-                            $igst = $percent;
-                            break;
-                        case '3':
-                            $vat = $percent;
-                            break;
-                    }
-
-                    // accumulate this tax into the line total
-                    $taxAmountTotal += ($rate * $qty) * ($percent / 100);
-                }
-
-                // ---------- 3.  Grand total for this line ----------
-                $lineSubtotal = $rate * $qty;           // price before any tax
-                $lineTotal = $lineSubtotal + $taxAmountTotal;
-
-                $proposalItem = new Proposal_items();
-                $proposalItem->proposal_id = $proposal->id;
-                $proposalItem->item_name = $itemName;
-                $proposalItem->description = $descr;
-                $proposalItem->quantity = $qty;
-                $proposalItem->rate = $rate;
-                $proposalItem->cgst_percent = $cgst;
-                $proposalItem->sgst_percent = $sgst;
-                $proposalItem->igst_percent = $igst;
-                $proposalItem->vat_percent = $vat;
-                $proposalItem->item_total_amount = $lineTotal;
-                $proposalItem->save();
-            }
-
-        }
-
-
-        if ($request->submit == 'Save & Send') {
-
-            $to = $validatedData['client_email'] ?? '';
-            $subject = 'Business Proposal #000' . ($proposal->id ?? '') . ' Received: ' . ($validatedData['subject']);
-
-            $message = "
-            We have also attached our business proposal for your kind perusal.<br><br>
-            
-            <b>Proposal ID:</b> #000" . ($proposal->id ?? '') . "<br>
-            <b>Valid Until:</b> " . (date_format(date_create($proposal->open_till ?? null), 'd M, Y')) . "<br>
-            You can view the full proposal at the following link: <a href='https://esecrm.com/proposal/" . ($proposal->id ?? '') . "/" . md5($proposal->client_email ?? '') . "'>View Proposal</a><br><br>
-            
-            If you have any questions or comments, feel free to reach out or comment online. We are here to assist you.<br><br>
-            
-            Thank you once again for your interest and trust.<br><br>
-            ";
-
-            $viewName = 'emails.proposal';
-            $company = session('companies');
-            $signature = nl2br(Auth::User()->esign) ?? "Regards<br>Webbrella Global";
-            $viewData = ["name" => ($validatedData['client_name'] ?? 'Sir/Mam'), "messages" => $message, "company" => ($company->name ?? ''), "signature" => $signature];
-
-            // 1. Try to find user-specific settings
-            $smtpSettings = SmtpSettings::where('user_id', Auth::id())->first();
-
-            // 2. Fallback to company-specific settings (if no user-specific found and user has a cid)
-            if (!$smtpSettings && Auth::user()->cid) {
-                $smtpSettings = SmtpSettings::where('cid', Auth::user()->cid)->first();
-            }
-
-
-            $fromAddress = $smtpSettings?->from_address; // Get from DB if available
-            $fromName = $smtpSettings?->from_name;       // Get from DB if available
-
-            $mailable = new CustomMailable(
-                $subject,
-                $viewName,
-                $viewData,
-                $fromAddress, // Pass DB value or null
-                $fromName     // Pass DB value or null
-            );
-
-            Mail::to($to)->send($mailable);
-            //Mail::to($to)->send(new CustomMailable($subject, $viewName, $viewData));
-
-            return back()->with('success', 'Proposal sent successfully!');
-        }
-
-        // 7) Redirect or response
-        return back()->with('success', 'Proposal saved successfully!');
+        return back()->with('error', 'Failed to save proposal.');
     }
 
     // Helper function to convert currency strings like "₹100.00" to float
