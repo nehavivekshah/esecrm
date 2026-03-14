@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Traits\BelongsToCompany;
+
 class Invoices extends Model
 {
-    use HasFactory;
+    use HasFactory, BelongsToCompany;
     
     public function client() {
         return $this->belongsTo(Clients::class);
