@@ -14,14 +14,6 @@
         }
 
         /*.dataTables_wrapper .dataTables_filter { display: none; }*/
-        .filter-bar {
-            background: #fff;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            margin-bottom: 15px;
-        }
-
         #leadslists tbody tr {
             cursor: pointer;
         }
@@ -69,11 +61,11 @@
         @include('inc.header', ['title' => 'Leads Board'])
         <div class="container-fluid">
             <!-- Filter & Assign Bar -->
-            <div class="filter-bar d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+            <div class="card p-3 mb-4 border-0 shadow-sm d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
                 <div class="d-flex flex-wrap gap-2">
                     @if(in_array('All', $roleArray))
                         <!-- Sales Rep Filter -->
-                        <select id="ajaxSalesRep" class="form-select form-select-sm" style="width: 150px;">
+                        <select id="ajaxSalesRep" class="form-select form-select-sm" style="width: 150px; border-radius: 20px;">
                             <option value="">All Sales Reps</option>
                             @foreach($getUsers as $user)
                                 <option value="{{ $user->name }}">{{ $user->name }}</option>
@@ -82,14 +74,14 @@
                     @endif
 
                     <!-- Status Filter -->
-                    <select id="ajaxStatus" class="form-select form-select-sm" style="width: 120px;">
+                    <select id="ajaxStatus" class="form-select form-select-sm" style="width: 120px; border-radius: 20px;">
                         <option value="">Status</option>
                         <option value="0">Fresh</option>
                         <option value="1">Follow Up</option>
                         <option value="9">Loss</option>
                     </select>
 
-                    <button class="btn btn-primary btn-sm" id="refreshBtn"><i class="bx bx-refresh"></i></button>
+                    <button class="btn btn-light btn-sm rounded-circle shadow-sm" style="width: 32px; height: 32px; padding: 0;" id="refreshBtn"><i class="bx bx-refresh"></i></button>
                 </div>
 
                 <div class="d-flex mob-style gap-2">
@@ -101,14 +93,14 @@
                     @endif
 
                     @if(in_array('leads_import', $roleArray) || in_array('All', $roleArray))
-                        <a href="javascript:void(0)" class="btn btn-warning btn-sm" id="importFile"><i class="bx bx-upload"></i>
+                        <a href="javascript:void(0)" class="btn btn-warning btn-sm rounded-pill shadow-sm px-3" id="importFile"><i class="bx bx-upload"></i>
                             <span>Import</span></a>
-                        <a href="/public/assets/leads.csv" class="btn btn-danger btn-sm" target="_blank" download="leads.csv"
+                        <a href="/public/assets/leads.csv" class="btn btn-light btn-sm rounded-pill shadow-sm px-3 border" target="_blank" download="leads.csv"
                             title="Download CSV Sample File"><i class="bx bx-download"></i> <span>Sample File</span></a>
                     @endif
 
                     @if(in_array('leads_add', $roleArray) || in_array('All', $roleArray))
-                        <a href="/manage-lead" class="btn btn-primary bg-primary text-white btn-sm"><i class="bx bx-plus"></i>
+                        <a href="/manage-lead" class="btn btn-indigo shadow-sm rounded-pill btn-sm px-3"><i class="bx bx-plus"></i>
                             <span>Add New</span></a>
                     @endif
                     <!--<a href="/manage-lead" class="btn btn-success btn-sm"><i class="bx bx-plus"></i></a>-->
@@ -116,31 +108,33 @@
             </div>
 
             <!-- Table -->
-            <div class="table-responsive mb-3">
-                <table id="leadslists" class="table table-hover table-condensed m-table leads"
-                    style="width:100%;border-radius:5px;overflow:hidden;">
-                    <thead>
-                        <tr>
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-0 table-responsive">
+                    <table id="leadslists" class="table table-hover table-condensed m-table leads mb-0"
+                        style="width:100%;border-radius:var(--card-radius);overflow:hidden;">
+                        <thead>
+                            <tr>
 
-                            <th>Name</th>
-                            <th class="m-none">Company</th>
-                            <th class="m-none mw80">Mobile No.</th>
-                            <th class="m-none mw60">Status</th>
-                            <th class="m-none mw80">Since</th>
-                            <th class="m-none mw80">Purpose</th>
-                            <th class="m-none mw60">Value</th>
-                            <th class="m-none mw70">Last Talk</th>
-                            <th class="m-none mw150">Next Move</th>
-                            @if(in_array('All', $roleArray))
-                                <th class="m-none mw60">Assigned</th>
-                            @else
-                                <th class="m-none mw60">POC</th>
-                            @endif
-                            <th class="position-sticky end-0" width="60px">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+                                <th>Name</th>
+                                <th class="m-none">Company</th>
+                                <th class="m-none mw80">Mobile No.</th>
+                                <th class="m-none mw60">Status</th>
+                                <th class="m-none mw80">Since</th>
+                                <th class="m-none mw80">Purpose</th>
+                                <th class="m-none mw60">Value</th>
+                                <th class="m-none mw70">Last Talk</th>
+                                <th class="m-none mw150">Next Move</th>
+                                @if(in_array('All', $roleArray))
+                                    <th class="m-none mw60">Assigned</th>
+                                @else
+                                    <th class="m-none mw60">POC</th>
+                                @endif
+                                <th class="position-sticky end-0 bg-slate-50" width="60px">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </section>

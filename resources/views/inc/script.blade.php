@@ -1065,7 +1065,7 @@
                         $('#status').html(option);
 
                         // Show the modal
-                        $('#clientModal').modal('show');
+                        $('#clientModal').offcanvas('show');
                     },
                     error: function (xhr, status, error) {
                         // Handle errors here
