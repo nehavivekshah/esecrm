@@ -33,7 +33,7 @@
                                 </select>
                                 <small class="text-muted">The medium through which the campaign runs.</small>
                             </div>
-                            <button type="submit" class="btn btn-primary w-100 fw-bold">Create Draft</button>
+                            <button type="submit" class="btn btn-indigo rounded-pill w-100 fw-bold">Create Draft</button>
                         </form>
                     </div>
                 </div>
@@ -71,10 +71,10 @@
                                             </td>
                                             <td>
                                                 @if($camp->status === 'Draft')
-                                                    <button class="btn btn-sm btn-outline-success launch-btn"
+                                                    <button class="btn btn-sm btn-outline-indigo rounded-pill launch-btn"
                                                         data-id="{{ $camp->id }}"><i class='bx bx-rocket'></i> Launch</button>
                                                 @else
-                                                    <button class="btn btn-sm btn-light disabled"><i class='bx bx-check'></i>
+                                                    <button class="btn btn-sm btn-light rounded-pill disabled"><i class='bx bx-check'></i>
                                                         Running</button>
                                                 @endif
                                             </td>

@@ -15,7 +15,7 @@
                 <h1>Invoice Board</h1>
                 @if(in_array('invoice_add', $roleArray) || in_array('All', $roleArray))
                     <div class="btn-group">
-                        <a href="/manage-invoice" class="btn btn-primary bg-primary text-white btn-sm">
+                        <a href="/manage-invoice" class="btn btn-indigo rounded-pill btn-sm">
                             <i class="bx bx-plus"></i> 
                             <span>Create New Invoice</span>
                         </a>
@@ -63,16 +63,16 @@
                                         @endif
                                     </td>
                                     <td class="position-sticky end-0">
-                                        <div class="table-btn">
+                                        <div class="table-btn d-flex align-items-center gap-2">
                                             <a href="/invoices/pdf/preview/{{ $invoice->id }}" 
-                                               class="btn btn-primary bg-primary text-white btn-sm" 
+                                               class="btn btn-outline-primary btn-sm rounded-circle shadow-sm" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;"
                                                title="View"
                                                target="_blank">
                                                 <i class="bx bx-file"></i>
                                             </a>
                                             @if(in_array('invoice_edit', $roleArray) || in_array('All', $roleArray))
                                                 <a href="/manage-invoice?id={{ $invoice->id }}" 
-                                                   class="btn btn-info btn-sm" 
+                                                   class="btn btn-outline-info btn-sm rounded-circle shadow-sm" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;"
                                                    title="Edit">
                                                     <i class="bx bx-edit"></i>
                                                 </a>
@@ -80,14 +80,14 @@
                                             
                                             <!-- Send Invoice -->
                                             <a href="mailto:{{ $invoice->client_email ?? '' }}?subject=Invoice INV-{{ $invoice->invoice_number }}&body=Please find attached invoice." 
-                                               class="btn btn-warning btn-sm send-invoice-btn" 
+                                               class="btn btn-outline-warning btn-sm send-invoice-btn rounded-circle shadow-sm" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;"
                                                title="Send Email">
                                                 <i class="bx bx-envelope"></i>
                                             </a>
 
                                             @if(in_array('invoice_delete', $roleArray) || in_array('All', $roleArray))
                                                 <a href="javascript:void(0)" 
-                                                   class="btn btn-danger btn-sm delete" 
+                                                   class="btn btn-outline-danger btn-sm delete rounded-circle shadow-sm" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;"
                                                    data-id="{{ $invoice->id }}" 
                                                    data-page="invoiceDelete" 
                                                    title="Delete">

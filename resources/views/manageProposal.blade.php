@@ -63,7 +63,7 @@
         <div class="container-fluid">
             <div class="board-title mb-4">
                 <div class="d-flex align-items-center gap-3">
-                    <a href="/proposals" class="btn btn-primary btn-sm back-btn"><i class="bx bx-arrow-back"></i></a>
+                    <a href="/proposals" class="btn btn-light btn-sm back-btn rounded-pill border"><i class="bx bx-arrow-back"></i></a>
                     @if(!empty($proposal->id))
                         <h1 class="mb-0">Edit Proposal #{{ $proposal->id ?? '' }}</h1>
                     @else
@@ -396,7 +396,7 @@
                                 </table>
                             </div>
                             <div class="mb-4">
-                                <button type="button" class="btn btn-primary bg-primary text-white btn-sm add-item-btn"><i
+                                <button type="button" class="btn btn-indigo btn-sm rounded-pill px-3 add-item-btn"><i
                                         class="bx bx-plus"></i> Add Item</button>
                             </div>
 
@@ -474,9 +474,9 @@
 
                         <!-- Actions Section -->
                         <div class="form-card mb-4 bg-transparent border-0 shadow-none p-0 text-end">
-                            <button type="submit" class="btn btn-success px-4 me-2 shadow-sm"><i class="bx bx-save"></i>
+                            <button type="submit" class="btn btn-success rounded-pill px-4 me-2 shadow-sm"><i class="bx bx-save"></i>
                                 Save</button>
-                            <button type="submit" class="btn btn-primary px-4 shadow-sm" name="submit"
+                            <button type="submit" class="btn btn-indigo rounded-pill px-4 shadow-sm" name="submit"
                                 value="Save & Send"><i class="bx bx-send"></i> Save & Send</button>
                         </div>
                     </div>

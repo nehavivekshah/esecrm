@@ -18,7 +18,7 @@
     <div class="container-fluid">
         <div class="board-title board-title-flex mb-2">
             @if(Request::segment(1) !== 'my-license')
-                <a href="/licensing" class="btn btn-primary bg-primary text-white btn-sm back-btn"><i class="bx bx-arrow-back"></i></a>
+                <a href="/licensing" class="btn btn-light btn-sm back-btn rounded-pill border"><i class="bx bx-arrow-back"></i></a>
                 @if(request()->filled('id')) <h1>Edit License</h1> @else <h1>Add New License</h1> @endif
             @else
                 <h1>Edit Details</h1>
@@ -26,7 +26,7 @@
         </div>
 
         <div class="row g-3 px-2">
-            <div class="col-md-12 bg-white py-3 px-4 rounded">
+            <div class="col-md-12 form-card">
                 <form action="{{ route('manageLicense') }}" method="post" class="row" enctype="multipart/form-data">
                     @csrf
 
@@ -133,9 +133,9 @@
                         </select>
                     </div>
 
-                    <div class="form-group text-right col-md-12 mt-2">
-                        <button type="submit" class="btn btn-primary bg-primary text-white px-4">Submit</button>
-                        <button type="reset" class="btn btn-light border px-4">Reset</button>
+                    <div class="form-group text-right col-md-12 mt-4 pt-3 border-top">
+                        <button type="submit" class="btn btn-indigo rounded-pill px-4">Submit</button>
+                        <button type="reset" class="btn btn-light rounded-pill border px-4">Reset</button>
                     </div>
                 </form>
             </div>

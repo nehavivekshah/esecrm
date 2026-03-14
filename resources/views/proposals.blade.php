@@ -24,7 +24,7 @@
                 <h1>List Board</h1>
                 @if(in_array('proposals_add', $roleArray) || in_array('All', $roleArray))
                     <div class="btn-group">
-                        <a href="/manage-proposal" class="btn btn-primary bg-primary text-white btn-sm">
+                        <a href="/manage-proposal" class="btn btn-indigo rounded-pill btn-sm">
                             <i class="bx bx-plus"></i> 
                             <span>New Proposal</span>
                         </a>
@@ -72,13 +72,13 @@
                                 <td width="100px" class="m-none">{{ $proposal->tags ?? '' }}</td>
                                 @if(in_array('proposals_edit',$roleArray) || in_array('proposals_delete',$roleArray) || in_array('All',$roleArray))
                                 <td class="actionWidth position-sticky end-0">
-                                    <div class="table-btn">
-                                        <a href="/quotation/{{ $proposal->id }}/{{ md5($proposal->client_email) }}" class="btn btn-primary bg-primary text-white btn-sm" title="View" target="_blank"><i class="bx bx-show"></i></a>
+                                    <div class="table-btn d-flex align-items-center gap-2">
+                                        <a href="/quotation/{{ $proposal->id }}/{{ md5($proposal->client_email) }}" class="btn btn-outline-primary btn-sm rounded-circle shadow-sm" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;" title="View" target="_blank"><i class="bx bx-show"></i></a>
                                         @if(in_array('proposals_edit',$roleArray) || in_array('All',$roleArray))
-                                        <a href="/manage-proposal?id={{ $proposal->id }}" class="btn btn-info btn-sm" title="Edit"><i class="bx bx-edit"></i></a>
+                                        <a href="/manage-proposal?id={{ $proposal->id }}" class="btn btn-outline-info btn-sm rounded-circle shadow-sm" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;" title="Edit"><i class="bx bx-edit"></i></a>
                                         @endif
                                         @if(in_array('proposals_delete',$roleArray) || in_array('All',$roleArray))
-                                        <a href="javascript:void(0)" class="btn btn-danger btn-sm delete" id="{{ $proposal->id }}" date-page="proposalDelete" title="Delete"><i class="bx bx-trash"></i></a>
+                                        <a href="javascript:void(0)" class="btn btn-outline-danger btn-sm delete rounded-circle shadow-sm" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;" id="{{ $proposal->id }}" date-page="proposalDelete" title="Delete"><i class="bx bx-trash"></i></a>
                                         @endif
                                     </div>    
                                 </td>

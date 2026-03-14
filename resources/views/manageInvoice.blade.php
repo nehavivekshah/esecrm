@@ -26,7 +26,7 @@
                 <div class="board-title mb-4">
                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                         <div class="d-flex align-items-center gap-3">
-                            <a href="/invoices" class="btn btn-primary btn-sm back-btn"><i class="bx bx-arrow-back"></i></a>
+                            <a href="/invoices" class="btn btn-light btn-sm back-btn rounded-pill border"><i class="bx bx-arrow-back"></i></a>
                             @if(!empty($invoice->id))
                                 <h1 class="mb-0">Edit Invoice #{{ $invoice->invoice_number ?? '' }}</h1>
                             @else
@@ -34,9 +34,9 @@
                             @endif
                         </div>
                         <div class="d-flex gap-2">
-                            <button type="button" class="btn btn-outline-info shadow-sm" id="previewInvoiceBtn"><i
+                            <button type="button" class="btn btn-outline-info shadow-sm rounded-pill px-4" id="previewInvoiceBtn"><i
                                     class='bx bx-show'></i> Preview</button>
-                            <button type="submit" class="btn btn-primary shadow-sm px-4"><i class='bx bx-save'></i> Save
+                            <button type="submit" class="btn btn-indigo shadow-sm rounded-pill px-4"><i class='bx bx-save'></i> Save
                                 Invoice</button>
                         </div>
                     </div>
@@ -97,7 +97,7 @@
                                                 </option>
                                             @endforeach
                                         </select>
-                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        <button type="button" class="btn btn-indigo" data-bs-toggle="modal"
                                             data-bs-target="#addClientModal" title="Add New Client">
                                             <i class='bx bx-plus'></i>
                                         </button>
@@ -363,7 +363,7 @@
                                 </table>
                             </div>
                             <div class="mb-4">
-                                <button type="button" class="btn btn-primary bg-primary text-white btn-sm"
+                                <button type="button" class="btn btn-indigo btn-sm rounded-pill px-3"
                                     id="addItemButton"><i class='bx bx-plus'></i> Add Item</button>
                             </div>
 
@@ -458,9 +458,9 @@
 
                         <!-- Actions -->
                         <div class="form-card mb-4 bg-transparent border-0 shadow-none p-0 text-end">
-                            <button type="button" class="btn btn-outline-info px-4 me-2 shadow-sm" id="previewInvoiceBtn"><i
+                            <button type="button" class="btn btn-outline-info px-4 me-2 shadow-sm rounded-pill" id="previewInvoiceBtn"><i
                                     class='bx bx-show'></i> Preview</button>
-                            <button type="submit" class="btn btn-primary px-5 shadow-sm"><i class='bx bx-save'></i> Save
+                            <button type="submit" class="btn btn-indigo px-5 shadow-sm rounded-pill"><i class='bx bx-save'></i> Save
                                 Invoice</button>
                         </div>
                     </div>
@@ -589,9 +589,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary bg-primary text-white" id="saveClientBtn"> {{-- Added
+                    <div class="modal-footer border-top px-4 py-3">
+                        <button type="button" class="btn btn-light rounded-pill border px-4" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-indigo rounded-pill px-4" id="saveClientBtn"> {{-- Added
                             ID --}}
                             <i class='bx bx-save'></i> Save Client
                         </button>

@@ -16,7 +16,7 @@
         </div>
         <div class="container-fluid py-4">
             <div class="d-flex align-items-center gap-3 mb-4">
-                <a href="/leads" class="btn btn-light border-0 shadow-sm rounded-circle p-2"
+                <a href="/leads" class="btn btn-light btn-sm back-btn rounded-pill border"
                     style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
                     <i class="bx bx-arrow-back" style="font-size: 1.2rem; color: var(--color-default);"></i>
                 </a>
@@ -259,10 +259,10 @@
                 <!-- Form Controls -->
                 <div class="col-12 mt-2 mb-5">
                     <div class="d-flex align-items-center justify-content-end gap-3 p-3 bg-white rounded shadow-sm border">
-                        <button type="reset" class="btn btn-outline-secondary">
+                        <button type="reset" class="btn btn-light rounded-pill border px-4">
                             <i class='bx bx-reset me-1'></i> Reset Form
                         </button>
-                        <button type="submit" class="btn btn-primary d-flex align-items-center gap-2">
+                        <button type="submit" class="btn btn-indigo rounded-pill px-4 d-flex align-items-center gap-2">
                             <i class='bx bx-check-circle' style="font-size: 1.2rem;"></i>
                             @if(!empty($_GET['id'])) Update Lead Details @else Save New Lead @endif
                         </button>

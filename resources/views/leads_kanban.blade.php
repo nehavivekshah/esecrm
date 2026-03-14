@@ -14,12 +14,12 @@
 
         .kanban-col {
             min-width: 300px;
-            background: #e9ecef;
+            background: #f8f9fa; /* Google background */
             border-radius: 8px;
             padding: 15px;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #dadce0; /* Google border */
         }
 
         .kanban-header {
@@ -37,17 +37,17 @@
         .kanban-item {
             background: #fff;
             padding: 15px;
-            border-radius: 6px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            border: 1px solid #dadce0; /* Google flat card */
             margin-bottom: 15px;
             cursor: grab;
-            border-left: 4px solid #007bff;
-            transition: transform 0.2s ease;
+            border-left: 4px solid var(--accent-primary); /* Use theme color */
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
         }
 
         .kanban-item:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15); /* Google hover shadow */
         }
 
         .item-title {
@@ -94,8 +94,8 @@
         <div class="container-fluid">
             <div class="d-flex justify-content-between my-3">
                 <div>
-                    <a href="/manage-lead" class="btn btn-primary btn-sm"><i class="bx bx-plus"></i> Add Lead</a>
-                    <a href="/leads" class="btn btn-secondary btn-sm"><i class="bx bx-list-ul"></i> List View</a>
+                    <a href="/manage-lead" class="btn btn-indigo rounded-pill btn-sm"><i class="bx bx-plus"></i> Add Lead</a>
+                    <a href="/leads" class="btn btn-light rounded-pill border btn-sm"><i class="bx bx-list-ul"></i> List View</a>
                 </div>
             </div>
 

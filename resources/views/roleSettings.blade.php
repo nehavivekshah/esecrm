@@ -12,7 +12,7 @@
             <div class="board-title board-title-flex">
                 <h1>List Board</h1>
                 <div class="btn-group">
-                    <a href="/manage-role-setting" class="btn btn-primary bg-primary text-white btn-sm"><i class="bx bx-plus"></i> <span>Add New</span></a>
+                    <a href="/manage-role-setting" class="btn btn-indigo rounded-pill btn-sm"><i class="bx bx-plus"></i> <span>Add New</span></a>
                 </div>
             </div>
             <div class="row">
@@ -38,8 +38,10 @@
                                 <td class="m-none">{{$features}}</td>
                                 <td>@if($role->status == '1')<span class="font-weight-bold text-success">Active</span>@else<span class="font-weight-bold text-danger">Deactive</span>@endif</td>
                                 <td class="text-center">
-                                    <a @if($features=='All') href="javascript:void(0)" @else href="/manage-role-setting?id={{ $role->id }}" @endif class="btn btn-info btn-sm @if($features=='All') op-4 @endif"
-                                        title="Edit"><i class="bx bx-edit"></i></a>
+                                    <div class="table-btn d-flex align-items-center justify-content-center gap-2">
+                                        <a @if($features=='All') href="javascript:void(0)" @else href="/manage-role-setting?id={{ $role->id }}" @endif class="btn btn-outline-info btn-sm rounded-circle shadow-sm @if($features=='All') op-4 @endif" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;"
+                                            title="Edit"><i class="bx bx-edit"></i></a>
+                                    </div>
                                 </td>
                             </tr>
                             @endforeach

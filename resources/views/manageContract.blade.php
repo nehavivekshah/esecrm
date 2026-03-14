@@ -18,7 +18,7 @@
 
     <div class="container-fluid">
         <div class="board-title board-title-flex mb-2">
-            <a href="/contracts" class="btn btn-primary bg-primary text-white btn-sm back-btn">
+            <a href="/contracts" class="btn btn-light btn-sm back-btn rounded-pill border">
                 <i class="bx bx-arrow-back"></i>
             </a>
             @if(!empty($_GET['id']))
@@ -29,7 +29,7 @@
         </div>
 
         <div class="row g-3 px-2">
-            <div class="col-md-12 bg-white py-3 px-4 rounded">
+            <div class="col-md-12 form-card">
                 <form action="/manage-contract" method="post" class="row">
                     @csrf
 
@@ -117,11 +117,11 @@
                     </div>
 
                     <!-- Buttons -->
-                    <div class="form-group text-right col-md-12 mt-3">
-                        <button type="submit" class="btn btn-primary bg-primary text-white px-4">
+                    <div class="form-group text-right col-md-12 mt-4 pt-3 border-top">
+                        <button type="submit" class="btn btn-indigo rounded-pill px-4">
                             {{ isset($contract) && $contract->exists ? 'Update Contract' : 'Save Contract' }}
                         </button>
-                        <a href="/contracts" class="btn btn-light border px-4">Cancel</a>
+                        <a href="/contracts" class="btn btn-light rounded-pill border px-4">Cancel</a>
                     </div>
                 </form>
             </div>

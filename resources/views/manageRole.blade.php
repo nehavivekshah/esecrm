@@ -9,13 +9,13 @@
         <a href="/signout" class="logoutbtn"><i class="bx bx-log-out"></i></a>
     </div>
     <div class="container-fluid">
-        <div class="board-title board-title-flex mb-2">
-            <a href="/role-settings" class="btn btn-primary bg-primary text-white btn-sm back-btn"><i class="bx bx-arrow-back"></i></a>
-            @if(!empty(request()->get('id'))) <h1>Edit Role</h1> @else <h1>Add New Role</h1> @endif
+        <div class="board-title board-title-flex mb-4">
+            <a href="/role-settings" class="btn btn-light btn-sm back-btn rounded-pill border"><i class="bx bx-arrow-back"></i></a>
+            @if(!empty(request()->get('id'))) <h1 class="mb-0">Edit Role</h1> @else <h1 class="mb-0">Add New Role</h1> @endif
         </div>
 
-        <div class="row g-3 px-2">
-            <div class="col-md-12 bg-white py-3 px-4 rounded">
+            <div class="col-md-12">
+                <form action="manage-role-setting" method="post" class="row form-card bg-white p-4 rounded shadow-sm">
                 @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul>
@@ -25,8 +25,7 @@
                         </ul>
                     </div>
                 @endif
-                
-                <form action="manage-role-setting" method="post" class="row">
+                @endif
                     @csrf
                         
                     <div class="form-group col-md-4">
@@ -355,9 +354,9 @@
                         </table>
                     </div>
 
-                    <div class="form-group col-md-12 text-right">
-                        <button type="submit" class="btn btn-primary bg-primary text-white px-4">Submit</button>
-                        <button type="reset" class="btn btn-light border px-4">Reset</button>
+                    <div class="form-group col-md-12 text-right mt-4">
+                        <button type="submit" class="btn btn-indigo rounded-pill px-4">Submit</button>
+                        <button type="reset" class="btn btn-light rounded-pill border px-4">Reset</button>
                     </div>
                 </form>
             </div>

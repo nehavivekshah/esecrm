@@ -16,7 +16,7 @@
 
         <div class="row">
             <div class="col-md-12 csp-3">
-                <form action="/smtp-settings" method="post" class="row g-3 bg-white p-3">
+                <form action="/smtp-settings" method="post" class="row g-3 form-card bg-white p-4 rounded shadow-sm">
                     @csrf
                     <div class="col-md-6 form-group">
                         <label for="mailer">Mailer</label>
@@ -76,8 +76,8 @@
                     </div>
 
                     <div class="col-md-12 text-center mt-4">
-                        <button type="submit" class="btn btn-primary bg-primary text-white px-4">Save Settings</button>
-                        <button type="reset" class="btn btn-outline-secondary border px-4">Reset</button>
+                        <button type="submit" class="btn btn-indigo rounded-pill px-4">Save Settings</button>
+                        <button type="reset" class="btn btn-light rounded-pill border px-4">Reset</button>
                     </div>
                 </form>
             </div>

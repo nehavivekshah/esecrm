@@ -20,7 +20,7 @@
                 <h1>List Board</h1>
                 @if(in_array('contracts_add', $roleArray) || in_array('All', $roleArray))
                     <div class="btn-group">
-                        <a href="/manage-contract" class="btn btn-primary bg-primary text-white btn-sm">
+                        <a href="/manage-contract" class="btn btn-indigo rounded-pill btn-sm">
                             <i class="bx bx-plus"></i> 
                             <span>New Contract</span>
                         </a>
@@ -70,12 +70,12 @@
                                     <td width="100px">{!! date_format(date_create($contract->end_date ?? null),'d M, Y') !!}</td>
                                     @if(in_array('contracts_edit',$roleArray) || in_array('contracts_delete',$roleArray) || in_array('All',$roleArray))
                                     <td class="actionWidth position-sticky end-0">
-                                        <div class="table-btn">
+                                        <div class="table-btn d-flex align-items-center gap-2">
                                             @if(in_array('contracts_edit',$roleArray) || in_array('All',$roleArray))
-                                            <a href="/manage-contract?id={{ $contract->id }}" class="btn btn-info btn-sm" title="Edit"><i class="bx bx-edit"></i></a>
+                                            <a href="/manage-contract?id={{ $contract->id }}" class="btn btn-outline-info btn-sm rounded-circle shadow-sm" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;" title="Edit"><i class="bx bx-edit"></i></a>
                                             @endif
                                             @if(in_array('contracts_delete',$roleArray) || in_array('All',$roleArray))
-                                            <a href="javascript:void(0)" class="btn btn-danger btn-sm delete" id="{{ $contract->id }}" date-page="contractDelete" title="Delete"><i class="bx bx-trash"></i></a>
+                                            <a href="javascript:void(0)" class="btn btn-outline-danger btn-sm delete rounded-circle shadow-sm" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;" id="{{ $contract->id }}" date-page="contractDelete" title="Delete"><i class="bx bx-trash"></i></a>
                                             @endif
                                         </div>    
                                     </td>

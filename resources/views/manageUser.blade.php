@@ -22,7 +22,7 @@
             <div class="board-title board-title-flex mb-2">
                 @if(Request::segment(1) != 'my-profile')
                 
-                <a href="users" class="btn btn-primary btn-sm back-btn"><i class="bx bx-arrow-back"></i></a>
+                <a href="users" class="btn btn-light btn-sm back-btn rounded-pill border"><i class="bx bx-arrow-back"></i></a>
                 
                 @if(!empty($_GET['id'])) <h1>Edit User</h1> @else <h1>Add New User</h1> @endif
                 
@@ -34,7 +34,7 @@
             </div>
 
             <div class="row g-3 px-2">
-                <div class="col-md-12 bg-white py-3 px-4 rounded">
+                <div class="col-md-12 form-card">
                     <form action="manage-user" method="post" class="row" enctype="multipart/form-data">
                         @csrf
                         
@@ -177,9 +177,9 @@
                             <textarea type="text" class="form-control mt-1" id="emailSign" rows="4" name="emailSign" placeholder="Write Here...">{{$users->esign ?? ''}}</textarea>
                         </div>
                         
-                        <div class="form-group text-right col-md-12">
-                            <button type="submit" class="btn btn-primary px-4">Submit</button>
-                            <button type="reset" class="btn btn-light border px-4">Reset</button>
+                        <div class="form-group text-right col-md-12 mt-4 pt-3 border-top">
+                            <button type="submit" class="btn btn-indigo rounded-pill px-4">Submit</button>
+                            <button type="reset" class="btn btn-light rounded-pill border px-4">Reset</button>
                         </div>
                     </form>
                 </div>

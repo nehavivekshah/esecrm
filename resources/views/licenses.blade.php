@@ -12,7 +12,7 @@
             <div class="board-title board-title-flex">
                 <h1>License Board</h1>
                 <div class="btn-group">
-                    <a href="/manage-license" class="btn btn-primary bg-primary text-white btn-sm"><i class="bx bx-plus"></i> <span>Add New</span></a>
+                    <a href="/manage-license" class="btn btn-indigo rounded-pill btn-sm"><i class="bx bx-plus"></i> <span>Add New</span></a>
                 </div>
             </div>
             <div class="row">
@@ -50,8 +50,8 @@
                                     @endif
                                 </td>-->
                                 <td width="60px" class="position-sticky end-0">
-                                    <div class="table-btn">
-                                        <a href="/manage-license?id={{ $license->id }}" class="btn btn-info btn-sm" title="Edit"><i class="bx bx-edit"></i></a>
+                                    <div class="table-btn d-flex align-items-center gap-2">
+                                        <a href="/manage-license?id={{ $license->id }}" class="btn btn-outline-info btn-sm rounded-circle shadow-sm" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;" title="Edit"><i class="bx bx-edit"></i></a>
                                         <!--<a href="javascript:void(0)" class="btn btn-danger btn-sm delete" id="{{ $license->id }}" data-page="licenseDelete" title="Delete"><i class="bx bx-trash"></i></a>-->
                                     </div>
                                 </td>

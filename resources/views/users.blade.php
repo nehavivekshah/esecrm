@@ -15,7 +15,7 @@
                 <h1>List Board</h1>
                 @if(in_array('users_add',$roleArray) || in_array('All',$roleArray))
                 <div class="btn-group">
-                    <a href="/manage-user" class="btn btn-primary btn-sm"><i class="bx bx-plus"></i> <span>Add New</span></a>
+                    <a href="/manage-user" class="btn btn-indigo rounded-pill btn-sm"><i class="bx bx-plus"></i> <span>Add New</span></a>
                 </div>
                 @endif
             </div>
@@ -44,12 +44,12 @@
                                 <td width="50px">@if($user->status == '1')<span class="badge bg-success">Active</span>@else<span class="badge bg-danger">Deactive</span>@endif</td>
                                 @if(in_array('users_edit',$roleArray) || in_array('users_delete',$roleArray) || in_array('All',$roleArray))
                                 <td width="50px" class="position-sticky end-0">
-                                    <div class="table-btn">
+                                    <div class="table-btn d-flex align-items-center gap-2">
                                         @if(in_array('users_edit',$roleArray) || in_array('All',$roleArray))
-                                        <a href="/manage-user?id={{ $user->id }}" class="btn btn-info btn-sm" title="Edit"><i class="bx bx-edit"></i></a>
+                                        <a href="/manage-user?id={{ $user->id }}" class="btn btn-outline-info btn-sm rounded-circle shadow-sm" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;" title="Edit"><i class="bx bx-edit"></i></a>
                                         @endif
                                         @if(in_array('users_delete',$roleArray) || in_array('All',$roleArray))
-                                        <a href="javascript:void(0)" class="btn btn-danger btn-sm delete" id="{{ $user->id }}" date-page="userDelete" title="Delete"><i class="bx bx-trash"></i></a>
+                                        <a href="javascript:void(0)" class="btn btn-outline-danger btn-sm delete rounded-circle shadow-sm" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;" id="{{ $user->id }}" date-page="userDelete" title="Delete"><i class="bx bx-trash"></i></a>
                                         @endif
                                     </div>
                                 </td>
