@@ -92,7 +92,11 @@ class AuthController extends Controller
                 $fromName     // Pass DB value or null
             );
 
-            Mail::to($to)->send($mailable);
+            try {
+                Mail::to($to)->send($mailable);
+            } catch (\Exception $e) {
+                Log::error('Registration Email Failed: ' . $e->getMessage());
+            }
 
             return redirect('/login')->with('success', 'Successfully registered your business on our platform! To complete the setup, please verify your email and fill out your business profile to start reaching potential customers.');
 
