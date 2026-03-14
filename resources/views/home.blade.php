@@ -29,9 +29,12 @@
                 <!-- DASHBOARD WIDGETS -->
                 <div class="row mb-4">
                     <div class="col-md-3 mb-3">
-                        <div class="card widget-card h-100 p-4 border-top" style="border-top: 4px solid #1a73e8 !important;">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="widget-label text-slate-500 font-weight-bold text-uppercase" style="font-size: 0.75rem;">Outstanding Invoices</span>
+                        <div class="card widget-card h-100 p-4 border-top" style="border-top: 4px solid var(--accent-primary) !important;">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <h6 class="text-xs font-weight-bold text-uppercase text-slate-800 mb-1">Total Outstanding</h6>
+                                    <span class="widget-label text-slate-500 font-weight-bold text-uppercase" style="font-size: 0.75rem;">Invoices</span>
+                                </div>
                                 <div class="p-2 bg-blue-soft rounded-circle">
                                     <i class="bx bx-receipt text-primary h5 mb-0"></i>
                                 </div>

@@ -2,8 +2,10 @@
 
 :root {
     --card-radius: 8px; /* Google flat card radius */
-    --accent-primary: #1a73e8; /* Google Blue */
-    --accent-secondary: #fbbc04; /* Google Yellow */
+    --accent-primary: #006666; /* Custom Brand Primary */
+    --accent-red: #ea4335;
+    --accent-yellow: #fbbc04;
+    --accent-green: #34a853;
     --accent-indigo: #1a73e8;
     --accent-emerald: #34a853; /* Google Green */
     --accent-rose: #ea4335; /* Google Red */
@@ -41,19 +43,19 @@ body {
 }
 
 /* ==========================================================================
-   Google Workspace Sidebar Overrides
+   Google Workspace Sidebar Overrides (Custom Branded)
    ========================================================================== */
 .sidebar {
-    background-color: #ffffff !important;
-    border-right: 1px solid var(--border-google) !important;
+    background-color: var(--accent-primary) !important;
+    border-right: none !important;
 }
 
 .sidebar .logo_details .logo_name {
-    color: var(--text-primary) !important;
+    color: #ffffff !important;
 }
 
 .sidebar .logo_details i#btn {
-    color: var(--text-secondary) !important;
+    color: #ffffff !important;
 }
 
 .sidebar li a {
@@ -65,39 +67,39 @@ body {
 }
 
 .sidebar li a i {
-    color: var(--text-secondary) !important;
+    color: rgba(255, 255, 255, 0.7) !important;
 }
 
 .sidebar li a .link_name {
-    color: var(--text-secondary) !important;
+    color: rgba(255, 255, 255, 0.7) !important;
     font-weight: 500 !important;
 }
 
 .sidebar li a:hover {
-    background-color: var(--bg-hover) !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
     box-shadow: none !important;
 }
 
 .sidebar li a:hover i,
 .sidebar li a:hover .link_name {
-    color: var(--text-primary) !important;
+    color: #ffffff !important;
 }
 
 /* Active State */
 .sidebar li a.active {
-    background-color: #e8f0fe !important;
+    background-color: rgba(255, 255, 255, 0.2) !important;
 }
 
 .sidebar li a.active i,
 .sidebar li a.active .link_name {
-    color: var(--accent-primary) !important;
+    color: #ffffff !important;
     font-weight: 600 !important;
 }
 
 /* Sidebar Profile/Bottom */
 .sidebar li.profile {
     background: transparent !important;
-    border-top: 1px solid var(--border-google) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
     border-bottom: none !important;
     border-left: none !important;
     border-right: none !important;
@@ -108,25 +110,25 @@ body {
 }
 
 .sidebar li.profile .name {
-    color: var(--text-primary) !important;
+    color: #ffffff !important;
 }
 
 .sidebar li.profile .designation {
-    color: var(--text-secondary) !important;
+    color: rgba(255, 255, 255, 0.7) !important;
 }
 
 .sidebar .profile #log_out {
-    color: var(--text-secondary) !important;
+    color: rgba(255, 255, 255, 0.7) !important;
     background: transparent !important;
 }
 
 .sidebar .profile #log_out:hover {
-    color: var(--accent-primary) !important;
+    color: #ffffff !important;
 }
 
 /* Fix sidebar child menu labels */
 .sidebar .divider {
-    color: var(--text-secondary) !important;
+    color: rgba(255, 255, 255, 0.7) !important;
     font-weight: 600;
     font-size: 0.75rem;
     padding: 12px 15px 4px 15px;
@@ -134,13 +136,13 @@ body {
 }
 
 .sidebar .divider label {
-    color: rgba(95, 99, 104, 0.8) !important;
+    color: rgba(255, 255, 255, 0.6) !important;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .sidebar .divider i {
-    color: var(--text-secondary) !important;
+    color: rgba(255, 255, 255, 0.7) !important;
 }
 
 .sidebar .sb_submenu li a {
