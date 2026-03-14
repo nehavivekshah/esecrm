@@ -145,6 +145,17 @@ body {
     color: rgba(255, 255, 255, 0.7) !important;
 }
 
+.sidebar .nav-title {
+    color: rgba(255, 255, 255, 0.45) !important;
+    font-size: 0.70rem;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 20px 15px 8px 15px;
+    display: block;
+    margin-bottom: 0;
+}
+
 .sidebar .sb_submenu li a {
     padding-left: 30px !important;
 }

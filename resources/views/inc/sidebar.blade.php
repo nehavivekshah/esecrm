@@ -33,6 +33,7 @@
             </div>
         </li>
 
+        <li class="nav-title">MAIN</li>
         <li>
             <a href="/home" @if(Request::segment(1) == '' || Request::segment(1) == 'home') class="active" @endif>
                 <i class="bx bx-grid-alt"></i>
@@ -48,6 +49,7 @@
             </li>
         @endif
 
+        <li class="nav-title">SALES & CRM</li>
         @if(in_array('leads', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
             <li>
                 <span class="divider" data-bs-toggle="collapse" data-bs-target="#leads-menu"><label>Leads</label> <i
@@ -84,15 +86,7 @@
             </li>
         @endif
 
-        @if(in_array('attendances', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
-            <li>
-                <a href="/attendances" @if(Request::segment(1) == 'attendances') class="active" @endif>
-                    <i class="bx bx-calendar-check"></i>
-                    <span class="link_name">Attendance</span>
-                </a>
-                <span class="tooltip">Attendance</span>
-            </li>
-        @endif
+
 
         @if(in_array('tasks', $roleArray) || in_array('crm_tasks', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
             <li>
@@ -186,6 +180,7 @@
 
 
 
+        <li class="nav-title">ENGAGEMENT</li>
         @if(in_array('campaigns', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
             <li>
                 <a href="/campaigns" @if(Request::segment(1) == 'campaigns') class="active" @endif>
@@ -213,6 +208,18 @@
                     <span class="link_name">Reports</span>
                 </a>
                 <span class="tooltip">Reports</span>
+            </li>
+        @endif
+
+        <li class="nav-title">ADMINISTRATION</li>
+
+        @if(in_array('attendances', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
+            <li>
+                <a href="/attendances" @if(Request::segment(1) == 'attendances') class="active" @endif>
+                    <i class="bx bx-calendar-check"></i>
+                    <span class="link_name">Attendance</span>
+                </a>
+                <span class="tooltip">Attendance</span>
             </li>
         @endif
 
