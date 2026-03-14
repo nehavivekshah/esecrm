@@ -145,12 +145,28 @@ body {
     background: rgba(255, 255, 255, 0.08);
 }
 
+.sidebar .divider-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sidebar .divider-left i {
+    font-size: 1rem !important;
+    height: auto !important;
+    line-height: 1 !important;
+    min-width: auto !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    opacity: 1;
+}
+
 .sidebar .divider label {
-    color: rgba(255, 255, 255, 0.75) !important;
-    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-size: 0.82rem;
     font-weight: 500;
     cursor: pointer;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.2px;
+    text-transform: capitalize;
 }
 
 .sidebar .divider i.bx-chevron-down {
