@@ -2635,14 +2635,3 @@ div.dataTables_processing>div:last-child>div {
     background: var(--color-default) !important;
     animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
-
-.sidebar li i.bx.bx-chevron-down {
-    text-align: right;
-}
-
-span.divider-left {
-    min-width: 151px !important;
-    display: flex !important;
-    justify-content: start !important;
-    align-items: center !important;
-}
