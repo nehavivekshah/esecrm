@@ -228,13 +228,15 @@ body {
     display: flex;
     align-items: center;
     gap: 12px;
+    min-width: 0;
+    flex: 1;
 }
 
 .sidebar .divider-left i {
     font-size: 1.1rem !important;
     height: auto !important;
     line-height: 1 !important;
-    min-width: 20px !important;
+    min-width: 22px !important;
     color: rgba(255, 255, 255, 0.65) !important;
     text-align: center;
     flex-shrink: 0;
@@ -246,13 +248,16 @@ body {
 }
 
 .sidebar .divider label {
-    color: rgba(255, 255, 255, 0.8) !important;
-    font-size: 0.82rem !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-size: 0.83rem !important;
     font-weight: 500 !important;
     cursor: pointer;
     letter-spacing: 0.1px;
     text-transform: capitalize !important;
     transition: color 0.2s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .sidebar .divider:hover label {
@@ -268,6 +273,7 @@ body {
     color: rgba(255, 255, 255, 0.4) !important;
     transition: transform 0.25s ease, color 0.2s ease !important;
     flex-shrink: 0;
+    margin-left: auto;
 }
 
 .sidebar li:has(.collapse.show) .bx-chevron-down {
@@ -281,42 +287,105 @@ body {
     display: none !important;
 }
 
-/* === Submenu === */
+/* === Submenu — Tree Connector Style === */
 .sidebar .sb_submenu {
     padding: 2px 0 6px 0;
-    margin: 0;
+    margin: 0 8px 0 24px;
     list-style: none;
+    position: relative;
 }
 
+/* Vertical line running down the left side of submenu */
+.sidebar.open .sb_submenu::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 4px;
+    bottom: 8px;
+    width: 1.5px;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 2px;
+}
+
+/* Each submenu item row */
+.sidebar .sb_submenu li {
+    position: relative;
+    margin: 0;
+    padding: 0;
+}
+
+/* Override the full-width link to match tree style */
 .sidebar .sb_submenu li a {
-    margin: 1px 8px !important;
-    padding: 7px 12px 7px 44px !important;
-    font-size: 0.79rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    margin: 1px 0 !important;
+    padding: 7px 8px 7px 28px !important;
+    font-size: 0.80rem !important;
     border-radius: 8px !important;
-    border-left: none !important;
+    border: none !important;
+    width: 100% !important;
+    transition: all 0.15s ease !important;
+    position: relative;
+    background: transparent !important;
 }
 
+/* Dot bullet */
+.sidebar.open .sb_submenu li a::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.22);
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    z-index: 1;
+}
+
+/* Dot highlight on hover/active */
+.sidebar.open .sb_submenu li a:hover::before,
+.sidebar.open .sb_submenu li a.active::before {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.12);
+}
+
+/* Hide submenu icons — use dot only */
 .sidebar .sb_submenu li a i {
-    font-size: 0.9rem !important;
-    color: rgba(255, 255, 255, 0.5) !important;
+    display: none !important;
 }
 
 .sidebar .sb_submenu li a .link_name {
-    color: rgba(255, 255, 255, 0.65) !important;
-    font-size: 0.79rem !important;
+    color: rgba(255, 255, 255, 0.62) !important;
+    font-size: 0.80rem !important;
+    font-weight: 400 !important;
+    padding: 0;
+    transition: color 0.15s ease !important;
 }
 
-.sidebar .sb_submenu li a:hover i,
-.sidebar .sb_submenu li a:hover .link_name,
-.sidebar .sb_submenu li a.active i,
-.sidebar .sb_submenu li a.active .link_name {
-    color: #ffffff !important;
+.sidebar .sb_submenu li a:hover .link_name {
+    color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.sidebar .sb_submenu li a:hover {
+    background: rgba(255, 255, 255, 0.07) !important;
+    padding-bottom: 7px !important;
 }
 
 .sidebar .sb_submenu li a.active {
-    background: rgba(255, 255, 255, 0.12) !important;
-    border-left: 2px solid rgba(255, 255, 255, 0.7) !important;
-    padding-left: 42px !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-left: none !important;
+    padding-left: 28px !important;
+}
+
+.sidebar .sb_submenu li a.active .link_name {
+    color: #ffffff !important;
+    font-weight: 500 !important;
 }
 
 /* Suppress old sidebar i global height for dividers/titles */
@@ -709,16 +778,4 @@ table.dataTable tbody td {
 
 .table-hover tbody tr:hover {
     background-color: #f8fafc !important;
-}
-
-
-.sidebar li i.bx.bx-chevron-down {
-    text-align: right;
-}
-
-span.divider-left {
-    min-width: 151px !important;
-    display: flex !important;
-    justify-content: start !important;
-    align-items: center !important;
 }
