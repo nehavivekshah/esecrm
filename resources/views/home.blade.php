@@ -25,78 +25,72 @@
         <section class="task__section">
             @include('inc.header', ['title' => 'Dashboard'])
 
-            <div class="container-fluid mb-2">
-                <!-- DASHBOARD WIDGETS -->
-                <div class="row mb-4">
-                    <div class="col-md-3 mb-3">
-                        <div class="card widget-card h-100 p-4 border-top" style="border-top: 4px solid var(--accent-primary) !important;">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <div>
-                                    <h6 class="text-xs font-weight-bold text-uppercase text-slate-800 mb-1">Total Outstanding</h6>
-                                    <span class="widget-label text-slate-500 font-weight-bold text-uppercase" style="font-size: 0.75rem;">Invoices</span>
-                                </div>
-                                <div class="p-2 bg-blue-soft rounded-circle">
-                                    <i class="bx bx-receipt text-primary h5 mb-0"></i>
-                                </div>
+            <div class="container-fluid px-4 pb-4">
+
+                {{-- STAT WIDGETS ROW --}}
+                <div class="row g-3 mb-4">
+
+                    <div class="col-xl-3 col-md-6">
+                        <div class="dash-stat-card" style="--card-accent: #006666;">
+                            <div class="dash-stat-icon" style="background:rgba(0,102,102,0.10); color:#006666;">
+                                <i class="bx bx-receipt"></i>
                             </div>
-                            <h2 class="font-weight-bold mb-0 text-slate-800">₹{{ number_format($outstandingInvoices, 0) }}</h2>
-                            <div class="mt-3">
-                                <span class="badge bg-slate-100 text-slate-600 rounded-pill small">Pending</span>
+                            <div class="dash-stat-body">
+                                <span class="dash-stat-label">Outstanding Invoices</span>
+                                <div class="dash-stat-value">₹{{ number_format($outstandingInvoices, 0) }}</div>
+                                <span class="dash-stat-badge" style="background:#e6f4f1; color:#006666;">Pending Payment</span>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3 mb-3">
-                        <div class="card widget-card h-100 p-4 border-top" style="border-top: 4px solid #ea4335 !important;">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="widget-label text-slate-500 font-weight-bold text-uppercase" style="font-size: 0.75rem;">Pending Proposals</span>
-                                <div class="p-2 bg-rose-soft rounded-circle">
-                                    <i class="bx bx-file-blank text-rose-500 h5 mb-0"></i>
-                                </div>
+
+                    <div class="col-xl-3 col-md-6">
+                        <div class="dash-stat-card" style="--card-accent: #ea4335;">
+                            <div class="dash-stat-icon" style="background:rgba(234,67,53,0.10); color:#ea4335;">
+                                <i class="bx bx-file-blank"></i>
                             </div>
-                            <h2 class="font-weight-bold mb-0 text-slate-800">{{ $pendingProposals }}</h2>
-                            <div class="mt-3">
-                                <span class="badge bg-slate-100 text-slate-600 rounded-pill small">Active</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <div class="card widget-card h-100 p-4 border-top" style="border-top: 4px solid #fbbc04 !important;">
-                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="widget-label text-slate-500 font-weight-bold text-uppercase" style="font-size: 0.75rem;">Assigned Tasks</span>
-                                <div class="p-2 bg-warning bg-opacity-10 rounded-circle">
-                                    <i class="bx bx-task text-warning h5 mb-0"></i>
-                                </div>
-                            </div>
-                            <h2 class="font-weight-bold mb-0 text-slate-800">{{ $myPendingTasks }}</h2>
-                            <div class="mt-3">
-                                <span class="badge bg-slate-100 text-slate-600 rounded-pill small">Your Queue</span>
+                            <div class="dash-stat-body">
+                                <span class="dash-stat-label">Pending Proposals</span>
+                                <div class="dash-stat-value">{{ $pendingProposals }}</div>
+                                <span class="dash-stat-badge" style="background:#fdecea; color:#ea4335;">Awaiting Action</span>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3 mb-3">
-                        <div class="card widget-card h-100 p-4 border-top" style="border-top: 4px solid #34a853 !important;">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="widget-label text-slate-500 font-weight-bold text-uppercase" style="font-size: 0.75rem;">Total Leads</span>
-                                <div class="p-2 bg-emerald-soft rounded-circle">
-                                    <i class="bx bx-pulse text-emerald-600 h5 mb-0"></i>
-                                </div>
+
+                    <div class="col-xl-3 col-md-6">
+                        <div class="dash-stat-card" style="--card-accent: #fbbc04;">
+                            <div class="dash-stat-icon" style="background:rgba(251,188,4,0.10); color:#f9a825;">
+                                <i class="bx bx-task"></i>
                             </div>
-                            <h2 class="font-weight-bold mb-0 text-slate-800">{{ $totalLeads }}</h2>
-                            <div class="mt-3">
-                                <span class="badge bg-slate-100 text-slate-600 rounded-pill small">Sales Pipeline</span>
+                            <div class="dash-stat-body">
+                                <span class="dash-stat-label">Assigned Tasks</span>
+                                <div class="dash-stat-value">{{ $myPendingTasks }}</div>
+                                <span class="dash-stat-badge" style="background:#fffde7; color:#f57f17;">Your Queue</span>
                             </div>
                         </div>
                     </div>
-                      </div>
+
+                    <div class="col-xl-3 col-md-6">
+                        <div class="dash-stat-card" style="--card-accent: #34a853;">
+                            <div class="dash-stat-icon" style="background:rgba(52,168,83,0.10); color:#34a853;">
+                                <i class="bx bx-trending-up"></i>
+                            </div>
+                            <div class="dash-stat-body">
+                                <span class="dash-stat-label">Total Leads</span>
+                                <div class="dash-stat-value">{{ $totalLeads }}</div>
+                                <span class="dash-stat-badge" style="background:#e8f5e9; color:#2e7d32;">Sales Pipeline</span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
-                <!-- QUICK ACTIONS SECTION -->
-                <div class="mb-5">
-                    <div class="d-flex align-items-center mb-4">
-                        <div class="p-2 bg-indigo-50 rounded-circle me-3">
-                            <i class="bx bx-bolt-circle text-indigo-600 h4 mb-0"></i>
+                {{-- QUICK ACTIONS --}}
+                <div class="dash-section mb-4">
+                    <div class="dash-section-header">
+                        <div class="dash-section-icon" style="background:rgba(0,102,102,0.08); color:#006666;">
+                            <i class="bx bx-bolt-circle"></i>
                         </div>
-                        <h5 class="mb-0 font-weight-bold text-slate-800">Operational Hub</h5>
+                        <h6 class="dash-section-title">Quick Actions</h6>
                     </div>
                     <div class="quick-actions-grid">
                         @if(in_array('leads', $roleArray) || in_array('All', $roleArray) || (Auth::user()->role == '0'))
@@ -108,153 +102,147 @@
                         @endif
                         @if(in_array('clients', $roleArray) || in_array('All', $roleArray) || (Auth::user()->role == '0'))
                             <a href="/clients" class="action-tile" style="--tile-color: #3b82f6;">
-                                <i class="bx bx-group" style="background: rgba(59, 130, 246, 0.08); color: #3b82f6;"></i>
+                                <i class="bx bx-group" style="background:rgba(59,130,246,0.08); color:#3b82f6;"></i>
                                 <h6>Client Base</h6>
                                 <span>{{ count($clients ?? []) }}</span>
                             </a>
-                            <a href="/projects" class="action-tile" style="--tile-color: #10b981;">
-                                <i class="bx bx-file" style="background: rgba(16, 185, 129, 0.08); color: #10b981;"></i>
-                                <h6>Project Map</h6>
-                                <span>{{ count($projects ?? []) }}</span>
-                            </a>
                             <a href="/recoveries" class="action-tile" style="--tile-color: #f59e0b;">
-                                <i class="bx bx-coin-stack" style="background: rgba(245, 158, 11, 0.08); color: #f59e0b;"></i>
+                                <i class="bx bx-coin-stack" style="background:rgba(245,158,11,0.08); color:#f59e0b;"></i>
                                 <h6>Recovery Log</h6>
                                 <span>{{ count($recoveries ?? []) }}</span>
                             </a>
                         @endif
                         @if(in_array('users', $roleArray) || in_array('All', $roleArray) || (Auth::user()->role == '0'))
                             <a href="/users" class="action-tile" style="--tile-color: #f43f5e;">
-                                <i class="bx bx-user" style="background: rgba(244, 63, 94, 0.08); color: #f43f5e;"></i>
+                                <i class="bx bx-user" style="background:rgba(244,63,94,0.08); color:#f43f5e;"></i>
                                 <h6>Team Users</h6>
                                 <span>{{ count($users ?? []) }}</span>
                             </a>
                         @endif
                     </div>
                 </div>
-                <!-- Action Required Alerts Section -->
-                <div class="row g-4 mb-4">
-                    <div class="col-md-12">
-                        <div class="card p-4 border-0 shadow-sm" style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);">
-                            <div class="d-flex align-items-center mb-3">
-                                <i class='bx bxs-zap text-amber-500 h4 me-2 mb-0'></i>
-                                <h5 class="card-title mb-0">Action Required & CRM Alerts</h5>
-                            </div>
-                            <div class="row g-3">
-                                <!-- Overdue Follow-ups -->
-                                <div class="col-lg-6">
-                                    <h6 class="text-slate-500 small font-weight-bold text-uppercase mb-2">Overdue Follow-ups ({{ count($overdueLeadsList) }})</h6>
-                                    <div class="list-group list-group-flush border rounded-3 bg-white">
-                                        @forelse($overdueLeadsList as $olead)
-                                            <a href="/manage-lead?id={{ $olead->id }}" class="list-group-item list-group-item-action border-0 py-3">
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <div>
-                                                        <div class="fw-bold text-slate-800">{{ $olead->name }}</div>
-                                                        <small class="text-rose-500"><i class='bx bx-history'></i> Missed: {{ \Carbon\Carbon::parse($olead->next_date)->diffForHumans() }}</small>
-                                                    </div>
-                                                    <i class='bx bx-chevron-right text-slate-300'></i>
-                                                </div>
-                                            </a>
-                                        @empty
-                                            <div class="p-4 text-center text-muted small">No overdue follow-ups! Great job.</div>
-                                        @endforelse
-                                    </div>
+                {{-- CRM ALERTS --}}
+                <div class="dash-section mb-4">
+                    <div class="dash-section-header">
+                        <div class="dash-section-icon" style="background:rgba(234,67,53,0.08); color:#ea4335;">
+                            <i class="bx bxs-zap"></i>
+                        </div>
+                        <h6 class="dash-section-title">Action Required &amp; CRM Alerts</h6>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-6">
+                            <div class="dash-card">
+                                <div class="dash-card-header">
+                                    <i class="bx bx-history" style="color:#ea4335;"></i>
+                                    <span>Overdue Follow-ups</span>
+                                    <span class="dash-badge ms-auto" style="background:#fdecea; color:#ea4335;">{{ count($overdueLeadsList) }}</span>
                                 </div>
-                                <!-- Expiring Proposals -->
-                                <div class="col-lg-6">
-                                    <h6 class="text-slate-500 small font-weight-bold text-uppercase mb-2">Proposals Near Expiry ({{ count($expiringProposals) }})</h6>
-                                    <div class="list-group list-group-flush border rounded-3 bg-white">
-                                        @forelse($expiringProposals as $eprop)
-                                            <a href="/manage-proposal?id={{ $eprop->id }}" class="list-group-item list-group-item-action border-0 py-3">
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <div>
-                                                        <div class="fw-bold text-slate-800">{{ $eprop->subject }}</div>
-                                                        <small class="text-amber-600"><i class='bx bx-time-five'></i> Expires in: {{ \Carbon\Carbon::parse($eprop->open_till)->diffForHumans() }}</small>
-                                                    </div>
-                                                    <i class='bx bx-chevron-right text-slate-300'></i>
-                                                </div>
-                                            </a>
-                                        @empty
-                                            <div class="p-4 text-center text-muted small">All proposals are up to date.</div>
-                                        @endforelse
-                                    </div>
+                                <div class="dash-list">
+                                    @forelse($overdueLeadsList as $olead)
+                                        <a href="/manage-lead?id={{ $olead->id }}" class="dash-list-item">
+                                            <div>
+                                                <div class="dash-list-title">{{ $olead->name }}</div>
+                                                <small class="dash-list-sub" style="color:#ea4335;"><i class="bx bx-time-five"></i> Missed: {{ \Carbon\Carbon::parse($olead->next_date)->diffForHumans() }}</small>
+                                            </div>
+                                            <i class="bx bx-chevron-right dash-list-arrow"></i>
+                                        </a>
+                                    @empty
+                                        <div class="dash-list-empty"><i class="bx bx-check-circle"></i><span>No overdue follow-ups! Great job.</span></div>
+                                    @endforelse
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="dash-card">
+                                <div class="dash-card-header">
+                                    <i class="bx bx-time-five" style="color:#fbbc04;"></i>
+                                    <span>Proposals Near Expiry</span>
+                                    <span class="dash-badge ms-auto" style="background:#fffde7; color:#f57f17;">{{ count($expiringProposals) }}</span>
+                                </div>
+                                <div class="dash-list">
+                                    @forelse($expiringProposals as $eprop)
+                                        <a href="/manage-proposal?id={{ $eprop->id }}" class="dash-list-item">
+                                            <div>
+                                                <div class="dash-list-title">{{ $eprop->subject }}</div>
+                                                <small class="dash-list-sub" style="color:#f57f17;"><i class="bx bx-calendar"></i> Expires {{ \Carbon\Carbon::parse($eprop->open_till)->diffForHumans() }}</small>
+                                            </div>
+                                            <i class="bx bx-chevron-right dash-list-arrow"></i>
+                                        </a>
+                                    @empty
+                                        <div class="dash-list-empty"><i class="bx bx-check-circle"></i><span>All proposals are up to date.</span></div>
+                                    @endforelse
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row g-4">
+
+
+                {{-- CHARTS + ACTIVITY FEED --}}
+                <div class="row g-3">
                     <div class="col-lg-8">
-                        <div class="row g-4">
+                        <div class="row g-3">
                             <div class="col-md-6">
-                                <div class="card h-100 p-4 shadow-sm border-0">
-                                    <div class="d-flex align-items-center mb-4">
-                                        <div class="p-2 bg-emerald-soft rounded-3 me-3">
-                                            <i class="bx bx-trending-up text-emerald-600 h5 mb-0"></i>
-                                        </div>
-                                        <h5 class="card-title mb-0">Revenue Growth</h5>
+                                <div class="dash-card h-100">
+                                    <div class="dash-card-header">
+                                        <i class="bx bx-line-chart" style="color:#34a853;"></i>
+                                        <span>Revenue Growth</span>
                                     </div>
-                                    <div class="chart-container">
+                                    <div class="dash-chart-container">
                                         <canvas id="revenueChart"></canvas>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="card h-100 p-4 shadow-sm border-0">
-                                    <div class="d-flex justify-content-between align-items-center mb-4">
-                                        <div class="d-flex align-items-center">
-                                            <div class="p-2 bg-blue-soft rounded-3 me-3">
-                                                <i class="bx bx-bar-chart-alt-2 text-primary h5 mb-0"></i>
-                                            </div>
-                                            <h5 class="card-title mb-0">Activity Flux</h5>
-                                        </div>
-                                        <select id="activityDateRange" class="form-select form-select-sm border-0 bg-slate-50 rounded-pill px-3" style="width: auto; font-size: 0.75rem; font-weight: 600;">
-                                            <option value="7" {{ $selectedActivityDays == 7 ? 'selected' : '' }}>7 DAYS</option>
-                                            <option value="30" {{ $selectedActivityDays == 30 ? 'selected' : '' }}>30 DAYS</option>
-                                            <option value="90" {{ $selectedActivityDays == 90 ? 'selected' : '' }}>90 DAYS</option>
+                                <div class="dash-card h-100">
+                                    <div class="dash-card-header">
+                                        <i class="bx bx-bar-chart-alt-2" style="color:#1a73e8;"></i>
+                                        <span>Activity Flux</span>
+                                        <select id="activityDateRange" class="form-select form-select-sm ms-auto" style="width:auto; font-size:0.72rem; border:1px solid #dadce0; border-radius:20px; padding:3px 10px; color:#3c4043;">
+                                            <option value="7" {{ $selectedActivityDays == 7 ? 'selected' : '' }}>7 Days</option>
+                                            <option value="30" {{ $selectedActivityDays == 30 ? 'selected' : '' }}>30 Days</option>
+                                            <option value="90" {{ $selectedActivityDays == 90 ? 'selected' : '' }}>90 Days</option>
                                         </select>
                                     </div>
-                                    <div class="chart-container">
+                                    <div class="dash-chart-container">
                                         <canvas id="activityFlowChart"></canvas>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                     <div class="col-lg-4">
-                        <div class="card h-100 p-4 shadow-sm border-0 d-flex flex-column" style="max-height: 455px;">
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <div class="d-flex align-items-center">
-                                    <div class="p-2 bg-rose-soft rounded-3 me-3">
-                                        <i class="bx bx-pulse text-rose-500 h5 mb-0"></i>
-                                    </div>
-                                    <h5 class="card-title mb-0">Live Activities</h5>
-                                </div>
-                                <span class="badge bg-slate-100 text-slate-500 rounded-pill px-3 py-2 font-weight-bold" style="font-size: 0.65rem;">REAL-TIME</span>
+                        <div class="dash-card h-100" style="max-height:460px; display:flex; flex-direction:column;">
+                            <div class="dash-card-header">
+                                <i class="bx bx-pulse" style="color:#ea4335;"></i>
+                                <span>Live Activities</span>
+                                <span class="dash-badge ms-auto" style="background:#fdecea; color:#ea4335; font-size:0.60rem; letter-spacing:0.5px;">REAL-TIME</span>
                             </div>
-                            <div class="activity-log">
+                            <div class="activity-log" style="flex:1; overflow-y:auto;">
                                 @forelse(collect($activities ?? [])->take(20) as $activity)
                                     <div class="activity-feed-item">
-                                        <div class="d-flex justify-content-between align-items-start mb-2">
-                                            <span class="font-weight-bold text-slate-800 small">{{ $activity->user_name ?? 'System' }}</span>
-                                            <span class="text-slate-400" style="font-size: 0.65rem;">{{ \Carbon\Carbon::parse($activity->created_at)->diffForHumans() }}</span>
+                                        <div class="d-flex justify-content-between align-items-start mb-1">
+                                            <span class="fw-bold text-slate-800 small">{{ $activity->user_name ?? 'System' }}</span>
+                                            <span class="text-slate-400" style="font-size: 0.62rem;">{{ \Carbon\Carbon::parse($activity->created_at)->diffForHumans() }}</span>
                                         </div>
-                                        <p class="mb-2 text-slate-600 small" style="line-height: 1.5;">{{ $activity->type }} - {{ $activity->description ?? 'Action recorded' }}</p>
+                                        <p class="mb-1 text-slate-600 small" style="line-height:1.45;">{{ $activity->type }} &mdash; {{ $activity->description ?? 'Action recorded' }}</p>
                                         @if(isset($activity->subject))
-                                            <span class="badge bg-indigo-soft text-indigo-600 rounded px-2 py-1" style="font-size: 0.6rem; font-weight: 700;">{{ strtoupper($activity->subject) }}</span>
+                                            <span class="dash-badge" style="background:rgba(0,102,102,0.08); color:#006666; font-size:0.6rem; font-weight:700;">{{ strtoupper($activity->subject) }}</span>
                                         @endif
                                     </div>
                                 @empty
-                                    <div class="text-center py-5 text-muted flex-grow-1 d-flex flex-column justify-content-center">
-                                        <i class="bx bx-news mb-2 text-slate-200" style="font-size: 3rem;"></i>
-                                        <p class="small text-slate-400">Waiting for activities...</p>
+                                    <div class="dash-list-empty" style="padding:40px 0;">
+                                        <i class="bx bx-news" style="font-size:2.5rem; color:#dadce0;"></i>
+                                        <span style="color:#9aa0a6;">Waiting for activities...</span>
                                     </div>
                                 @endforelse
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
 
         </section>
