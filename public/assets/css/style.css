@@ -1716,7 +1716,7 @@ div.dataTables_wrapper div.dataTables_length select {
 
 ul.sb_submenu {
     padding: 0px !important;
-    margin: 0px !important;
+    margin: 0px 0px 0px 15px !important;
 }
 
 ul.sb_submenu li {
