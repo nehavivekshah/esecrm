@@ -21,7 +21,64 @@
             </div>
             <div class="flex">
                 <input type="hidden" id="userCount" value="{{ count($users) }}" />
-                <?php echo html_entity_decode($output); ?>
+                
+                @foreach ($kanbanData as $column)
+                    <div class="scrum-board backlog">
+                        <h2>{{ $column['user']->name }}</h2>
+                        <div class="scrum-board-column">
+                            <div class="eventblock connectedSortable" data-user="{{ $column['user']->id }}">
+                                
+                                @foreach ($column['tasks'] as $task)
+                                    @php
+                                        if ($task->status == '1') { $borderColorClass = 'scrum-task-argent'; }
+                                        elseif ($task->status == '2') { $borderColorClass = 'scrum-task-warning'; }
+                                        elseif ($task->status == '3') { $borderColorClass = 'scrum-task-info'; }
+                                        elseif ($task->status == '4') { $borderColorClass = 'scrum-task-success'; }
+                                        elseif ($task->status == '5') { $borderColorClass = 'scrum-task-primary'; }
+                                        else { $borderColorClass = 'scrum-task'; }
+
+                                        $highlightClass = $task->is_highlighted ? 'task-highlighted' : '';
+                                        $displayTitle = strlen($task->title) > 28 ? substr($task->title, 0, 28) . '...' : $task->title;
+                                    @endphp
+
+                                    <a href="{{ route('edit-task', ['id' => $task->id]) }}" 
+                                       class="{{ $borderColorClass }} {{ $highlightClass }} overflow ui-state-default" 
+                                       draggable="true" 
+                                       data-taskid="{{ $task->id }}" 
+                                       style="border-color:{{ $task->label }}">
+                                        
+                                        <div class="scrum-task-description">
+                                            <p>{{ $displayTitle }}</p>
+                                            <div class="scrum-edit">
+                                                @if ($task->status == '0')
+                                                    <i class="bx bx-time playicon" id="playicon" title="Stop"></i>
+                                                @else
+                                                    <i class="bx bx-stopwatch playicon" id="playicon" title="Start"></i>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </a>
+                                @endforeach
+
+                            </div>
+                            <div class="scrum-task-assignee">
+                                <form action="{{ route('task') }}" method="post" class="task-form" id="tf{{ $column['user']->id }}" style="display:none;">
+                                    @csrf
+                                    <input type="hidden" name="uid" value="{{ $column['user']->id }}" />
+                                    <input type="hidden" name="cid" value="{{ $column['user']->cid }}" />
+                                    <textarea type="text" name="msg" class="form-contol" id="tx{{ $column['user']->id }}" placeholder="Enter a title for this card.." required></textarea>
+                                    <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                                    <button type="reset" class="btn btn-light btn-sm" id="cls{{ $column['user']->id }}">Reset</button>
+                                </form>
+                                @if($canAddTask)
+                                    <a href="javascript:void(0)" onclick="addtask(this.id)" id="{{ $column['user']->id }}" class="nc">
+                                        <i class="bx bx-plus" id="edit_task"></i> Add New Card
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
             </div>
         </div>
     </section>

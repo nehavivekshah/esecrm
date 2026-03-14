@@ -16,230 +16,52 @@ use Carbon\Carbon;
 
 class UserController extends Controller
 {
+    protected $userService;
+
+    public function __construct(\App\Services\UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
     public function attendances(Request $request)
     {
         $user = Auth::user();
         $roles = session('roles');
         $isAdmin = $roles && $roles->title === 'Admin';
     
-        // Filters
         $selectedUserId = $request->input('user_id');
         $range = $request->input('range', $isAdmin ? 'today' : '7days');
-        $today = now()->toDateString();
-        $dates = collect();
-        
-        switch ($range) {
-            case 'today':
-                $dates->push($today);
-                break;
-        
-            case '7days':
-                for ($i = 0; $i < 7; $i++) {
-                    $dates->push(now()->subDays($i)->toDateString());
-                }
-                break;
-        
-            case 'month': // This month
-                $start = now()->startOfMonth();
-                $end   = now();
-                while ($start <= $end) {
-                    $dates->push($start->toDateString());
-                    $start->addDay();
-                }
-                break;
-        
-            case 'last-month':
-                $start = now()->subMonth()->startOfMonth();
-                $end   = now()->subMonth()->endOfMonth();
-                while ($start <= $end) {
-                    $dates->push($start->toDateString());
-                    $start->addDay();
-                }
-                break;
-        
-            case 'year': // Current year till today
-                $start = now()->startOfYear();
-                $end   = now();
-                while ($start <= $end) {
-                    $dates->push($start->toDateString());
-                    $start->addDay();
-                }
-                break;
-        
-            default:
-                $dates->push($today);
-        }
 
-    
-        // Load users
-        if ($isAdmin) {
-            $users = User::select('id', 'name', 'working_times')
-                ->where('cid', $user->cid)
-                ->when($selectedUserId, fn($q) => $q->where('id', $selectedUserId))
-                ->get();
-        } else {
-            $users = collect([$user]);
-        }
-    
-        $userIds = $users->pluck('id')->toArray();
-    
-        // Attendance data for all users in selected range
-        $attendanceData = Attendances::whereIn('date', $dates)
-            ->whereIn('user_id', $userIds)
-            ->get()
-            ->groupBy('user_id');
-    
-        $holidays = Holidays::whereIn('date', $dates)->get()->keyBy('date');
-    
-        $final = [];
-        $summary = [
-            'working_days' => 0,
-            'expected_hours' => 0,
-            'worked_hours' => 0,
-            'holidays' => 0,
-            'leaves' => 0,
-            'present' => 0,
-            'absent' => 0,
-        ];
-    
-        foreach ($users as $u) {
-            $uid = $u->id;
-            $userAttendance = $attendanceData->has($uid) ? $attendanceData[$uid]->keyBy('date') : collect();
-            $workingTimes = json_decode($u->working_times, true);
-            $start = $workingTimes['start'] ?? '10:00';
-            $end = $workingTimes['end'] ?? '18:00';
-            $expectedHours = \Carbon\Carbon::parse($end)->diffInHours(\Carbon\Carbon::parse($start));
-    
-            foreach ($dates as $date) {
-                $dayName = \Carbon\Carbon::parse($date)->format('l');
-                $checkIn = $checkOut = $method = $remarks = '-';
-                $workedHours = 0;
-                $type = 'Working Day';
-                $status = 'Absent';
-    
-                if ($userAttendance->has($date)) {
-                    $att = $userAttendance[$date];
-                    $checkIn = $att->check_in ?? '-';
-                    $checkOut = $att->check_out ?? '-';
-                    $method = $att->method ?? '-';
-                    $remarks = $att->remarks ?? '-';
-                    $status = $att->status;
-    
-                    if ($checkIn !== '-' && $checkOut !== '-') {
-                        //$workedHours = \Carbon\Carbon::parse($checkOut)->diffInHours(\Carbon\Carbon::parse($checkIn));
-                        $minutes = Carbon::parse($checkOut)->diffInMinutes(Carbon::parse($checkIn));
-                        $workedHours = round($minutes / 60, 2);
-                    }
-                } elseif (isset($holidays[$date])) {
-                    $status = 'Holiday';
-                    $type = 'Holiday: ' . $holidays[$date]->title;
-                } elseif ($dayName === 'Sunday') {
-                    $status = 'Holiday';
-                    $type = 'Sunday';
-                } else {
-                    $status = 'Leave';
-                    $type = 'Leave';
-                }
-    
-                // Summary updates
-                if ($status === 'Present') $summary['present']++;
-                if ($status === 'Leave') $summary['leaves']++;
-                if ($status === 'Absent') $summary['absent']++;
-                if ($status === 'Holiday') $summary['holidays']++;
-    
-                if (!in_array($status, ['Holiday'])) {
-                    $summary['working_days']++;
-                    $summary['expected_hours'] += $expectedHours;
-                    $summary['worked_hours'] += $workedHours;
-                }
-    
-                $final[] = [
-                    'user' => $u->name,
-                    'user_id' => $uid,
-                    'date' => $date,
-                    'day' => $dayName,
-                    'status' => $status,
-                    'type' => $type,
-                    'check_in' => $checkIn,
-                    'check_out' => $checkOut,
-                    'method' => $method,
-                    'remarks' => $remarks,
-                    'expected_hours' => $expectedHours,
-                    'worked_hours' => $workedHours,
-                ];
-            }
-        }
-    
-        return view('attendances', compact('final', 'isAdmin', 'users', 'summary', 'range', 'selectedUserId'));
+        $data = $this->userService->getAttendanceReport($user, $isAdmin, $selectedUserId, $range);
+
+        return view('attendances', array_merge($data, [
+            'isAdmin' => $isAdmin,
+            'range' => $range,
+            'selectedUserId' => $selectedUserId
+        ]));
     }
 
     //User Controller
-    function users(Request $request){
-        
+    public function users(Request $request)
+    {
         $segment = $request->segment(1);
-        $roles = session('roles');
+        $user = Auth::user();
+
+        $users = $this->userService->getUsersBySegment($user, $segment);
+        // Note: The original code fetched roles but didn't pass them to the 'users' view. 
+        // We'll keep the view call standard. If roles are needed in view later, add them here.
         
-        if(Auth::user()->role == 'master'){
-        
-            $users = User::leftjoin('companies','users.cid','=','companies.id')
-                ->leftjoin('roles','users.role','=','roles.id')
-                ->select('companies.name','roles.title','roles.subtitle','users.*')->get();
-            
-            $roles = Roles::where('cid','=',(Auth::user()->cid ?? ''))->get();
-        
-        }elseif($segment == 'admins'){
-            
-            $users = User::leftjoin('companies','users.cid','=','companies.id')
-                ->leftjoin('roles','users.role','=','roles.id')
-                ->select('companies.name','roles.title','roles.subtitle','users.*')
-                ->where('users.cid','=',(Auth::user()->cid ?? ''))
-                ->where('roles.features','=','All')->get();
-            
-            $roles = Roles::where('cid','=',(Auth::user()->cid ?? ''))->get();
-            
-        }elseif($segment == 'employees'){
-            
-            $users = User::leftjoin('companies','users.cid','=','companies.id')
-                ->leftjoin('roles','users.role','=','roles.id')
-                ->select('companies.name','roles.title','roles.subtitle','users.*')
-                ->where('users.cid','=',(Auth::user()->cid ?? ''))
-                ->where('roles.features','!=','All')->get();
-            
-            $roles = Roles::where('cid','=',(Auth::user()->cid ?? ''))->get();
-            
-        }else{
-            
-            $users = User::leftjoin('companies','users.cid','=','companies.id')
-                ->leftjoin('roles','users.role','=','roles.id')
-                ->select('companies.name','roles.title','roles.subtitle','users.*')
-                ->where('users.cid','=',(Auth::user()->cid ?? ''))->get();
-            
-            $roles = Roles::where('cid','=',(Auth::user()->cid ?? ''))->get();
-            
-        }
-        
-        return view('users',['users'=>$users]);
+        return view('users', ['users' => $users]);
     }
     
-    function manageUser(Request $request){
-        
+    public function manageUser(Request $request)
+    {
         $segment = $request->segment(1);
+        $uid = ($segment == 'my-profile') ? Auth::id() : $request->id;
         
-        if($segment == 'my-profile'){ $uid = Auth::user()->id ?? ''; }else{ $uid = $request->id ?? ''; }
+        $data = $this->userService->getUserDetails($uid, Auth::user());
         
-        $users = User::leftjoin('companies','users.cid','=','companies.id')
-            ->leftjoin('roles','users.role','=','roles.id')
-            ->select('companies.name as company','companies.img','roles.title','roles.features as roleFeatures','users.*')
-            ->where('users.id','=',$uid)->first();
-            
-        $allusers = User::leftjoin('companies','users.cid','=','companies.id')
-                ->leftjoin('roles','users.role','=','roles.id')
-                ->select('companies.name','roles.title','roles.subtitle','users.*')
-                ->where('users.cid','=',(Auth::user()->cid ?? ''))->get();
-            
-        $roles = Roles::where('cid','=',(Auth::user()->cid ?? ''))->where('features','!=','All')->get();
-        
-        return view('manageUser',['users'=>$users,'roles'=>$roles,'allusers'=>$allusers]);
+        return view('manageUser', $data);
     }
     
     function manageUserPost(Request $request){
