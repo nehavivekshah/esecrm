@@ -232,7 +232,7 @@
                                 </div>
                                 @if(in_array('clients_edit', $roleArray) || in_array('All', $roleArray))
                                     <div class="form-group col-md-12 text-center mt-3">
-                                        <button type="submit" class="btn btn-primary px-4">Save</button>
+                                        <button type="submit" class="btn btn-indigo px-4">Save</button>
                                         <button type="reset" class="btn btn-light border px-4">Reset</button>
                                     </div>
                                 @endif
@@ -264,8 +264,8 @@
                                         </div>
                                     </div>
                                     <div class="form-group text-center pt-2">
-                                        <button type="submit" class="btn btn-primary">Submit</button>
-                                        <button type="reset" class="btn btn-light border">Reset</button>
+                                        <button type="submit" class="btn btn-indigo px-4">Submit</button>
+                                        <button type="reset" class="btn btn-light border px-4">Reset</button>
                                     </div>
                                 </form>
                             </div>

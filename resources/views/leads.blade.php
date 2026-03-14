@@ -368,7 +368,7 @@
                                                 <div>
                                                     <button type="reset" class="btn btn-light ml-auto border px-4">Reset</button>
                                                     <button type="submit"
-                                                        class="btn btn-success bg-success text-white px-4">Save</button>
+                                                        class="btn btn-indigo px-4">Save</button>
                                                 </div>
                                             @endif
                                         </div>
@@ -393,7 +393,7 @@
                                                 type="datetime-local" name="next_date" id="c_next_date"
                                                 class="form-control form-control-sm" required></div>
                                         <button type="submit"
-                                            class="btn btn-success bg-success btn-sm w-100 py-2 text-white">Save
+                                            class="btn btn-indigo btn-sm w-100 py-2">Save
                                             Comment</button>
                                     </form>
                                 </div>
