@@ -790,3 +790,9 @@ span.divider-left {
     justify-content: start !important;
     align-items: center !important;
 }
+
+li.nav-title {
+    color: #fff !important;
+    font-size: 14px;
+    font-weight: 700;
+}
