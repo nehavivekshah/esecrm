@@ -779,3 +779,14 @@ table.dataTable tbody td {
 .table-hover tbody tr:hover {
     background-color: #f8fafc !important;
 }
+
+.sidebar li i.bx.bx-chevron-down {
+    text-align: right;
+}
+
+span.divider-left {
+    min-width: 151px !important;
+    display: flex !important;
+    justify-content: start !important;
+    align-items: center !important;
+}
