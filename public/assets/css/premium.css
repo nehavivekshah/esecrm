@@ -193,7 +193,7 @@ body {
 .sidebar li a.active i,
 .sidebar li a.active .link_name {
     color: #ffffff !important;
-    font-weight: 600 !important;
+    font-weight: 400 !important;
 }
 
 /* === Tooltip (only when collapsed) === */
