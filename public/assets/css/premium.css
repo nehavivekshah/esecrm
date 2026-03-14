@@ -128,36 +128,85 @@ body {
 
 /* Fix sidebar child menu labels */
 .sidebar .divider {
-    color: rgba(255, 255, 255, 0.7) !important;
+    color: rgba(255, 255, 255, 0.75) !important;
     font-weight: 600;
-    font-size: 0.75rem;
-    padding: 12px 15px 4px 15px;
-    display: block;
+    font-size: 0.78rem;
+    padding: 4px 12px 4px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 5px;
+    transition: background 0.2s ease;
+}
+
+.sidebar .divider:hover {
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .sidebar .divider label {
-    color: rgba(255, 255, 255, 0.6) !important;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.75) !important;
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 0.3px;
 }
 
-.sidebar .divider i {
-    color: rgba(255, 255, 255, 0.7) !important;
+.sidebar .divider i.bx-chevron-down {
+    font-size: 1rem !important;
+    height: auto !important;
+    line-height: 1 !important;
+    min-width: auto !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    transition: transform 0.25s ease;
+}
+
+.sidebar li .collapse.show + * .bx-chevron-down,
+.sidebar li:has(.collapse.show) .bx-chevron-down {
+    transform: rotate(180deg);
 }
 
 .sidebar .nav-title {
-    color: rgba(255, 255, 255, 0.45) !important;
-    font-size: 0.70rem;
+    color: rgba(255, 255, 255, 0.38) !important;
+    font-size: 0.65rem;
     font-weight: 700;
-    letter-spacing: 0.8px;
+    letter-spacing: 1px;
     text-transform: uppercase;
-    padding: 20px 15px 8px 15px;
+    padding: 16px 12px 4px 12px;
     display: block;
     margin-bottom: 0;
+    pointer-events: none;
+    height: auto !important;
+    line-height: 1 !important;
+    min-height: 0 !important;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* Suppress sidebar i height override for non-icon <li> */
+.sidebar li.nav-title i,
+.sidebar li .divider i {
+    height: auto !important;
+    line-height: normal !important;
+    min-width: auto !important;
+}
+
+.sidebar .sb_submenu {
+    padding: 2px 0 4px 0;
+    margin: 0;
+    list-style: none;
 }
 
 .sidebar .sb_submenu li a {
-    padding-left: 30px !important;
+    padding-left: 36px !important;
+    font-size: 0.80rem !important;
+    opacity: 0.85;
+}
+
+.sidebar .sb_submenu li a.active,
+.sidebar .sb_submenu li a:hover {
+    opacity: 1;
 }
 
 /* ==========================================================================

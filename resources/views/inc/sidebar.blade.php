@@ -179,8 +179,6 @@
             </div>
         </li>
 
-
-
         <li class="nav-title">MARKETING</li>
         @if(in_array('campaigns', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
             <li>
@@ -202,6 +200,8 @@
             </li>
         @endif
 
+        <li class="nav-title">OPERATIONS</li>
+
         @if(in_array('reports', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
             <li>
                 <a href="/reports" @if(Request::segment(1) == 'reports') class="active" @endif>
@@ -211,8 +211,6 @@
                 <span class="tooltip">Reports</span>
             </li>
         @endif
-
-        <li class="nav-title">OPERATIONS</li>
 
         @if(in_array('attendances', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
             <li>
