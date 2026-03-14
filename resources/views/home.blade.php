@@ -29,53 +29,62 @@
                 <!-- DASHBOARD WIDGETS -->
                 <div class="row mb-4">
                     <div class="col-md-3 mb-3">
-                        <div class="card widget-card mesh-gradient-1 h-100 p-4">
-                            <i class="bx bx-receipt bg-icon"></i>
-                            <span class="widget-label text-white-50">Outstanding Invoices</span>
-                            <div class="d-flex align-items-end">
-                                <h2 class="font-weight-bold mb-0 me-2 mt-2">₹{{ number_format($outstandingInvoices, 0) }}</h2>
+                        <div class="card widget-card h-100 p-4 border-top" style="border-top: 4px solid #1a73e8 !important;">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="widget-label text-slate-500 font-weight-bold text-uppercase" style="font-size: 0.75rem;">Outstanding Invoices</span>
+                                <div class="p-2 bg-blue-soft rounded-circle">
+                                    <i class="bx bx-receipt text-primary h5 mb-0"></i>
+                                </div>
                             </div>
+                            <h2 class="font-weight-bold mb-0 text-slate-800">₹{{ number_format($outstandingInvoices, 0) }}</h2>
                             <div class="mt-3">
-                                <span class="badge bg-white bg-opacity-20 rounded-pill small">Pending</span>
+                                <span class="badge bg-slate-100 text-slate-600 rounded-pill small">Pending</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <div class="card widget-card mesh-gradient-2 h-100 p-4">
-                            <i class="bx bx-file-blank bg-icon"></i>
-                            <span class="widget-label text-white-50">Pending Proposals</span>
-                            <div class="d-flex align-items-end">
-                                <h2 class="font-weight-bold mb-0 me-2 mt-2">{{ $pendingProposals }}</h2>
+                        <div class="card widget-card h-100 p-4 border-top" style="border-top: 4px solid #ea4335 !important;">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="widget-label text-slate-500 font-weight-bold text-uppercase" style="font-size: 0.75rem;">Pending Proposals</span>
+                                <div class="p-2 bg-rose-soft rounded-circle">
+                                    <i class="bx bx-file-blank text-rose-500 h5 mb-0"></i>
+                                </div>
                             </div>
+                            <h2 class="font-weight-bold mb-0 text-slate-800">{{ $pendingProposals }}</h2>
                             <div class="mt-3">
-                                <span class="badge bg-white bg-opacity-20 rounded-pill small">Active</span>
+                                <span class="badge bg-slate-100 text-slate-600 rounded-pill small">Active</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <div class="card widget-card mesh-gradient-3 h-100 p-4">
-                            <i class="bx bx-task bg-icon"></i>
-                            <span class="widget-label text-white-50">Assigned Tasks</span>
-                            <div class="d-flex align-items-end">
-                                <h2 class="font-weight-bold mb-0 me-2 mt-2">{{ $myPendingTasks }}</h2>
+                        <div class="card widget-card h-100 p-4 border-top" style="border-top: 4px solid #fbbc04 !important;">
+                             <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="widget-label text-slate-500 font-weight-bold text-uppercase" style="font-size: 0.75rem;">Assigned Tasks</span>
+                                <div class="p-2 bg-warning bg-opacity-10 rounded-circle">
+                                    <i class="bx bx-task text-warning h5 mb-0"></i>
+                                </div>
                             </div>
+                            <h2 class="font-weight-bold mb-0 text-slate-800">{{ $myPendingTasks }}</h2>
                             <div class="mt-3">
-                                <span class="badge bg-white bg-opacity-20 rounded-pill small">Your Queue</span>
+                                <span class="badge bg-slate-100 text-slate-600 rounded-pill small">Your Queue</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <div class="card widget-card mesh-gradient-4 h-100 p-4">
-                            <i class="bx bx-pulse bg-icon"></i>
-                            <span class="widget-label text-white-50">Total Leads</span>
-                            <div class="d-flex align-items-end">
-                                <h2 class="font-weight-bold mb-0 me-2 mt-2">{{ $totalLeads }}</h2>
+                        <div class="card widget-card h-100 p-4 border-top" style="border-top: 4px solid #34a853 !important;">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="widget-label text-slate-500 font-weight-bold text-uppercase" style="font-size: 0.75rem;">Total Leads</span>
+                                <div class="p-2 bg-emerald-soft rounded-circle">
+                                    <i class="bx bx-pulse text-emerald-600 h5 mb-0"></i>
+                                </div>
                             </div>
+                            <h2 class="font-weight-bold mb-0 text-slate-800">{{ $totalLeads }}</h2>
                             <div class="mt-3">
-                                <span class="badge bg-white bg-opacity-20 rounded-pill small">Sales Pipeline</span>
+                                <span class="badge bg-slate-100 text-slate-600 rounded-pill small">Sales Pipeline</span>
                             </div>
                         </div>
                     </div>
+                      </div>
                 </div>
 
                 <!-- QUICK ACTIONS SECTION -->

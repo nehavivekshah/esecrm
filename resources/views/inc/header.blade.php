@@ -8,10 +8,10 @@
     <div class="header-right d-flex align-items-center">
         <!-- Quick Add Dropdown -->
         <div class="dropdown me-2">
-            <button class="btn btn-primary rounded-pill btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn btn-indigo rounded-pill btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bx bx-plus me-1"></i> Quick Add
             </button>
-            <ul class="dropdown-menu shadow-sm border-0 mt-2" style="border-radius: 12px;">
+            <ul class="dropdown-menu shadow-sm border-0 mt-2" style="border-radius: 12px; border: 1px solid var(--border-google) !important;">
                 <li><a class="dropdown-item" href="/manage-lead"><i class="bx bx-user-plus me-2 text-primary"></i> New Lead</a></li>
                 <li><a class="dropdown-item" href="/manage-client"><i class="bx bx-group me-2 text-success"></i> New Client</a></li>
                 <li><hr class="dropdown-divider"></li>
