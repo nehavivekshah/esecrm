@@ -53,7 +53,7 @@
         @if(in_array('leads', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
             <li>
                 <span class="divider" data-bs-toggle="collapse" data-bs-target="#leads-menu"><label>Leads</label> <i
-                        class="bx bx-chevron-down-circle"></i></span>
+                        class="bx bx-chevron-down"></i></span>
                 <div id="leads-menu"
                     class="collapse @if(Request::segment(1) == 'leads' || Request::segment(1) == 'leads' && Request::segment(2) == 'kanban') show @endif"
                     data-bs-parent="#accordion">
@@ -91,7 +91,7 @@
         @if(in_array('tasks', $roleArray) || in_array('crm_tasks', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
             <li>
                 <span class="divider" data-bs-toggle="collapse" data-bs-target="#tasks-menu"><label>Tasks</label> <i
-                        class="bx bx-chevron-down-circle"></i></span>
+                        class="bx bx-chevron-down"></i></span>
                 <div id="tasks-menu"
                     class="collapse @if(Request::segment(1) == 'task' || Request::segment(1) == 'edit-task' || Request::segment(1) == 'crm-tasks') show @endif"
                     data-bs-parent="#accordion">
@@ -121,7 +121,7 @@
         <li class="nav-title">SALES</li>
         <li>
             <span class="divider" data-bs-toggle="collapse" data-bs-target="#sales-menu"><label>Sales</label> <i
-                    class="bx bx-chevron-down-circle"></i></span>
+                    class="bx bx-chevron-down"></i></span>
             <div id="sales-menu"
                 class="collapse @if(Request::segment(1) == 'proposals' || Request::segment(1) == 'opportunities' || Request::segment(1) == 'invoices' || Request::segment(1) == 'contracts' || Request::segment(1) == 'recoveries' || Request::segment(1) == 'manage-proposal' || Request::segment(1) == 'manage-invoice' || Request::segment(1) == 'manage-contract' || Request::segment(1) == 'manage-recovery') show @endif"
                 data-bs-parent="#accordion">
@@ -239,7 +239,7 @@
 
         <li>
             <span class="divider" data-bs-toggle="collapse" data-bs-target="#s"><label>Settings</label> <i
-                    class="bx bx-chevron-down-circle"></i></span>
+                    class="bx bx-chevron-down"></i></span>
             <div id="s"
                 class="collapse @if(Request::segment(1) == 'my-profile' || Request::segment(1) == 'smtp-settings' || Request::segment(1) == 'email-templates' || Request::segment(1) == 'my-company' || Request::segment(1) == 'reset-password' || Request::segment(1) == 'role-settings' || Request::segment(1) == 'manage-role-setting') show @endif"
                 data-bs-parent="#accordion">
