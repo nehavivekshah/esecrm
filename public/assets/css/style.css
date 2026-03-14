@@ -2641,8 +2641,8 @@ div.dataTables_processing>div:last-child>div {
 }
 
 span.divider-left {
-    min-width: 151px;
-    display: flex;
-    justify-content: start;
-    align-items: center;
+    min-width: 151px !important;
+    display: flex !important;
+    justify-content: start !important;
+    align-items: center !important;
 }
