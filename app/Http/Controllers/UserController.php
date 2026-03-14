@@ -297,8 +297,6 @@ class UserController extends Controller
             
             return redirect('manage-user')->with('success', 'New user role was successfully added.');
             
-            return redirect('manage-user')->with('error', 'Opps! Something has gone wrong.');
-            
         }else{
             
             $id = $request->id ?? '';
@@ -368,9 +366,6 @@ class UserController extends Controller
             endif;
             
             return back()->with('success', 'Successfully updated.');
-            
-            return back()->with('error', 'Opps! Something has gone wrong.');
-            
         }
         
     }
@@ -476,7 +471,5 @@ class UserController extends Controller
         $user->update();
         
         return redirect('reset-password')->with('success', 'Successfully updated.');
-            
-        return redirect('reset-password')->with('error', 'Opps! Something has gone wrong.');
     }
 }

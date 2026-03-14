@@ -609,7 +609,7 @@ class ClientController extends Controller
 
         if (!$client) {
             $client = new Clients();
-            $client->cid = 2;
+            $client->cid = Auth::user()->cid;
             $client->name = $validatedData['name'];
             $client->company = $validatedData['company'];
             $client->email = $validatedData['email'];
@@ -621,8 +621,7 @@ class ClientController extends Controller
             $client_id = $client->id;
 
             $client = Clients::findOrFail($client_id);
-            ;
-            $client->cid = 2;
+            $client->cid = Auth::user()->cid;
             $client->name = $validatedData['name'];
             $client->company = $validatedData['company'];
             $client->email = $validatedData['email'];
@@ -637,7 +636,7 @@ class ClientController extends Controller
         // Check if project exists or needs to be created
         if (empty($validatedData['project_id'])) {
             $project = new Projects();
-            $project->cid = 2;
+            $project->cid = Auth::user()->cid;
             $project->client_id = $client_id;
             $project->name = $validatedData['project_name'];
             $project->type = $validatedData['type'];
@@ -652,7 +651,7 @@ class ClientController extends Controller
         } else {
             $project_id = $validatedData['project_id'];
             $project = Projects::findOrFail($project_id);
-            $project->cid = 2;
+            $project->cid = Auth::user()->cid;
             $project->client_id = $client_id;
             $project->name = $validatedData['project_name'];
             $project->type = $validatedData['type'];

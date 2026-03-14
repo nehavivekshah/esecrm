@@ -95,8 +95,6 @@ class AuthController extends Controller
 
             return redirect('/login')->with('success', 'Successfully registered your business on our platform! To complete the setup, please verify your email and fill out your business profile to start reaching potential customers.');
 
-            return back()->with('error', 'Oops, Somethings went worng.');
-
         } catch (Illuminate\Database\QueryException $e) {
 
             $errorCode = $e->errorInfo[1];
@@ -176,42 +174,48 @@ class AuthController extends Controller
 
         $getSociety = Companies::where('id', '=', $getUser->cid)->first();
 
+        // Generate a secure random token and store it
+        $token = \Illuminate\Support\Str::random(64);
+        \DB::table('password_reset_tokens')->updateOrInsert(
+            ['email' => $to],
+            ['email' => $to, 'token' => Hash::make($token), 'created_at' => now()]
+        );
+
+        $resetUrl = url('/new-password?token=' . $token . '&email=' . urlencode($to));
+
         $subject = 'Reset Your Password for Your CRM Account';
 
         $message = "Dear " . $getUser->name . ",<br><br>
         We received a request to reset your password for your CRM account. If you did not make this request, please ignore this email. Otherwise, follow the instructions below to reset your password.<br><br>
         <b>Reset Your Password:</b><br>
         <ul>
-            <li>Click on the following link or copy and paste it into your browser: <a href='https://esecrm.com/new-password?token=" . $getUser->id . "crm" . $getUser->password . "'>Password Reset Link</a></li>
+            <li>Click on the following link or copy and paste it into your browser: <a href='" . $resetUrl . "'>Password Reset Link</a></li>
             <li>Enter your new password in the provided field.</li>
             <li>Confirm your new password by re-entering it.</li>
             <li>Click the <b>Submit</b> button to complete the process.</li>
         </ul><br>
-        For your security, this link will expire in 24 hours. If you need a new link, you can request another password reset through the Webbrella website.<br><br>
+        For your security, this link will expire in 24 hours.<br><br>
         Thank you for being a valued member of the Webbrella community!<br><br>
         <b>Best regards,</b><br>" . ($getSociety->name ?? 'ESECRM');
 
         $viewName = 'emails.welcome';
-        $viewData = ["name" => $getUser->first_name, "messages" => $message];
+        $viewData = ["name" => $getUser->name, "messages" => $message];
 
         $smtpSettings = SmtpSettings::where('user_id', $getUser->id)->first();
 
-        // 2. Fallback: If no user-specific settings found AND the user has a company ID (cid)
         if (!$smtpSettings && !empty($getUser->cid)) {
-            $smtpSettings = SmtpSettings::where('cid', $getUser->cid)
-                // ->whereNull('user_id') // Optional: Add if company settings have user_id = null
-                ->first();
+            $smtpSettings = SmtpSettings::where('cid', $getUser->cid)->first();
         }
 
-        $fromAddress = $smtpSettings?->from_address; // Get from DB if available
-        $fromName = $smtpSettings?->from_name;       // Get from DB if available
+        $fromAddress = $smtpSettings?->from_address;
+        $fromName = $smtpSettings?->from_name;
 
         $mailable = new CustomMailable(
             $subject,
             $viewName,
             $viewData,
-            $fromAddress, // Pass DB value or null
-            $fromName     // Pass DB value or null
+            $fromAddress,
+            $fromName
         );
 
         Mail::to($to)->send($mailable);
@@ -222,28 +226,39 @@ class AuthController extends Controller
 
     public function newPassword(Request $request)
     {
+        $token   = $request->token ?? '';
+        $email   = $request->email ?? '';
 
-        $token = explode('crm', ($request->token ?? ''));
+        $record = \DB::table('password_reset_tokens')->where('email', $email)->first();
 
-        $getUser = User::where('id', '=', $token[0])->first();
+        if (!$record || !Hash::check($token, $record->token)) {
+            return back()->with('error', 'This password reset link is invalid or has expired.');
+        }
 
-        $id = $token[0] ?? '';
+        $getUser = User::where('email', $email)->first();
 
         if (!$getUser) {
             return back()->with('error', 'No user found with this email address.');
         }
 
-        return view('newPassword', ['id' => $id]);
+        return view('newPassword', ['id' => $getUser->id, 'token' => $token, 'email' => $email]);
 
     }
 
     public function newPasswordPost(Request $request)
     {
+        $request->validate([
+            'new_password' => 'required|min:8',
+            'uid'          => 'required|exists:users,id',
+        ]);
 
         $id = $request->uid ?? '';
-        $password = User::find($id);
-        $password->password = Hash::make(($request->new_password ?? ''));
-        $password->update();
+        $user = User::findOrFail($id);
+        $user->password = Hash::make($request->new_password);
+        $user->update();
+
+        // Invalidate the token
+        \DB::table('password_reset_tokens')->where('email', $user->email)->delete();
 
         return redirect('login')->with('success', 'Your password has been successfully updated! You can now log in using your new password.');
 

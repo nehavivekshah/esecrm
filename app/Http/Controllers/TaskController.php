@@ -295,8 +295,6 @@ class TaskController extends Controller
 
         return back()->with('success', 'New Task Added');
 
-        return back()->with('error', 'Oops, Somethings went worng.');
-
     }
 
     public function taskEdit(Request $request)
