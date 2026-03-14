@@ -145,16 +145,13 @@
         </div>
     </section>
 
-    <!-- Modal for Edit/Profile (same as before) -->
-    <div class="modal fade" id="leadModal" tabindex="-1" aria-hidden="true">
-        <!-- ... (Internal modal content remains the same as provided in previous full code) ... -->
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header border-bottom-0">
-                    <h5 class="modal-title">Edit Lead Details</h5>
-                    <button type="button" class="btn-close text-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body pt-0">
+    <!-- Offcanvas for Edit/Profile -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="leadModal" aria-labelledby="leadModalLabel" style="width: 800px; max-width: 100vw; border-top-left-radius: 20px; border-bottom-left-radius: 20px; box-shadow: -10px 0 30px rgba(0,0,0,0.1);">
+        <div class="offcanvas-header border-bottom bg-slate-50" style="border-top-left-radius: 20px;">
+            <h5 class="offcanvas-title font-weight-bold text-slate-800" id="leadModalLabel">Edit Lead Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body pt-3 bg-white">
                     <!--<ul class="nav nav-tabs mb-3" id="leadModalTab" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="lead-details-tab" data-bs-toggle="pill" data-bs-target="#lead-details" type="button" role="tab" aria-controls="lead-details" aria-selected="true">Profile</button>
@@ -441,8 +438,6 @@
                         </div>
 
                     </div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -547,7 +542,7 @@
                         html += '<div class="pb-2 border-bottom mb-2"><small class="text-primary fw-bold">' + c.created_at + '</small><p class="mb-0 small">' + c.msg + '</p></div>';
                     });
                     $('#commentHistory').html(html || 'No history.');
-                    $('#leadModal').modal('show');
+                    $('#leadModal').offcanvas('show');
                 });
             });
 
@@ -558,7 +553,7 @@
                 e.preventDefault();
                 $.get("{{ route('leads.update') }}", $(this).serialize(), function () {
                     alert('Profile Updated');
-                    $('#leadModal').modal('hide');
+                    $('#leadModal').offcanvas('hide');
                     table.ajax.reload(null, false);
                 });
             });
@@ -567,7 +562,7 @@
                 e.preventDefault();
                 $.post("{{ route('leads.storeComment') }}", $(this).serialize(), function () {
                     alert('Comment Saved');
-                    $('#leadModal').modal('hide');
+                    $('#leadModal').offcanvas('hide');
                     table.ajax.reload(null, false);
                 });
             });
@@ -581,7 +576,7 @@
                         id: id
                     }, function (res) {
                         alert('Lead deleted successfully');
-                        $('#leadModal').modal('hide');
+                        $('#leadModal').offcanvas('hide');
 
                         // FIX: Use this instead of table.ajax.reload()
                         $('#leadslists').DataTable().ajax.reload(null, false);

@@ -9,11 +9,7 @@
     
     @endphp
     <section class="task__section">
-        <div class="text">
-            <i class="bx bx-menu" id="mbtn"></i> 
-            Customers
-            <a href="/signout" class="logoutbtn"><i class="bx bx-log-out"></i></a>
-        </div>
+        @include('inc.header', ['title' => 'Projects'])
         <div class="container-fluid">
             <div class="board-title board-title-flex">
                 <h1>List Board</h1>

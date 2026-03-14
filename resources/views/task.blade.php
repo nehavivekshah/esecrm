@@ -3,11 +3,7 @@
 
 @section('content')
     <section class="task__section">
-        <div class="text">
-            <i class="bx bx-menu" id="mbtn"></i> 
-            Task
-            <a href="/signout" class="logoutbtn"><i class="bx bx-log-out"></i></a>
-        </div>
+        @include('inc.header', ['title' => 'Tasks'])
         <div class="container-fluid">
             <div class="board-title board-title-flex px-4">
                 <h1>Kanban Board</h1>

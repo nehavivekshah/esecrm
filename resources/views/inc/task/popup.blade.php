@@ -4,22 +4,20 @@
     $roleArray = explode(',',($roles->permissions ?? ''));
 
 @endphp
-<section class="task_pop_section" id="task_pop_section"><!-- style="display:none;"-->
-    <!--<div class="text">Task</div>-->
-    <div class="pop-scrum-board-container">
-        <div class="pop-scrum-board">
+<div class="offcanvas offcanvas-end show" tabindex="-1" id="taskOffcanvas" aria-labelledby="taskOffcanvasLabel" style="width: 850px; max-width: 100vw; border-top-left-radius: 20px; border-bottom-left-radius: 20px; box-shadow: -10px 0 30px rgba(0,0,0,0.1); z-index: 1060; visibility: visible;">
+    <div class="offcanvas-body" style="padding: 0;">
+        <div class="pop-scrum-board" style="box-shadow: none; border-radius: 0; margin: 0; min-height: 100%; border: none;">
             
             <!--Header Content-->
-            <div class="pop-flex">
-                <div class="listicon">
-                    <i class="bx bx-window-alt"></i>
+            <div class="pop-flex offcanvas-header bg-slate-50 border-bottom" style="border-top-left-radius: 20px;">
+                <div class="listicon text-indigo-600">
+                    <i class="bx bx-window-alt h4 mb-0"></i>
                 </div>
-                <div class="headcontent">
-                    <textarea type="text" id="tasktitle">{{ ucfirst($taskSingle[0]->title) }}</textarea>
-                    <!--<h5 class="text-second">in list {{ $userSingle[0]->name }}</h5>-->
+                <div class="headcontent flex-grow-1 px-3">
+                    <textarea type="text" id="tasktitle" class="form-control font-weight-bold tracking-tight text-slate-800" style="border:none; padding-left:0; font-size:1.2rem; background:transparent;">{{ ucfirst($taskSingle[0]->title) }}</textarea>
                 </div>
                 <div class="listicon">
-                    <a href="{{ route('task') }}" class="close-pop"  onclick="closepop()"><i class="bx bx-x"></i></a>
+                    <a href="{{ route('task') }}" class="btn-close" aria-label="Close" style="font-size: 1rem;"><i class="bx bx-x d-none"></i></a>
                 </div>
             </div>
             
@@ -157,7 +155,6 @@
                     </div>
                 </div>
             </div>
-            
         </div>
     </div>
-</section>
+</div>

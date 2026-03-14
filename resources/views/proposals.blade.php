@@ -18,11 +18,7 @@
         }
     </style>
     <section class="task__section">
-        <div class="text">
-            <i class="bx bx-menu" id="mbtn"></i> 
-            Proposals
-            <a href="/signout" class="logoutbtn"><i class="bx bx-log-out"></i></a>
-        </div>
+        @include('inc.header', ['title' => 'Proposals'])
         <div class="container-fluid">
             <div class="board-title board-title-flex">
                 <h1>List Board</h1>
