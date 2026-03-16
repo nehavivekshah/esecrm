@@ -588,4 +588,11 @@
             });
         });
     </script>
+
+    {{-- Hidden form for CSV import (required by #importFile button handler) --}}
+    <form id="leadsubmit" action="/import-leads-file" method="post" enctype="multipart/form-data">
+        @csrf
+        <input type="file" name="impLeadFile" id="impLeadFile" accept=".csv, .xls" style="display:none;" />
+    </form>
+
 @endsection

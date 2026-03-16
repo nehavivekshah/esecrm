@@ -1723,6 +1723,10 @@ li.nav-title {
     padding-left: 20px;
 }
 
+th.text-center.position-sticky.end-0.bg-default.mw60.sorting_disabled {
+    color: #fff;
+}
+
 @media (max-width: 768px) {
     .leads-toolbar {
         flex-direction: column;
