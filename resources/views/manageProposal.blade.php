@@ -30,16 +30,16 @@
         {{-- ── Progress steps ── --}}
         <div class="mp-steps mb-4">
             <div class="mp-step mp-step-done">
-                <span class="mp-step-num">1</span>
+                <span class="mp-step-num"><i class="bx bx-check" style="font-size:0.8rem;"></i></span>
                 <span class="mp-step-label">Proposal Info</span>
             </div>
-            <div class="mp-step-line"></div>
+            <div class="mp-step-line mp-line-done"></div>
             <div class="mp-step mp-step-done">
-                <span class="mp-step-num">2</span>
+                <span class="mp-step-num"><i class="bx bx-check" style="font-size:0.8rem;"></i></span>
                 <span class="mp-step-label">Client Details</span>
             </div>
             <div class="mp-step-line"></div>
-            <div class="mp-step">
+            <div class="mp-step mp-step-active">
                 <span class="mp-step-num">3</span>
                 <span class="mp-step-label">Items &amp; Summary</span>
             </div>
@@ -316,111 +316,144 @@
                                 <i class="bx bx-plus"></i> Add Item
                             </button>
                         </div>
-                        <div class="ml-card-body p-0">
-                            <div class="table-responsive">
-                                <table class="mp-items-table" id="items-table">
-                                    <thead>
-                                        <tr>
-                                            <th style="min-width:200px;">Item</th>
-                                            <th style="min-width:220px;">Description</th>
-                                            <th style="width:80px;" class="text-center">Qty</th>
-                                            <th style="width:130px;" class="text-end">Rate</th>
-                                            <th style="width:140px;">Tax</th>
-                                            <th style="width:130px;" class="text-end">Amount</th>
-                                            <th style="width:46px;"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if(count($proposalItems) > 0)
-                                            @foreach($proposalItems as $k => $proposalItem)
-                                                <tr data-item-row="0">
-                                                    <td><textarea class="form-control item-name"
-                                                            name="proposal_items[{{ $k }}][item_name]"
-                                                            placeholder="Item Name" rows="1">{{ $proposalItem->item_name ?? '' }}</textarea></td>
-                                                    <td><textarea class="form-control item-description"
-                                                            name="proposal_items[{{ $k }}][description]"
-                                                            placeholder="Description" rows="1">{{ $proposalItem->description ?? '' }}</textarea></td>
-                                                    <td><input type="number" class="form-control item-qty text-center"
-                                                            name="proposal_items[{{ $k }}][quantity]"
-                                                            value="{{ $proposalItem->quantity ?? '' }}" min="1"></td>
-                                                    <td><input type="number" class="form-control item-rate text-end"
-                                                            name="proposal_items[{{ $k }}][rate]"
-                                                            placeholder="0.00"
-                                                            value="{{ $proposalItem->rate ?? '' }}"></td>
-                                                    <td>
-                                                        <select class="form-select item-tax" multiple
-                                                            name="proposal_items[{{ $k }}][tax_percentage][]" title="No Tax">
-                                                            @foreach($taxes as $index => $tax)
-                                                                @php $calTax = ($tax ?? 0) / 100; @endphp
-                                                                @if($index == 0)
-                                                                    <option value="{{ $index . ':' . $calTax }}"
-                                                                        @if(($proposalItem->cgst_percent ?? '') == ($calTax ?? 0)) selected @endif>
-                                                                        CGST {{ $tax ?? 0 }} %</option>
-                                                                @elseif($index == 1)
-                                                                    <option value="{{ $index . ':' . $calTax }}"
-                                                                        @if(($proposalItem->sgst_percent ?? '') == ($calTax ?? 0)) selected @endif>
-                                                                        SGST {{ $tax ?? 0 }} %</option>
-                                                                @elseif($index == 2)
-                                                                    <option value="{{ $index . ':' . $calTax }}"
-                                                                        @if(($proposalItem->igst_percent ?? '') == ($calTax ?? 0)) selected @endif>
-                                                                        IGST {{ $tax ?? 0 }} %</option>
-                                                                @elseif($index == 3)
-                                                                    <option value="{{ $index . ':' . $calTax }}"
-                                                                        @if(($proposalItem->vat_percent ?? '') == ($calTax ?? 0)) selected @endif>
-                                                                        VAT {{ $tax ?? 0 }} %</option>
-                                                                @else
-                                                                    <option value="{{ $index . ':' . $calTax }}">{{ $tax ?? 0 }} %</option>
-                                                                @endif
-                                                            @endforeach
-                                                        </select>
-                                                    </td>
-                                                    <td class="item-amount text-end fw-bold">
-                                                        ₹{{ ($proposalItem->rate ?? 0) * ($proposalItem->quantity ?? 0) }}</td>
-                                                    <td class="text-center">
-                                                        <button type="button" class="kb-action-btn kb-action-del remove-item-btn"
-                                                                style="width:30px;height:30px;" title="Remove">
-                                                            <i class="bx bx-trash"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        @else
-                                            <tr data-item-row="0">
-                                                <td><textarea class="form-control item-name"
-                                                        name="proposal_items[0][item_name]"
-                                                        placeholder="Item Name" rows="1" required></textarea></td>
-                                                <td><textarea class="form-control item-description"
-                                                        name="proposal_items[0][description]"
-                                                        placeholder="Description" rows="1"></textarea></td>
-                                                <td><input type="number" class="form-control item-qty text-center"
-                                                        name="proposal_items[0][quantity]"
-                                                        value="1" min="1"></td>
-                                                <td><input type="number" class="form-control item-rate text-end"
-                                                        name="proposal_items[0][rate]"
-                                                        placeholder="0.00" required></td>
-                                                <td>
-                                                    <select class="form-select item-tax" multiple
-                                                        name="proposal_items[0][tax_percentage][]" title="No Tax">
-                                                        @foreach($taxes as $index => $tax)
-                                                            @php $calTax = ($tax ?? 0) / 100; @endphp
+                        <div class="ml-card-body p-3">
+                            {{-- Items container --}}
+                            <div id="items-card-container">
+                                @if(count($proposalItems) > 0)
+                                    @foreach($proposalItems as $k => $proposalItem)
+                                    <div class="mp-item-row" data-item-row="{{ $k }}">
+                                        <div class="mp-item-row-header">
+                                            <span class="mp-item-num">{{ $k + 1 }}</span>
+                                            <span class="mp-item-row-title">Item {{ $k + 1 }}</span>
+                                            <button type="button" class="kb-action-btn kb-action-del remove-item-btn ms-auto"
+                                                    style="width:28px;height:28px;" title="Remove item">
+                                                <i class="bx bx-trash"></i>
+                                            </button>
+                                        </div>
+                                        <div class="mp-item-row-body">
+                                            <div class="mp-item-field mp-item-name-field">
+                                                <label class="mp-item-label">Item Name</label>
+                                                <textarea class="form-control form-control-sm item-name mp-autoresize"
+                                                          name="proposal_items[{{ $k }}][item_name]"
+                                                          placeholder="e.g. Web Development"
+                                                          rows="1">{{ $proposalItem->item_name ?? '' }}</textarea>
+                                            </div>
+                                            <div class="mp-item-field mp-item-desc-field">
+                                                <label class="mp-item-label">Description</label>
+                                                <textarea class="form-control form-control-sm item-description mp-autoresize"
+                                                          name="proposal_items[{{ $k }}][description]"
+                                                          placeholder="Optional details…"
+                                                          rows="1">{{ $proposalItem->description ?? '' }}</textarea>
+                                            </div>
+                                            <div class="mp-item-field mp-item-qty-field">
+                                                <label class="mp-item-label">Qty</label>
+                                                <input type="number" class="form-control form-control-sm item-qty text-center"
+                                                       name="proposal_items[{{ $k }}][quantity]"
+                                                       value="{{ $proposalItem->quantity ?? 1 }}" min="1">
+                                            </div>
+                                            <div class="mp-item-field mp-item-rate-field">
+                                                <label class="mp-item-label">Rate (₹)</label>
+                                                <input type="number" class="form-control form-control-sm item-rate text-end"
+                                                       name="proposal_items[{{ $k }}][rate]"
+                                                       placeholder="0.00"
+                                                       value="{{ $proposalItem->rate ?? '' }}">
+                                            </div>
+                                            <div class="mp-item-field mp-item-tax-field">
+                                                <label class="mp-item-label">Tax</label>
+                                                <select class="form-select form-select-sm item-tax" multiple
+                                                        name="proposal_items[{{ $k }}][tax_percentage][]" title="No Tax">
+                                                    @foreach($taxes as $index => $tax)
+                                                        @php $calTax = ($tax ?? 0) / 100; @endphp
+                                                        @if($index == 0)
+                                                            <option value="{{ $index . ':' . $calTax }}"
+                                                                @if(($proposalItem->cgst_percent ?? '') == ($calTax ?? 0)) selected @endif>
+                                                                CGST {{ $tax ?? 0 }} %</option>
+                                                        @elseif($index == 1)
+                                                            <option value="{{ $index . ':' . $calTax }}"
+                                                                @if(($proposalItem->sgst_percent ?? '') == ($calTax ?? 0)) selected @endif>
+                                                                SGST {{ $tax ?? 0 }} %</option>
+                                                        @elseif($index == 2)
+                                                            <option value="{{ $index . ':' . $calTax }}"
+                                                                @if(($proposalItem->igst_percent ?? '') == ($calTax ?? 0)) selected @endif>
+                                                                IGST {{ $tax ?? 0 }} %</option>
+                                                        @elseif($index == 3)
+                                                            <option value="{{ $index . ':' . $calTax }}"
+                                                                @if(($proposalItem->vat_percent ?? '') == ($calTax ?? 0)) selected @endif>
+                                                                VAT {{ $tax ?? 0 }} %</option>
+                                                        @else
                                                             <option value="{{ $index . ':' . $calTax }}">{{ $tax ?? 0 }} %</option>
-                                                        @endforeach
-                                                    </select>
-                                                </td>
-                                                <td class="item-amount text-end fw-bold">₹0.00</td>
-                                                <td class="text-center">
-                                                    <button type="button" class="kb-action-btn kb-action-del remove-item-btn"
-                                                            style="width:30px;height:30px;" title="Remove">
-                                                        <i class="bx bx-trash"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        @endif
-                                    </tbody>
-                                </table>
+                                                        @endif
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="mp-item-field mp-item-amount-field">
+                                                <label class="mp-item-label">Amount</label>
+                                                <span class="item-amount mp-item-amount-val">
+                                                    ₹{{ number_format(($proposalItem->rate ?? 0) * ($proposalItem->quantity ?? 0), 2) }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                @else
+                                    <div class="mp-item-row" data-item-row="0">
+                                        <div class="mp-item-row-header">
+                                            <span class="mp-item-num">1</span>
+                                            <span class="mp-item-row-title">Item 1</span>
+                                            <button type="button" class="kb-action-btn kb-action-del remove-item-btn ms-auto"
+                                                    style="width:28px;height:28px;" title="Remove item">
+                                                <i class="bx bx-trash"></i>
+                                            </button>
+                                        </div>
+                                        <div class="mp-item-row-body">
+                                            <div class="mp-item-field mp-item-name-field">
+                                                <label class="mp-item-label">Item Name</label>
+                                                <textarea class="form-control form-control-sm item-name mp-autoresize"
+                                                          name="proposal_items[0][item_name]"
+                                                          placeholder="e.g. Web Development"
+                                                          rows="1" required></textarea>
+                                            </div>
+                                            <div class="mp-item-field mp-item-desc-field">
+                                                <label class="mp-item-label">Description</label>
+                                                <textarea class="form-control form-control-sm item-description mp-autoresize"
+                                                          name="proposal_items[0][description]"
+                                                          placeholder="Optional details…"
+                                                          rows="1"></textarea>
+                                            </div>
+                                            <div class="mp-item-field mp-item-qty-field">
+                                                <label class="mp-item-label">Qty</label>
+                                                <input type="number" class="form-control form-control-sm item-qty text-center"
+                                                       name="proposal_items[0][quantity]"
+                                                       value="1" min="1">
+                                            </div>
+                                            <div class="mp-item-field mp-item-rate-field">
+                                                <label class="mp-item-label">Rate (₹)</label>
+                                                <input type="number" class="form-control form-control-sm item-rate text-end"
+                                                       name="proposal_items[0][rate]"
+                                                       placeholder="0.00" required>
+                                            </div>
+                                            <div class="mp-item-field mp-item-tax-field">
+                                                <label class="mp-item-label">Tax</label>
+                                                <select class="form-select form-select-sm item-tax" multiple
+                                                        name="proposal_items[0][tax_percentage][]" title="No Tax">
+                                                    @foreach($taxes as $index => $tax)
+                                                        @php $calTax = ($tax ?? 0) / 100; @endphp
+                                                        <option value="{{ $index . ':' . $calTax }}">{{ $tax ?? 0 }} %</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="mp-item-field mp-item-amount-field">
+                                                <label class="mp-item-label">Amount</label>
+                                                <span class="item-amount mp-item-amount-val">₹0.00</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
 
-                             {{-- No summary here; it lives in the sticky sidebar --}}
+                            <button type="button" class="mp-add-item-btn add-item-btn mt-3">
+                                <i class="bx bx-plus"></i> Add Another Item
+                            </button>
                         </div>
                     </div>
 
@@ -538,85 +571,70 @@
     </div>
 </section>
 
-{{-- ── All original JS preserved exactly ── --}}
 <script>
-    const leadList = document.getElementById('relatedList');
-
-    leadList.addEventListener('change', function () {
-        const selectedOption = this.options[this.selectedIndex];
-        const name    = selectedOption.getAttribute('data-name');
-        const email   = selectedOption.getAttribute('data-email');
-        const phone   = selectedOption.getAttribute('data-mob');
-        const address = selectedOption.getAttribute('data-address');
-        const city    = selectedOption.getAttribute('data-city');
-        const state   = selectedOption.getAttribute('data-state');
-        const zip     = selectedOption.getAttribute('data-zip');
-        const country = selectedOption.getAttribute('data-country');
-
-        document.getElementById('clientName').value    = name    || '';
-        document.getElementById('clientEmail').value   = email   || '';
-        document.getElementById('clientPhone').value   = phone   || '';
-        document.getElementById('clientAddress').value = address || '';
-        document.getElementById('clientCity').value    = city    || '';
-        document.getElementById('clientState').value   = state   || '';
-        document.getElementById('clientZip').value     = zip     || '';
-        document.getElementById('clientCountry').value = country || '';
+    // ── Auto-resize textareas ──
+    function autoResize(el) {
+        el.style.height = 'auto';
+        el.style.height = el.scrollHeight + 'px';
+    }
+    document.addEventListener('input', function(e) {
+        if (e.target.classList.contains('mp-autoresize')) autoResize(e.target);
     });
+    document.querySelectorAll('.mp-autoresize').forEach(autoResize);
+
+    // ── Lead/Client autofill ──
+    const leadList = document.getElementById('relatedList');
+    if (leadList) {
+        leadList.addEventListener('change', function () {
+            const opt = this.options[this.selectedIndex];
+            document.getElementById('clientName').value    = opt.getAttribute('data-name')    || '';
+            document.getElementById('clientEmail').value   = opt.getAttribute('data-email')   || '';
+            document.getElementById('clientPhone').value   = opt.getAttribute('data-mob')     || '';
+            document.getElementById('clientAddress').value = opt.getAttribute('data-address') || '';
+            document.getElementById('clientCity').value    = opt.getAttribute('data-city')    || '';
+            document.getElementById('clientState').value   = opt.getAttribute('data-state')   || '';
+            document.getElementById('clientZip').value     = opt.getAttribute('data-zip')     || '';
+            document.getElementById('clientCountry').value = opt.getAttribute('data-country') || '';
+            // Expand client details if collapsed
+            const body = document.getElementById('clientDetailsBody');
+            if (body && !body.classList.contains('show')) {
+                new bootstrap.Collapse(body, { show: true });
+            }
+        });
+    }
 
     function updateRelatedList(relatedValue) {
-        const $related = $('#relatedList').empty()
-                                         .append(`<option value="">Select…</option>`);
+        const $related = $('#relatedList').empty().append('<option value="">Select\u2026</option>');
         const map = {
             '1': { text: 'Leads List',   url: '/leads-list',   key: 'leads'   },
             '2': { text: 'Clients List', url: '/clients-list', key: 'clients' }
         };
         const cfg = map[relatedValue];
-        if (!cfg) { console.warn('Invalid relatedValue'); return; }
-
+        if (!cfg) return;
         $('#proposalType').text(cfg.text);
-
-        $.get(cfg.url)
-         .done(resp => {
-             let items;
-             try {
-                 items = JSON.parse(resp)[cfg.key] ?? [];
-                 if (!Array.isArray(items)) throw new Error('Bad format');
-             } catch (e) {
-                 console.error(e);
-                 $related.append(`<option value="">Error loading data</option>`);
-                 return;
-             }
-             items.forEach(item => {
-                 const loc = item.location ? JSON.parse(item.location) : [];
-                 $('<option>', {
-                     value: item.id, text: item.name,
-                     'data-name': item.name, 'data-company': item.company,
-                     'data-email': item.email, 'data-mob': item.mob,
-                     'data-address': loc[0] || '', 'data-city': loc[1] || '',
-                     'data-state': loc[2] || '', 'data-country': loc[3] || '',
-                     'data-zip': loc[4] || ''
-                 }).appendTo($related);
-             });
-             $related.selectpicker('refresh');
-         })
-         .fail((xhr, status, err) => {
-             console.error(err);
-             $related.append(`<option value="">Error loading data</option>`);
-             $related.selectpicker('refresh');
-         });
+        $.get(cfg.url).done(resp => {
+            let items;
+            try { items = JSON.parse(resp)[cfg.key] ?? []; if (!Array.isArray(items)) throw 0; }
+            catch (e) { $related.append('<option value="">Error loading data</option>'); return; }
+            items.forEach(item => {
+                const loc = item.location ? JSON.parse(item.location) : [];
+                $('<option>', {
+                    value: item.id, text: item.name,
+                    'data-name': item.name, 'data-company': item.company,
+                    'data-email': item.email, 'data-mob': item.mob,
+                    'data-address': loc[0] || '', 'data-city': loc[1] || '',
+                    'data-state': loc[2] || '', 'data-country': loc[3] || '',
+                    'data-zip': loc[4] || ''
+                }).appendTo($related);
+            });
+            $related.selectpicker('refresh');
+        }).fail(() => { $related.append('<option value="">Error loading data</option>'); $related.selectpicker('refresh'); });
     }
-
-    document.getElementById('related').addEventListener('change', function () {
-        updateRelatedList(this.value);
-    });
-
-    window.onload = function () {
-        updateRelatedList(document.getElementById('related').value);
-    };
+    document.getElementById('related').addEventListener('change', function () { updateRelatedList(this.value); });
+    window.onload = function () { updateRelatedList(document.getElementById('related').value); };
 
     document.addEventListener('DOMContentLoaded', function () {
-        const itemsTableBody  = document.getElementById('items-table').querySelector('tbody');
-        const addItemBtn      = document.querySelector('.add-item-btn');
+        const container       = document.getElementById('items-card-container');
         const currencySelect  = document.getElementById('currency');
         const adjustmentInput = document.getElementById('adjustment');
         const discountTypeSelect  = document.getElementById('discountType');
@@ -625,118 +643,124 @@
         const discountTotalDisplay  = document.getElementById('discount-total');
         const discountTotalDisplay1 = document.getElementById('discount-total1');
 
-        function formatCurrency(amount, currencyCode = 'INR') {
-            let options = { style: 'currency', currency: currencyCode };
+        function formatCurrency(amount, code = 'INR') {
             try {
-                const locale = currencyCode === 'INR' ? 'en-IN' : undefined;
-                return new Intl.NumberFormat(locale, options).format(amount);
+                return new Intl.NumberFormat(code === 'INR' ? 'en-IN' : undefined, { style: 'currency', currency: code }).format(amount);
             } catch (e) {
-                const symbols = { INR: '₹', USD: '$', EUR: '€', GBP: '£' };
-                return (symbols[currencyCode] || '') + amount.toFixed(2);
+                return ({ INR: '₹', USD: '$', EUR: '€', GBP: '£' }[code] || '') + amount.toFixed(2);
             }
         }
 
+        function renumberItems() {
+            container.querySelectorAll('.mp-item-row').forEach((row, i) => {
+                const badge = row.querySelector('.mp-item-num');
+                const title = row.querySelector('.mp-item-row-title');
+                if (badge) badge.textContent = i + 1;
+                if (title) title.textContent = 'Item ' + (i + 1);
+                row.querySelectorAll('input, textarea, select').forEach(el => {
+                    if (!el.name) return;
+                    el.name = el.name.replace(/proposal_items\[\d+\]/, `proposal_items[${i}]`);
+                });
+            });
+        }
+
         function calculateTotals() {
-            const currencyCode = currencySelect.value;
-            const adjustment   = parseFloat(adjustmentInput.value) || 0;
-            const discType     = discountTypeSelect.value;
-            const discPct      = parseFloat(discountValueInput.value) || 0;
+            const code      = currencySelect.value;
+            const adj       = parseFloat(adjustmentInput.value) || 0;
+            const discType  = discountTypeSelect.value;
+            const discPct   = parseFloat(discountValueInput.value) || 0;
+            let subTotal = 0, cgst = 0, sgst = 0, igst = 0, vat = 0;
 
-            let subTotal = 0, cgstTotal = 0, sgstTotal = 0, igstTotal = 0, vatTotal = 0;
-
-            itemsTableBody.querySelectorAll('tr').forEach(row => {
+            container.querySelectorAll('.mp-item-row').forEach(row => {
                 const qty  = parseFloat(row.querySelector('.item-qty').value)  || 0;
                 const rate = parseFloat(row.querySelector('.item-rate').value) || 0;
                 const line = qty * rate;
                 subTotal += line;
-
-                Array.from(row.querySelector('.item-tax').selectedOptions).forEach(opt => {
-                    const [idx, pctStr] = opt.value.split(':');
-                    const pct = parseFloat(pctStr) || 0;
-                    const tax = line * pct;
-                    switch (+idx) {
-                        case 0: cgstTotal += tax; break;
-                        case 1: sgstTotal += tax; break;
-                        case 2: igstTotal += tax; break;
-                        case 3: vatTotal  += tax; break;
-                    }
-                });
-
-                row.querySelector('.item-amount').textContent = formatCurrency(line, currencyCode);
+                const amtEl = row.querySelector('.item-amount');
+                if (amtEl) amtEl.textContent = formatCurrency(line, code);
+                const taxSel = row.querySelector('.item-tax');
+                if (taxSel) {
+                    Array.from(taxSel.selectedOptions).forEach(opt => {
+                        const [idx, pct] = opt.value.split(':');
+                        const t = line * (parseFloat(pct) || 0);
+                        switch (+idx) { case 0: cgst += t; break; case 1: sgst += t; break; case 2: igst += t; break; case 3: vat += t; break; }
+                    });
+                }
             });
 
-            const taxTotal    = cgstTotal + sgstTotal + igstTotal + vatTotal;
+            const taxTotal  = cgst + sgst + igst + vat;
             let   discountAmt = 0;
             if (discPct > 0) {
                 const base = discType === 'before-tax' ? subTotal : subTotal + taxTotal;
                 discountAmt = base * discPct / 100;
             }
-            const grandTotal = subTotal + taxTotal - discountAmt + adjustment;
+            const grand = subTotal + taxTotal - discountAmt + adj;
 
-            document.getElementById('sub-total').textContent   = formatCurrency(subTotal, currencyCode);
-            document.getElementById('sub-total1').value        = subTotal.toFixed(2);
-            discountTypeDisplay.textContent                    = discountTypeSelect.selectedOptions[0].text;
-            discountTotalDisplay.textContent                   = formatCurrency(discountAmt, currencyCode);
-            discountTotalDisplay1.value                        = discountAmt.toFixed(2);
-            document.getElementById('cgst-total').textContent  = formatCurrency(cgstTotal, currencyCode);
-            document.getElementById('cgst-total1').value       = cgstTotal.toFixed(2);
-            document.getElementById('sgst-total').textContent  = formatCurrency(sgstTotal, currencyCode);
-            document.getElementById('sgst-total1').value       = sgstTotal.toFixed(2);
-            document.getElementById('igst-total').textContent  = formatCurrency(igstTotal, currencyCode);
-            document.getElementById('igst-total1').value       = igstTotal.toFixed(2);
-            document.getElementById('vat-total').textContent   = formatCurrency(vatTotal, currencyCode);
-            document.getElementById('vat-total1').value        = vatTotal.toFixed(2);
-            document.getElementById('total').textContent       = formatCurrency(grandTotal, currencyCode);
-            document.getElementById('total1').value            = grandTotal.toFixed(2);
+            document.getElementById('sub-total').textContent  = formatCurrency(subTotal, code);
+            document.getElementById('sub-total1').value       = subTotal.toFixed(2);
+            discountTypeDisplay.textContent                   = discountTypeSelect.selectedOptions[0].text;
+            discountTotalDisplay.textContent                  = '- ' + formatCurrency(discountAmt, code);
+            discountTotalDisplay1.value                       = discountAmt.toFixed(2);
+            document.getElementById('cgst-total').textContent = formatCurrency(cgst, code);
+            document.getElementById('cgst-total1').value      = cgst.toFixed(2);
+            document.getElementById('sgst-total').textContent = formatCurrency(sgst, code);
+            document.getElementById('sgst-total1').value      = sgst.toFixed(2);
+            document.getElementById('igst-total').textContent = formatCurrency(igst, code);
+            document.getElementById('igst-total1').value      = igst.toFixed(2);
+            document.getElementById('vat-total').textContent  = formatCurrency(vat, code);
+            document.getElementById('vat-total1').value       = vat.toFixed(2);
+            document.getElementById('total').textContent      = formatCurrency(grand, code);
+            document.getElementById('total1').value           = grand.toFixed(2);
         }
 
-        addItemBtn.addEventListener('click', function () {
-            const lastRow = itemsTableBody.querySelector('tr:last-child');
-            if (!lastRow) return;
-            const newRow      = lastRow.cloneNode(true);
-            const newRowIndex = itemsTableBody.querySelectorAll('tr').length;
-            newRow.querySelectorAll('input, textarea').forEach(input => {
-                if (input.classList.contains('item-qty'))  { input.value = 1; }
-                else if (input.classList.contains('item-rate')) { input.value = ''; }
-                else if (!input.classList.contains('item-name') && !input.classList.contains('item-description')) { input.value = ''; }
+        // ── Add Item ──
+        document.querySelectorAll('.add-item-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const rows  = container.querySelectorAll('.mp-item-row');
+                const last  = rows[rows.length - 1];
+                const idx   = rows.length;
+                const clone = last.cloneNode(true);
+                clone.querySelector('.mp-item-num').textContent   = idx + 1;
+                clone.querySelector('.mp-item-row-title').textContent = 'Item ' + (idx + 1);
+                clone.querySelectorAll('input, textarea').forEach(el => {
+                    el.value = el.classList.contains('item-qty') ? 1 : '';
+                    if (el.classList.contains('mp-autoresize')) { el.style.height = 'auto'; }
+                    if (el.name) el.name = el.name.replace(/proposal_items\[\d+\]/, `proposal_items[${idx}]`);
+                });
+                clone.querySelectorAll('select').forEach(sel => {
+                    Array.from(sel.options).forEach(o => o.selected = false);
+                    if (sel.name) sel.name = sel.name.replace(/proposal_items\[\d+\]/, `proposal_items[${idx}]`);
+                });
+                const amtEl = clone.querySelector('.item-amount');
+                if (amtEl) amtEl.textContent = formatCurrency(0, currencySelect.value);
+                container.appendChild(clone);
+                clone.querySelectorAll('.mp-autoresize').forEach(autoResize);
+                clone.querySelector('.item-name')?.focus();
+                calculateTotals();
             });
-            newRow.querySelector('.item-tax').value         = '0';
-            newRow.querySelector('.item-amount').textContent = formatCurrency(0, currencySelect.value);
-            newRow.querySelector('.item-name').name        = `proposal_items[${newRowIndex}][item_name]`;
-            newRow.querySelector('.item-description').name = `proposal_items[${newRowIndex}][description]`;
-            newRow.querySelector('.item-qty').name         = `proposal_items[${newRowIndex}][quantity]`;
-            newRow.querySelector('.item-rate').name        = `proposal_items[${newRowIndex}][rate]`;
-            newRow.querySelector('.item-tax').name         = `proposal_items[${newRowIndex}][tax_percentage][]`;
-            newRow.querySelector('.item-name').value = '';
-            newRow.querySelector('.item-description').value = '';
-            newRow.querySelector('.item-qty').value = '';
-            newRow.querySelector('.item-rate').value = '';
-            itemsTableBody.appendChild(newRow);
-            calculateTotals();
         });
 
-        itemsTableBody.addEventListener('click', function (event) {
-            if (event.target.closest('.remove-item-btn')) {
-                if (itemsTableBody.querySelectorAll('tr').length > 1) {
-                    event.target.closest('tr').remove();
+        // ── Remove Item ──
+        container.addEventListener('click', function (e) {
+            if (e.target.closest('.remove-item-btn')) {
+                const rows = container.querySelectorAll('.mp-item-row');
+                if (rows.length > 1) {
+                    e.target.closest('.mp-item-row').remove();
+                    renumberItems();
                     calculateTotals();
                 } else {
-                    alert("You must have at least one item.");
+                    alert('You must have at least one item.');
                 }
             }
         });
 
-        itemsTableBody.addEventListener('input', function (event) {
-            const target = event.target;
-            if (target.classList.contains('item-qty') || target.classList.contains('item-rate')) {
-                calculateTotals();
-            }
+        // ── Live calculation triggers ──
+        container.addEventListener('input', function (e) {
+            if (e.target.classList.contains('item-qty') || e.target.classList.contains('item-rate')) calculateTotals();
         });
-
-        itemsTableBody.addEventListener('change', function (event) {
-            if (event.target.classList.contains('item-tax')) { calculateTotals(); }
+        container.addEventListener('change', function (e) {
+            if (e.target.classList.contains('item-tax')) calculateTotals();
         });
-
         currencySelect.addEventListener('change', calculateTotals);
         adjustmentInput.addEventListener('input', calculateTotals);
         discountTypeSelect.addEventListener('change', calculateTotals);
@@ -745,6 +769,7 @@
         calculateTotals();
     });
 </script>
+
 <script>
     tinymce.init({
         selector: '#editor',
