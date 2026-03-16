@@ -4281,3 +4281,82 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
 }#proposalForm .ml-card {
     height: auto !important;
 }
+
+/* ── Progress steps ── */
+.mp-steps {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 12px 16px;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e8eaed;
+}
+
+.mp-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mp-step-num {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #e8eaed;
+    color: #9aa0a6;
+    font-size: 0.72rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.2s, color 0.2s;
+}
+
+.mp-step-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #9aa0a6;
+    white-space: nowrap;
+    transition: color 0.2s;
+}
+
+.mp-step.mp-step-done .mp-step-num {
+    background: #006666;
+    color: #fff;
+}
+
+.mp-step.mp-step-done .mp-step-label {
+    color: #006666;
+}
+
+.mp-step.mp-step-active .mp-step-num {
+    background: rgba(0,102,102,0.12);
+    color: #006666;
+    border: 2px solid #006666;
+}
+
+.mp-step.mp-step-active .mp-step-label {
+    color: #006666;
+}
+
+.mp-step-line {
+    flex: 1;
+    height: 2px;
+    background: #e8eaed;
+    margin: 0 8px;
+    min-width: 20px;
+}
+
+/* ── Sticky sidebar ── */
+.mp-sidebar-sticky {
+    position: sticky;
+    top: 80px;
+}
+
+/* Full-width lb-btn support */
+.lb-btn.w-100 {
+    width: 100%;
+    justify-content: center;
+}

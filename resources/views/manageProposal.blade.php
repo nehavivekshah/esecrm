@@ -10,7 +10,7 @@
     <div class="dash-container">
 
         {{-- ── Page heading bar ── --}}
-        <div class="leads-toolbar mb-4">
+        <div class="leads-toolbar mb-3">
             <div class="leads-toolbar-left gap-3">
                 <a href="/proposals" class="kb-action-btn" title="Back to Proposals"
                    style="width:34px;height:34px;background:#f1f3f4;color:#5f6368;">
@@ -25,15 +25,23 @@
                     @endif
                 </div>
             </div>
-            <div class="leads-toolbar-right gap-2">
-                <button type="submit" form="proposalForm" class="lb-btn"
-                        style="background:#f1f3f4;color:#202124;">
-                    <i class="bx bx-save"></i> Save Draft
-                </button>
-                <button type="submit" form="proposalForm" name="submit" value="Save & Send"
-                        class="lb-btn lb-btn-primary">
-                    <i class="bx bx-send"></i> Save &amp; Send
-                </button>
+        </div>
+
+        {{-- ── Progress steps ── --}}
+        <div class="mp-steps mb-4">
+            <div class="mp-step mp-step-done">
+                <span class="mp-step-num">1</span>
+                <span class="mp-step-label">Proposal Info</span>
+            </div>
+            <div class="mp-step-line"></div>
+            <div class="mp-step mp-step-done">
+                <span class="mp-step-num">2</span>
+                <span class="mp-step-label">Client Details</span>
+            </div>
+            <div class="mp-step-line"></div>
+            <div class="mp-step">
+                <span class="mp-step-num">3</span>
+                <span class="mp-step-label">Items &amp; Summary</span>
             </div>
         </div>
 
@@ -41,12 +49,10 @@
             @csrf
             <input type="hidden" name="id" id="id" value="{{ $proposal->id ?? '' }}">
 
-            <div class="row g-4">
+            <div class="row g-4 align-items-start">
 
-                {{-- ══════════════════════════════════════════
-                     LEFT COLUMN — Info + Client + Items
-                ══════════════════════════════════════════ --}}
-                <div class="col-lg-12">
+                {{-- ══ LEFT — Form sections ══ --}}
+                <div class="col-lg-8">
 
                     {{-- ── Proposal Information ── --}}
                     <div class="ml-card mb-4">
@@ -205,18 +211,19 @@
                         </div>
                     </div>
 
-                    {{-- ── Client Details ── --}}
+                    {{-- ── Client Details (collapsible) ── --}}
                     <div class="ml-card mb-4">
-                        <div class="ml-card-header">
+                        <div class="ml-card-header" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#clientDetailsBody">
                             <div class="ml-card-icon" style="background:rgba(26,115,232,0.10);color:#1a73e8;">
                                 <i class="bx bx-user-circle"></i>
                             </div>
-                            <div>
+                            <div class="flex-grow-1">
                                 <h6 class="ml-card-title">Client Details</h6>
-                                <span class="ml-card-sub">Auto-filled when you choose from the list above</span>
+                                <span class="ml-card-sub">Auto-filled when you pick a lead/client above</span>
                             </div>
+                            <i class="bx bx-chevron-down" style="color:#9aa0a6;font-size:1.1rem;"></i>
                         </div>
-                        <div class="ml-card-body">
+                        <div class="collapse show ml-card-body" id="clientDetailsBody">
                             <div class="row g-3">
                                 <div class="col-md-4">
                                     <label class="ml-label">Name <span class="text-danger">*</span></label>
@@ -413,75 +420,118 @@
                                 </table>
                             </div>
 
-                            {{-- ── Summary Box ── --}}
-                            <div class="d-flex justify-content-end p-4">
-                                <div class="mp-summary-box">
-                                    <div class="mp-summary-row">
-                                        <span class="mp-summary-label">Sub Total</span>
-                                        <span id="sub-total" class="mp-summary-val">₹{{ $proposal->sub_total ?? '0.00' }}</span>
-                                        <input type="hidden" name="sub_total" id="sub-total1"
-                                               value="{{ $proposal->sub_total ?? 0.00 }}">
-                                    </div>
-
-                                    <div class="mp-summary-row">
-                                        <span class="mp-summary-label">
-                                            Discount (<span id="discount-type-display" class="fst-italic">None</span>)
-                                        </span>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <input type="number" class="form-control form-control-sm text-end mp-disc-input"
-                                                   name="discount_percentage" id="discountValue"
-                                                   value="{{ $proposal->discount_percentage ?? 0 }}"
-                                                   placeholder="%" step="0.01" min="0">
-                                            <span id="discount-total" class="mp-summary-val text-danger">
-                                                ₹{{ $proposal->discount_amount_calculated ?? '0.00' }}
-                                            </span>
-                                            <input type="hidden" name="discount_amount_calculated" id="discount-total1"
-                                                   value="{{ $proposal->discount_amount_calculated ?? 0.00 }}">
-                                        </div>
-                                    </div>
-
-                                    <div class="mp-summary-row mp-tax-row">
-                                        <span class="mp-summary-label text-muted">CGST</span>
-                                        <span id="cgst-total" class="mp-summary-val text-muted">₹{{ $proposal->cgst_total ?? '0.00' }}</span>
-                                        <input type="hidden" name="cgst_total" id="cgst-total1" value="{{ $proposal->cgst_total ?? 0.00 }}">
-                                    </div>
-                                    <div class="mp-summary-row mp-tax-row">
-                                        <span class="mp-summary-label text-muted">SGST</span>
-                                        <span id="sgst-total" class="mp-summary-val text-muted">₹{{ $proposal->sgst_total ?? '0.00' }}</span>
-                                        <input type="hidden" name="sgst_total" id="sgst-total1" value="{{ $proposal->sgst_total ?? 0.00 }}">
-                                    </div>
-                                    <div class="mp-summary-row mp-tax-row">
-                                        <span class="mp-summary-label text-muted">IGST</span>
-                                        <span id="igst-total" class="mp-summary-val text-muted">₹{{ $proposal->igst_total ?? '0.00' }}</span>
-                                        <input type="hidden" name="igst_total" id="igst-total1" value="{{ $proposal->igst_total ?? 0.00 }}">
-                                    </div>
-                                    <div class="mp-summary-row mp-tax-row">
-                                        <span class="mp-summary-label text-muted">VAT</span>
-                                        <span id="vat-total" class="mp-summary-val text-muted">₹{{ $proposal->vat_total ?? '0.00' }}</span>
-                                        <input type="hidden" name="vat_total" id="vat-total1" value="{{ $proposal->vat_total ?? 0.00 }}">
-                                    </div>
-
-                                    <div class="mp-summary-row">
-                                        <span class="mp-summary-label">Adjustment</span>
-                                        <input type="number" class="form-control form-control-sm text-end mp-disc-input"
-                                               name="adjustment_amount" id="adjustment"
-                                               value="{{ $proposal->adjustment_amount ?? 0 }}" step="0.01">
-                                    </div>
-
-                                    <div class="mp-summary-total">
-                                        <span>Grand Total</span>
-                                        <strong id="total" class="mp-grand-total-val">
-                                            ₹{{ $proposal->grand_total ?? '0.00' }}
-                                        </strong>
-                                        <input type="hidden" name="grand_total" id="total1"
-                                               value="{{ $proposal->grand_total ?? 0.00 }}">
-                                    </div>
-                                </div>
-                            </div>
+                             {{-- No summary here; it lives in the sticky sidebar --}}
                         </div>
                     </div>
 
-                </div>{{-- /col-lg-12 --}}
+                </div>{{-- /col-lg-8 --}}
+
+                {{-- ══ RIGHT — Sticky Summary + Actions ══ --}}
+                <div class="col-lg-4">
+                    <div class="mp-sidebar-sticky">
+
+                        {{-- Summary card --}}
+                        <div class="ml-card mb-3">
+                            <div class="ml-card-header">
+                                <div class="ml-card-icon" style="background:rgba(52,168,83,0.10);color:#34a853;">
+                                    <i class="bx bx-calculator"></i>
+                                </div>
+                                <div>
+                                    <h6 class="ml-card-title">Summary</h6>
+                                    <span class="ml-card-sub">Live totals as you type</span>
+                                </div>
+                            </div>
+                            <div class="ml-card-body">
+                                <div class="mp-summary-row">
+                                    <span class="mp-summary-label">Sub Total</span>
+                                    <span id="sub-total" class="mp-summary-val">&#x20B9;{{ $proposal->sub_total ?? '0.00' }}</span>
+                                    <input type="hidden" name="sub_total" id="sub-total1"
+                                           value="{{ $proposal->sub_total ?? 0.00 }}">
+                                </div>
+                                <div class="mp-summary-row">
+                                    <span class="mp-summary-label">
+                                        Discount (<span id="discount-type-display" class="fst-italic">None</span>)
+                                    </span>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <input type="number" class="form-control form-control-sm text-end mp-disc-input"
+                                               name="discount_percentage" id="discountValue"
+                                               value="{{ $proposal->discount_percentage ?? 0 }}"
+                                               placeholder="%" step="0.01" min="0">
+                                        <span id="discount-total" class="mp-summary-val text-danger">
+                                            &#x20B9;{{ $proposal->discount_amount_calculated ?? '0.00' }}
+                                        </span>
+                                        <input type="hidden" name="discount_amount_calculated" id="discount-total1"
+                                               value="{{ $proposal->discount_amount_calculated ?? 0.00 }}">
+                                    </div>
+                                </div>
+                                <div class="mp-summary-row mp-tax-row">
+                                    <span class="mp-summary-label text-muted">CGST</span>
+                                    <span id="cgst-total" class="mp-summary-val text-muted">&#x20B9;{{ $proposal->cgst_total ?? '0.00' }}</span>
+                                    <input type="hidden" name="cgst_total" id="cgst-total1" value="{{ $proposal->cgst_total ?? 0.00 }}">
+                                </div>
+                                <div class="mp-summary-row mp-tax-row">
+                                    <span class="mp-summary-label text-muted">SGST</span>
+                                    <span id="sgst-total" class="mp-summary-val text-muted">&#x20B9;{{ $proposal->sgst_total ?? '0.00' }}</span>
+                                    <input type="hidden" name="sgst_total" id="sgst-total1" value="{{ $proposal->sgst_total ?? 0.00 }}">
+                                </div>
+                                <div class="mp-summary-row mp-tax-row">
+                                    <span class="mp-summary-label text-muted">IGST</span>
+                                    <span id="igst-total" class="mp-summary-val text-muted">&#x20B9;{{ $proposal->igst_total ?? '0.00' }}</span>
+                                    <input type="hidden" name="igst_total" id="igst-total1" value="{{ $proposal->igst_total ?? 0.00 }}">
+                                </div>
+                                <div class="mp-summary-row mp-tax-row">
+                                    <span class="mp-summary-label text-muted">VAT</span>
+                                    <span id="vat-total" class="mp-summary-val text-muted">&#x20B9;{{ $proposal->vat_total ?? '0.00' }}</span>
+                                    <input type="hidden" name="vat_total" id="vat-total1" value="{{ $proposal->vat_total ?? 0.00 }}">
+                                </div>
+                                <div class="mp-summary-row">
+                                    <span class="mp-summary-label">Adjustment</span>
+                                    <input type="number" class="form-control form-control-sm text-end mp-disc-input"
+                                           name="adjustment_amount" id="adjustment"
+                                           value="{{ $proposal->adjustment_amount ?? 0 }}" step="0.01">
+                                </div>
+                                <div class="mp-summary-total">
+                                    <span>Grand Total</span>
+                                    <strong id="total" class="mp-grand-total-val">
+                                        &#x20B9;{{ $proposal->grand_total ?? '0.00' }}
+                                    </strong>
+                                    <input type="hidden" name="grand_total" id="total1"
+                                           value="{{ $proposal->grand_total ?? 0.00 }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Action buttons card --}}
+                        <div class="ml-card">
+                            <div class="ml-card-body">
+                                <div class="d-flex flex-column gap-2">
+                                    <button type="submit" form="proposalForm" name="submit" value="Save & Send"
+                                            class="lb-btn lb-btn-primary w-100 justify-content-center">
+                                        <i class="bx bx-send"></i> Save &amp; Send
+                                    </button>
+                                    <button type="submit" form="proposalForm"
+                                            class="lb-btn w-100 justify-content-center"
+                                            style="background:#f1f3f4;color:#202124;">
+                                        <i class="bx bx-save"></i> Save as Draft
+                                    </button>
+                                    @if(!empty($proposal->id))
+                                    <a href="/quotation/{{ $proposal->id }}/{{ md5($proposal->client_email ?? '') }}"
+                                       class="lb-btn w-100 justify-content-center" target="_blank"
+                                       style="background:rgba(26,115,232,0.08);color:#1a73e8;">
+                                        <i class="bx bx-show"></i> View Proposal
+                                    </a>
+                                    @endif
+                                    <a href="/proposals" class="lb-btn w-100 justify-content-center"
+                                       style="background:transparent;color:#9aa0a6;border:1px solid #e8eaed;">
+                                        <i class="bx bx-x"></i> Cancel
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>{{-- /col-lg-4 sticky sidebar --}}
+
             </div>{{-- /row --}}
         </form>
 
