@@ -2602,3 +2602,264 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     background: rgba(60, 64, 67, 0.08);
     color: #5f6368;
 }
+
+/* ==========================================================================
+   CRM FOLLOW-UP TASKS BOARD — tk-* / tb-* Components
+   ========================================================================== */
+
+/* Board layout — horizontal scroll */
+.tk-board {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 16px;
+    align-items: flex-start;
+    scrollbar-width: thin;
+    scrollbar-color: #dadce0 transparent;
+}
+
+.tk-board::-webkit-scrollbar { height: 6px; }
+.tk-board::-webkit-scrollbar-thumb { background: #dadce0; border-radius: 4px; }
+
+/* Column card */
+.tk-col {
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid #e8eaed;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    min-width: 280px;
+    width: 280px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Column header */
+.tk-col-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-bottom: 3px solid #e8eaed;
+    background: #fafafa;
+}
+
+/* User avatar badge */
+.tk-col-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.tk-col-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #202124;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tk-col-count {
+    font-size: 0.70rem;
+    color: #80868b;
+    margin-top: 1px;
+}
+
+.tk-count-badge {
+    font-weight: 700;
+    color: #202124;
+}
+
+/* Add task button in header */
+.tk-add-btn {
+    border: none;
+    background: rgba(60,64,67,0.07);
+    color: #5f6368;
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.15s;
+}
+
+.tk-add-btn:hover {
+    background: rgba(0,102,102,0.10);
+    color: #006666;
+}
+
+/* Cards area */
+.tk-cards {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 120px;
+    max-height: calc(100vh - 220px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #dadce0 transparent;
+}
+
+.tk-cards::-webkit-scrollbar { width: 3px; }
+.tk-cards::-webkit-scrollbar-thumb { background: #dadce0; border-radius: 4px; }
+
+/* Task card */
+.tk-card {
+    display: block;
+    background: #fff;
+    border: 1px solid #e8eaed;
+    border-left: 4px solid #ccc;
+    border-radius: 10px;
+    padding: 10px 12px;
+    cursor: grab;
+    text-decoration: none;
+    color: #202124;
+    transition: box-shadow 0.15s, transform 0.12s;
+    position: relative;
+}
+
+.tk-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+    transform: translateY(-2px);
+    color: #202124;
+    text-decoration: none;
+}
+
+.tk-card:active { cursor: grabbing; }
+
+.tk-card-highlighted {
+    background: #fffde7;
+    border-color: #f9a825;
+}
+
+.tk-card-title {
+    font-size: 0.82rem;
+    font-weight: 500;
+    line-height: 1.45;
+    color: #202124;
+    margin-top: 4px;
+}
+
+/* Status pill on card */
+.tk-status-pill {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* Timer icon */
+.tk-card-action {
+    color: #9aa0a6;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+}
+
+/* Label colour bar at bottom */
+.tk-card-label-bar {
+    height: 3px;
+    border-radius: 2px;
+    margin-top: 8px;
+}
+
+/* Quick-add panel */
+.tk-quick-add {
+    border-top: 1px dashed #e8eaed;
+    padding: 10px;
+    background: #fafafa;
+}
+
+.tk-quick-textarea {
+    width: 100%;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 0.80rem;
+    resize: none;
+    outline: none;
+    background: #fff;
+    transition: border-color 0.15s;
+}
+
+.tk-quick-textarea:focus {
+    border-color: #006666;
+    box-shadow: 0 0 0 3px rgba(0,102,102,0.08);
+}
+
+/* Toolbar search box */
+.tb-search-wrap {
+    position: relative;
+}
+
+.tb-search-box {
+    display: flex;
+    align-items: center;
+    background: #f1f3f4;
+    border-radius: 20px;
+    padding: 0 12px;
+    gap: 6px;
+    transition: background 0.15s, box-shadow 0.15s;
+}
+
+.tb-search-box:focus-within {
+    background: #fff;
+    box-shadow: 0 0 0 2px #006666;
+}
+
+.tb-search-icon {
+    color: #80868b;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.tb-search-input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 0.82rem;
+    padding: 6px 0;
+    width: 160px;
+    color: #202124;
+}
+
+.tb-search-input::placeholder { color: #9aa0a6; }
+
+/* Status legend pills in toolbar */
+.tb-legend {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.tb-legend-urgent   { background: rgba(234,67,53,0.10);  color: #ea4335; }
+.tb-legend-pending  { background: rgba(242,153,0,0.12);  color: #f29900; }
+.tb-legend-progress { background: rgba(26,115,232,0.10); color: #1a73e8; }
+.tb-legend-done     { background: rgba(52,168,83,0.10);  color: #34a853; }
+.tb-legend-closed   { background: rgba(0,102,102,0.08);  color: #006666; }
+
+/* Drag-over highlight */
+.tk-cards.drag-over {
+    background: rgba(0,102,102,0.04);
+    border-radius: 8px;
+}
