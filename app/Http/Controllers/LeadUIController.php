@@ -56,7 +56,7 @@ class LeadUIController extends Controller
             ->orderBy('updated_at', 'desc')
             ->skip($offset)
             ->take($limit)
-            ->get(['id', 'name', 'company', 'mob', 'values', 'poc', 'purpose', 'score', 'status']);
+            ->get(['id', 'name', 'company', 'mob', 'whatsapp', 'email', 'values', 'poc', 'purpose', 'score', 'status']);
 
         return response()->json([
             'data'      => $leads,

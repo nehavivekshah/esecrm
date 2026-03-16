@@ -147,6 +147,12 @@
                     </div>
                     ${company}${mobile}
                     <div class="kb-card-footer">${value}${poc}</div>
+                    <div class="kb-card-actions">
+                        ${lead.whatsapp ? `<a href="https://api.whatsapp.com/send/?phone=${encodeURIComponent(lead.whatsapp)}&text=Hi&type=phone_number&app_absent=0" target="_blank" class="kb-action-btn kb-action-wa" title="WhatsApp" onclick="event.stopPropagation();"><i class="bx bxl-whatsapp"></i></a>` : ''}
+                        ${lead.mob      ? `<a href="tel:+${encodeURIComponent(lead.mob)}" class="kb-action-btn kb-action-call" title="Call" onclick="event.stopPropagation();"><i class="bx bx-phone"></i></a>` : ''}
+                        ${lead.email    ? `<a href="mailto:${escHtml(lead.email)}" class="kb-action-btn kb-action-email" title="Email" onclick="event.stopPropagation();"><i class="bx bx-envelope"></i></a>` : ''}
+                        <a href="/manage-lead?id=${lead.id}" class="kb-action-btn kb-action-edit" title="Edit Lead" onclick="event.stopPropagation();"><i class="bx bx-edit-alt"></i></a>
+                    </div>
                 </div>`;
         }
 
