@@ -2166,3 +2166,91 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting_disabled {
 }
 
 .kb-card-poc i { font-size: 0.80rem; }
+
+/* ---- Skeleton loader ---- */
+@keyframes kb-shimmer {
+    0%   { background-position: -400px 0; }
+    100% { background-position: 400px 0; }
+}
+
+.kb-skeleton {
+    height: 88px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #f1f3f4 25%, #e8eaed 50%, #f1f3f4 75%);
+    background-size: 800px 100%;
+    animation: kb-shimmer 1.4s infinite linear;
+    margin-bottom: 0;
+}
+
+/* ---- Load More button ---- */
+.kb-load-more-wrap {
+    padding: 8px 10px 12px;
+}
+
+.kb-load-more-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border: 1px dashed #dadce0;
+    border-radius: 8px;
+    background: transparent;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #5f6368;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.kb-load-more-btn:hover {
+    background: rgba(0, 102, 102, 0.06);
+    border-color: #006666;
+    color: #006666;
+}
+
+/* ---- Total badge ---- */
+.kb-total-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: rgba(60, 64, 67, 0.08);
+    color: #3c4043;
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+
+/* ---- Spinner inside count badge while loading ---- */
+.kb-spinner-sm {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border: 2px solid rgba(60,64,67,0.2);
+    border-top-color: #5f6368;
+    border-radius: 50%;
+    animation: kb-spin 0.7s linear infinite;
+}
+
+@keyframes kb-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ---- Empty / error state ---- */
+.kb-empty-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 32px 16px;
+    color: #9aa0a6;
+    font-size: 0.78rem;
+    text-align: center;
+}
+
+.kb-empty-col i {
+    font-size: 2rem;
+    opacity: 0.4;
+}
