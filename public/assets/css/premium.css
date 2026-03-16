@@ -1239,6 +1239,7 @@ li.nav-title {
 
 .dash-card {
     background: #fff;
+    padding: 8px;
     border: 1px solid #e8eaed;
     border-radius: 12px;
     overflow: hidden;
@@ -1515,6 +1516,11 @@ li.nav-title {
     padding: 11px 14px;
     color: #3c4043;
     vertical-align: middle;
+}
+
+.leads-table tbody td:first-child {
+    font-weight: 500;
+    color: #202124;
 }
 
 /* Row alert highlight */
