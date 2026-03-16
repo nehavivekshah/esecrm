@@ -3662,3 +3662,67 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     flex-shrink: 0;
     white-space: nowrap;
 }
+
+/* ── Task search dropdown override ──
+   Old style.css uses top:80px/right:35px (hard-coded for old layout).
+   Override to correctly anchor below the new pill search box. */
+.tb-search-wrap {
+    position: relative;
+}
+
+.tb-search-wrap .searchTaskResult {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    min-width: 280px;
+    max-width: 360px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.13);
+    border: 1px solid #e8eaed;
+    z-index: 16000;
+    margin-top: 0;
+    padding: 4px 0;
+    display: none;
+}
+
+.tb-search-wrap .searchTaskResult ul {
+    max-height: 60vh;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.tb-search-wrap .searchTaskResult ul li {
+    border-top: 1px solid #f1f3f4;
+    border-bottom: none;
+}
+
+.tb-search-wrap .searchTaskResult ul li:first-child { border-top: none; }
+
+.tb-search-wrap .searchTaskResult a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 14px;
+    text-decoration: none;
+    color: #202124;
+    font-size: 0.82rem;
+    font-weight: 500;
+    gap: 8px;
+    transition: background 0.12s;
+}
+
+.tb-search-wrap .searchTaskResult a:hover {
+    background: #f1f3f4;
+    color: #006666;
+}
+
+.tb-search-wrap .searchTaskResult ul li span {
+    font-size: 0.70rem;
+    color: #9aa0a6;
+    margin-left: auto;
+    flex-shrink: 0;
+}

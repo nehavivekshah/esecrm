@@ -17,17 +17,20 @@
                 </div>
                 <div class="leads-toolbar-right">
                     {{-- Search --}}
-                    <form method="post" class="tb-search-wrap" autocomplete="off">
-                        @csrf
-                        <div class="tb-search-box">
-                            <i class="bx bx-search tb-search-icon"></i>
-                            <input type="text" id="taskSearch" name="taskSearch"
-                                   placeholder="Search tasks…" class="tb-search-input" />
-                        </div>
+                    <div class="tb-search-wrap">
+                        <form method="post" autocomplete="off" onsubmit="return false;">
+                            @csrf
+                            <div class="tb-search-box">
+                                <i class="bx bx-search tb-search-icon"></i>
+                                <input type="text" id="taskSearch" name="taskSearch"
+                                       placeholder="Search tasks…" class="tb-search-input" />
+                            </div>
+                        </form>
+                        {{-- Dropdown OUTSIDE the search-box so absolute positioning works --}}
                         <div class="searchTaskResult">
                             <ul id="tsdata"></ul>
                         </div>
-                    </form>
+                    </div>
                     {{-- Status Legend --}}
                     <div class="d-none d-md-flex align-items-center gap-2 ms-2">
                         <span class="tb-legend tb-legend-urgent">Urgent</span>
