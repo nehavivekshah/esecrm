@@ -124,9 +124,9 @@
             const color   = stageColors[stage];
             const initial = (lead.name || lead.company || 'L').charAt(0).toUpperCase();
 
-            // Header: name + company
-            const nameHtml    = `<div class="kb-card-name">${escHtml(lead.name || lead.company || 'No Name')}</div>`;
-            const companyHtml = (lead.company && lead.name)
+            // Header: name + company — always shown separately
+            const nameHtml    = `<div class="kb-card-name">${escHtml(lead.name || '—')}</div>`;
+            const companyHtml = lead.company
                 ? `<div class="kb-card-company"><i class="bx bx-buildings"></i> ${escHtml(lead.company)}</div>` : '';
 
             // Source badge
