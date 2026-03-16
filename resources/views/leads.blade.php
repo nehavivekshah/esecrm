@@ -59,65 +59,62 @@
 
     <section class="task__section">
         @include('inc.header', ['title' => 'Leads Board'])
-        <div class="container-fluid">
-            <!-- Filter & Assign Bar -->
-            <div class="card p-3 mb-4 border-0 shadow-sm d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
-                <div class="d-flex flex-wrap gap-2">
+
+        <div class="dash-container">
+
+            {{-- Toolbar --}}
+            <div class="leads-toolbar mb-3">
+                {{-- Left: Filters --}}
+                <div class="leads-toolbar-left">
                     @if(in_array('All', $roleArray))
-                        <!-- Sales Rep Filter -->
-                        <select id="ajaxSalesRep" class="form-select form-select-sm" style="width: 150px; border-radius: 20px;">
+                        <select id="ajaxSalesRep" class="lb-select">
                             <option value="">All Sales Reps</option>
                             @foreach($getUsers as $user)
                                 <option value="{{ $user->name }}">{{ $user->name }}</option>
                             @endforeach
                         </select>
                     @endif
-
-                    <!-- Status Filter -->
-                    <select id="ajaxStatus" class="form-select form-select-sm" style="width: 120px; border-radius: 20px;">
-                        <option value="">Status</option>
-                        <option value="0">Fresh</option>
-                        <option value="1">Follow Up</option>
-                        <option value="9">Loss</option>
+                    <select id="ajaxStatus" class="lb-select">
+                        <option value="">All Status</option>
+                        <option value="0">🟢 Fresh</option>
+                        <option value="1">🔵 Follow Up</option>
+                        <option value="9">🔴 Loss</option>
                     </select>
-
-                    <button class="btn btn-light btn-sm rounded-circle shadow-sm" style="width: 32px; height: 32px; padding: 0;" id="refreshBtn"><i class="bx bx-refresh"></i></button>
+                    <button class="lb-icon-btn" id="refreshBtn" title="Refresh">
+                        <i class="bx bx-refresh"></i>
+                    </button>
                 </div>
 
-                <div class="d-flex mob-style gap-2">
-
-
-                    <!--<input type="text" id="ajaxSearch" class="form-control form-control-sm" placeholder="Search...">-->
-                    @if(in_array('leads_export', $roleArray) || in_array('All', $roleArray))
-                        <!--<a href="/export-leads-file" class="btn btn-info btn-sm" target="_blank" download="leads.csv" title="Download Leads CSV File"><i class="bx bx-download"></i> <span>Export</span></a>-->
-                    @endif
-
+                {{-- Right: Actions --}}
+                <div class="leads-toolbar-right">
                     @if(in_array('leads_import', $roleArray) || in_array('All', $roleArray))
-                        <a href="javascript:void(0)" class="btn btn-warning btn-sm rounded-pill shadow-sm px-3" id="importFile"><i class="bx bx-upload"></i>
-                            <span>Import</span></a>
-                        <a href="/public/assets/leads.csv" class="btn btn-light btn-sm rounded-pill shadow-sm px-3 border" target="_blank" download="leads.csv"
-                            title="Download CSV Sample File"><i class="bx bx-download"></i> <span>Sample File</span></a>
+                        <a href="javascript:void(0)" class="lb-btn lb-btn-secondary" id="importFile">
+                            <i class="bx bx-upload"></i>
+                            <span class="d-none d-sm-inline">Import</span>
+                        </a>
+                        <a href="/public/assets/leads.csv" class="lb-btn lb-btn-ghost" target="_blank" download="leads.csv" title="Download CSV Sample">
+                            <i class="bx bx-download"></i>
+                            <span class="d-none d-sm-inline">Sample</span>
+                        </a>
                     @endif
-
                     @if(in_array('leads_add', $roleArray) || in_array('All', $roleArray))
-                        <a href="/manage-lead" class="btn btn-indigo shadow-sm rounded-pill btn-sm px-3"><i class="bx bx-plus"></i>
-                            <span>Add New</span></a>
+                        <a href="/manage-lead" class="lb-btn lb-btn-primary">
+                            <i class="bx bx-plus"></i>
+                            <span>Add Lead</span>
+                        </a>
                     @endif
-                    <!--<a href="/manage-lead" class="btn btn-success btn-sm"><i class="bx bx-plus"></i></a>-->
                 </div>
             </div>
 
-            <!-- Table -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body p-0 table-responsive">
-                    <table id="leadslists" class="table table-hover table-condensed m-table leads mb-0"
-                        style="width:100%;border-radius:var(--card-radius);overflow:hidden;">
+            {{-- Leads Table --}}
+            <div class="dash-card">
+                <div class="table-responsive">
+                    <table id="leadslists" class="leads-table" style="width:100%;">
                         <thead>
                             <tr>
-
                                 <th>Name</th>
                                 <th class="m-none">Company</th>
-                                <th class="m-none mw80">Mobile No.</th>
+                                <th class="m-none mw80">Mobile</th>
                                 <th class="m-none mw60">Status</th>
                                 <th class="m-none mw80">Since</th>
                                 <th class="m-none mw80">Purpose</th>
@@ -129,23 +126,32 @@
                                 @else
                                     <th class="m-none mw60">POC</th>
                                 @endif
-                                <th class="position-sticky end-0 bg-slate-50" width="60px">Action</th>
+                                <th class="text-center" width="60px">Action</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
                     </table>
                 </div>
             </div>
+
         </div>
     </section>
 
     <!-- Offcanvas for Edit/Profile -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="leadModal" aria-labelledby="leadModalLabel" style="width: 800px; max-width: 100vw; border-top-left-radius: 20px; border-bottom-left-radius: 20px; box-shadow: -10px 0 30px rgba(0,0,0,0.1);">
-        <div class="offcanvas-header border-bottom bg-slate-50" style="border-top-left-radius: 20px;">
-            <h5 class="offcanvas-title font-weight-bold text-slate-800" id="leadModalLabel">Edit Lead Details</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <div class="offcanvas-header lb-offcanvas-header">
+            <div class="d-flex align-items-center gap-3">
+                <div class="lb-offcanvas-avatar" id="leadAvatarBadge">L</div>
+                <div>
+                    <h5 class="offcanvas-title" id="leadModalLabel">Lead Details</h5>
+                    <span class="lb-offcanvas-subtitle" id="leadAvatarCompany">Loading...</span>
+                </div>
+            </div>
+            <button type="button" class="lb-offcanvas-close" data-bs-dismiss="offcanvas" aria-label="Close">
+                <i class="bx bx-x"></i>
+            </button>
         </div>
-        <div class="offcanvas-body pt-3 bg-white">
+        <div class="offcanvas-body lb-offcanvas-body">
                     <!--<ul class="nav nav-tabs mb-3" id="leadModalTab" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="lead-details-tab" data-bs-toggle="pill" data-bs-target="#lead-details" type="button" role="tab" aria-controls="lead-details" aria-selected="true">Profile</button>
