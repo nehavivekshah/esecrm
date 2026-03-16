@@ -1,160 +1,248 @@
 @php
-
-    $roles = session('roles');
-    $roleArray = explode(',',($roles->permissions ?? ''));
-
+    $roles     = session('roles');
+    $roleArray = explode(',', ($roles->permissions ?? ''));
+    $task      = $taskSingle[0];
+    $labels    = [
+        '#787878' => 'New Task',
+        '#007265' => 'In Working',
+        '#ff9800' => 'Pause',
+        '#e91e1e' => 'Urgent',
+        '#0dd500' => 'Complete',
+    ];
+    // Working hours calculation
+    $isRunning  = !empty($taskHistory[0]->id) && $taskHistory[0]->status == '0';
+    $workingMin = $isRunning
+        ? (strtotime(date('d-m-Y h:i:s a')) - strtotime($taskHistory[0]->start_time)) / 60
+        : 0;
+    // Total duration
+    $total_min = 0;
+    foreach ($taskHistory as $t) {
+        $diff = intval((strtotime($t->start_time ?? '') - strtotime($t->end_time ?? '')) / 60);
+        $total_min += intval($diff / 60) * 60 + $diff % 60;
+    }
+    $th = intval($total_min / 60);
+    $tm = $total_min % 60;
 @endphp
-<div class="offcanvas offcanvas-end show" tabindex="-1" id="taskOffcanvas" aria-labelledby="taskOffcanvasLabel" style="width: 850px; max-width: 100vw; border-top-left-radius: 20px; border-bottom-left-radius: 20px; box-shadow: -10px 0 30px rgba(0,0,0,0.1); z-index: 1060; visibility: visible;">
-    <div class="offcanvas-body" style="padding: 0;">
-        <div class="pop-scrum-board" style="box-shadow: none; border-radius: 0; margin: 0; min-height: 100%; border: none;">
-            
-            <!--Header Content-->
-            <div class="pop-flex offcanvas-header bg-slate-50 border-bottom" style="border-top-left-radius: 20px;">
-                <div class="listicon text-indigo-600">
-                    <i class="bx bx-window-alt h4 mb-0"></i>
-                </div>
-                <div class="headcontent flex-grow-1 px-3">
-                    <textarea type="text" id="tasktitle" class="form-control font-weight-bold tracking-tight text-slate-800" style="border:none; padding-left:0; font-size:1.2rem; background:transparent;">{{ ucfirst($taskSingle[0]->title) }}</textarea>
-                </div>
-                <div class="listicon">
-                    <a href="{{ route('task') }}" class="btn-close" aria-label="Close" style="font-size: 1rem;"><i class="bx bx-x d-none"></i></a>
-                </div>
-            </div>
-            
-            <!--Body Content-->
-            <div class="pop-body-flex">
-                <div class="pagesidebar">
-                    <h4 class="pop-title h4 text-default font-weight-bold"><i class="bx bx-list-minus"></i> <span>Actions</span></h4>
-                    <ul class="tab-list">
-                        @if(!empty($taskHistory[0]->id) && $taskHistory[0]->status == '0')
-                        <?php $workingHours = (strtotime(date('d-m-Y h:i:s a')) - strtotime($taskHistory[0]->start_time)) / 60; ?>
-                        <li><a href="javascript:void(0)" class="taskstart" data-taskhr="{{ round($workingHours,2) }}" 
-                        id="{{ $taskHistory[0]->id }}"><i class="bx bx-time"></i> <span class="p-0">Stop</span></a></li>
-                        @else
-                        <li><a href="javascript:void(0)" class="taskstart" id="{{ $taskSingle[0]->id }}"><i class="bx bx-stopwatch"></i> <span class="p-0">Start</span></a></li>
-                        @endif
-                        <li>
-                          <div class="input-group d-flex">
-                            <i class="bx bxs-label" id="labelicon" style="color:{{ $taskSingle[0]->label }}"></i>
-                            <select id="colorpalet">
-                              <option value="">Label</option>
-                              <option value="#787878" @if(($taskSingle[0]->label ?? '') == "#787878") {{ "selected" }} @endif>New Task</option>
-                              <option value="#007265" @if(($taskSingle[0]->label ?? '') == "#007265") {{ "selected" }} @endif>In Working</option>
-                              <option value="#ff9800" @if(($taskSingle[0]->label ?? '') == "#ff9800") {{ "selected" }} @endif>Pause</option>
-                              <option value="#e91e1e" @if(($taskSingle[0]->label ?? '') == "#e91e1e") {{ "selected" }} @endif>Urgent</option>
-                              <option value="#0dd500" @if(($taskSingle[0]->label ?? '') == "#0dd500") {{ "selected" }} @endif>Complete</option>
-                            </select>
-                          </div>
-                        </li>
-                        <!--li><a href="javascript:void(0)"><i class="bx bxs-copy"></i> <span>Copy</span></a></li>
-                        <li><a href="javascript:void(0)"><i class="bx bxs-arrow-from-left"></i> <span>Move</span></a></li>
-                        <li><a href="javascript:void(0)"><i class="bx bxs-box"></i> <span>Acrive</span></a></li>
-                        <li><a href="javascript:void(0)"><i class="bx bxs-share"></i> <span>Share</span></a></li-->
-                        @if(in_array('tasks_delete',$roleArray) || in_array('All',$roleArray))
-                        <li><a href="javascript:void(0)" class="taskdeleted text-danger" id="{{ $taskSingle[0]->id }}"><i class="bx bxs-trash"></i> <span>Delete</span></a></li>
-                        @endif
-                    </ul>
-                  	
-                  	@if(count($taskHistory)>0)
-                  	<h5 class="text-default sb-title">Durations</h5>
-                    <ul class="tab-time-list">
-                      @php
-                      
-                      	$total_min = 0;
-                      
-                      @endphp
-                      
-                      @foreach($taskHistory as $taskTime)
-                      
-                      @php
-                      
-                   		$dateDiff = intval((strtotime($taskTime->start_time ?? '')-strtotime($taskTime->end_time ?? ''))/60);
 
-                        $hours = intval($dateDiff/60);
-                        $minutes = $dateDiff%60;
-                      
-                      	$total_min += intval($dateDiff/60)*60 + $dateDiff%60;
-                      
-                      @endphp
-                      
-                      <li>{{ date_format(date_create($taskTime->created_at),'d M') }} <span>{{ -$hours.'.'.-$minutes }}Hr.</span></li>
-                      @endforeach
-                  	</ul>
-                  
-                  	@php
+<div class="offcanvas offcanvas-end show" tabindex="-1" id="taskOffcanvas"
+     style="width:820px; max-width:100vw; border-top-left-radius:16px; border-bottom-left-radius:16px;
+            box-shadow:-12px 0 40px rgba(0,0,0,0.12); z-index:1060; visibility:visible; overflow:hidden;">
 
-                        $hours1 = intval($total_min/60);
-                        $minutes1 = $total_min%60;
-                      
-                      @endphp
-                  
-                 	 <h5 class="text-default sb-title mt-2">Total: <span>{{ -$hours1.'Hr. '.-$minutes1.'Min.' }} </span></h5>
-                  	@endif
-                </div>
-                <div class="pagecontent">
-                    <div class="des-area">
-                        <h3 class="pop-title h4 text-default"><i class="bx bx-list-minus"></i> <span>Description</span></h4>
-                        <form class="edit-textarea" id="edttaskdetails" method="post">
-                            @csrf
-                            <div class="form-group">
-                                <input type="hidden" name="taskid" id="taskid" value="{{ $taskSingle[0]->id }}" />
-                                <textarea type="text" name="taskdes" rows="6" class="form-control" id="example" placeholder="Add a more detailed description…" required>{{ ucfirst($taskSingle[0]->des) }}</textarea>
-                            </div>
-                            @if(in_array('tasks_edit',$roleArray) || in_array('All',$roleArray))
-                            <div class="form-group">
-                                <button type="submit" name="tasksubmit" class="btn btn-primary btn-sm">Save</button>
-                                <button type="reset" class="btn btn-light btn-sm border">Cancel</button>
-                                <span id="res"></span>
-                            </div>
-                            @endif
-                        </form>
-                    </div>
-                    <br>
-                    <div class="activity-area">
-                        <h3 class="pop-title h4 text-default"><i class="bx bx-list-minus"></i> <span>Comments</span></h4>
-                        <form class="edit-textarea" method="post" id="taskComments">
-                            @csrf
-                            <div class="form-group">
-                                <input type="hidden" name="commenttaskid" id="taskid" value="{{ $taskSingle[0]->id }}" />
-                                <textarea type="text" name="taskcomment" rows="2" class="form-control" id="commentInputs" placeholder="Write a comment…" required ></textarea>
-                            </div>
-                            <div class="form-group">
-                                <button type="submit" name="cmtsubmit" class="btn btn-primary btn-sm">Save</button>
-                                <span id="res1"></span>
-                            </div>
-                        </form>
-                        @if(count($taskComments)>0)
-                        <div class="col-md-12 leftpadding-63">
-                            <div class="bg-light rounded my-4 p-3" id="reloadMsg">
-                            @foreach($taskComments as $taskComment)
-                                @if($taskComment->uid == Auth::user()->id)
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="primary-user">
-                                            <label class="small text-second">{{ Auth::user()->name }}</label><br>
-                                            <p>{{ $taskComment->comments }}</p>
-                                            <span class="small text-light">{{ $taskComment->created_at }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                @else
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="sec-user">
-                                            <label class="small text-default">{{ $taskComment->name }}</label><br>
-                                            <p>{{ $taskComment->comments }}</p>
-                                            <span class="small text-dark">{{ $taskComment->created_at }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                @endif
-                            @endforeach
-                            </div>
-                        </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
+    {{-- ── HEADER ── --}}
+    <div class="et-header">
+        <div class="et-header-icon">
+            <i class="bx bx-task"></i>
+        </div>
+        <div class="flex-grow-1 min-w-0">
+            <textarea id="tasktitle" class="et-title-input"
+                      placeholder="Task title…">{{ ucfirst($task->title) }}</textarea>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            {{-- Timer start/stop --}}
+            @if($isRunning)
+                <a href="javascript:void(0)" class="lb-btn lb-btn-ghost et-timer-btn taskstart"
+                   data-taskhr="{{ round($workingMin, 2) }}" id="{{ $taskHistory[0]->id }}"
+                   style="color:#ea4335;" title="Stop Timer">
+                    <i class="bx bx-stop-circle"></i>
+                    <span class="d-none d-sm-inline">Stop</span>
+                </a>
+            @else
+                <a href="javascript:void(0)" class="lb-btn lb-btn-ghost et-timer-btn taskstart"
+                   id="{{ $task->id }}" title="Start Timer">
+                    <i class="bx bx-play-circle"></i>
+                    <span class="d-none d-sm-inline">Start</span>
+                </a>
+            @endif
+            {{-- Delete --}}
+            @if(in_array('tasks_delete', $roleArray) || in_array('All', $roleArray))
+                <a href="javascript:void(0)" class="kb-action-btn kb-action-del taskdeleted"
+                   id="{{ $task->id }}" title="Delete Task">
+                    <i class="bx bx-trash"></i>
+                </a>
+            @endif
+            {{-- Close --}}
+            <a href="{{ route('task') }}" class="kb-action-btn" title="Close"
+               style="background:rgba(60,64,67,0.07);color:#5f6368;">
+                <i class="bx bx-x"></i>
+            </a>
         </div>
     </div>
+
+    <div class="offcanvas-body p-0" style="overflow-y:auto;">
+        <div class="et-body">
+
+            {{-- ── LEFT SIDEBAR ── --}}
+            <div class="et-sidebar">
+
+                {{-- Label selector --}}
+                <div class="et-section">
+                    <div class="et-section-title">
+                        <i class="bx bxs-label"></i> Label
+                    </div>
+                    <div class="et-label-row">
+                        <span class="et-label-dot" id="labelicon"
+                              style="background:{{ $task->label ?? '#787878' }};"></span>
+                        <select id="colorpalet" class="et-label-select">
+                            <option value="">Select…</option>
+                            @foreach($labels as $hex => $name)
+                                <option value="{{ $hex }}"
+                                    {{ ($task->label ?? '') == $hex ? 'selected' : '' }}>
+                                    {{ $name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                {{-- Priority / Status quick-view --}}
+                <div class="et-section">
+                    <div class="et-section-title">
+                        <i class="bx bx-radio-circle-marked"></i> Status
+                    </div>
+                    @php
+                        $statusMap = [
+                            '0' => ['#80868b', 'Open'],
+                            '1' => ['#ea4335', 'Urgent'],
+                            '2' => ['#f29900', 'Pending'],
+                            '3' => ['#1a73e8', 'In Progress'],
+                            '4' => ['#34a853', 'Done'],
+                            '5' => ['#006666', 'Closed'],
+                        ];
+                        [$sColor, $sLabel] = $statusMap[$task->status] ?? ['#80868b', 'Open'];
+                    @endphp
+                    <span class="et-status-badge" style="background:{{ $sColor }}18; color:{{ $sColor }};">
+                        {{ $sLabel }}
+                    </span>
+                </div>
+
+                {{-- Assigned to --}}
+                <div class="et-section">
+                    <div class="et-section-title">
+                        <i class="bx bx-user"></i> Assigned To
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        @php $assignee = $userSingle[0] ?? null; @endphp
+                        @if($assignee)
+                            <div class="et-assignee-avatar">
+                                {{ strtoupper(substr($assignee->name, 0, 1)) }}
+                            </div>
+                            <span class="et-assignee-name">{{ $assignee->name }}</span>
+                        @else
+                            <span class="text-muted small">Unassigned</span>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- Duration history --}}
+                @if(count($taskHistory) > 0)
+                    <div class="et-section">
+                        <div class="et-section-title">
+                            <i class="bx bx-time-five"></i> Time Log
+                        </div>
+                        <div class="et-time-list">
+                            @foreach($taskHistory as $t)
+                                @php
+                                    $d  = intval((strtotime($t->start_time ?? '') - strtotime($t->end_time ?? '')) / 60);
+                                    $h  = intval($d / 60);
+                                    $m  = $d % 60;
+                                @endphp
+                                <div class="et-time-row">
+                                    <span class="et-time-date">{{ date_format(date_create($t->created_at), 'd M') }}</span>
+                                    <span class="et-time-val">{{ -$h }}h {{ -$m }}m</span>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="et-time-total">
+                            <i class="bx bx-calculator"></i>
+                            Total: <strong>{{ -$th }}h {{ -$tm }}m</strong>
+                        </div>
+                    </div>
+                @endif
+
+            </div>
+
+            {{-- ── MAIN CONTENT ── --}}
+            <div class="et-main">
+
+                {{-- Description --}}
+                <div class="et-panel">
+                    <div class="et-panel-header">
+                        <i class="bx bx-align-left"></i>
+                        <span>Description</span>
+                    </div>
+                    <form id="edttaskdetails" method="post">
+                        @csrf
+                        <input type="hidden" name="taskid" id="taskid" value="{{ $task->id }}" />
+                        <textarea name="taskdes" rows="6" class="et-textarea" id="example"
+                                  placeholder="Add a more detailed description…"
+                                  required>{{ ucfirst($task->des) }}</textarea>
+                        @if(in_array('tasks_edit', $roleArray) || in_array('All', $roleArray))
+                            <div class="d-flex align-items-center gap-2 mt-2">
+                                <button type="submit" class="lb-btn lb-btn-primary" style="padding:5px 16px;font-size:0.80rem;">
+                                    <i class="bx bx-save"></i> Save
+                                </button>
+                                <button type="reset" class="lb-btn lb-btn-ghost" style="padding:5px 12px;font-size:0.80rem;">
+                                    Cancel
+                                </button>
+                                <span id="res" class="small ms-1"></span>
+                            </div>
+                        @endif
+                    </form>
+                </div>
+
+                {{-- Comments --}}
+                <div class="et-panel">
+                    <div class="et-panel-header">
+                        <i class="bx bx-comment-dots"></i>
+                        <span>Comments</span>
+                    </div>
+
+                    {{-- Comment input --}}
+                    <form method="post" id="taskComments">
+                        @csrf
+                        <input type="hidden" name="commenttaskid" value="{{ $task->id }}" />
+                        <div class="et-comment-input-wrap">
+                            <div class="et-auth-avatar">
+                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                            </div>
+                            <textarea name="taskcomment" rows="2" id="commentInputs"
+                                      class="et-comment-input"
+                                      placeholder="Write a comment…" required></textarea>
+                        </div>
+                        <div class="d-flex gap-2 mt-2 ps-1" style="padding-left:40px;">
+                            <button type="submit" class="lb-btn lb-btn-primary" style="padding:4px 14px;font-size:0.78rem;">
+                                <i class="bx bx-send"></i> Post
+                            </button>
+                            <span id="res1" class="small align-self-center"></span>
+                        </div>
+                    </form>
+
+                    {{-- Comment list --}}
+                    <div id="reloadMsg" class="et-comment-list mt-3">
+                        @if(count($taskComments) > 0)
+                            @foreach($taskComments as $c)
+                                @php $isMine = $c->uid == Auth::user()->id; @endphp
+                                <div class="et-comment {{ $isMine ? 'et-comment-mine' : 'et-comment-other' }}">
+                                    <div class="et-comment-avatar" style="{{ $isMine ? 'background:rgba(0,102,102,0.12);color:#006666;' : 'background:rgba(26,115,232,0.10);color:#1a73e8;' }}">
+                                        {{ strtoupper(substr($c->name ?? 'U', 0, 1)) }}
+                                    </div>
+                                    <div class="et-comment-bubble {{ $isMine ? 'et-bubble-mine' : 'et-bubble-other' }}">
+                                        <div class="et-comment-name">{{ $c->name ?? 'Unknown' }}</div>
+                                        <div class="et-comment-text">{{ $c->comments }}</div>
+                                        <div class="et-comment-time">{{ \Carbon\Carbon::parse($c->created_at)->format('d M Y, H:i') }}</div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @else
+                            <div class="kb-empty-col" style="padding:24px 0;">
+                                <i class="bx bx-comment"></i>
+                                <span>No comments yet. Be the first!</span>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+            </div>{{-- /et-main --}}
+        </div>{{-- /et-body --}}
+    </div>{{-- /offcanvas-body --}}
 </div>

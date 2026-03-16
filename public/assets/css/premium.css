@@ -2935,3 +2935,359 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
 }
 
 .tk-empty-col i { font-size: 1.8rem; }
+
+/* ==========================================================================
+   EDIT-TASK OFFCANVAS — et-* Components
+   ========================================================================== */
+
+/* --- Header --- */
+.et-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #006666 0%, #008080 100%);
+    border-radius: 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.et-header-icon {
+    width: 38px;
+    height: 38px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    margin-top: 4px;
+}
+
+.et-title-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.4;
+    resize: none;
+    min-height: 40px;
+    padding: 4px 0;
+}
+
+.et-title-input::placeholder { color: rgba(255,255,255,0.55); }
+.et-title-input:focus { box-shadow: none; }
+
+.et-timer-btn {
+    color: #fff !important;
+    border-color: rgba(255,255,255,0.3) !important;
+    background: rgba(255,255,255,0.10) !important;
+    flex-shrink: 0;
+    padding: 4px 12px;
+    font-size: 0.78rem;
+}
+
+.et-timer-btn:hover {
+    background: rgba(255,255,255,0.20) !important;
+}
+
+/* --- Body two-column layout --- */
+.et-body {
+    display: flex;
+    height: 100%;
+    min-height: 0;
+}
+
+/* --- Sidebar --- */
+.et-sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    border-right: 1px solid #e8eaed;
+    padding: 16px 0;
+    background: #fafafa;
+    overflow-y: auto;
+}
+
+.et-section {
+    padding: 10px 16px;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.et-section:last-child { border-bottom: none; }
+
+.et-section-title {
+    font-size: 0.70rem;
+    font-weight: 700;
+    color: #80868b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+/* Label selector */
+.et-label-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.et-label-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: background 0.2s;
+}
+
+.et-label-select {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    padding: 3px 8px;
+    outline: none;
+    background: #fff;
+    color: #202124;
+    flex: 1;
+    cursor: pointer;
+}
+
+.et-label-select:focus {
+    border-color: #006666;
+    box-shadow: 0 0 0 2px rgba(0,102,102,0.10);
+}
+
+/* Status badge in sidebar */
+.et-status-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* Assignee */
+.et-assignee-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    background: rgba(0,102,102,0.12);
+    color: #006666;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.et-assignee-name {
+    font-size: 0.80rem;
+    font-weight: 600;
+    color: #202124;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Time log rows */
+.et-time-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.et-time-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+}
+
+.et-time-date { color: #80868b; }
+
+.et-time-val {
+    font-weight: 600;
+    color: #202124;
+    font-family: 'Courier New', monospace;
+}
+
+.et-time-total {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #006666;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding-top: 6px;
+    border-top: 1px dashed #e0e0e0;
+}
+
+/* --- Main content area --- */
+.et-main {
+    flex: 1;
+    min-width: 0;
+    padding: 16px 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.et-panel {
+    background: #fff;
+    border: 1px solid #e8eaed;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.et-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #202124;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.et-panel-header i {
+    font-size: 1rem;
+    color: #006666;
+}
+
+/* Description textarea */
+.et-textarea {
+    width: 100%;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.82rem;
+    resize: vertical;
+    outline: none;
+    background: #fafafa;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    line-height: 1.55;
+}
+
+.et-textarea:focus {
+    border-color: #006666;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(0,102,102,0.08);
+}
+
+/* Comment input row */
+.et-comment-input-wrap {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.et-auth-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: rgba(0,102,102,0.12);
+    color: #006666;
+    font-size: 0.80rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 6px;
+}
+
+.et-comment-input {
+    flex: 1;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 0.80rem;
+    outline: none;
+    resize: none;
+    background: #fafafa;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.et-comment-input:focus {
+    border-color: #006666;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(0,102,102,0.08);
+}
+
+/* Comment list */
+.et-comment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.et-comment {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.et-comment-other { flex-direction: row; }
+.et-comment-mine  { flex-direction: row-reverse; }
+
+.et-comment-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    font-size: 0.77rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.et-comment-bubble {
+    max-width: 85%;
+    padding: 9px 12px;
+    border-radius: 12px;
+    font-size: 0.80rem;
+    line-height: 1.5;
+}
+
+.et-bubble-other {
+    background: #f1f3f4;
+    color: #202124;
+    border-top-left-radius: 2px;
+}
+
+.et-bubble-mine {
+    background: rgba(0,102,102,0.09);
+    color: #202124;
+    border-top-right-radius: 2px;
+}
+
+.et-comment-name {
+    font-size: 0.70rem;
+    font-weight: 700;
+    color: #5f6368;
+    margin-bottom: 3px;
+}
+
+.et-comment-text { margin-bottom: 4px; }
+
+.et-comment-time {
+    font-size: 0.65rem;
+    color: #9aa0a6;
+}
