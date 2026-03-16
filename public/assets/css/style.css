@@ -1095,7 +1095,7 @@ ul.tab-list li a span {
 
 .eventblock {
     min-height: 250px;
-    height: 400px;
+    height: 90%;
     overflow: auto;
     padding-right: 5px;
 }

@@ -73,7 +73,8 @@
                                 </div>
                             </div>
                             @if($canAddTask)
-                                <button type="button" class="tk-add-btn" onclick="addtask({{ $uid }})" title="Add Task">
+                                <button type="button" class="tk-add-btn" onclick="addtask({{ $uid }})"
+                                        data-uid="{{ $uid }}" title="Add Task">
                                     <i class="bx bx-plus"></i>
                                 </button>
                             @endif
@@ -153,10 +154,10 @@
                             @endforelse
                         </div>
 
-                        {{-- Quick Add Form --}}
+                        {{-- Quick Add Form — id="tf{uid}" matches global addtask() in script.js --}}
                         @if($canAddTask)
-                            <div class="tk-quick-add" id="qa-{{ $uid }}" style="display:none;">
-                                <form action="{{ route('task') }}" method="post" id="tf{{ $uid }}">
+                            <div class="tk-quick-add task-form" id="tf{{ $uid }}" style="display:none;">
+                                <form action="{{ route('task') }}" method="post">
                                     @csrf
                                     <input type="hidden" name="uid" value="{{ $uid }}" />
                                     <input type="hidden" name="cid" value="{{ $column['user']->cid }}" />
@@ -167,7 +168,7 @@
                                             <i class="bx bx-check"></i> Add
                                         </button>
                                         <button type="button" class="lb-btn lb-btn-ghost" style="padding:4px 10px;font-size:0.78rem;"
-                                                onclick="document.getElementById('qa-{{ $uid }}').style.display='none';">
+                                                onclick="this.closest('.task-form').style.display='none';">
                                             <i class="bx bx-x"></i>
                                         </button>
                                     </div>
@@ -186,14 +187,18 @@
     @endif
 
     <script>
-        function addtask(uid) {
-            const qa = document.getElementById('qa-' + uid);
-            if (qa) {
-                qa.style.display = qa.style.display === 'none' ? 'block' : 'none';
-                const ta = document.getElementById('tx' + uid);
-                if (ta) ta.focus();
-            }
-        }
+        // Focus textarea after addtask() unhides the panel
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.tk-add-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    const uid = this.dataset.uid;
+                    setTimeout(function () {
+                        const ta = document.getElementById('tx' + uid);
+                        if (ta) ta.focus();
+                    }, 50);
+                });
+            });
+        });
     </script>
 
 @endsection
