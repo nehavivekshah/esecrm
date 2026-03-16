@@ -81,7 +81,7 @@
 
                         {{-- Cards --}}
                         <div class="tk-cards eventblock connectedSortable" data-user="{{ $uid }}">
-                            @foreach ($column['tasks'] as $task)
+                            @forelse ($column['tasks'] as $task)
                                 @php
                                     $statusColors = [
                                         '1' => ['#ea4335', 'Urgent',      'bg-danger'],
@@ -90,10 +90,14 @@
                                         '4' => ['#34a853', 'Done',        'bg-success'],
                                         '5' => ['#006666', 'Closed',      'bg-secondary'],
                                     ];
-                                    $sc = $statusColors[$task->status] ?? ['#aaa', 'Open', 'bg-light'];
-                                    $displayTitle = strlen($task->title) > 50
-                                        ? substr($task->title, 0, 50) . '…'
+                                    $sc = $statusColors[$task->status] ?? ['#9aa0a6', 'Open', 'bg-light'];
+                                    $displayTitle = strlen($task->title) > 55
+                                        ? substr($task->title, 0, 55) . '…'
                                         : $task->title;
+                                    $displayDesc  = (!empty($task->msg) && $task->msg !== $task->title)
+                                        ? (strlen($task->msg) > 60 ? substr($task->msg, 0, 60) . '…' : $task->msg)
+                                        : '';
+                                    $whr = floatval($task->whr ?? 0);
                                 @endphp
 
                                 <a href="{{ route('edit-task', ['id' => $task->id]) }}"
@@ -101,29 +105,52 @@
                                    draggable="true" data-taskid="{{ $task->id }}"
                                    style="border-left-color: {{ $sc[0] }};">
 
-                                    {{-- Status pill --}}
+                                    {{-- Top row: status pill + timer icon --}}
                                     <div class="d-flex align-items-center justify-content-between mb-1">
                                         <span class="tk-status-pill" style="background:{{ $sc[0] }}18; color:{{ $sc[0] }};">
                                             {{ $sc[1] }}
                                         </span>
-                                        <div class="tk-card-action">
-                                            @if($task->status == '0')
-                                                <i class="bx bx-time" title="Start Timer"></i>
-                                            @else
-                                                <i class="bx bx-stopwatch" title="Running"></i>
-                                            @endif
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="tk-card-action">
+                                                @if($task->status == '0')
+                                                    <i class="bx bx-time" title="Start Timer"></i>
+                                                @else
+                                                    <i class="bx bx-stopwatch" title="Running"></i>
+                                                @endif
+                                            </div>
+                                            <i class="bx bx-dots-vertical-rounded tk-drag-handle" title="Drag"></i>
                                         </div>
                                     </div>
 
                                     {{-- Title --}}
                                     <div class="tk-card-title">{{ $displayTitle }}</div>
 
-                                    {{-- Label dot --}}
-                                    @if(!empty($task->label))
-                                        <div class="tk-card-label-bar" style="background: {{ $task->label }};"></div>
+                                    {{-- Description preview --}}
+                                    @if($displayDesc)
+                                        <div class="tk-card-desc">{{ $displayDesc }}</div>
+                                    @endif
+
+                                    {{-- Footer: hours worked --}}
+                                    @if($whr > 0 || !empty($task->label))
+                                        <div class="tk-card-footer">
+                                            @if($whr > 0)
+                                                <span class="tk-card-hours" title="Hours worked">
+                                                    <i class="bx bx-time-five"></i> {{ $whr }}h
+                                                </span>
+                                            @endif
+                                            @if(!empty($task->label))
+                                                <span class="tk-card-label-dot" style="background:{{ $task->label }};" title="Label"></span>
+                                            @endif
+                                        </div>
                                     @endif
                                 </a>
-                            @endforeach
+
+                            @empty
+                                <div class="tk-empty-col">
+                                    <i class="bx bx-clipboard"></i>
+                                    <span>No tasks yet</span>
+                                </div>
+                            @endforelse
                         </div>
 
                         {{-- Quick Add Form --}}

@@ -2863,3 +2863,74 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     background: rgba(0,102,102,0.04);
     border-radius: 8px;
 }
+
+/* --- Enhanced Task Card extras --- */
+
+/* Description preview line */
+.tk-card-desc {
+    font-size: 0.74rem;
+    color: #80868b;
+    line-height: 1.4;
+    margin-top: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Card footer row */
+.tk-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 1px solid #f1f3f4;
+}
+
+/* Hours worked chip */
+.tk-card-hours {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.70rem;
+    font-weight: 600;
+    color: #5f6368;
+    background: rgba(60,64,67,0.07);
+    padding: 2px 7px;
+    border-radius: 8px;
+}
+
+.tk-card-hours i { font-size: 0.80rem; }
+
+/* Label colour dot */
+.tk-card-label-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* Drag handle icon */
+.tk-drag-handle {
+    color: #c4c7ca;
+    font-size: 1rem;
+    cursor: grab;
+    transition: color 0.15s;
+}
+
+.tk-card:hover .tk-drag-handle { color: #80868b; }
+
+/* Empty column placeholder */
+.tk-empty-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 28px 0;
+    color: #bdc1c7;
+    font-size: 0.80rem;
+}
+
+.tk-empty-col i { font-size: 1.8rem; }
