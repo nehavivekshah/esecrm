@@ -122,39 +122,59 @@
         // Build a card's HTML
         function buildCard(lead, stage) {
             const color   = stageColors[stage];
-            const initial = (lead.name || 'L').charAt(0).toUpperCase();
-            const company = lead.company
-                ? `<div class="kb-card-meta"><i class="bx bx-buildings"></i> ${escHtml(lead.company)}</div>` : '';
-            const mobile  = lead.mob
-                ? `<div class="kb-card-meta"><i class="bx bx-phone"></i> ${escHtml(lead.mob)}</div>` : '';
-            const value   = lead.values
-                ? `<span class="kb-card-value"><i class="bx bx-rupee"></i>${escHtml(String(lead.values))}</span>` : '';
-            const poc     = lead.poc
-                ? `<span class="kb-card-poc"><i class="bx bx-user-check"></i> ${escHtml(lead.poc)}</span>` : '';
-            const purpose = lead.purpose
-                ? `<div class="kb-card-tag">${escHtml(lead.purpose)}</div>` : '';
+            const initial = (lead.name || lead.company || 'L').charAt(0).toUpperCase();
+
+            // Header: name + company
+            const nameHtml    = `<div class="kb-card-name">${escHtml(lead.name || lead.company || 'No Name')}</div>`;
+            const companyHtml = (lead.company && lead.name)
+                ? `<div class="kb-card-company"><i class="bx bx-buildings"></i> ${escHtml(lead.company)}</div>` : '';
+
+            // Source badge
+            const sourceHtml = lead.source
+                ? `<span class="kb-card-source"><i class="bx bx-user-plus"></i> ${escHtml(lead.source)}</span>` : '';
+
+            // Lead value chip
+            const valueHtml = lead.values
+                ? `<span class="kb-card-value-chip"><i class="bx bx-rupee"></i>${escHtml(String(lead.values))}</span>` : '';
+
+            // Contact action buttons — always visible
+            const waBtn    = lead.whatsapp
+                ? `<a href="https://api.whatsapp.com/send/?phone=${encodeURIComponent(lead.whatsapp)}&text=Hi&type=phone_number&app_absent=0" target="_blank" class="kb-action-btn kb-action-wa" title="WhatsApp" onclick="event.stopPropagation();"><i class="bx bxl-whatsapp"></i></a>` : '';
+            const callBtn  = lead.mob
+                ? `<a href="tel:+${encodeURIComponent(lead.mob)}" class="kb-action-btn kb-action-call" title="Call ${escHtml(lead.mob)}" onclick="event.stopPropagation();"><i class="bx bx-phone"></i></a>` : '';
+            const emailBtn = lead.email
+                ? `<a href="mailto:${escHtml(lead.email)}" class="kb-action-btn kb-action-email" title="Email ${escHtml(lead.email)}" onclick="event.stopPropagation();"><i class="bx bx-envelope"></i></a>` : '';
+            const editBtn  = `<a href="/manage-lead?id=${lead.id}" class="kb-action-btn kb-action-edit" title="Edit Lead" onclick="event.stopPropagation();"><i class="bx bx-edit-alt"></i></a>`;
 
             return `
                 <div class="kb-card" id="lead-${lead.id}" draggable="true"
                      ondragstart="drag(event)" data-id="${lead.id}"
                      style="border-left-color:${color.border};">
+
+                    {{-- Top: avatar + name + company --}}
                     <div class="kb-card-header">
                         <div class="kb-card-avatar" style="background:${color.bg}; color:${color.border};">${initial}</div>
                         <div class="kb-card-name-block">
-                            <div class="kb-card-name">${escHtml(lead.name || '')}</div>
-                            ${purpose}
+                            ${nameHtml}
+                            ${companyHtml}
                         </div>
                     </div>
-                    ${company}${mobile}
-                    <div class="kb-card-footer">${value}${poc}</div>
-                    <div class="kb-card-actions">
-                        ${lead.whatsapp ? `<a href="https://api.whatsapp.com/send/?phone=${encodeURIComponent(lead.whatsapp)}&text=Hi&type=phone_number&app_absent=0" target="_blank" class="kb-action-btn kb-action-wa" title="WhatsApp" onclick="event.stopPropagation();"><i class="bx bxl-whatsapp"></i></a>` : ''}
-                        ${lead.mob      ? `<a href="tel:+${encodeURIComponent(lead.mob)}" class="kb-action-btn kb-action-call" title="Call" onclick="event.stopPropagation();"><i class="bx bx-phone"></i></a>` : ''}
-                        ${lead.email    ? `<a href="mailto:${escHtml(lead.email)}" class="kb-action-btn kb-action-email" title="Email" onclick="event.stopPropagation();"><i class="bx bx-envelope"></i></a>` : ''}
-                        <a href="/manage-lead?id=${lead.id}" class="kb-action-btn kb-action-edit" title="Edit Lead" onclick="event.stopPropagation();"><i class="bx bx-edit-alt"></i></a>
+
+                    {{-- Meta row: source + value --}}
+                    <div class="kb-card-meta-row">
+                        ${sourceHtml}
+                        ${valueHtml}
+                    </div>
+
+                    {{-- Action buttons — always visible --}}
+                    <div class="kb-card-actions kb-card-actions-visible">
+                        ${waBtn}${callBtn}${emailBtn}
+                        <span class="kb-action-spacer"></span>
+                        ${editBtn}
                     </div>
                 </div>`;
         }
+
 
         function escHtml(s) {
             return String(s)
