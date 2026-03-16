@@ -2382,3 +2382,47 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting_disabled {
 
 /* Push edit to the right */
 .kb-action-spacer { flex: 1; }
+
+/* ==========================================================================
+   CUSTOMERS PAGE — shared utility additions
+   ========================================================================== */
+
+/* Small avatar circle in table name column */
+.lb-avatar-sm {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(0, 102, 102, 0.10);
+    color: #006666;
+    font-size: 0.80rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* Page count badge in toolbar */
+.lb-page-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #3c4043;
+    padding: 4px 12px;
+    background: rgba(60, 64, 67, 0.07);
+    border-radius: 20px;
+}
+
+.lb-page-count i { font-size: 1rem; color: #006666; }
+
+/* Delete action button */
+.kb-action-del {
+    background: rgba(234, 67, 53, 0.08);
+    color: #ea4335;
+}
+.kb-action-del:hover { background: rgba(234, 67, 53, 0.18); color: #c62828; }
+
+/* font-weight utility */
+.fw-500 { font-weight: 500; }
