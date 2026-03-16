@@ -4155,3 +4155,127 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+/* ==========================================================================
+   MANAGE PROPOSAL PAGE — mp-* Components
+   ========================================================================== */
+
+/* ── Line Items table ── */
+.mp-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+}
+
+.mp-items-table thead tr {
+    background: #fafafa;
+    border-bottom: 2px solid #e8eaed;
+}
+
+.mp-items-table thead th {
+    padding: 10px 12px;
+    font-size: 0.70rem;
+    font-weight: 700;
+    color: #5f6368;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+}
+
+.mp-items-table tbody tr {
+    border-bottom: 1px solid #f1f3f4;
+    transition: background 0.1s;
+}
+
+.mp-items-table tbody tr:last-child { border-bottom: none; }
+.mp-items-table tbody tr:hover { background: #fafafa; }
+
+.mp-items-table tbody td {
+    padding: 8px 10px;
+    vertical-align: middle;
+}
+
+.mp-items-table .form-control,
+.mp-items-table .form-select {
+    font-size: 0.80rem;
+    padding: 5px 8px;
+}
+
+.mp-items-table .item-amount {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #34a853;
+    white-space: nowrap;
+}
+
+/* ── Summary Box ── */
+.mp-summary-box {
+    background: #fff;
+    border: 1px solid #e8eaed;
+    border-radius: 14px;
+    padding: 20px 24px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.mp-summary-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 7px 0;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.mp-summary-row:last-of-type { border-bottom: none; }
+
+.mp-summary-label {
+    font-size: 0.80rem;
+    color: #5f6368;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.mp-summary-val {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #202124;
+    white-space: nowrap;
+}
+
+.mp-tax-row .mp-summary-label,
+.mp-tax-row .mp-summary-val {
+    font-size: 0.72rem;
+    font-weight: 400;
+}
+
+.mp-disc-input {
+    width: 90px !important;
+    font-size: 0.78rem !important;
+    border-radius: 8px !important;
+}
+
+/* Grand Total row */
+.mp-summary-total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding: 12px 14px;
+    background: rgba(0,102,102,0.06);
+    border-radius: 10px;
+    border: 1px solid rgba(0,102,102,0.15);
+}
+
+.mp-summary-total span {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #006666;
+}
+
+.mp-grand-total-val {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #006666;
+}
