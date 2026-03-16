@@ -8,14 +8,34 @@
         <div class="dash-container">
 
             {{-- Toolbar --}}
-            <div class="leads-toolbar mb-3">
+            <div class="leads-toolbar tk-toolbar mb-3">
                 <div class="leads-toolbar-left">
                     <span class="lb-page-count">
                         <i class="bx bx-task"></i>
-                        Task Board &mdash; <span id="memberCount">{{ count($users) }}</span> Members
+                        Task Board — <span id="memberCount">{{ count($users) }}</span> Members
                     </span>
+
+                    {{-- Sort order toggle --}}
+                    <div class="tk-sort-group ms-2">
+                        <button class="tk-sort-btn active" data-sort="priority" title="Sort by Priority (Urgent first)">
+                            <i class="bx bx-sort-up"></i> Priority
+                        </button>
+                        <button class="tk-sort-btn" data-sort="default" title="Default order">
+                            <i class="bx bx-list-ol"></i> Default
+                        </button>
+                    </div>
                 </div>
-                <div class="leads-toolbar-right">
+                <div class="leads-toolbar-right gap-2 flex-wrap">
+                    {{-- Status Filter chips --}}
+                    <div class="tk-filter-row">
+                        <button class="tk-filter-btn active" data-filter="all">All</button>
+                        <button class="tk-filter-btn" data-filter="1" style="--fc:#ea4335;">🔴 Urgent</button>
+                        <button class="tk-filter-btn" data-filter="2" style="--fc:#f29900;">🟡 Pending</button>
+                        <button class="tk-filter-btn" data-filter="3" style="--fc:#1a73e8;">🔵 In Progress</button>
+                        <button class="tk-filter-btn" data-filter="4" style="--fc:#34a853;">🟢 Done</button>
+                        <button class="tk-filter-btn" data-filter="5" style="--fc:#006666;">✅ Closed</button>
+                    </div>
+
                     {{-- Search --}}
                     <form method="post" class="tb-search-wrap" autocomplete="off">
                         @csrf
@@ -28,47 +48,69 @@
                             <ul id="tsdata"></ul>
                         </div>
                     </form>
-                    {{-- Status Legend --}}
-                    <div class="d-none d-md-flex align-items-center gap-2 ms-2">
-                        <span class="tb-legend tb-legend-urgent">Urgent</span>
-                        <span class="tb-legend tb-legend-pending">Pending</span>
-                        <span class="tb-legend tb-legend-progress">In Progress</span>
-                        <span class="tb-legend tb-legend-done">Done</span>
-                        <span class="tb-legend tb-legend-closed">Closed</span>
-                    </div>
                 </div>
             </div>
 
-            {{-- Kanban Board --}}
+            {{-- Board --}}
             <input type="hidden" id="userCount" value="{{ count($users) }}" />
 
-            <div class="tk-board">
-                @php
-                    $colColors = [
-                        '#1a73e8', '#9334e9', '#006666', '#f29900',
-                        '#34a853', '#ea4335', '#0b8043', '#e52592'
-                    ];
-                @endphp
+            @php
+                $colColors = [
+                    '#1a73e8','#9334e9','#006666','#f29900',
+                    '#34a853','#ea4335','#0b8043','#e52592'
+                ];
 
+                // Priority order for sorting: lower = higher priority
+                $statusPriority = [
+                    '1' => 1, // Urgent
+                    '3' => 2, // In Progress
+                    '2' => 3, // Pending
+                    '4' => 4, // Done
+                    '5' => 5, // Closed
+                    '0' => 6, // Open / default
+                    '6' => 7, // Newly created
+                ];
+
+                $statusMeta = [
+                    '1' => ['#ea4335', 'Urgent'],
+                    '2' => ['#f29900', 'Pending'],
+                    '3' => ['#1a73e8', 'In Progress'],
+                    '4' => ['#34a853', 'Done'],
+                    '5' => ['#006666', 'Closed'],
+                ];
+            @endphp
+
+            <div class="tk-board" id="tk-board">
                 @foreach ($kanbanData as $idx => $column)
                     @php
                         $accent  = $colColors[$idx % count($colColors)];
-                        $bgAlpha = 'rgba(' . implode(',', sscanf(ltrim($accent,'#'), '%02x%02x%02x')) . ',0.07)';
+                        $rgb     = sscanf(ltrim($accent,'#'), '%02x%02x%02x');
+                        $bgAlpha = 'rgba('.implode(',',$rgb).',0.08)';
                         $initial = strtoupper(substr($column['user']->name, 0, 1));
                         $uid     = $column['user']->id;
+
+                        // Sort tasks by status priority
+                        $sortedTasks = collect($column['tasks'])
+                            ->sortBy(fn($t) => $statusPriority[$t->status] ?? 6)
+                            ->values();
+
+                        // Count per status for breakdown pills
+                        $statusCounts = $sortedTasks->groupBy('status')->map->count();
+                        $totalTasks   = $sortedTasks->count();
                     @endphp
 
                     <div class="tk-col" data-user="{{ $uid }}">
+
                         {{-- Column Header --}}
-                        <div class="tk-col-header" style="border-bottom-color: {{ $accent }};">
+                        <div class="tk-col-header" style="border-bottom-color:{{ $accent }};">
                             <div class="d-flex align-items-center gap-2 flex-grow-1 min-w-0">
-                                <div class="tk-col-avatar" style="background:{{ $bgAlpha }}; color:{{ $accent }};">
+                                <div class="tk-col-avatar" style="background:{{ $bgAlpha }};color:{{ $accent }};">
                                     {{ $initial }}
                                 </div>
-                                <div class="min-w-0">
+                                <div class="min-w-0 flex-grow-1">
                                     <div class="tk-col-name">{{ $column['user']->name }}</div>
                                     <div class="tk-col-count">
-                                        <span class="tk-count-badge" id="count-{{ $uid }}">{{ count($column['tasks']) }}</span> tasks
+                                        <span class="tk-count-badge" id="count-{{ $uid }}">{{ $totalTasks }}</span> tasks
                                     </div>
                                 </div>
                             </div>
@@ -79,67 +121,78 @@
                             @endif
                         </div>
 
+                        {{-- Status Breakdown Bar --}}
+                        @if($totalTasks > 0)
+                            <div class="tk-breakdown">
+                                @foreach($statusMeta as $st => [$color, $label])
+                                    @if(($statusCounts[$st] ?? 0) > 0)
+                                        <span class="tk-breakdown-pill" style="background:{{ $color }}18;color:{{ $color }};" title="{{ $label }}">
+                                            {{ $statusCounts[$st] }}
+                                        </span>
+                                    @endif
+                                @endforeach
+                            </div>
+                        @endif
+
                         {{-- Cards --}}
                         <div class="tk-cards eventblock connectedSortable" data-user="{{ $uid }}">
-                            @forelse ($column['tasks'] as $task)
+                            @forelse ($sortedTasks as $task)
                                 @php
-                                    $statusColors = [
-                                        '1' => ['#ea4335', 'Urgent',      'bg-danger'],
-                                        '2' => ['#f29900', 'Pending',     'bg-warning'],
-                                        '3' => ['#1a73e8', 'In Progress', 'bg-primary'],
-                                        '4' => ['#34a853', 'Done',        'bg-success'],
-                                        '5' => ['#006666', 'Closed',      'bg-secondary'],
-                                    ];
-                                    $sc = $statusColors[$task->status] ?? ['#9aa0a6', 'Open', 'bg-light'];
+                                    $sc = $statusMeta[$task->status] ?? ['#9aa0a6', 'Open'];
                                     $displayTitle = strlen($task->title) > 55
-                                        ? substr($task->title, 0, 55) . '…'
+                                        ? substr($task->title, 0, 55).'…'
                                         : $task->title;
-                                    $displayDesc  = (!empty($task->msg) && $task->msg !== $task->title)
-                                        ? (strlen($task->msg) > 60 ? substr($task->msg, 0, 60) . '…' : $task->msg)
+                                    $displayDesc = (!empty($task->msg) && $task->msg !== $task->title)
+                                        ? (strlen($task->msg) > 70 ? substr($task->msg, 0, 70).'…' : $task->msg)
                                         : '';
                                     $whr = floatval($task->whr ?? 0);
                                 @endphp
 
                                 <a href="{{ route('edit-task', ['id' => $task->id]) }}"
-                                   class="tk-card {{ $task->is_highlighted ? 'tk-card-highlighted' : '' }}"
-                                   draggable="true" data-taskid="{{ $task->id }}"
-                                   style="border-left-color: {{ $sc[0] }};">
+                                   class="tk-card"
+                                   draggable="true"
+                                   data-taskid="{{ $task->id }}"
+                                   data-status="{{ $task->status }}"
+                                   data-title="{{ strtolower($task->title) }}"
+                                   style="border-left-color:{{ $sc[0] }};{{ $task->is_highlighted ? 'background:#fffde7;' : '' }}">
 
-                                    {{-- Top row: status pill + timer icon --}}
+                                    {{-- Top: status pill + icons --}}
                                     <div class="d-flex align-items-center justify-content-between mb-1">
-                                        <span class="tk-status-pill" style="background:{{ $sc[0] }}18; color:{{ $sc[0] }};">
+                                        <span class="tk-status-pill" style="background:{{ $sc[0] }}18;color:{{ $sc[0] }};">
                                             {{ $sc[1] }}
                                         </span>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <div class="tk-card-action">
+                                        <div class="d-flex align-items-center gap-1">
+                                            <span class="tk-card-action">
                                                 @if($task->status == '0')
                                                     <i class="bx bx-time" title="Start Timer"></i>
                                                 @else
                                                     <i class="bx bx-stopwatch" title="Running"></i>
                                                 @endif
-                                            </div>
-                                            <i class="bx bx-dots-vertical-rounded tk-drag-handle" title="Drag"></i>
+                                            </span>
+                                            <i class="bx bx-dots-vertical-rounded tk-drag-handle" title="Drag to reorder"></i>
                                         </div>
                                     </div>
 
                                     {{-- Title --}}
                                     <div class="tk-card-title">{{ $displayTitle }}</div>
 
-                                    {{-- Description preview --}}
+                                    {{-- Description --}}
                                     @if($displayDesc)
                                         <div class="tk-card-desc">{{ $displayDesc }}</div>
                                     @endif
 
-                                    {{-- Footer: hours worked --}}
+                                    {{-- Footer --}}
                                     @if($whr > 0 || !empty($task->label))
                                         <div class="tk-card-footer">
                                             @if($whr > 0)
-                                                <span class="tk-card-hours" title="Hours worked">
+                                                <span class="tk-card-hours">
                                                     <i class="bx bx-time-five"></i> {{ $whr }}h
                                                 </span>
+                                            @else
+                                                <span></span>
                                             @endif
                                             @if(!empty($task->label))
-                                                <span class="tk-card-label-dot" style="background:{{ $task->label }};" title="Label"></span>
+                                                <span class="tk-card-label-dot" style="background:{{ $task->label }};"></span>
                                             @endif
                                         </div>
                                     @endif
@@ -153,7 +206,7 @@
                             @endforelse
                         </div>
 
-                        {{-- Quick Add Form --}}
+                        {{-- Quick Add --}}
                         @if($canAddTask)
                             <div class="tk-quick-add" id="qa-{{ $uid }}" style="display:none;">
                                 <form action="{{ route('task') }}" method="post" id="tf{{ $uid }}">
@@ -174,6 +227,7 @@
                                 </form>
                             </div>
                         @endif
+
                     </div>
                 @endforeach
             </div>
@@ -186,6 +240,7 @@
     @endif
 
     <script>
+        /* ── Quick-add toggle ── */
         function addtask(uid) {
             const qa = document.getElementById('qa-' + uid);
             if (qa) {
@@ -194,6 +249,48 @@
                 if (ta) ta.focus();
             }
         }
+
+        /* ── Status filter ── */
+        document.querySelectorAll('.tk-filter-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.tk-filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                const filter = this.dataset.filter;
+                document.querySelectorAll('.tk-card').forEach(card => {
+                    if (filter === 'all' || card.dataset.status === filter) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                // Show/hide empty state per column
+                document.querySelectorAll('.tk-cards').forEach(col => {
+                    const visible = [...col.querySelectorAll('.tk-card')].filter(c => c.style.display !== 'none');
+                    let empty = col.querySelector('.tk-empty-col');
+                    if (!empty) {
+                        empty = document.createElement('div');
+                        empty.className = 'tk-empty-col tk-empty-filter';
+                        empty.innerHTML = '<i class="bx bx-filter-alt"></i><span>No matching tasks</span>';
+                        col.appendChild(empty);
+                    }
+                    empty.style.display = visible.length === 0 ? 'flex' : 'none';
+                });
+            });
+        });
+
+        /* ── Live search within board ── */
+        document.getElementById('taskSearch').addEventListener('input', function () {
+            const q = this.value.toLowerCase().trim();
+            document.querySelectorAll('.tk-card').forEach(card => {
+                if (!q || (card.dataset.title || '').includes(q)) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
     </script>
 
 @endsection
