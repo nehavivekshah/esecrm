@@ -2,304 +2,288 @@
 @section('title', 'Sales Pipeline - eseCRM')
 
 @section('content')
-    <style>
-        .kanban-board {
-            display: flex;
-            overflow-x: auto;
-            padding: 20px 0;
-            min-height: calc(100vh - 150px);
-            background: #f4f6f9;
-            gap: 20px;
-        }
+<section class="task__section">
+    @include('inc.header', ['title' => 'Sales Pipeline'])
 
-        .kanban-col {
-            min-width: 320px;
-            background: #f8f9fa; /* Google background */
-            border-radius: 8px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid #dadce0; /* Google border */
-        }
+    <div class="dash-container">
 
-        .kanban-header {
-            font-weight: bold;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #ddd;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            font-size: 14px;
-            color: #495057;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .kanban-item {
-            background: #fff;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #dadce0; /* Google flat card */
-            margin-bottom: 15px;
-            cursor: grab;
-            border-left: 4px solid var(--accent-primary); /* Use theme color */
-            transition: box-shadow 0.2s ease, transform 0.2s ease;
-        }
-
-        .kanban-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15); /* Google hover shadow */
-        }
-
-        .item-title {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 5px;
-            font-size: 15px;
-        }
-
-        .item-company {
-            font-size: 12px;
-            color: #6c757d;
-            margin-bottom: 5px;
-        }
-
-        .item-footer {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            color: #444;
-            border-top: 1px solid #eee;
-            padding-top: 8px;
-            font-weight: 600;
-        }
-
-        .kanban-col.drag-over {
-            background: #d4d8db;
-        }
-
-        .total-val {
-            font-size: 12px;
-            color: #28a745;
-        }
-    </style>
-
-    <section class="task__section">
-        <div class="text">
-            <i class="bx bx-menu" id="mbtn"></i>
-            Sales Pipeline (Opportunities)
-        </div>
-
-        <div class="container-fluid">
-            <div class="d-flex justify-content-between my-3">
-                <div>
-                    <button class="btn btn-indigo rounded-pill" data-bs-toggle="modal" data-bs-target="#addOpportunityModal">
-                        <i class="bx bx-plus"></i> New Deal
-                    </button>
+        {{-- ── Toolbar ── --}}
+        <div class="leads-toolbar mb-3">
+            <div class="leads-toolbar-left gap-3">
+                <span class="lb-page-count">
+                    <i class="bx bx-trending-up"></i> Opportunities Pipeline
+                </span>
+                {{-- Pipeline total --}}
+                <div class="ok-pipeline-total" id="pipelineTotal">
+                    <i class="bx bx-rupee"></i>
+                    <span id="pipelineTotalVal">0</span>
+                    <span class="ok-pipeline-label">Total Pipeline</span>
                 </div>
             </div>
-
-            <div class="kanban-board" id="kanbanBoard">
-                <!-- Stages -->
-                <div class="kanban-col" data-stage="New" ondrop="drop(event)" ondragover="allowDrop(event)">
-                    <div class="kanban-header">
-                        <span>New <span class="badge bg-secondary" id="count-New">0</span></span>
-                        <span class="total-val" id="val-New">₹0</span>
-                    </div>
-                    <div class="kanban-items" id="col-New"></div>
-                </div>
-
-                <div class="kanban-col" data-stage="Qualified" ondrop="drop(event)" ondragover="allowDrop(event)">
-                    <div class="kanban-header">
-                        <span>Qualified <span class="badge bg-secondary" id="count-Qualified">0</span></span>
-                        <span class="total-val" id="val-Qualified">₹0</span>
-                    </div>
-                    <div class="kanban-items" id="col-Qualified"></div>
-                </div>
-
-                <div class="kanban-col" data-stage="Proposal" ondrop="drop(event)" ondragover="allowDrop(event)">
-                    <div class="kanban-header">
-                        <span>Proposal <span class="badge bg-secondary" id="count-Proposal">0</span></span>
-                        <span class="total-val" id="val-Proposal">₹0</span>
-                    </div>
-                    <div class="kanban-items" id="col-Proposal"></div>
-                </div>
-
-                <div class="kanban-col" data-stage="Negotiation" ondrop="drop(event)" ondragover="allowDrop(event)">
-                    <div class="kanban-header">
-                        <span>Negotiation <span class="badge bg-secondary" id="count-Negotiation">0</span></span>
-                        <span class="total-val" id="val-Negotiation">₹0</span>
-                    </div>
-                    <div class="kanban-items" id="col-Negotiation"></div>
-                </div>
-
-                <div class="kanban-col" data-stage="Closed Won" ondrop="drop(event)" ondragover="allowDrop(event)">
-                    <div class="kanban-header" style="border-left-color: #28a745">
-                        <span>Closed Won <span class="badge bg-secondary" id="count-Closed-Won">0</span></span>
-                        <span class="total-val" id="val-Closed-Won">₹0</span>
-                    </div>
-                    <div class="kanban-items" id="col-Closed-Won"></div>
-                </div>
-
-                <div class="kanban-col" data-stage="Closed Lost" ondrop="drop(event)" ondragover="allowDrop(event)">
-                    <div class="kanban-header" style="border-left-color: #dc3545">
-                        <span>Closed Lost <span class="badge bg-secondary" id="count-Closed-Lost">0</span></span>
-                        <span class="total-val text-danger" id="val-Closed-Lost">₹0</span>
-                    </div>
-                    <div class="kanban-items" id="col-Closed-Lost"></div>
-                </div>
+            <div class="leads-toolbar-right">
+                <button class="lb-btn lb-btn-primary"
+                        data-bs-toggle="offcanvas" data-bs-target="#addDealOffcanvas">
+                    <i class="bx bx-plus"></i> New Deal
+                </button>
             </div>
         </div>
-    </section>
 
-    <!-- Add Opportunity Modal -->
-    <div class="modal fade" id="addOpportunityModal" tabindex="-1">
-        <div class="modal-dialog">
-            <form action="{{ route('opportunities.store') }}" method="POST" class="modal-content">
-                @csrf
-                <div class="modal-header">
-                    <h5 class="modal-title">Create New Deal</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        {{-- ── Stage summary strip ── --}}
+        <div class="ok-stage-strip" id="stageSummaryStrip">
+            @php
+            $stages = [
+                'New'         => ['#1a73e8', 'bx bx-star'],
+                'Qualified'   => ['#9334e9', 'bx bx-check-shield'],
+                'Proposal'    => ['#f29900', 'bx bx-file'],
+                'Negotiation' => ['#006666', 'bx bx-transfer'],
+                'Closed Won'  => ['#34a853', 'bx bx-trophy'],
+                'Closed Lost' => ['#ea4335', 'bx bx-x-circle'],
+            ];
+            @endphp
+            @foreach($stages as $stage => $cfg)
+                @php $sid = str_replace(' ', '-', $stage); @endphp
+                <div class="ok-stage-chip" style="border-bottom:2px solid {{ $cfg[0] }};">
+                    <i class="{{ $cfg[1] }}" style="color:{{ $cfg[0] }};"></i>
+                    <span class="ok-stage-chip-label">{{ $stage }}</span>
+                    <span class="ok-stage-chip-count badge" id="count-{{ $sid }}"
+                          style="background:{{ $cfg[0] }}20;color:{{ $cfg[0] }};">0</span>
+                    <span class="ok-stage-chip-val" id="val-{{ $sid }}">₹0</span>
                 </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label>Deal Name</label>
-                        <input type="text" name="name" class="form-control" required placeholder="e.g. Website Redesign">
-                    </div>
-                    <div class="mb-3">
-                        <label>Customer</label>
-                        <select name="customer_id" class="form-select" required>
-                            <option value="">Select Customer</option>
-                            @foreach($clients as $c)
-                                <option value="{{ $c->id }}">{{ $c->company ?? $c->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label>Deal Value (₹)</label>
-                        <input type="number" name="amount" class="form-control" placeholder="50000">
-                    </div>
-                    <div class="mb-3">
-                        <label>Expected Close Date</label>
-                        <input type="date" name="expected_close_date" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label>Stage</label>
-                        <select name="stage" class="form-select" required>
-                            <option value="New">New</option>
-                            <option value="Qualified">Qualified</option>
-                            <option value="Proposal">Proposal</option>
-                            <option value="Negotiation">Negotiation</option>
-                            <option value="Closed Won">Closed Won</option>
-                            <option value="Closed Lost">Closed Lost</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-indigo rounded-pill px-4">Save Deal</button>
-                </div>
-            </form>
+            @endforeach
         </div>
-    </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        function formatCurrency(val) {
-            return '₹' + Number(val).toLocaleString('en-IN');
-        }
+        {{-- ── Kanban Board ── --}}
+        <div class="ok-board" id="kanbanBoard">
+            @foreach($stages as $stage => $cfg)
+                @php $sid = str_replace(' ', '-', $stage); @endphp
+                <div class="ok-col" data-stage="{{ $stage }}"
+                     ondrop="drop(event)" ondragover="allowDrop(event)">
 
-        function loadKanban() {
-            $.get("{{ route('opportunities.kanban_data') }}", function (res) {
-                $('.kanban-items').empty();
-
-                let counts = { 'New': 0, 'Qualified': 0, 'Proposal': 0, 'Negotiation': 0, 'Closed Won': 0, 'Closed Lost': 0 };
-                let values = { 'New': 0, 'Qualified': 0, 'Proposal': 0, 'Negotiation': 0, 'Closed Won': 0, 'Closed Lost': 0 };
-
-                res.data.forEach(function (opp) {
-                    let stageStr = opp.stage || 'New';
-                    if (!counts.hasOwnProperty(stageStr)) stageStr = 'New';
-
-                    counts[stageStr]++;
-                    values[stageStr] += Number(opp.amount || 0);
-
-                    // CSS ID friendly stage name
-                    let stageId = stageStr.replace(/\s+/g, '-');
-                    let amountHtml = opp.amount ? `<span><i class='bx bx-rupee'></i>${Number(opp.amount).toLocaleString('en-IN')}</span>` : '<span>-</span>';
-                    let dateHtml = opp.expected_close_date ? `<span class="text-muted"><i class='bx bx-calendar'></i> ${opp.expected_close_date}</span>` : '';
-
-                    let cardHtml = `
-                        <div class="kanban-item" id="opp-${opp.id}" draggable="true" ondragstart="drag(event)" data-id="${opp.id}">
-                            <div class="item-title">${opp.name}</div>
-                            <div class="item-company"><i class='bx bx-building'></i> ${opp.company_name || opp.client_name || 'Unknown'}</div>
-                            <div class="item-footer">
-                                ${amountHtml}
-                                ${dateHtml}
+                    {{-- Column header --}}
+                    <div class="ok-col-header" style="border-bottom:3px solid {{ $cfg[0] }};">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="ok-col-icon" style="background:{{ $cfg[0] }}15;color:{{ $cfg[0] }};">
+                                <i class="{{ $cfg[1] }}"></i>
                             </div>
+                            <span class="ok-col-title">{{ $stage }}</span>
                         </div>
-                    `;
-                    $('#col-' + stageId).append(cardHtml);
-                });
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="ok-col-count" id="colcount-{{ $sid }}"
+                                  style="background:{{ $cfg[0] }}15;color:{{ $cfg[0] }};">0</span>
+                        </div>
+                    </div>
 
-                // Update stats
-                Object.keys(counts).forEach(key => {
-                    let stageId = key.replace(/\s+/g, '-');
-                    $('#count-' + stageId).text(counts[key]);
-                    $('#val-' + stageId).text(formatCurrency(values[key]));
-                });
-            });
-        }
+                    {{-- Column value total --}}
+                    <div class="ok-col-total">
+                        <i class="bx bx-rupee"></i>
+                        <span id="colval-{{ $sid }}">0</span>
+                    </div>
 
-        $(document).ready(function () {
-            loadKanban();
+                    {{-- Cards container --}}
+                    <div class="ok-cards" id="col-{{ $sid }}">
+                        {{-- populated by JS --}}
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+    </div>
+</section>
+
+{{-- ── ADD DEAL OFFCANVAS ── --}}
+<div class="offcanvas offcanvas-end" tabindex="-1" id="addDealOffcanvas"
+     style="width:440px; max-width:100vw;">
+    <div class="offcanvas-header" style="background:linear-gradient(135deg,#006666,#008080); color:#fff;">
+        <div class="d-flex align-items-center gap-3">
+            <div style="width:36px;height:36px;background:rgba(255,255,255,0.15);border-radius:10px;
+                        display:flex;align-items:center;justify-content:center;font-size:1.1rem;">
+                <i class="bx bx-trending-up"></i>
+            </div>
+            <div>
+                <h6 class="mb-0 fw-bold">New Deal</h6>
+                <small style="opacity:0.75;">Add an opportunity to the pipeline</small>
+            </div>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form action="{{ route('opportunities.store') }}" method="POST" class="row g-3">
+            @csrf
+            <div class="col-12">
+                <label class="ml-label">Deal Name <span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bx bx-pencil"></i></span>
+                    <input type="text" name="name" class="form-control"
+                           placeholder="e.g. Website Redesign" required>
+                </div>
+            </div>
+            <div class="col-12">
+                <label class="ml-label">Customer <span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bx bx-building"></i></span>
+                    <select name="customer_id" class="form-select" required>
+                        <option value="">Select Customer…</option>
+                        @foreach($clients as $c)
+                            <option value="{{ $c->id }}">{{ $c->company ?? $c->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="col-6">
+                <label class="ml-label">Deal Value (₹)</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bx bx-rupee"></i></span>
+                    <input type="number" name="amount" class="form-control" placeholder="50000">
+                </div>
+            </div>
+            <div class="col-6">
+                <label class="ml-label">Stage</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bx bx-git-branch"></i></span>
+                    <select name="stage" class="form-select" required>
+                        <option value="New">New</option>
+                        <option value="Qualified">Qualified</option>
+                        <option value="Proposal">Proposal</option>
+                        <option value="Negotiation">Negotiation</option>
+                        <option value="Closed Won">Closed Won</option>
+                        <option value="Closed Lost">Closed Lost</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-12">
+                <label class="ml-label">Expected Close Date</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bx bx-calendar"></i></span>
+                    <input type="date" name="expected_close_date" class="form-control">
+                </div>
+            </div>
+            <div class="col-12 mt-2">
+                <button type="submit" class="lb-btn lb-btn-primary w-100">
+                    <i class="bx bx-check-circle"></i> Create Deal
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+const STAGE_COLORS = {
+    'New':         '#1a73e8',
+    'Qualified':   '#9334e9',
+    'Proposal':    '#f29900',
+    'Negotiation': '#006666',
+    'Closed Won':  '#34a853',
+    'Closed Lost': '#ea4335',
+};
+
+function formatCurrency(val) {
+    return '₹' + Number(val).toLocaleString('en-IN');
+}
+
+function stageId(s) { return s.replace(/\s+/g, '-'); }
+
+function loadKanban() {
+    $.get("{{ route('opportunities.kanban_data') }}", function (res) {
+        $('.ok-cards').html('<div class="ok-empty"><i class="bx bx-package"></i><span>No deals</span></div>');
+
+        let counts = {}, values = {};
+        Object.keys(STAGE_COLORS).forEach(s => { counts[s] = 0; values[s] = 0; });
+
+        res.data.forEach(function (opp) {
+            let stage = STAGE_COLORS.hasOwnProperty(opp.stage) ? opp.stage : 'New';
+            counts[stage]++;
+            values[stage] += Number(opp.amount || 0);
+
+            let sid      = stageId(stage);
+            let color    = STAGE_COLORS[stage];
+            let amount   = opp.amount ? formatCurrency(opp.amount) : '—';
+            let closeDate = opp.expected_close_date || '';
+            let isOverdue = closeDate && new Date(closeDate) < new Date() && stage !== 'Closed Won' && stage !== 'Closed Lost';
+            let dateLabel = closeDate
+                ? `<span class="ok-card-date ${isOverdue ? 'ok-date-overdue' : ''}">
+                       <i class="bx bx-calendar"></i> ${closeDate}
+                   </span>` : '';
+
+            let client = opp.company_name || opp.client_name || 'Unknown';
+            // Remove empty state if present
+            let $col = $('#col-' + sid);
+            $col.find('.ok-empty').remove();
+
+            let cardHtml = `
+            <div class="ok-card" id="opp-${opp.id}" draggable="true"
+                 ondragstart="drag(event)" data-id="${opp.id}"
+                 style="border-left-color:${color};">
+                <div class="ok-card-title">${opp.name}</div>
+                <div class="ok-card-company">
+                    <i class="bx bx-building" style="color:${color};"></i>
+                    <span>${client}</span>
+                </div>
+                <div class="ok-card-footer">
+                    <span class="ok-card-amount" style="color:${color};">
+                        <i class="bx bx-rupee"></i>${Number(opp.amount || 0).toLocaleString('en-IN')}
+                    </span>
+                    ${dateLabel}
+                </div>
+            </div>`;
+            $col.append(cardHtml);
         });
 
-        // Drag and Drop Logic
-        function allowDrop(ev) {
-            ev.preventDefault();
-            $(ev.currentTarget).addClass('drag-over');
-        }
-
-        function drag(ev) {
-            ev.dataTransfer.setData("text", ev.target.id);
-            ev.dataTransfer.setData("oppId", $(ev.target).data('id'));
-        }
-
-        $('.kanban-col').on('dragleave drop', function (e) {
-            $(this).removeClass('drag-over');
+        // Update stage strip + col headers
+        let totalPipeline = 0;
+        Object.keys(STAGE_COLORS).forEach(s => {
+            let sid = stageId(s);
+            $('#count-' + sid).text(counts[s]);
+            $('#colcount-' + sid).text(counts[s]);
+            let fv = formatCurrency(values[s]);
+            $('#val-' + sid).text(fv);
+            $('#colval-' + sid).text(values[s].toLocaleString('en-IN'));
+            if (s !== 'Closed Lost') totalPipeline += values[s];
         });
+        $('#pipelineTotalVal').text(totalPipeline.toLocaleString('en-IN'));
+    });
+}
 
-        function drop(ev) {
-            ev.preventDefault();
-            $(ev.currentTarget).removeClass('drag-over');
+$(document).ready(function () { loadKanban(); });
 
-            var data = ev.dataTransfer.getData("text");
-            var oppId = ev.dataTransfer.getData("oppId");
+// Drag and Drop
+function allowDrop(ev) {
+    ev.preventDefault();
+    $(ev.currentTarget).addClass('ok-drag-over');
+}
 
-            var container = $(ev.currentTarget).find('.kanban-items')[0];
-            container.appendChild(document.getElementById(data));
+function drag(ev) {
+    ev.dataTransfer.setData("text", ev.target.id);
+    ev.dataTransfer.setData("oppId", $(ev.target).data('id'));
+}
 
-            var newStage = $(ev.currentTarget).data('stage');
+$(document).on('dragleave drop', '.ok-col', function (e) {
+    $(this).removeClass('ok-drag-over');
+});
 
-            // Optional prompt if closed lost
-            var reason = '';
-            if (newStage === 'Closed Lost') {
-                reason = prompt("Please provide a reason for losing this deal:");
-            }
+function drop(ev) {
+    ev.preventDefault();
+    $(ev.currentTarget).removeClass('ok-drag-over');
 
-            updateOppStage(oppId, newStage, reason);
-        }
+    let data   = ev.dataTransfer.getData("text");
+    let oppId  = ev.dataTransfer.getData("oppId");
+    let container = $(ev.currentTarget).find('.ok-cards')[0];
+    container.appendChild(document.getElementById(data));
 
-        function updateOppStage(oppId, newStage, reason) {
-            $.post("{{ route('opportunities.update_stage') }}", {
-                _token: "{{ csrf_token() }}",
-                id: oppId,
-                stage: newStage,
-                reason: reason
-            }, function (res) {
-                loadKanban();
-            }).fail(function () {
-                alert('Error updating deal stage.');
-                loadKanban();
-            });
-        }
-    </script>
+    let newStage = $(ev.currentTarget).data('stage');
+    let reason   = '';
+    if (newStage === 'Closed Lost') {
+        reason = prompt("Reason for losing this deal (optional):");
+    }
+    updateOppStage(oppId, newStage, reason);
+}
+
+function updateOppStage(oppId, newStage, reason) {
+    $.post("{{ route('opportunities.update_stage') }}", {
+        _token: "{{ csrf_token() }}", id: oppId, stage: newStage, reason: reason
+    }, function () { loadKanban(); }).fail(function () {
+        alert('Error updating deal stage.');
+        loadKanban();
+    });
+}
+</script>
 @endsection

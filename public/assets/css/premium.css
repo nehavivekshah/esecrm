@@ -3726,3 +3726,250 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     margin-left: auto;
     flex-shrink: 0;
 }
+
+/* ==========================================================================
+   OPPORTUNITIES PIPELINE — ok-* Components
+   ========================================================================== */
+
+/* Pipeline total chip in toolbar */
+.ok-pipeline-total {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #006666;
+    background: rgba(0,102,102,0.08);
+    padding: 5px 14px;
+    border-radius: 20px;
+}
+
+.ok-pipeline-label {
+    font-weight: 400;
+    color: #80868b;
+    font-size: 0.72rem;
+    margin-left: 2px;
+}
+
+/* ── Stage summary strip ── */
+.ok-stage-strip {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 0 0 12px 0;
+    scrollbar-width: none;
+}
+
+.ok-stage-strip::-webkit-scrollbar { display: none; }
+
+.ok-stage-chip {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 14px;
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e8eaed;
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-size: 0.75rem;
+}
+
+.ok-stage-chip i { font-size: 0.95rem; }
+
+.ok-stage-chip-label {
+    font-weight: 600;
+    color: #202124;
+}
+
+.ok-stage-chip-count {
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 8px;
+}
+
+.ok-stage-chip-val {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #5f6368;
+}
+
+/* ── Kanban Board ── */
+.ok-board {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    padding-bottom: 16px;
+    align-items: flex-start;
+    min-height: calc(100vh - 280px);
+    scrollbar-width: thin;
+    scrollbar-color: #dadce0 transparent;
+}
+
+.ok-board::-webkit-scrollbar { height: 5px; }
+.ok-board::-webkit-scrollbar-thumb { background: #dadce0; border-radius: 4px; }
+
+/* ── Column ── */
+.ok-col {
+    min-width: 280px;
+    width: 280px;
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid #e8eaed;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.ok-col-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px 10px;
+    background: #fafafa;
+}
+
+.ok-col-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.90rem;
+    flex-shrink: 0;
+}
+
+.ok-col-title {
+    font-size: 0.80rem;
+    font-weight: 700;
+    color: #202124;
+}
+
+.ok-col-count {
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 8px;
+}
+
+.ok-col-total {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #34a853;
+    padding: 4px 14px 8px;
+    background: #fafafa;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.ok-col-total i { font-size: 0.80rem; }
+
+/* ── Cards container ── */
+.ok-cards {
+    flex: 1;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 150px;
+    overflow-y: auto;
+    max-height: calc(100vh - 360px);
+    scrollbar-width: thin;
+    scrollbar-color: #dadce0 transparent;
+}
+
+.ok-cards::-webkit-scrollbar { width: 3px; }
+.ok-cards::-webkit-scrollbar-thumb { background: #dadce0; border-radius: 3px; }
+
+.ok-col.ok-drag-over { background: rgba(0,102,102,0.04); }
+.ok-col.ok-drag-over .ok-cards { background: rgba(0,102,102,0.03); border-radius: 8px; }
+
+/* ── Deal Card ── */
+.ok-card {
+    background: #fff;
+    border: 1px solid #e8eaed;
+    border-left: 4px solid #dadce0;
+    border-radius: 10px;
+    padding: 12px;
+    cursor: grab;
+    transition: box-shadow 0.15s, transform 0.15s;
+}
+
+.ok-card:hover {
+    box-shadow: 0 4px 14px rgba(0,0,0,0.10);
+    transform: translateY(-2px);
+}
+
+.ok-card:active { cursor: grabbing; }
+
+.ok-card-title {
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: #202124;
+    margin-bottom: 4px;
+    line-height: 1.35;
+}
+
+.ok-card-company {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.72rem;
+    color: #5f6368;
+    margin-bottom: 10px;
+}
+
+.ok-card-company i { font-size: 0.82rem; }
+
+.ok-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid #f1f3f4;
+    padding-top: 8px;
+    font-size: 0.72rem;
+}
+
+.ok-card-amount {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-weight: 700;
+}
+
+.ok-card-amount i { font-size: 0.78rem; }
+
+.ok-card-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    color: #80868b;
+    font-size: 0.68rem;
+}
+
+.ok-card-date i { font-size: 0.75rem; }
+
+.ok-date-overdue {
+    color: #ea4335;
+    font-weight: 700;
+}
+
+/* ── Empty column state ── */
+.ok-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 0;
+    color: #bdc1c7;
+    font-size: 0.78rem;
+    gap: 5px;
+}
+
+.ok-empty i { font-size: 1.8rem; }
