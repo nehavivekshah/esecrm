@@ -24,9 +24,12 @@
     $tm = $total_min % 60;
 @endphp
 
+{{-- Backdrop overlay --}}
+<div class="et-backdrop" onclick="window.location='{{ route('task') }}';"></div>
+
 <div class="offcanvas offcanvas-end show" tabindex="-1" id="taskOffcanvas"
      style="width:820px; max-width:100vw; border-top-left-radius:16px; border-bottom-left-radius:16px;
-            box-shadow:-12px 0 40px rgba(0,0,0,0.12); z-index:1060; visibility:visible; overflow:hidden;">
+            box-shadow:-12px 0 40px rgba(0,0,0,0.12); z-index:1061; visibility:visible; overflow:hidden;">
 
     {{-- ── HEADER ── --}}
     <div class="et-header">
@@ -34,17 +37,17 @@
             <i class="bx bx-task"></i>
         </div>
         <div class="flex-grow-1 min-w-0">
-            <textarea id="tasktitle" class="et-title-input"
+            <textarea id="tasktitle" class="et-title-input" rows="1"
                       placeholder="Task title…">{{ ucfirst($task->title) }}</textarea>
         </div>
-        <div class="d-flex align-items-center gap-2">
+        <div class="d-flex align-items-center gap-2 flex-shrink-0">
             {{-- Timer start/stop --}}
             @if($isRunning)
-                <a href="javascript:void(0)" class="lb-btn lb-btn-ghost et-timer-btn taskstart"
+                <a href="javascript:void(0)" class="lb-btn lb-btn-ghost et-timer-btn et-timer-running taskstart"
                    data-taskhr="{{ round($workingMin, 2) }}" id="{{ $taskHistory[0]->id }}"
-                   style="color:#ea4335;" title="Stop Timer">
+                   title="Stop Timer">
                     <i class="bx bx-stop-circle"></i>
-                    <span class="d-none d-sm-inline">Stop</span>
+                    <span class="d-none d-sm-inline">Stop &bull; {{ floor($workingMin/60) }}h {{ floor($workingMin%60) }}m</span>
                 </a>
             @else
                 <a href="javascript:void(0)" class="lb-btn lb-btn-ghost et-timer-btn taskstart"
@@ -207,7 +210,7 @@
                             </div>
                             <textarea name="taskcomment" rows="2" id="commentInputs"
                                       class="et-comment-input"
-                                      placeholder="Write a comment…" required></textarea>
+                                      placeholder="Write a comment… (Ctrl+Enter to post)" required></textarea>
                         </div>
                         <div class="d-flex gap-2 mt-2 ps-1" style="padding-left:40px;">
                             <button type="submit" class="lb-btn lb-btn-primary" style="padding:4px 14px;font-size:0.78rem;">
@@ -246,3 +249,54 @@
         </div>{{-- /et-body --}}
     </div>{{-- /offcanvas-body --}}
 </div>
+
+<script>
+(function () {
+    /* 1. Auto-resize title textarea */
+    const titleTA = document.getElementById('tasktitle');
+    function resizeTitle() {
+        titleTA.style.height = 'auto';
+        titleTA.style.height = titleTA.scrollHeight + 'px';
+    }
+    if (titleTA) { resizeTitle(); titleTA.addEventListener('input', resizeTitle); }
+
+    /* 2. Live label dot update (background, not color) */
+    const colorSel = document.getElementById('colorpalet');
+    const labelDot = document.getElementById('labelicon');
+    if (colorSel && labelDot) {
+        colorSel.addEventListener('change', function () {
+            labelDot.style.background = this.value || '#787878';
+            /* keep script.js happy — it targets #labelicon.style.color */
+            labelDot.style.color = this.value || '#787878';
+        });
+    }
+
+    /* 3. Ctrl+Enter to submit comment */
+    const commentTA = document.getElementById('commentInputs');
+    if (commentTA) {
+        commentTA.addEventListener('keydown', function (e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('taskComments').dispatchEvent(new Event('submit', { bubbles: true }));
+            }
+        });
+    }
+
+    /* 4. Live running timer counter in Stop button */
+    const stopBtn = document.querySelector('.et-timer-running');
+    if (stopBtn) {
+        let startMs = Date.now();
+        const baseMin = parseFloat(stopBtn.dataset.taskhr || 0) * 60000;
+        const span    = stopBtn.querySelector('span');
+        if (span) {
+            setInterval(function () {
+                const totalMs  = baseMin + (Date.now() - startMs);
+                const h = Math.floor(totalMs / 3600000);
+                const m = Math.floor((totalMs % 3600000) / 60000);
+                const s = Math.floor((totalMs % 60000) / 1000);
+                span.textContent = 'Stop \u2022 ' + (h ? h + 'h ' : '') + m + 'm ' + s + 's';
+            }, 1000);
+        }
+    }
+})();
+</script>

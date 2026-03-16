@@ -2569,11 +2569,30 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     box-shadow: 0 0 0 2px #34a853;
 }
 
-.mc-tl-blue  .mc-tl-dot { background: #1a73e8; box-shadow: 0 0 0 2px #1a73e8; }
-.mc-tl-purple .mc-tl-dot { background: #9334e9; box-shadow: 0 0 0 2px #9334e9; }
-.mc-tl-teal  .mc-tl-dot { background: #006666; box-shadow: 0 0 0 2px #006666; }
-.mc-tl-amber .mc-tl-dot { background: #f29900; box-shadow: 0 0 0 2px #f29900; }
-.mc-tl-green .mc-tl-dot { background: #34a853; box-shadow: 0 0 0 2px #34a853; }
+.mc-tl-blue .mc-tl-dot {
+    background: #1a73e8;
+    box-shadow: 0 0 0 2px #1a73e8;
+}
+
+.mc-tl-purple .mc-tl-dot {
+    background: #9334e9;
+    box-shadow: 0 0 0 2px #9334e9;
+}
+
+.mc-tl-teal .mc-tl-dot {
+    background: #006666;
+    box-shadow: 0 0 0 2px #006666;
+}
+
+.mc-tl-amber .mc-tl-dot {
+    background: #f29900;
+    box-shadow: 0 0 0 2px #f29900;
+}
+
+.mc-tl-green .mc-tl-dot {
+    background: #34a853;
+    box-shadow: 0 0 0 2px #34a853;
+}
 
 .mc-tl-title {
     font-size: 0.88rem;
@@ -2618,15 +2637,21 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     scrollbar-color: #dadce0 transparent;
 }
 
-.tk-board::-webkit-scrollbar { height: 6px; }
-.tk-board::-webkit-scrollbar-thumb { background: #dadce0; border-radius: 4px; }
+.tk-board::-webkit-scrollbar {
+    height: 6px;
+}
+
+.tk-board::-webkit-scrollbar-thumb {
+    background: #dadce0;
+    border-radius: 4px;
+}
 
 /* Column card */
 .tk-col {
     background: #fff;
     border-radius: 14px;
     border: 1px solid #e8eaed;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
     min-width: 280px;
     width: 280px;
     flex-shrink: 0;
@@ -2681,7 +2706,7 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
 /* Add task button in header */
 .tk-add-btn {
     border: none;
-    background: rgba(60,64,67,0.07);
+    background: rgba(60, 64, 67, 0.07);
     color: #5f6368;
     width: 28px;
     height: 28px;
@@ -2696,7 +2721,7 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
 }
 
 .tk-add-btn:hover {
-    background: rgba(0,102,102,0.10);
+    background: rgba(0, 102, 102, 0.10);
     color: #006666;
 }
 
@@ -2707,14 +2732,20 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     flex-direction: column;
     gap: 8px;
     min-height: 120px;
-    max-height: calc(100vh - 220px);
+    max-height: calc(100vh - 260px);
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #dadce0 transparent;
 }
 
-.tk-cards::-webkit-scrollbar { width: 3px; }
-.tk-cards::-webkit-scrollbar-thumb { background: #dadce0; border-radius: 4px; }
+.tk-cards::-webkit-scrollbar {
+    width: 3px;
+}
+
+.tk-cards::-webkit-scrollbar-thumb {
+    background: #dadce0;
+    border-radius: 4px;
+}
 
 /* Task card */
 .tk-card {
@@ -2732,13 +2763,15 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
 }
 
 .tk-card:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
     transform: translateY(-2px);
     color: #202124;
     text-decoration: none;
 }
 
-.tk-card:active { cursor: grabbing; }
+.tk-card:active {
+    cursor: grabbing;
+}
 
 .tk-card-highlighted {
     background: #fffde7;
@@ -2801,7 +2834,7 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
 
 .tk-quick-textarea:focus {
     border-color: #006666;
-    box-shadow: 0 0 0 3px rgba(0,102,102,0.08);
+    box-shadow: 0 0 0 3px rgba(0, 102, 102, 0.08);
 }
 
 /* Toolbar search box */
@@ -2840,7 +2873,9 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     color: #202124;
 }
 
-.tb-search-input::placeholder { color: #9aa0a6; }
+.tb-search-input::placeholder {
+    color: #9aa0a6;
+}
 
 /* Status legend pills in toolbar */
 .tb-legend {
@@ -2852,15 +2887,34 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     letter-spacing: 0.3px;
 }
 
-.tb-legend-urgent   { background: rgba(234,67,53,0.10);  color: #ea4335; }
-.tb-legend-pending  { background: rgba(242,153,0,0.12);  color: #f29900; }
-.tb-legend-progress { background: rgba(26,115,232,0.10); color: #1a73e8; }
-.tb-legend-done     { background: rgba(52,168,83,0.10);  color: #34a853; }
-.tb-legend-closed   { background: rgba(0,102,102,0.08);  color: #006666; }
+.tb-legend-urgent {
+    background: rgba(234, 67, 53, 0.10);
+    color: #ea4335;
+}
+
+.tb-legend-pending {
+    background: rgba(242, 153, 0, 0.12);
+    color: #f29900;
+}
+
+.tb-legend-progress {
+    background: rgba(26, 115, 232, 0.10);
+    color: #1a73e8;
+}
+
+.tb-legend-done {
+    background: rgba(52, 168, 83, 0.10);
+    color: #34a853;
+}
+
+.tb-legend-closed {
+    background: rgba(0, 102, 102, 0.08);
+    color: #006666;
+}
 
 /* Drag-over highlight */
 .tk-cards.drag-over {
-    background: rgba(0,102,102,0.04);
+    background: rgba(0, 102, 102, 0.04);
     border-radius: 8px;
 }
 
@@ -2896,12 +2950,14 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     font-size: 0.70rem;
     font-weight: 600;
     color: #5f6368;
-    background: rgba(60,64,67,0.07);
+    background: rgba(60, 64, 67, 0.07);
     padding: 2px 7px;
     border-radius: 8px;
 }
 
-.tk-card-hours i { font-size: 0.80rem; }
+.tk-card-hours i {
+    font-size: 0.80rem;
+}
 
 /* Label colour dot */
 .tk-card-label-dot {
@@ -2920,7 +2976,9 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     transition: color 0.15s;
 }
 
-.tk-card:hover .tk-drag-handle { color: #80868b; }
+.tk-card:hover .tk-drag-handle {
+    color: #80868b;
+}
 
 /* Empty column placeholder */
 .tk-empty-col {
@@ -2934,7 +2992,9 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     font-size: 0.80rem;
 }
 
-.tk-empty-col i { font-size: 1.8rem; }
+.tk-empty-col i {
+    font-size: 1.8rem;
+}
 
 /* ==========================================================================
    EDIT-TASK OFFCANVAS — et-* Components
@@ -2956,7 +3016,7 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
 .et-header-icon {
     width: 38px;
     height: 38px;
-    background: rgba(255,255,255,0.15);
+    background: rgba(255, 255, 255, 0.15);
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -2981,20 +3041,25 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     padding: 4px 0;
 }
 
-.et-title-input::placeholder { color: rgba(255,255,255,0.55); }
-.et-title-input:focus { box-shadow: none; }
+.et-title-input::placeholder {
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.et-title-input:focus {
+    box-shadow: none;
+}
 
 .et-timer-btn {
     color: #fff !important;
-    border-color: rgba(255,255,255,0.3) !important;
-    background: rgba(255,255,255,0.10) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    background: rgba(255, 255, 255, 0.10) !important;
     flex-shrink: 0;
     padding: 4px 12px;
     font-size: 0.78rem;
 }
 
 .et-timer-btn:hover {
-    background: rgba(255,255,255,0.20) !important;
+    background: rgba(255, 255, 255, 0.20) !important;
 }
 
 /* --- Body two-column layout --- */
@@ -3019,7 +3084,9 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     border-bottom: 1px solid #f1f3f4;
 }
 
-.et-section:last-child { border-bottom: none; }
+.et-section:last-child {
+    border-bottom: none;
+}
 
 .et-section-title {
     font-size: 0.70rem;
@@ -3062,7 +3129,7 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
 
 .et-label-select:focus {
     border-color: #006666;
-    box-shadow: 0 0 0 2px rgba(0,102,102,0.10);
+    box-shadow: 0 0 0 2px rgba(0, 102, 102, 0.10);
 }
 
 /* Status badge in sidebar */
@@ -3082,7 +3149,7 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     width: 28px;
     height: 28px;
     border-radius: 7px;
-    background: rgba(0,102,102,0.12);
+    background: rgba(0, 102, 102, 0.12);
     color: #006666;
     font-size: 0.75rem;
     font-weight: 700;
@@ -3116,7 +3183,9 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     font-size: 0.75rem;
 }
 
-.et-time-date { color: #80868b; }
+.et-time-date {
+    color: #80868b;
+}
 
 .et-time-val {
     font-weight: 600;
@@ -3187,7 +3256,7 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
 .et-textarea:focus {
     border-color: #006666;
     background: #fff;
-    box-shadow: 0 0 0 3px rgba(0,102,102,0.08);
+    box-shadow: 0 0 0 3px rgba(0, 102, 102, 0.08);
 }
 
 /* Comment input row */
@@ -3201,7 +3270,7 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     width: 30px;
     height: 30px;
     border-radius: 8px;
-    background: rgba(0,102,102,0.12);
+    background: rgba(0, 102, 102, 0.12);
     color: #006666;
     font-size: 0.80rem;
     font-weight: 700;
@@ -3227,7 +3296,7 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
 .et-comment-input:focus {
     border-color: #006666;
     background: #fff;
-    box-shadow: 0 0 0 3px rgba(0,102,102,0.08);
+    box-shadow: 0 0 0 3px rgba(0, 102, 102, 0.08);
 }
 
 /* Comment list */
@@ -3243,8 +3312,13 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     align-items: flex-start;
 }
 
-.et-comment-other { flex-direction: row; }
-.et-comment-mine  { flex-direction: row-reverse; }
+.et-comment-other {
+    flex-direction: row;
+}
+
+.et-comment-mine {
+    flex-direction: row-reverse;
+}
 
 .et-comment-avatar {
     width: 30px;
@@ -3273,7 +3347,7 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
 }
 
 .et-bubble-mine {
-    background: rgba(0,102,102,0.09);
+    background: rgba(0, 102, 102, 0.09);
     color: #202124;
     border-top-right-radius: 2px;
 }
@@ -3285,9 +3359,97 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     margin-bottom: 3px;
 }
 
-.et-comment-text { margin-bottom: 4px; }
+.et-comment-text {
+    margin-bottom: 4px;
+}
 
 .et-comment-time {
     font-size: 0.65rem;
     color: #9aa0a6;
+}
+
+/* --- Edit Task: backdrop, body height, timer animation, mobile --- */
+
+/* Semi-transparent backdrop so clicking outside closes the panel */
+.et-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 1060;
+    cursor: pointer;
+    animation: etFadeIn 0.2s ease;
+}
+
+@keyframes etFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* et-body must have a fixed height so sidebar and main scroll independently */
+.et-body {
+    height: calc(100vh - 90px);
+}
+
+/* Title textarea max height so it doesn't grow without limit */
+.et-title-input {
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+/* Running timer button — red pulse */
+.et-timer-running {
+    color: #ea4335 !important;
+    border-color: rgba(234, 67, 53, 0.4) !important;
+    background: rgba(234, 67, 53, 0.08) !important;
+    animation: timerPulse 2s ease-in-out infinite;
+}
+
+@keyframes timerPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(234, 67, 53, 0.25);
+    }
+
+    50% {
+        box-shadow: 0 0 0 5px rgba(234, 67, 53, 0);
+    }
+}
+
+/* Mobile: stack sidebar above main */
+@media (max-width: 640px) {
+    .et-body {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .et-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e8eaed;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0;
+        padding: 8px 0;
+    }
+
+    .et-section {
+        min-width: 140px;
+        flex: 1;
+        border-bottom: none;
+        border-right: 1px solid #f1f3f4;
+    }
+
+    .et-section:last-child {
+        border-right: none;
+    }
+
+    .et-main {
+        padding: 12px;
+    }
 }
