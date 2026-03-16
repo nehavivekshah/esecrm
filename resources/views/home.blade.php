@@ -25,7 +25,7 @@
         <section class="task__section">
             @include('inc.header', ['title' => 'Dashboard'])
 
-            <div class="container-fluid px-4 pb-4">
+            <div class="dash-container">
 
                 {{-- STAT WIDGETS ROW --}}
                 <div class="row g-3 mb-4">
@@ -96,27 +96,35 @@
                         @if(in_array('leads', $roleArray) || in_array('All', $roleArray) || (Auth::user()->role == '0'))
                             <a href="/leads" class="action-tile">
                                 <i class="bx bx-filter-alt"></i>
-                                <h6>Leads Pipeline</h6>
-                                <span>{{ count($leads ?? []) }}</span>
+                                <div class="action-tile-body">
+                                    <h6>Leads Pipeline</h6>
+                                    <span>{{ count($leads ?? []) }}</span>
+                                </div>
                             </a>
                         @endif
                         @if(in_array('clients', $roleArray) || in_array('All', $roleArray) || (Auth::user()->role == '0'))
                             <a href="/clients" class="action-tile" style="--tile-color: #3b82f6;">
                                 <i class="bx bx-group" style="background:rgba(59,130,246,0.08); color:#3b82f6;"></i>
-                                <h6>Client Base</h6>
-                                <span>{{ count($clients ?? []) }}</span>
+                                <div class="action-tile-body">
+                                    <h6>Client Base</h6>
+                                    <span>{{ count($clients ?? []) }}</span>
+                                </div>
                             </a>
                             <a href="/recoveries" class="action-tile" style="--tile-color: #f59e0b;">
                                 <i class="bx bx-coin-stack" style="background:rgba(245,158,11,0.08); color:#f59e0b;"></i>
-                                <h6>Recovery Log</h6>
-                                <span>{{ count($recoveries ?? []) }}</span>
+                                <div class="action-tile-body">
+                                    <h6>Recovery Log</h6>
+                                    <span>{{ count($recoveries ?? []) }}</span>
+                                </div>
                             </a>
                         @endif
                         @if(in_array('users', $roleArray) || in_array('All', $roleArray) || (Auth::user()->role == '0'))
                             <a href="/users" class="action-tile" style="--tile-color: #f43f5e;">
                                 <i class="bx bx-user" style="background:rgba(244,63,94,0.08); color:#f43f5e;"></i>
-                                <h6>Team Users</h6>
-                                <span>{{ count($users ?? []) }}</span>
+                                <div class="action-tile-body">
+                                    <h6>Team Users</h6>
+                                    <span>{{ count($users ?? []) }}</span>
+                                </div>
                             </a>
                         @endif
                     </div>
@@ -177,9 +185,14 @@
                     </div>
                 </div>
 
-
-
                 {{-- CHARTS + ACTIVITY FEED --}}
+                <div class="dash-section mb-4">
+                    <div class="dash-section-header">
+                        <div class="dash-section-icon" style="background:rgba(26,115,232,0.08); color:#1a73e8;">
+                            <i class="bx bx-bar-chart-square"></i>
+                        </div>
+                        <h6 class="dash-section-title">Analytics & Live Feed</h6>
+                    </div>
                 <div class="row g-3">
                     <div class="col-lg-8">
                         <div class="row g-3">
@@ -224,12 +237,12 @@
                                 @forelse(collect($activities ?? [])->take(20) as $activity)
                                     <div class="activity-feed-item">
                                         <div class="d-flex justify-content-between align-items-start mb-1">
-                                            <span class="fw-bold text-slate-800 small">{{ $activity->user_name ?? 'System' }}</span>
-                                            <span class="text-slate-400" style="font-size: 0.62rem;">{{ \Carbon\Carbon::parse($activity->created_at)->diffForHumans() }}</span>
+                                            <span class="activity-feed-user">{{ $activity->user_name ?? 'System' }}</span>
+                                            <span class="activity-feed-time">{{ \Carbon\Carbon::parse($activity->created_at)->diffForHumans() }}</span>
                                         </div>
-                                        <p class="mb-1 text-slate-600 small" style="line-height:1.45;">{{ $activity->type }} &mdash; {{ $activity->description ?? 'Action recorded' }}</p>
+                                        <p class="activity-feed-text mb-1">{{ $activity->type }} &mdash; {{ $activity->description ?? 'Action recorded' }}</p>
                                         @if(isset($activity->subject))
-                                            <span class="dash-badge" style="background:rgba(0,102,102,0.08); color:#006666; font-size:0.6rem; font-weight:700;">{{ strtoupper($activity->subject) }}</span>
+                                            <span class="dash-badge" style="background:rgba(0,102,102,0.08); color:#006666; font-size:0.60rem; font-weight:700; letter-spacing:0.4px;">{{ strtoupper($activity->subject) }}</span>
                                         @endif
                                     </div>
                                 @empty
@@ -241,9 +254,10 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>{{-- end .row charts --}}
+                </div>{{-- end .dash-section analytics --}}
 
-            </div>
+            </div>{{-- end .dash-container --}}
 
         </section>
 
