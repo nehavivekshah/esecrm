@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Leads;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class LeadUIController extends Controller
 {
@@ -13,7 +15,12 @@ class LeadUIController extends Controller
      */
     public function kanbanView()
     {
-        return view('leads_kanban');
+        $getUsers = User::where('cid', Auth::user()->cid)
+            ->where('status', '1')
+            ->orderBy('name')
+            ->get();
+
+        return view('leads_kanban', compact('getUsers'));
     }
 
     /**

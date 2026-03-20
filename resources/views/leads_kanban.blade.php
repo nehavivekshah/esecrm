@@ -93,6 +93,87 @@
 
     </section>
 
+    {{-- Lead Details Popup Modal --}}
+    <div class="modal fade" id="kbLeadModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" style="max-width:540px;">
+            <div class="modal-content" style="border-radius:16px; overflow:hidden; border:none;">
+
+                {{-- Header Banner --}}
+                <div class="ld-header">
+                    <div class="ld-header-content">
+                        <div class="ld-avatar" id="kb_leadAvatar">L</div>
+                        <div style="flex:1; min-width:0;">
+                            <div class="ld-name" id="kb_leadName">—</div>
+                            <span class="ld-company" id="kb_leadCompany">—</span>
+                            <div class="mt-1">
+                                <span class="ld-status-chip" id="kb_leadStatus">—</span>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-1 align-items-center">
+                            <a href="#" class="ld-quick-btn" id="kb_btnCall" title="Call"><i class="bx bx-phone"></i></a>
+                            <a href="#" class="ld-quick-btn ld-quick-wa" id="kb_btnWa" title="WhatsApp"><i class="bx bxl-whatsapp"></i></a>
+                            <a href="#" class="ld-quick-btn ld-quick-mail" id="kb_btnMail" title="Email"><i class="bx bx-envelope"></i></a>
+                            <button type="button" class="ld-close-btn" data-bs-dismiss="modal"><i class="bx bx-x"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Modal Body --}}
+                <div class="modal-body p-0">
+
+                    {{-- Tabs --}}
+                    <div class="ld-tab-nav">
+                        <button class="ld-tab active" onclick="kbTab(this,'kb-tab-info')">
+                            <i class="bx bx-user"></i> Info
+                        </button>
+                        <button class="ld-tab" onclick="kbTab(this,'kb-tab-conv')">
+                            <i class="bx bx-message-dots"></i> Conversations
+                        </button>
+                    </div>
+
+                    {{-- Info Tab --}}
+                    <div id="kb-tab-info" style="padding:16px;">
+                        <div class="ld-info-grid" id="kb_infoGrid">
+                            {{-- Contact Card --}}
+                            <div class="ld-info-card">
+                                <div class="ld-info-card-header"><i class="bx bx-phone-call"></i> Contact</div>
+                                <div class="ld-info-row"><span class="ld-info-label">Mobile</span><span class="ld-info-val" id="kb_mob">—</span></div>
+                                <div class="ld-info-row"><span class="ld-info-label">WhatsApp</span><span class="ld-info-val" id="kb_wa">—</span></div>
+                                <div class="ld-info-row"><span class="ld-info-label">Email</span><span class="ld-info-val" id="kb_email">—</span></div>
+                            </div>
+                            {{-- Business Card --}}
+                            <div class="ld-info-card">
+                                <div class="ld-info-card-header"><i class="bx bx-buildings"></i> Business</div>
+                                <div class="ld-info-row"><span class="ld-info-label">Company</span><span class="ld-info-val" id="kb_company">—</span></div>
+                                <div class="ld-info-row"><span class="ld-info-label">Industry</span><span class="ld-info-val" id="kb_industry">—</span></div>
+                                <div class="ld-info-row"><span class="ld-info-label">Website</span><span class="ld-info-val" id="kb_website">—</span></div>
+                            </div>
+                            {{-- CRM Card (full width) --}}
+                            <div class="ld-info-card" style="grid-column:1/-1;">
+                                <div class="ld-info-card-header"><i class="bx bx-brain"></i> CRM Intelligence</div>
+                                <div class="ld-info-row"><span class="ld-info-label">Purpose</span><span class="ld-info-val" id="kb_purpose">—</span></div>
+                                <div class="ld-info-row"><span class="ld-info-label">Lead Value</span><span class="ld-info-val" id="kb_value">—</span></div>
+                                <div class="ld-info-row"><span class="ld-info-label">Assigned</span><span class="ld-info-val" id="kb_assigned">—</span></div>
+                                <div class="ld-info-row"><span class="ld-info-label">Tags</span><span class="ld-info-val" id="kb_tags">—</span></div>
+                            </div>
+                        </div>
+                        <div class="ld-action-bar">
+                            <a href="#" id="kb_editBtn" class="ld-btn ld-btn-primary"><i class="bx bx-edit-alt"></i> Edit Lead</a>
+                        </div>
+                    </div>
+
+                    {{-- Conversations Tab --}}
+                    <div id="kb-tab-conv" style="display:none; padding:16px;">
+                        <div id="kb_timeline" style="padding-left:8px;">
+                            <p class="text-muted text-center" style="font-size:0.82rem;">Loading…</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         const KANBAN_URL = "{{ route('leads.kanban_data') }}";
@@ -260,6 +341,79 @@
                 initBoard();
             });
         });
+
+        /* ── Kanban Card Double-Click → Lead Details Popup ── */
+        var kbUserMap = {!! json_encode($getUsers->pluck('name','id')) !!};
+
+        var kbStatusLabels = {0:'New',1:'Contacted',2:'Qualified',3:'Proposal Sent',5:'Closed (Won)',9:'Lost'};
+        var kbStatusColors = {0:'#5f6368',1:'#f29900',2:'#9334e9',3:'#006666',5:'#34a853',9:'#ea4335'};
+
+        $(document).on('dblclick', '.kb-card', function (e) {
+            e.stopPropagation();
+            var id = $(this).data('id');
+            if (!id) return;
+
+            // Reset to Info tab
+            kbTab($('.ld-tab').first()[0], 'kb-tab-info');
+            $('#kb_timeline').html('<p class="text-muted text-center" style="font-size:0.82rem;">Loading…</p>');
+
+            // Open modal immediately
+            var modal = new bootstrap.Modal(document.getElementById('kbLeadModal'));
+            modal.show();
+
+            $.get('/get-lead-details/' + id, function (data) {
+                var l = data.lead;
+                var loc = {};
+                try { loc = JSON.parse(l.location) || {}; } catch(e) {}
+
+                // Header
+                $('#kb_leadAvatar').text((l.name || 'L').charAt(0).toUpperCase());
+                $('#kb_leadName').text(l.name || '—');
+                $('#kb_leadCompany').text(l.company || '—');
+
+                var sl = kbStatusLabels[l.status] || 'New';
+                var sc = kbStatusColors[l.status] || '#5f6368';
+                $('#kb_leadStatus').text(sl).css({'background': sc+'18','color': sc,'border-color': sc+'40'});
+
+                $('#kb_btnCall').attr('href', l.mob   ? 'tel:+'+l.mob                    : '#');
+                $('#kb_btnWa').attr('href',   l.whatsapp ? 'https://wa.me/'+l.whatsapp  : '#');
+                $('#kb_btnMail').attr('href', l.email ? 'mailto:'+l.email               : '#');
+
+                // Info cards
+                $('#kb_mob').text(l.mob ? '+'+l.mob : '—');
+                $('#kb_wa').text(l.whatsapp ? '+'+l.whatsapp : '—');
+                $('#kb_email').text(l.email || '—');
+                $('#kb_company').text(l.company || '—');
+                $('#kb_industry').text(l.industry || '—');
+                $('#kb_website').html(l.website ? '<a href="'+l.website+'" target="_blank">'+l.website+'</a>' : '—');
+                $('#kb_purpose').text(l.purpose || '—');
+                $('#kb_value').text(l.values ? '₹'+Number(l.values).toLocaleString('en-IN') : '—');
+                $('#kb_assigned').text(kbUserMap[l.assigned] || l.assigned || '—');
+                $('#kb_tags').text(l.tags || '—');
+
+                // Edit button
+                $('#kb_editBtn').attr('href', '/manage-lead?id='+id+'&from=kanban');
+
+                // Conversations timeline
+                var html = '';
+                (data.comments || []).forEach(function (c) {
+                    html += '<div class="ld-timeline-item">'
+                          + '<div class="ld-tl-dot"></div>'
+                          + '<div class="ld-tl-body">'
+                          + '<div class="ld-tl-meta">'+(c.next_date || c.created_at)+'</div>'
+                          + '<p class="ld-tl-msg">'+c.msg+'</p>'
+                          + '</div></div>';
+                });
+                $('#kb_timeline').html(html || '<p class="text-muted text-center py-3" style="font-size:0.82rem;">No conversations yet.</p>');
+            });
+        });
+
+        function kbTab(btn, tabId) {
+            $('.ld-tab').removeClass('active');
+            $(btn).addClass('active');
+            $('#kb-tab-info, #kb-tab-conv').hide();
+            $('#' + tabId).show();
+        }
 
         /* ── Drag & Drop ─────────────────────────────────────────── */
         function allowDrop(ev) {
