@@ -361,7 +361,7 @@ body {
 }
 
 .sidebar .sb_submenu li a .link_name {
-    color: rgba(255, 255, 255, 0.62) !important;
+    color: #fffffffa !important;
     font-size: 14px !important;
     font-weight: 400 !important;
     padding: 0;
