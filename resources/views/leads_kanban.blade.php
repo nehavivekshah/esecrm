@@ -1,6 +1,20 @@
 @extends('layout')
 @section('title', 'Leads Pipeline (Kanban) - eseCRM')
 
+<style>
+/* Kanban Filter Bar */
+.kb-filter-bar{background:#fff;border:1px solid #e8eaed;border-radius:12px;padding:12px 16px;margin:0 16px 12px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.kb-filter-row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.kb-filter-field{display:flex;flex-direction:column;gap:4px;flex:1 1 150px;min-width:120px}
+.kb-filter-label{font-size:.72rem;font-weight:600;color:#5f6368;text-transform:uppercase;letter-spacing:.3px;display:flex;align-items:center;gap:4px}
+.kb-filter-input,.kb-filter-select{height:36px;border:1.5px solid #dadce0;border-radius:8px;padding:0 10px;font-size:.82rem;color:#202124;background:#f8f9fa;outline:none;transition:border-color .2s,box-shadow .2s;width:100%}
+.kb-filter-input:focus,.kb-filter-select:focus{border-color:#006666;box-shadow:0 0 0 3px rgba(0,102,102,.10);background:#fff}
+.kb-filter-actions{flex:0 0 auto;flex-direction:row!important;align-items:flex-end;gap:6px;min-width:auto}
+.kb-filter-active-dot{display:inline-block;width:8px;height:8px;background:#f29900;border-radius:50%;margin-left:4px;vertical-align:middle;animation:kbDotPulse 1.5s ease-in-out infinite}
+@keyframes kbDotPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.7}}
+@media(max-width:576px){.kb-filter-bar{margin:0 8px 10px;padding:10px 12px}.kb-filter-field{flex:1 1 100%}.kb-filter-actions{width:100%}}
+</style>
+
 @section('content')
 
     <section class="task__section">
@@ -303,6 +317,16 @@
                 .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
         }
 
+        // ── Get current filter values ──
+        function getFilters() {
+            return {
+                search:    $('#kbSearch').val().trim(),
+                assigned:  $('#kbAssigned').val(),
+                date_from: $('#kbDateFrom').val(),
+                date_to:   $('#kbDateTo').val(),
+            };
+        }
+
         // Load (or append) cards for one stage
         function loadStage(stage, statusInt, append) {
             const page   = append ? (colPages[stage] + 1) : 1;
@@ -314,11 +338,12 @@
                 colEl.html('<div class="kb-skeleton"></div><div class="kb-skeleton" style="height:60px;"></div>');
                 moreEl.hide();
             } else {
-                // Show spinner on Load More btn
                 $(`#more-label-${stage}`).html('<i class="bx bx-loader-alt bx-spin"></i> Loading...');
             }
 
-            $.get(KANBAN_URL, { stage: statusInt, page: page, limit: LIMIT }, function (res) {
+            var params = Object.assign({ stage: statusInt, page: page, limit: LIMIT }, getFilters());
+
+            $.get(KANBAN_URL, params, function (res) {
                 if (!append) colEl.empty();
 
                 res.data.forEach(function (lead) {
@@ -348,13 +373,19 @@
         // Load SUMMARY counts first (cheap), then load each column
         function initBoard() {
             let totalAll = 0;
-            $.get(KANBAN_URL, function (res) {
+            var filters  = getFilters();
+
+            $.get(KANBAN_URL, filters, function (res) {
                 if (res.counts) {
                     for (let key in res.counts) {
                         totalAll += res.counts[key];
                     }
                 }
-                $('#kbTotalBadge').text(totalAll + ' total leads');
+                // Show active filter indicator if any filter is set
+                var hasFilter = filters.search || filters.assigned || filters.date_from || filters.date_to;
+                var badge = totalAll + ' lead' + (totalAll === 1 ? '' : 's');
+                if (hasFilter) badge += ' <span class="kb-filter-active-dot" title="Filters active"></span>';
+                $('#kbTotalBadge').html(badge);
             });
 
             // Load each column independently (parallel)
@@ -375,9 +406,25 @@
         $(document).ready(function () {
             initBoard();
 
+            // Refresh button
             $('#kbRefreshBtn').on('click', function () {
                 $(this).find('i').addClass('bx-spin');
                 setTimeout(() => $(this).find('i').removeClass('bx-spin'), 1200);
+                initBoard();
+            });
+
+            // Apply filters
+            $('#kbApplyFilter').on('click', function () { initBoard(); });
+            $('#kbSearch').on('keydown', function (e) {
+                if (e.key === 'Enter') initBoard();
+            });
+
+            // Reset filters
+            $('#kbResetFilter').on('click', function () {
+                $('#kbSearch').val('');
+                $('#kbAssigned').val('');
+                $('#kbDateFrom').val('');
+                $('#kbDateTo').val('');
                 initBoard();
             });
         });
