@@ -477,7 +477,7 @@ h2 {
 
 .sidebar li a .link_name {
     color: var(--color-white);
-    font-size: var(--normal-font-size);
+    font-size: 14px;
     font-weight: 500;
     white-space: nowrap;
     pointer-events: auto;

@@ -166,7 +166,7 @@ body {
 
 .sidebar li a .link_name {
     color: rgba(255, 255, 255, 0.75) !important;
-    font-size: 0.82rem !important;
+    font-size: 14px !important;
     font-weight: 500 !important;
     white-space: nowrap;
     transition: all 0.2s ease !important;
@@ -249,7 +249,7 @@ body {
 
 .sidebar .divider label {
     color: rgba(255, 255, 255, 0.85) !important;
-    font-size: 0.83rem !important;
+    font-size: 14px !important;
     font-weight: 500 !important;
     cursor: pointer;
     letter-spacing: 0.1px;
@@ -362,7 +362,7 @@ body {
 
 .sidebar .sb_submenu li a .link_name {
     color: rgba(255, 255, 255, 0.62) !important;
-    font-size: 0.80rem !important;
+    font-size: 14px !important;
     font-weight: 400 !important;
     padding: 0;
     transition: color 0.15s ease !important;
