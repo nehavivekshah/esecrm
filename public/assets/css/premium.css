@@ -350,7 +350,7 @@ body {
 /* Dot highlight on hover/active */
 .sidebar.open .sb_submenu li a:hover::before,
 .sidebar.open .sb_submenu li a.active::before {
-    background: rgba(255, 255, 255, 0.9);
+    background: #fff;
     border-color: #ffffff;
     box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.12);
 }
@@ -369,7 +369,7 @@ body {
 }
 
 .sidebar .sb_submenu li a:hover .link_name {
-    color: rgba(255, 255, 255, 0.95) !important;
+    color: #fff !important;
 }
 
 .sidebar .sb_submenu li a:hover {
