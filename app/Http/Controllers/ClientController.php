@@ -302,19 +302,38 @@ class ClientController extends Controller
 
     public function projects()
     {
+        $query = Projects::leftJoin('clients', 'projects.client_id', '=', 'clients.id')
+            ->select('projects.*', 'clients.name as client_name', 'clients.company as client_company');
 
-        if (Auth::user()->role == 'master') {
-
-            $clients = Clients::orderBy('id', 'DESC')->get();
-
-        } else {
-
-            $clients = Clients::where('cid', '=', Auth::user()->cid)->orderBy('status', 'ASC')->get();
-
+        if (Auth::user()->role != 'master') {
+            $query->where('projects.cid', '=', Auth::user()->cid);
         }
 
-        return view('projects', ['clients' => $clients]);
+        $projects = $query->orderBy('projects.id', 'DESC')->get();
 
+        return view('projects', ['projects' => $projects]);
+    }
+
+    public function singleProjectGet(Request $request)
+    {
+        $id = $request->id;
+        $project = Projects::leftJoin('clients', 'projects.client_id', '=', 'clients.id')
+            ->select('projects.*', 'clients.name as client_name', 'clients.company as client_company', 'clients.email as client_email', 'clients.mob as client_mob', 'clients.location as client_location')
+            ->where('projects.id', $id)
+            ->first();
+
+        if (!$project) {
+            return response()->json(['error' => 'Project not found'], 404);
+        }
+
+        $recoveries = Recoveries::where('project_id', $id)->orderBy('id', 'DESC')->get();
+        $license = Eselicenses::where('project_id', $id)->orderBy('id', 'DESC')->first();
+
+        return response()->json([
+            'project' => $project,
+            'recoveries' => $recoveries,
+            'license' => $license
+        ]);
     }
 
     public function licensing()
