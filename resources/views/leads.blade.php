@@ -477,10 +477,12 @@
                                         <div class="input-group input-group-sm">
                                             <span class="input-group-text"><i class="bx bx-list-check"></i></span>
                                             <select name="status" id="m_status" class="form-select">
-                                                <option value="0">Fresh</option>
-                                                <option value="1">Follow Up</option>
-                                                <option value="5">Converted</option>
-                                                <option value="9">Loss</option>
+                                                <option value="0">🔵 New / Fresh</option>
+                                                <option value="1">🟠 Contacted / Follow Up</option>
+                                                <option value="2">🟣 Qualified</option>
+                                                <option value="3">🟢 Proposal Sent</option>
+                                                <option value="5">✅ Closed (Won)</option>
+                                                <option value="9">❌ Lost</option>
                                             </select>
                                         </div>
                                     </div>

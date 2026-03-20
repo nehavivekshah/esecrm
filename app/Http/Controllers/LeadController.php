@@ -290,6 +290,8 @@ class LeadController extends Controller
         $location = json_encode($request->address ?? []);
 
         $currentPage = $request->page ?? 1;
+        $from        = $request->from;  // 'kanban' or null
+        $redirectTo  = ($from === 'kanban') ? 'leads/kanban' : ('leads?page=' . $currentPage);
 
         if (empty($request->id)) {
             $leadSingle = new Leads();
@@ -338,9 +340,9 @@ class LeadController extends Controller
                     $leadComment->save();
                 }
 
-                return redirect('leads?page=' . $currentPage)->with('success', 'This Lead was successfully added to the Leads Table.');
+                return redirect($redirectTo)->with('success', 'This Lead was successfully added to the Leads Table.');
             } else {
-                return redirect('leads?page=' . $currentPage)->with('error', 'Failed to add this lead to the leads table.');
+                return redirect($redirectTo)->with('error', 'Failed to add this lead to the leads table.');
             }
 
         } else {
@@ -389,9 +391,9 @@ class LeadController extends Controller
                     $leadSingle->update();
 
 
-                    return redirect('leads?page=' . $currentPage)->with('success', "Successfully converted leads moved to client list.");
+                    return redirect($redirectTo)->with('success', "Successfully converted leads moved to client list.");
                 } else {
-                    return redirect('leads?page=' . $currentPage)->with('error', 'Failed to add this lead to the client list.');
+                    return redirect($redirectTo)->with('error', 'Failed to add this lead to the client list.');
                 }
 
             } else {
@@ -422,9 +424,9 @@ class LeadController extends Controller
                 $leadSingle->status = ($request->status ?? '10');
 
                 if ($leadSingle->update()) {
-                    return redirect('leads?page=' . $currentPage)->with('success', 'This Lead was successfully updated in the Leads Table.');
+                    return redirect($redirectTo)->with('success', 'This Lead was successfully updated in the Leads Table.');
                 } else {
-                    return redirect('leads?page=' . $currentPage)->with('error', 'Failed to update this lead in the leads table.');
+                    return redirect($redirectTo)->with('error', 'Failed to update this lead in the leads table.');
                 }
 
             }

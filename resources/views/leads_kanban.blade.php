@@ -144,7 +144,7 @@
                 ? `<a href="tel:+${encodeURIComponent(lead.mob)}" class="kb-action-btn kb-action-call" title="Call ${escHtml(lead.mob)}" onclick="event.stopPropagation();"><i class="bx bx-phone"></i></a>` : '';
             const emailBtn = lead.email
                 ? `<a href="mailto:${escHtml(lead.email)}" class="kb-action-btn kb-action-email" title="Email ${escHtml(lead.email)}" onclick="event.stopPropagation();"><i class="bx bx-envelope"></i></a>` : '';
-            const editBtn  = `<a href="/manage-lead?id=${lead.id}" class="kb-action-btn kb-action-edit" title="Edit Lead" onclick="event.stopPropagation();"><i class="bx bx-edit-alt"></i></a>`;
+            const editBtn  = `<a href="/manage-lead?id=${lead.id}&from=kanban" class="kb-action-btn kb-action-edit" title="Edit Lead" onclick="event.stopPropagation();"><i class="bx bx-edit-alt"></i></a>`;
 
             return `
                 <div class="kb-card" id="lead-${lead.id}" draggable="true"

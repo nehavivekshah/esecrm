@@ -16,7 +16,7 @@
             {{-- Page Title Bar --}}
             <div class="ml-page-topbar mb-4">
                 <div class="ml-page-topbar-left">
-                    <a href="/leads" class="ml-back-btn" title="Back to Leads">
+                    <a href="{{ request('from') === 'kanban' ? '/leads/kanban' : '/leads' }}" class="ml-back-btn" title="Back">
                         <i class="bx bx-arrow-back"></i>
                     </a>
                     <div>
@@ -42,6 +42,7 @@
             <form action="manage-lead" method="post" id="manageLeadForm">
                 @csrf
                 <input type="hidden" name="id" value="{{ $_GET['id'] ?? '' }}">
+                <input type="hidden" name="from" value="{{ request('from') }}">
 
                 <div class="row g-4">
 
@@ -302,7 +303,21 @@
                                                 placeholder="e.g. K2, Hot, VIP"
                                                 value="{{ $leads->tags ?? '' }}">
                                         </div>
+                                        <div class="col-md-6">
+                                        <label class="ml-label">Status</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bx bx-list-check"></i></span>
+                                            <select class="form-select" name="status">
+                                                <option value="0" {{ ($leads->status ?? '') == '0' ? 'selected' : '' }}>🔵 New</option>
+                                                <option value="1" {{ ($leads->status ?? '') == '1' ? 'selected' : '' }}>🟠 Contacted</option>
+                                                <option value="2" {{ ($leads->status ?? '') == '2' ? 'selected' : '' }}>🟣 Qualified</option>
+                                                <option value="3" {{ ($leads->status ?? '') == '3' ? 'selected' : '' }}>🟢 Proposal Sent</option>
+                                                <option value="5" {{ ($leads->status ?? '') == '5' ? 'selected' : '' }}>✅ Closed (Won)</option>
+                                                <option value="9" {{ ($leads->status ?? '') == '9' ? 'selected' : '' }}>❌ Lost</option>
+                                            </select>
+                                        </div>
                                     </div>
+                                </div>
                                 </div>
                             </div>
                         </div>
@@ -344,7 +359,7 @@
                     {{-- FORM ACTION FOOTER --}}
                     <div class="col-12 mb-5">
                         <div class="ml-form-footer">
-                            <a href="/leads" class="lb-btn lb-btn-ghost">
+                            <a href="{{ request('from') === 'kanban' ? '/leads/kanban' : '/leads' }}" class="lb-btn lb-btn-ghost">
                                 <i class="bx bx-x"></i> Cancel
                             </a>
                             <div class="d-flex gap-2">
