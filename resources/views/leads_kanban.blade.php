@@ -14,7 +14,7 @@
                     <div class="kb-stage-legend">
                         <span class="kb-dot" style="background:#1a73e8;"></span> New
                         <span class="kb-dot ms-2" style="background:#f29900;"></span> Contacted
-                        <span class="kb-dot ms-2" style="background:#9334e9;"></span> Qualified
+                        <span class="kb-dot ms-2" style="background:#7c3aed;"></span> Qualified
                         <span class="kb-dot ms-2" style="background:#006666;"></span> Proposal
                         <span class="kb-dot ms-2" style="background:#34a853;"></span> Won
                         <span class="kb-dot ms-2" style="background:#ea4335;"></span> Lost
@@ -45,7 +45,7 @@
                 $stages = [
                     ['key' => 'New',       'status' => 0, 'label' => 'New Leads',     'cls' => 'new',       'color' => '#1a73e8'],
                     ['key' => 'Contacted', 'status' => 1, 'label' => 'Contacted',     'cls' => 'contacted', 'color' => '#f29900'],
-                    ['key' => 'Qualified', 'status' => 2, 'label' => 'Qualified',     'cls' => 'qualified', 'color' => '#9334e9'],
+                    ['key' => 'Qualified', 'status' => 2, 'label' => 'Qualified',     'cls' => 'qualified', 'color' => '#7c3aed'],
                     ['key' => 'Proposal',  'status' => 3, 'label' => 'Proposal Sent', 'cls' => 'proposal',  'color' => '#006666'],
                     ['key' => 'Closed',    'status' => 5, 'label' => 'Closed (Won)',  'cls' => 'closed',    'color' => '#34a853'],
                     ['key' => 'Lost',      'status' => 9, 'label' => 'Lost',          'cls' => 'lost',      'color' => '#ea4335'],
@@ -183,7 +183,7 @@
         const stageColors = {
             'New':       { border: '#1a73e8', bg: 'rgba(26,115,232,0.08)' },
             'Contacted': { border: '#f29900', bg: 'rgba(242,153,0,0.08)'  },
-            'Qualified': { border: '#9334e9', bg: 'rgba(147,52,233,0.08)' },
+            'Qualified': { border: '#7c3aed', bg: 'rgba(124,58,237,0.10)' },
             'Proposal':  { border: '#006666', bg: 'rgba(0,102,102,0.08)'  },
             'Closed':    { border: '#34a853', bg: 'rgba(52,168,83,0.08)'  },
             'Lost':      { border: '#ea4335', bg: 'rgba(234,67,53,0.08)'  },
@@ -346,7 +346,7 @@
         var kbUserMap = {!! json_encode($getUsers->pluck('name','id')) !!};
 
         var kbStatusLabels = {0:'New',1:'Contacted',2:'Qualified',3:'Proposal Sent',5:'Closed (Won)',9:'Lost'};
-        var kbStatusColors = {0:'#5f6368',1:'#f29900',2:'#9334e9',3:'#006666',5:'#34a853',9:'#ea4335'};
+        var kbStatusColors = {0:'#5f6368',1:'#f29900',2:'#7c3aed',3:'#006666',5:'#34a853',9:'#ea4335'};
 
         $(document).on('dblclick', '.kb-card', function (e) {
             e.stopPropagation();
