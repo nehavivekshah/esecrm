@@ -485,7 +485,7 @@ body {
     border: none;
     border-radius: 20px;
     padding: 7px 16px;
-    font-size: 0.82rem;
+    font-size: 14px;
     font-weight: 500;
     cursor: pointer;
     transition: background 0.2s, box-shadow 0.2s;
@@ -512,18 +512,18 @@ body {
 .header-right>button.header-action-btn:not(.header-action-primary):not(.dropdown-toggle) {
     background: #f1f3f4;
     color: #3c4043;
-    border: none;
+    border: 1px solid #00666626;
 }
 
 .header-right>button.header-action-btn:not(.header-action-primary):not(.dropdown-toggle):hover {
     background: #e8eaed;
-    box-shadow: none;
+    border: 1px solid #00666626;
 }
 
 /* Ghost icon-only button (bell, etc.) */
 .header-icon-btn {
     background: none;
-    border: none;
+    border: 1px solid #00666626;
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -579,7 +579,7 @@ body {
 }
 
 .header-user-name {
-    font-size: 0.80rem;
+    font-size: 14px;
     font-weight: 600;
     color: #202124;
 }
