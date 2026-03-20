@@ -300,8 +300,9 @@ class ClientController extends Controller
         return redirect('/contracts')->with('success', $request->id ? 'Contract updated successfully.' : 'Contract added successfully.');
     }
 
-    public function projects()
+    public function projects(Request $request)
     {
+        $search = $request->get('search');
         $query = Projects::leftJoin('clients', 'projects.client_id', '=', 'clients.id')
             ->select('projects.*', 'clients.name as client_name', 'clients.company as client_company');
 
@@ -309,9 +310,17 @@ class ClientController extends Controller
             $query->where('projects.cid', '=', Auth::user()->cid);
         }
 
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('projects.name', 'LIKE', "%{$search}%")
+                  ->orWhere('clients.name', 'LIKE', "%{$search}%")
+                  ->orWhere('clients.company', 'LIKE', "%{$search}%");
+            });
+        }
+
         $projects = $query->orderBy('projects.id', 'DESC')->get();
 
-        return view('projects', ['projects' => $projects]);
+        return view('projects', ['projects' => $projects, 'search' => $search]);
     }
 
     public function singleProjectGet(Request $request)

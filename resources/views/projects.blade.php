@@ -8,418 +8,341 @@
         $roleArray = explode(',',($roles->permissions ?? ''));
     
     @endphp
+    <link rel="stylesheet" href="{{ asset('assets/css/lead-panel.css') }}">
+
     <section class="task__section">
         @include('inc.header', ['title' => 'Projects'])
-        <div class="container-fluid">
-            <div class="board-title board-title-flex">
-                <h1>List Board</h1>
-                @if(in_array('clients_add',$roleArray) || in_array('All',$roleArray))
-                <div class="btn-group">
-                    <!--<a href="javascript:void(0)" class="btn btn-warning btn-sm" id="importFile"><i class="bx bx-upload"></i> <span>Import</span></a>
-                    <a href="/public/assets/leads.csv" class="btn btn-danger btn-sm" target="_blank" download="leads.csv" title="Download CSV Sample File"><i class="bx bx-download"></i> <span>Sample File</span></a>-->
-                    <a href="/manage-client" class="btn btn-primary btn-sm"><i class="bx bx-plus"></i> <span>Add New</span></a>
+        
+        <div class="dash-container">
+            {{-- Toolbar --}}
+            <div class="leads-toolbar mb-3">
+                <div class="leads-toolbar-left">
+                    <form action="/projects" method="GET" id="projectFilterForm" class="d-flex align-items-center gap-2">
+                        <div class="lb-search-box">
+                            <i class="bx bx-search"></i>
+                            <input type="text" name="search" id="projectSearch" class="form-control" placeholder="Search projects..." value="{{ $search ?? '' }}">
+                        </div>
+                    </form>
                 </div>
-                @endif
+                <div class="leads-toolbar-right">
+                    @if(in_array('clients_add', $roleArray) || in_array('All', $roleArray))
+                        <a href="/manage-project" class="lb-btn-primary">
+                            <i class="bx bx-plus"></i>
+                            <span>Add Project</span>
+                        </a>
+                    @endif
+                </div>
             </div>
+
             <div class="row">
                 <div class="col-md-12 py-3 table-responsive">
-                    <table id="leadslists" class="table table-condensed m-table leads" style="width:100%;border-radius: 5px!important;overflow: hidden;">
+                    <table id="projectList" class="table table-condensed m-table leads" style="width:100%; border-radius: 8px; overflow: hidden; background: #fff;">
                         <thead>
                             <tr>
-                                <th class="checkbox-column pl-2"><input type="checkbox" id="checkall" value="all"></th>
-                                <th>Name</th>
-                                <th class="m-none">Company</th>
-                                <th class="m-none" width="80px">Mobile No.</th>
-                                <th class="m-none">Projects</th>
-                                <th class="m-none" width="60px">Status</th>
-                                <th class="position-sticky end-0" width="60px">Action</th>
+                                <th width="10">#</th>
+                                <th>Project Name</th>
+                                <th>Client / Company</th>
+                                <th>Type</th>
+                                <th>Total Amount</th>
+                                <th width="100">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($clients as $client)
-                            @php
-                                $colorStatus = ($client->status == '5') ? 'table-success' : 
-                                           (($client->status == '9') ? 'table-danger' : 
-                                           (($client->status == '1' 
-                                           && date('Y-m-d', strtotime($client->next_date)) == date('Y-m-d') 
-                                           && date('His', strtotime($client->next_date)) < date('His')) ? 'table-danger bg-danger' :
-                                           ($client->status == '1' ? 'table-warning' : 'table-white')));
-
-                                $status = ($client->status == '5') ? "converted" : 
-                                          (($client->status == '9') ? "Lose" :
-                                          (($client->status == '1') ? "Follow Up" : "Fresh"));
-                            @endphp
-                            <!-- Add rows with your data here -->
-                            <tr class="{{ $colorStatus ?? '' }} view selectrow" id="{{ $client->id ?? '' }}">
-                                <td class="checkbox-column pr-0"><input type="checkbox" name="checkleads[]" class="checklead" value="{{ $client->id ?? '' }}"></td>
-                                <td>{{ $client->name ?? '' }}<span class="small d-none">{{ $client->company ?? '' }}</span></td>
-                                <td class="m-none">{{ substr(($client->company ?? ''),0,20).".." }}</td>
-                                <td class="m-none" width="80px">{{ $client->mob ?? '' }}</td>
-                                <td class="m-none"></td>
-                                <td class="m-none" width="60px">{{ $status ?? '' }}</td>
-                                <td class="position-sticky end-0" width="60px">
-                                    <div class="table-btn m-none">
-                                        @if(!empty($client->whatsapp))<a href="https://api.whatsapp.com/send/?phone={{ $client->whatsapp }}&text=Hi&type=phone_number&app_absent=0" class="btn btn-primary text-white btn-sm" title="whatsapp"><i class="bx bxl-whatsapp"></i></a>@endif
-                                        @if(!empty($client->email))<a href="mailto:{{ $client->email }}" class="btn btn-info text-white btn-sm" title="Email"><i class="bx bx-envelope"></i></a>@endif
-                                        @if(!empty($client->mob))<a href="tel:{{ $client->mob }}" class="btn btn-warning text-dark btn-sm" title="Call"><i class="bx bx-phone"></i></a>@endif
+                            @foreach($projects as $project)
+                            <tr class="view selectrow pointer-cursor" id="{{ $project->id }}">
+                                <td>{{ $loop->iteration }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="lb-avatar-sm" style="background: var(--teal-gradient);">
+                                            {{ substr($project->name, 0, 1) }}
+                                        </div>
+                                        <div class="d-flex flex-column">
+                                            <span class="fw-bold">{{ $project->name }}</span>
+                                            <span class="small text-muted">ID: #PROU-{{ str_pad($project->id, 4, '0', STR_PAD_LEFT) }}</span>
+                                        </div>
                                     </div>
-                                    <div class="table-btn d-none">
-                                        @if(!empty($client->whatsapp))<a href="https://api.whatsapp.com/send/?phone={{ $client->whatsapp }}&text=Hi&type=phone_number&app_absent=0" target="_blank" class="btn btn-primary text-white btn-sm" title="whatsapp"><i class="bx bxl-whatsapp"></i></a>@endif
-                                        @if(!empty($client->email))<a href="mailto:{{ $client->email }}" class="btn btn-info text-white btn-sm" title="Email"><i class="bx bx-envelope"></i></a>@endif
-                                        @if(!empty($client->mob))<a href="tel:{{ $client->mob }}" class="btn btn-warning text-dark btn-sm" title="Call"><i class="bx bx-phone"></i></a>@endif
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        <span>{{ $project->client_name }}</span>
+                                        <span class="small text-muted">{{ $project->client_company }}</span>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-soft-info text-info">{{ $project->type ?? 'General' }}</span></td>
+                                <td class="fw-bold text-primary">₹{{ number_format($project->amount, 2) }}</td>
+                                <td>
+                                    <div class="table-btn">
+                                        @if($project->deployment_url)
+                                            <a href="{{ $project->deployment_url }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Visit Site">
+                                                <i class="bx bx-link-external"></i>
+                                            </a>
+                                        @endif
+                                        <a href="/manage-project?id={{ $project->id }}" class="btn btn-sm btn-outline-secondary" title="Edit">
+                                            <i class="bx bx-edit-alt"></i>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
                             @endforeach
-                            <!-- Repeat rows as needed -->
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </section>
-    
-    <form id="leadsubmit" action="/import-leads-file" method="post" enctype="multipart/form-data">
-        @csrf
-        <input type="file" name="impLeadFile" id="impLeadFile" accept=".csv, .xls" style="display:none;" />
-    </form>
-    
-    <!-- Modal Structure -->
-    <div class="modal fade" id="leadModal" tabindex="-1" aria-labelledby="leadModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="leadModalLabel">Lead Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+    <!-- Project Details Offcanvas -->
+    <div class="offcanvas offcanvas-end lb-offcanvas" tabindex="-1" id="projectModal" aria-labelledby="projectModalLabel">
+        <div class="offcanvas-body p-0">
+            <!-- Premium Header -->
+            <div class="lb-offcanvas-header p-4 position-relative overflow-hidden">
+                <div class="lb-offcanvas-banner"></div>
+                <div class="d-flex align-items-start justify-content-between position-relative z-1 mb-3">
+                    <div class="d-flex align-items-center gap-3 mt-4">
+                        <div class="lb-avatar-lg shadow-lg border border-3 border-white" id="p-avatar-box">P</div>
+                        <div class="text-white">
+                            <h4 class="mb-1 text-white fw-bold" id="p-name">Loading...</h4>
+                            <p class="mb-0 opacity-75" id="p-client">Loading client...</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <!-- Tab navigation with tabs and auto-adjusting width -->
-                    <ul class="nav nav-tabs mb-3 nav-justified" id="leadModalTab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="lead-details-tab" data-bs-toggle="pill" data-bs-target="#lead-details" type="button" role="tab" aria-controls="lead-details" aria-selected="true">Lead Details</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="comments-tab" data-bs-toggle="pill" data-bs-target="#comments" type="button" role="tab" aria-controls="comments" aria-selected="false">Conversations</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="new-comment-tab" data-bs-toggle="pill" data-bs-target="#new-comment" type="button" role="tab" aria-controls="new-comment" aria-selected="false">New Reminder</button>
-                        </li>
-                    </ul>
-    
-                    <!-- Tab content -->
-                    <div class="tab-content" id="leadModalTabContent">
-                        <!-- Lead Details Tab -->
-                        <div class="tab-pane fade show active" id="lead-details" role="tabpanel" aria-labelledby="lead-details-tab">
-                            <!--<div id="leadinfo" class="mt-3"></div>-->
-                            <form action="manage-lead" method="post" class="row g-3">
-                                @csrf
-                                <div class="col-md-6 form-group">
-                                    <label for="name">Name*</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class='bx bx-user'></i></span>
-                                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name*" required>
-                                        <input type="hidden" id="id" name="id" value="{{ $_GET['id'] ?? '' }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <label for="email">Email Address*</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class='bx bx-envelope-open'></i></span>
-                                        <input type="email" class="form-control" id="email" name="email" placeholder="Enter Email Id*" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <label for="mobile">Mobile Number*</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class='bx bx-phone'></i></span>
-                                        <input type="text" class="form-control" id="mob" name="mob" placeholder="Enter Mobile Number*" value="91" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <label for="whatsapp">Whatsapp*</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class='bx bxl-whatsapp'></i></span>
-                                        <input type="text" class="form-control" id="whatsapp" name="whatsapp" placeholder="Enter Whatsapp Number*" value="91" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <label for="company">Company*</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class='bx bx-briefcase'></i></span>
-                                        <input type="text" class="form-control" id="company" name="company" placeholder="Enter Company*" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <label for="position">Position*</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class='bx bx-user'></i></span>
-                                        <input type="text" class="form-control" id="position" name="position" placeholder="Enter Position*" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <label for="industry">Industry*</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class='bx bx-building'></i></span>
-                                        <input type="text" class="form-control" id="industry" name="industry" placeholder="Enter Industry*" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <label for="address">Address</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class='bx bx-home'></i></span>
-                                        <input type="text" class="form-control" id="address" name="address[]" placeholder="Enter Address">
-                                    </div>
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <label for="city">City</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class='bx bx-map'></i></span>
-                                        <input type="text" class="form-control" id="city" name="address[]" placeholder="Enter City">
-                                    </div>
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <label for="state">State</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class='bx bx-map-pin'></i></span>
-                                        <input type="text" class="form-control" id="state" name="address[]" placeholder="Enter State">
-                                    </div>
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <label for="country">Country</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class='bx bx-globe'></i></span>
-                                        <input type="text" class="form-control" id="country" name="address[]" placeholder="Enter Country">
-                                    </div>
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <label for="website">Website</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class='bx bx-link'></i></span>
-                                        <input type="url" class="form-control" id="website" name="website" placeholder="Enter Website Link">
-                                    </div>
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <label for="source">Assigned</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class='bx bx-share-alt'></i></span>
-                                        <input type="text" class="form-control" id="source" name="source" placeholder="Enter Source">
-                                    </div>
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <label for="source">Purpose*</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class='bx bx-target-lock'></i></span>
-                                        <input type="text" class="form-control" id="purpose" name="purpose" placeholder="Enter Purpose*" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <label for="values">Lead Value</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class='bx bx-rupee'></i></span>
-                                        <input type="number" class="form-control" id="value" name="value" placeholder="Enter Values">
-                                    </div>
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <label for="source">Language</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class='bx bx-world'></i></span>
-                                        <input type="text" class="form-control" id="language" name="language" placeholder="Enter Language">
-                                    </div>
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <label for="source">POC</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class='bx bx-user-check'></i></span>
-                                        <input type="text" class="form-control" id="poc" name="poc" placeholder="Enter Point of Contact">
-                                    </div>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label>Status:</label><br>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class='bx bx-list-check'></i></span>
-                                        <select class="form-control" id="status" name="status"></select>
-                                    </div>
-                                </div>
-                                @if(in_array('leads_edit',$roleArray) || in_array('All',$roleArray))
-                                <div class="form-group col-md-12 text-center mt-3">
-                                    <button type="submit" class="btn btn-primary px-4">Save</button>
-                                    <button type="reset" class="btn btn-light border px-4">Reset</button>
-                                </div>
-                                @endif
-                            </form>
-                        </div>
-    
-                        <!-- Comments Tab -->
-                        <div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="comments-tab">
-                            <div id="leadcomments" class="mt-3"></div>
-                        </div>
-    
-                        <!-- New Comment Tab -->
-                        <div class="tab-pane fade" id="new-comment" role="tabpanel" aria-labelledby="new-comment-tab">
-                            <div class="cmtArea mt-3">
-                                <form action="manage-lead-comment" method="post" class="cmt-form">
-                                    @csrf
-                                    <input type="hidden" name="lead_id" id="commentLeadId">
-                                    <div class="form-group">
-                                        <label for="message" class="form-label">Message*:</label>
-                                        <textarea class="form-control" rows="5" id="message" name="message" placeholder="Write Here..." required></textarea>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="nxtDate" class="form-label">Next Date*:</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class='bx bx-calendar'></i></span>
-                                            <input type="datetime-local" class="form-control" min="{{today()}}" id="nxtDate" name="nxtDate" required>
-                                        </div>
-                                    </div>
-                                    <div class="form-group text-center pt-2">
-                                        <button type="submit" class="btn btn-primary">Submit</button>
-                                        <button type="reset" class="btn btn-light border">Reset</button>
-                                    </div>
-                                </form>
+                
+                <div class="d-flex gap-2 position-relative z-1 mt-4">
+                    <a href="#" id="p-action-call" class="lb-btn-light"><i class="bx bx-phone"></i> Call</a>
+                    <a href="#" id="p-action-wa" class="lb-btn-light"><i class="bx bxl-whatsapp"></i> WhatsApp</a>
+                    <a href="#" id="p-action-url" target="_blank" class="lb-btn-light"><i class="bx bx-link-external"></i> Deployment</a>
+                    <div class="ms-auto pt-2">
+                        <span class="text-white small opacity-75">Created on: <span id="p-created-at">--</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="px-4 mt-3">
+                <div class="ld-tabs-container">
+                    <div class="ld-tab active" onclick="cTab(event, 'p-tab-info')" id="defaultOpen">
+                        <i class="bx bx-info-circle"></i> Profile
+                    </div>
+                    <div class="ld-tab" onclick="cTab(event, 'p-tab-billing')">
+                        <i class="bx bx-receipt"></i> Billing
+                    </div>
+                    <div class="ld-tab" onclick="cTab(event, 'p-tab-license')">
+                        <i class="bx bx-key"></i> License
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="p-4 overflow-auto" style="height: calc(100vh - 350px);">
+                <!-- Profile Tab -->
+                <div id="p-tab-info" class="ld-tab-content">
+                    <div class="mb-4">
+                        <h6 class="lb-section-title"><i class="bx bx-detail me-2 text-primary"></i>Project Overview</h6>
+                        <div class="ld-info-grid">
+                            <div class="ld-info-card">
+                                <label><i class="bx bx-category"></i> Type</label>
+                                <span id="p-type">--</span>
                             </div>
+                            <div class="ld-info-card">
+                                <label><i class="bx bx-money"></i> Budget</label>
+                                <span id="p-budget" class="fw-bold text-primary">₹0.00</span>
+                            </div>
+                            <div class="ld-info-card col-span-2">
+                                <label><i class="bx bx-note"></i> Notes</label>
+                                <span id="p-notes">No notes available.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h6 class="lb-section-title"><i class="bx bx-user me-2 text-primary"></i>Client Information</h6>
+                        <div class="ld-info-grid">
+                            <div class="ld-info-card">
+                                <label><i class="bx bx-envelope"></i> Email</label>
+                                <span id="p-client-email">--</span>
+                            </div>
+                            <div class="ld-info-card">
+                                <label><i class="bx bx-phone"></i> Mobile</label>
+                                <span id="p-client-mob">--</span>
+                            </div>
+                            <div class="ld-info-card col-span-2">
+                                <label><i class="bx bx-map"></i> Location</label>
+                                <span id="p-client-location">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Billing Tab -->
+                <div id="p-tab-billing" class="ld-tab-content" style="display:none;">
+                    <h6 class="lb-section-title"><i class="bx bx-history me-2 text-primary"></i>Recovery History</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm lb-table-premium">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Note</th>
+                                </tr>
+                            </thead>
+                            <tbody id="p-billing-body">
+                                <tr><td colspan="4" class="text-center py-4 text-muted">No payments found.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- License Tab -->
+                <div id="p-tab-license" class="ld-tab-content" style="display:none;">
+                    <h6 class="lb-section-title"><i class="bx bx-shield-quarter me-2 text-primary"></i>License Details</h6>
+                    <div id="p-license-area">
+                        <div class="alert alert-info border-0 bg-light p-3 rounded-3 mb-3">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="bx bx-info-circle text-info fs-4"></i>
+                                <span class="fw-bold">No Active License</span>
+                            </div>
+                            <p class="small mb-0 opacity-75">There is no active license key associated with this project at the moment.</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
     <script>
+        function cTab(evt, tabName) {
+            $(".ld-tab-content").hide();
+            $(".ld-tab").removeClass("active");
+            $("#" + tabName).show();
+            $(evt.currentTarget).addClass("active");
+        }
+
         $(document).ready(function(){
-            $('#checkall').click(function() {
-                // Check if the .checkall checkbox is checked
-                let isChecked = $(this).prop('checked');
-                
-                // Set all .checklead checkboxes to the same state
-                $('.checklead').prop('checked', isChecked);
-            });
-            
-            $('.selectrow').click(function() {
-                // Check if the checkbox inside the current .selectrow is checked or unchecked
-                if ($(this).find('.checklead').prop('checked')) {
-                    // Add 'selected' class to the parent row if the checkbox is checked
-                    $(this).closest('tr').addClass('selected');
-                } else {
-                    // Remove 'selected' class from the parent row if unchecked
-                    $(this).closest('tr').removeClass('selected');
-                }
+            // Project Search Filter (Debounced)
+            let searchTimer;
+            $('#projectSearch').on('input', function() {
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(() => {
+                    $('#projectFilterForm').submit();
+                }, 500);
             });
 
-            $('#importFile').click(function() {
-                $("#impLeadFile").trigger("click");
-            });
-            
-            // Submit the form when a file is selected
-            $('#impLeadFile').change(function() {
-                // Submit the form automatically after file selection
-                $('#leadsubmit').submit();
-            });
+            const projectModal = new bootstrap.Offcanvas(document.getElementById('projectModal'));
 
             $('.view').dblclick(function(){
-                let id = $(this).attr('id');
-                let pagename = "leads";
+                const id = $(this).attr('id');
                 
-                $('#commentLeadId').val(id);
-                
-                function formatDate(dateString) {
-                    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-                    const date = new Date(dateString);
-                    return date.toLocaleDateString(undefined, options);
-                }
-        
-                $.ajax({
-                    url: '/view-single-lead', // Replace with your server endpoint URL
-                    type: 'GET', // You can use 'GET' or 'POST' depending on your requirement
-                    data: {
-                        id: id,
-                        pagename: pagename
-                    },
-                    success: function(response){
-                        let purpose;
-                        // Parsing the JSON data
-                        var parsedData = JSON.parse(response);
-                        let lead = parsedData.leads;
-                        let leadComments = parsedData.leadComments;
-                        let location = lead.location || '';
-                        let locationParts = location.split(',');
-                        
-                        let address = locationParts[0] ? locationParts[0].trim() : '';
-                        let city = locationParts[1] ? locationParts[1].trim() : '';
-                        let state = locationParts[2] ? locationParts[2].trim() : '';
-                        let country = locationParts[3] ? locationParts[3].trim() : '';
-    
-                        if (parsedData.leads.purpose == '' || parsedData.leads.purpose != null) {
-                            purpose = parsedData.leads.purpose; // Assign value if not null
-                        } else {
-                            purpose = "Customer Feedback"; // Default value if null
-                        }
-                        
-                        let purposeHtml = `
-                            <div class="date-style">
-                                ${purpose}
-                            </div>
-                        `;
-    
-                        let commentsHtml = leadComments.map(comment => `
-                            <div class="cmt-details">
-                                <p>${comment.msg}</p>
-                                <div class="mfooter">
-                                    <p><strong>Last Talk:</strong> ${formatDate(comment.updated_at)}</p>
-                                    <p><strong>Next Date:</strong> ${formatDate(comment.next_date)}</p>
-                                </div>
-                            </div>
-                        `).join('');
-    
-                        // Injecting HTML content into the modal
-                        $('#id').val(lead.id);
-                        $('#name').val(lead.name);
-                        $('#email').val(lead.email);
-                        $('#mob').val(lead.mob);
-                        $('#whatsapp').val(lead.whatsapp);
-                        $('#company').val(lead.company);
-                        $('#position').val(lead.position);
-                        $('#industry').val(lead.industry);
-                        $('#address').val(address);
-                        $('#city').val(city);
-                        $('#state').val(state);
-                        $('#country').val(country);
-                        $('#website').val(lead.website);
-                        $('#source').val(lead.source);
-                        $('#purpose').val(lead.purpose);
-                        $('#value').val(lead.values);
-                        $('#language').val(lead.language);
-                        $('#poc').val(lead.poc);
-                        
-                        var status = lead.status;
+                // Set default tab
+                $(".ld-tab-content").hide();
+                $("#p-tab-info").show();
+                $(".ld-tab").removeClass("active");
+                $(".ld-tab:first-child").addClass("active");
 
-                        let option = `
-                            <option value="0" ${status == '0' ? 'selected' : ''}>Fresh</option>
-                            <option value="1" ${status == '1' ? 'selected' : ''}>Follow Up</option>
-                            <option value="5" ${status == '5' ? 'selected' : ''}>Converted</option>
-                            <option value="9" ${status == '9' ? 'selected' : ''}>Loss</option>
-                        `;
+                // Show modal immediately with loading state
+                $('#p-name').text('Loading...');
+                $('#p-client').text('Fetching project details...');
+                projectModal.show();
+
+                $.ajax({
+                    url: '/view-single-project',
+                    type: 'GET',
+                    data: { id: id },
+                    success: function(response) {
+                        const project = response.project;
+                        const recoveries = response.recoveries;
+                        const license = response.license;
+
+                        // Header & Actions
+                        $('#p-name').text(project.name);
+                        $('#p-client').text(project.client_name + ' | ' + project.client_company);
+                        $('#p-avatar-box').text(project.name.charAt(0));
+                        $('#p-created-at').text(new Date(project.created_at).toLocaleDateString());
+
+                        const waLink = `https://api.whatsapp.com/send/?phone=${project.client_mob}&text=Regarding Project: ${project.name}&type=phone_number&app_absent=0`;
+                        $('#p-action-call').attr('href', 'tel:' + project.client_mob);
+                        $('#p-action-wa').attr('href', waLink);
                         
-                        $('#status').html(option);
-                        
-                        $('#leadcomments').html(purposeHtml + commentsHtml);
-                        
-                        let lastNextDate = leadComments.reduce((latest, comment) => {
-                            return (new Date(comment.next_date) > new Date(latest)) ? comment.next_date : latest;
-                        }, leadComments[0]?.next_date || null);
-    
-                        $("#nxtDate").attr("min",lastNextDate);
-    
-                        // Show the modal
-                        $('#leadModal').modal('show');
+                        if (project.deployment_url) {
+                            $('#p-action-url').attr('href', project.deployment_url).show();
+                        } else {
+                            $('#p-action-url').hide();
+                        }
+
+                        // Profile Tab
+                        $('#p-type').text(project.type || 'General');
+                        $('#p-budget').text('₹' + parseFloat(project.amount).toLocaleString('en-IN', {minimumFractionDigits: 2}));
+                        $('#p-notes').text(project.note || 'No notes available.');
+                        $('#p-client-email').text(project.client_email || '--');
+                        $('#p-client-mob').text(project.client_mob || '--');
+                        $('#p-client-location').text(project.client_location || 'Not specified');
+
+                        // Billing Tab
+                        let billingHtml = '';
+                        if (recoveries.length > 0) {
+                            recoveries.forEach(rec => {
+                                const statusClass = rec.status == '1' ? 'bg-success' : 'bg-warning';
+                                const statusText = rec.status == '1' ? 'Paid' : 'Pending';
+                                billingHtml += `
+                                    <tr>
+                                        <td>${new Date(rec.created_at).toLocaleDateString()}</td>
+                                        <td class="fw-bold">₹${parseFloat(rec.paid).toLocaleString('en-IN')}</td>
+                                        <td><span class="badge ${statusClass}">${statusText}</span></td>
+                                        <td class="small">${rec.note || '-'}</td>
+                                    </tr>
+                                `;
+                            });
+                        } else {
+                            billingHtml = '<tr><td colspan="4" class="text-center py-4 text-muted">No payment history found.</td></tr>';
+                        }
+                        $('#p-billing-body').html(billingHtml);
+
+                        // License Tab
+                        let licenseHtml = '';
+                        if (license) {
+                            licenseHtml = `
+                                <div class="lb-info-card border-primary border-start border-4 mb-3">
+                                    <label><i class="bx bx-key"></i> License Key</label>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <code class="fs-5 text-primary fw-bold">${license.eselicense_key}</code>
+                                        <button class="btn btn-sm btn-link" onclick="navigator.clipboard.writeText('${license.eselicense_key}')"><i class="bx bx-copy"></i></button>
+                                    </div>
+                                </div>
+                                <div class="ld-info-grid">
+                                    <div class="ld-info-card">
+                                        <label><i class="bx bx-code-alt"></i> Tech Stack</label>
+                                        <span>${license.technology_stack || 'N/A'}</span>
+                                    </div>
+                                    <div class="ld-info-card">
+                                        <label><i class="bx bx-calendar-event"></i> Expiry Date</label>
+                                        <span class="${new Date(license.expiry_date) < new Date() ? 'text-danger fw-bold' : ''}">
+                                            ${new Date(license.expiry_date).toLocaleDateString()}
+                                        </span>
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            licenseHtml = `
+                                <div class="alert alert-info border-0 bg-light p-3 rounded-3">
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <i class="bx bx-info-circle text-info fs-4"></i>
+                                        <span class="fw-bold">No Active License</span>
+                                    </div>
+                                    <p class="small mb-0 opacity-75">There is no active license key associated with this project at the moment.</p>
+                                </div>
+                            `;
+                        }
+                        $('#p-license-area').html(licenseHtml);
+
                     },
-                    error: function(xhr, status, error){
-                        // Handle errors here
-                        console.log('Error:', error);
+                    error: function(xhr) {
+                        console.error('Error fetching project details:', xhr);
+                        $('#p-name').text('Error');
+                        $('#p-client').text('Could not load project details.');
                     }
                 });
             });
         });
-
     </script>
 
 @endsection
