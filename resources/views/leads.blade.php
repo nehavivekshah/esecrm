@@ -193,223 +193,288 @@
 
     </section>
 
-    <!-- Offcanvas for Edit/Profile -->
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="leadModal" aria-labelledby="leadModalLabel" style="width: 800px; max-width: 100vw; border-top-left-radius: 20px; border-bottom-left-radius: 20px; box-shadow: -10px 0 30px rgba(0,0,0,0.1);">
-        <div class="offcanvas-header lb-offcanvas-header">
-            <div class="d-flex align-items-center gap-3">
-                <div class="lb-offcanvas-avatar" id="leadAvatarBadge">L</div>
-                <div>
-                    <h5 class="offcanvas-title" id="leadModalLabel">Lead Details</h5>
-                    <span class="lb-offcanvas-subtitle" id="leadAvatarCompany">Loading...</span>
+    <!-- ═══════════════════════════════════════════════════════════
+         LEAD DETAILS OFFCANVAS  —  Enhanced Panel
+    ════════════════════════════════════════════════════════════ -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="leadModal" aria-labelledby="leadModalLabel"
+         style="width:860px;max-width:100vw;">
+
+        <!-- ── Header Banner ── -->
+        <div class="ld-header">
+            <div class="ld-header-bg"></div>
+            <div class="ld-header-content">
+                <div class="d-flex align-items-center gap-3 flex-1 min-w-0">
+                    <div class="ld-avatar" id="leadAvatarBadge">L</div>
+                    <div class="min-w-0">
+                        <h5 class="ld-name mb-0" id="ld_display_name">Lead Details</h5>
+                        <span class="ld-company" id="ld_display_company">—</span>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                    <span class="ld-status-chip" id="ld_status_chip">Fresh</span>
+                    <a class="ld-quick-btn" id="ld_btn_call" href="#" title="Call"><i class="bx bx-phone"></i></a>
+                    <a class="ld-quick-btn ld-quick-wa" id="ld_btn_wa" href="#" target="_blank" title="WhatsApp"><i class="bx bxl-whatsapp"></i></a>
+                    <a class="ld-quick-btn ld-quick-mail" id="ld_btn_mail" href="#" title="Email"><i class="bx bx-envelope"></i></a>
+                    <button type="button" class="ld-close-btn" data-bs-dismiss="offcanvas"><i class="bx bx-x"></i></button>
                 </div>
             </div>
-            <button type="button" class="lb-offcanvas-close" data-bs-dismiss="offcanvas" aria-label="Close">
-                <i class="bx bx-x"></i>
+        </div>
+
+        <!-- ── Tab Nav ── -->
+        <div class="ld-tab-nav">
+            <button class="ld-tab active" data-bs-toggle="tab" data-bs-target="#tab-profile">
+                <i class="bx bx-user-circle"></i> Profile
+            </button>
+            <button class="ld-tab" data-bs-toggle="tab" data-bs-target="#tab-comments">
+                <i class="bx bx-message-detail"></i> Conversations
+            </button>
+            <button class="ld-tab" data-bs-toggle="tab" data-bs-target="#tab-porposal">
+                <i class="bx bx-file"></i> Proposals
+            </button>
+            <button class="ld-tab" data-bs-toggle="tab" data-bs-target="#tab-assign">
+                <i class="bx bx-user-plus"></i> Assign
             </button>
         </div>
-        <div class="offcanvas-body lb-offcanvas-body">
-                    <!--<ul class="nav nav-tabs mb-3" id="leadModalTab" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="lead-details-tab" data-bs-toggle="pill" data-bs-target="#lead-details" type="button" role="tab" aria-controls="lead-details" aria-selected="true">Profile</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="porposal-tab" data-bs-toggle="pill" data-bs-target="#porposal" type="button" role="tab" aria-controls="comments" aria-selected="false" tabindex="-1">Porposal</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="comments-tab" data-bs-toggle="pill" data-bs-target="#comments" type="button" role="tab" aria-controls="comments" aria-selected="false" tabindex="-1">Conversations</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="new-comment-tab" data-bs-toggle="pill" data-bs-target="#new-comment" type="button" role="tab" aria-controls="new-comment" aria-selected="false" tabindex="-1">Reminder</button>
-                            </li>
-                        </ul>-->
-                    <ul class="nav nav-tabs nav-justified bg-default mb-3" id="leadModalTab" role="tablist">
-                        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab"
-                                data-bs-target="#tab-profile">Profile Info</button></li>
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab"
-                                data-bs-target="#tab-comments">Conversations</button></li>
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab"
-                                data-bs-target="#tab-porposal">Porposal</button></li>
-                    </ul>
-                    <div class="tab-content">
-                        <!-- Profile Tab -->
-                        <div class="tab-pane fade show active" id="tab-profile">
+
+        <!-- ── Tab Content ── -->
+        <div class="offcanvas-body ld-body">
+            <div class="tab-content h-100">
+
+                <!-- ══ PROFILE TAB ══ -->
+                <div class="tab-pane fade show active h-100" id="tab-profile">
+                    <div class="ld-scroll">
+
+                        <!-- View Mode -->
+                        <div id="ld-view-mode">
+                            <!-- Info Cards Grid -->
+                            <div class="ld-info-grid">
+
+                                <!-- Contact -->
+                                <div class="ld-info-card">
+                                    <div class="ld-info-card-header"><i class="bx bx-user"></i> Contact</div>
+                                    <div class="ld-info-row"><span class="ld-info-label">Mobile</span><span class="ld-info-val" id="v_mob">—</span></div>
+                                    <div class="ld-info-row"><span class="ld-info-label">WhatsApp</span><span class="ld-info-val" id="v_whatsapp">—</span></div>
+                                    <div class="ld-info-row"><span class="ld-info-label">Email</span><span class="ld-info-val" id="v_email">—</span></div>
+                                    <div class="ld-info-row"><span class="ld-info-label">Language</span><span class="ld-info-val" id="v_language">—</span></div>
+                                </div>
+
+                                <!-- Business -->
+                                <div class="ld-info-card">
+                                    <div class="ld-info-card-header"><i class="bx bx-briefcase"></i> Business</div>
+                                    <div class="ld-info-row"><span class="ld-info-label">Company</span><span class="ld-info-val" id="v_company">—</span></div>
+                                    <div class="ld-info-row"><span class="ld-info-label">Position</span><span class="ld-info-val" id="v_position">—</span></div>
+                                    <div class="ld-info-row"><span class="ld-info-label">Industry</span><span class="ld-info-val" id="v_industry">—</span></div>
+                                    <div class="ld-info-row"><span class="ld-info-label">GST No.</span><span class="ld-info-val" id="v_gstno">—</span></div>
+                                    <div class="ld-info-row"><span class="ld-info-label">Website</span><span class="ld-info-val" id="v_website">—</span></div>
+                                </div>
+
+                                <!-- Address -->
+                                <div class="ld-info-card">
+                                    <div class="ld-info-card-header"><i class="bx bx-map"></i> Address</div>
+                                    <div class="ld-info-row"><span class="ld-info-label">Street</span><span class="ld-info-val" id="v_address">—</span></div>
+                                    <div class="ld-info-row"><span class="ld-info-label">City</span><span class="ld-info-val" id="v_city">—</span></div>
+                                    <div class="ld-info-row"><span class="ld-info-label">State</span><span class="ld-info-val" id="v_state">—</span></div>
+                                    <div class="ld-info-row"><span class="ld-info-label">Country</span><span class="ld-info-val" id="v_country">—</span></div>
+                                    <div class="ld-info-row"><span class="ld-info-label">ZIP</span><span class="ld-info-val" id="v_zip">—</span></div>
+                                </div>
+
+                                <!-- CRM Intelligence -->
+                                <div class="ld-info-card">
+                                    <div class="ld-info-card-header"><i class="bx bx-brain"></i> CRM Intelligence</div>
+                                    <div class="ld-info-row"><span class="ld-info-label">Purpose</span><span class="ld-info-val" id="v_purpose">—</span></div>
+                                    <div class="ld-info-row"><span class="ld-info-label">Lead Value</span><span class="ld-info-val" id="v_value">—</span></div>
+                                    <div class="ld-info-row"><span class="ld-info-label">POC</span><span class="ld-info-val" id="v_poc">—</span></div>
+                                    <div class="ld-info-row"><span class="ld-info-label">Assigned</span><span class="ld-info-val" id="v_assigned">—</span></div>
+                                    <div class="ld-info-row"><span class="ld-info-label">Tags</span><span class="ld-info-val" id="v_tags">—</span></div>
+                                </div>
+                            </div>
+
+                            <!-- Action Bar -->
+                            @if(in_array('leads_edit', $roleArray) || in_array('leads_delete', $roleArray) || in_array('All', $roleArray))
+                            <div class="ld-action-bar">
+                                @if(in_array('leads_delete', $roleArray) || in_array('All', $roleArray))
+                                    <button type="button" class="ld-btn ld-btn-danger leadDelete" id="leadDelete">
+                                        <i class="bx bx-trash"></i> Delete
+                                    </button>
+                                @endif
+                                @if(in_array('leads_edit', $roleArray) || in_array('All', $roleArray))
+                                    <button type="button" class="ld-btn ld-btn-primary" id="ld_edit_toggle">
+                                        <i class="bx bx-edit"></i> Edit Lead
+                                    </button>
+                                @endif
+                            </div>
+                            @endif
+                        </div>
+
+                        <!-- Edit Mode (hidden by default) -->
+                        <div id="ld-edit-mode" style="display:none;">
+                            <div class="ld-edit-banner">
+                                <i class="bx bx-edit-alt"></i> Editing Lead
+                                <button type="button" class="ms-auto ld-btn ld-btn-ghost btn-sm" id="ld_edit_cancel">
+                                    <i class="bx bx-x"></i> Cancel
+                                </button>
+                            </div>
                             <form id="editLeadForm">
                                 @csrf
-                                <div class="row g-3">
-                                    <div class="col-12 text-left">
-                                        <h4 class="h5 font-weight-bold divider">Lead Information</h4>
-                                        <span class="div-line mb-0"></span>
-                                        <input type="hidden" id="m_id" name="id" value="">
-                                    </div>
-                                    <div class="col-md-4 form-group">
-                                        <label for="name">Name*</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class='bx bx-user'></i></span>
-                                            <input type="text" class="form-control" id="m_name" name="name"
-                                                placeholder="Enter Name*" required>
+                                <input type="hidden" id="m_id" name="id">
+                                <div class="row g-3 p-3">
+                                    <div class="ld-section-label col-12">Contact Information</div>
+                                    <div class="col-md-4">
+                                        <label class="ld-label">Full Name *</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><i class="bx bx-user"></i></span>
+                                            <input type="text" class="form-control" id="m_name" name="name" placeholder="Full Name" required>
                                         </div>
                                     </div>
-                                    <div class="col-md-4 form-group">
-                                        <label for="email">Email Address</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class='bx bx-envelope-open'></i></span>
-                                            <input type="email" class="form-control" id="m_email" name="email"
-                                                placeholder="Enter Email Id">
+                                    <div class="col-md-4">
+                                        <label class="ld-label">Email</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><i class="bx bx-envelope"></i></span>
+                                            <input type="email" class="form-control" id="m_email" name="email" placeholder="Email">
                                         </div>
                                     </div>
-                                    <div class="col-md-4 form-group">
-                                        <label for="mobile">Mobile Number*</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class='bx bx-phone'></i></span>
-                                            <input type="text" class="form-control" id="m_mob" name="mob"
-                                                placeholder="Enter Mobile Number*" value="91" required>
+                                    <div class="col-md-4">
+                                        <label class="ld-label">Mobile *</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><i class="bx bx-phone"></i></span>
+                                            <input type="text" class="form-control" id="m_mob" name="mob" placeholder="91XXXXXXXXXX" required>
                                         </div>
                                     </div>
-                                    <div class="col-md-4 form-group">
-                                        <label for="whatsapp">Whatsapp</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class='bx bxl-whatsapp'></i></span>
-                                            <input type="text" class="form-control" id="m_whatsapp" name="whatsapp"
-                                                placeholder="Enter Whatsapp Number" value="91">
+                                    <div class="col-md-4">
+                                        <label class="ld-label">WhatsApp</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text" style="color:#25d366"><i class="bx bxl-whatsapp"></i></span>
+                                            <input type="text" class="form-control" id="m_whatsapp" name="whatsapp" placeholder="91XXXXXXXXXX">
                                         </div>
                                     </div>
-                                    <div class="col-md-4 form-group">
-                                        <label for="company">Company</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class='bx bx-briefcase'></i></span>
-                                            <input type="text" class="form-control" id="m_company" name="company"
-                                                placeholder="Enter Company">
+                                    <div class="col-md-4">
+                                        <label class="ld-label">Language</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><i class="bx bx-world"></i></span>
+                                            <input type="text" class="form-control" id="m_language" name="language" placeholder="EN / HI">
                                         </div>
                                     </div>
-                                    <div class="col-md-4 form-group">
-                                        <label for="position">Position</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class='bx bx-user'></i></span>
-                                            <input type="text" class="form-control" id="m_position" name="position"
-                                                placeholder="Enter Position">
+
+                                    <div class="ld-section-label col-12">Business Details</div>
+                                    <div class="col-md-4">
+                                        <label class="ld-label">Company</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><i class="bx bx-briefcase"></i></span>
+                                            <input type="text" class="form-control" id="m_company" name="company" placeholder="Company">
                                         </div>
                                     </div>
-                                    <div class="col-md-4 form-group">
-                                        <label for="industry">Industry</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class='bx bx-building'></i></span>
-                                            <input type="text" class="form-control" id="m_industry" name="industry"
-                                                placeholder="Enter Industry">
+                                    <div class="col-md-4">
+                                        <label class="ld-label">Position</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><i class="bx bx-user-pin"></i></span>
+                                            <input type="text" class="form-control" id="m_position" name="position" placeholder="e.g. Manager">
                                         </div>
                                     </div>
-                                    <div class="col-md-4 form-group">
-                                        <label for="industry">GST No.</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class='bx bx-building'></i></span>
-                                            <input type="text" class="form-control" id="m_gstno" name="gstno"
-                                                placeholder="Enter GST No.">
+                                    <div class="col-md-4">
+                                        <label class="ld-label">Industry</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><i class="bx bx-building"></i></span>
+                                            <input type="text" class="form-control" id="m_industry" name="industry" placeholder="e.g. IT">
                                         </div>
                                     </div>
-                                    <div class="col-12 text-left pt-3">
-                                        <h4 class="h5 font-weight-bold divider">Address Details</h4>
-                                        <span class="div-line mb-0"></span>
-                                    </div>
-                                    <div class="col-md-4 form-group">
-                                        <label for="address">Address</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class='bx bx-home'></i></span>
-                                            <input type="text" class="form-control" id="m_address" name="address[address]"
-                                                placeholder="Enter Address">
+                                    <div class="col-md-4">
+                                        <label class="ld-label">GST No.</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><i class="bx bx-id-card"></i></span>
+                                            <input type="text" class="form-control" id="m_gstno" name="gstno" placeholder="GSTIN">
                                         </div>
                                     </div>
-                                    <div class="col-md-4 form-group">
-                                        <label for="city">City</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class='bx bx-map'></i></span>
-                                            <input type="text" class="form-control" id="m_city" name="address[city]"
-                                                placeholder="Enter City">
+                                    <div class="col-md-4">
+                                        <label class="ld-label">Website</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><i class="bx bx-link"></i></span>
+                                            <input type="url" class="form-control" id="m_website" name="website" placeholder="https://">
                                         </div>
                                     </div>
-                                    <div class="col-md-4 form-group">
-                                        <label for="state">State</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class='bx bx-map-pin'></i></span>
-                                            <input type="text" class="form-control" id="m_state" name="address[state]"
-                                                placeholder="Enter State">
+
+                                    <div class="ld-section-label col-12">Address</div>
+                                    <div class="col-md-4">
+                                        <label class="ld-label">Street</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><i class="bx bx-home"></i></span>
+                                            <input type="text" class="form-control" id="m_address" name="address[address]" placeholder="Street">
                                         </div>
                                     </div>
-                                    <div class="col-md-4 form-group">
-                                        <label for="country">Country</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class='bx bx-globe'></i></span>
-                                            <input type="text" class="form-control" id="m_country" name="address[country]"
-                                                placeholder="Enter Country">
+                                    <div class="col-md-4">
+                                        <label class="ld-label">City</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><i class="bx bx-map-alt"></i></span>
+                                            <input type="text" class="form-control" id="m_city" name="address[city]" placeholder="City">
                                         </div>
                                     </div>
-                                    <div class="col-md-4 form-group">
-                                        <label for="zip">Zip/Postal Code</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class='bx bx-pin'></i></span>
-                                            <input type="text" class="form-control" id="m_zip" name="address[zip]"
-                                                placeholder="Enter Zip/Postal Code">
+                                    <div class="col-md-4">
+                                        <label class="ld-label">State</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><i class="bx bx-map-pin"></i></span>
+                                            <input type="text" class="form-control" id="m_state" name="address[state]" placeholder="State">
                                         </div>
                                     </div>
-                                    <div class="col-md-4 form-group">
-                                        <label for="website">Website</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class='bx bx-link'></i></span>
-                                            <input type="url" class="form-control" id="m_website" name="website"
-                                                placeholder="Enter Website Link">
+                                    <div class="col-md-4">
+                                        <label class="ld-label">Country</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><i class="bx bx-globe"></i></span>
+                                            <input type="text" class="form-control" id="m_country" name="address[country]" placeholder="Country">
                                         </div>
                                     </div>
-                                    <div class="col-md-4 form-group">
-                                        <label for="source">Language</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class='bx bx-world'></i></span>
-                                            <input type="text" class="form-control" id="m_language" name="language"
-                                                placeholder="Enter Language">
+                                    <div class="col-md-4">
+                                        <label class="ld-label">ZIP</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><i class="bx bx-pin"></i></span>
+                                            <input type="text" class="form-control" id="m_zip" name="address[zip]" placeholder="ZIP Code">
                                         </div>
                                     </div>
-                                    <div class="col-md-4 form-group">
-                                        <label for="source">Purpose</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class='bx bx-target-lock'></i></span>
-                                            <input type="text" class="form-control" id="m_purpose" name="purpose"
-                                                placeholder="Enter Purpose">
+
+                                    <div class="ld-section-label col-12">CRM Intelligence</div>
+                                    <div class="col-md-4">
+                                        <label class="ld-label">Purpose</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><i class="bx bx-target-lock"></i></span>
+                                            <input type="text" class="form-control" id="m_purpose" name="purpose" placeholder="e.g. Sales">
                                         </div>
                                     </div>
-                                    <div class="col-md-4 form-group">
-                                        <label for="values">Lead Value</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class='bx bx-rupee'></i></span>
-                                            <input type="number" class="form-control" id="m_value" name="values"
-                                                placeholder="Enter Values">
+                                    <div class="col-md-4">
+                                        <label class="ld-label">Lead Value (₹)</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><i class="bx bx-rupee"></i></span>
+                                            <input type="number" class="form-control" id="m_value" name="values" placeholder="0">
                                         </div>
                                     </div>
-                                    <div class="col-md-4 form-group">
-                                        <label for="source">Assigned</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class='bx bx-share-alt'></i></span>
-                                            <input type="text" class="form-control" id="m_assigned" name="assigned"
-                                                placeholder="Enter Assigned User Name">
+                                    <div class="col-md-4">
+                                        <label class="ld-label">POC</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><i class="bx bx-user-check"></i></span>
+                                            <input type="text" class="form-control" id="m_poc" name="poc" placeholder="Point of Contact">
                                         </div>
                                     </div>
-                                    <div class="col-md-4 form-group">
-                                        <label for="source">POC</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class='bx bx-user-check'></i></span>
-                                            <input type="text" class="form-control" id="m_poc" name="poc"
-                                                placeholder="Enter Point of Contact">
+                                    <div class="col-md-4">
+                                        <label class="ld-label">Assign Salesperson</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><i class="bx bx-share-alt"></i></span>
+                                            <select class="form-select" id="m_assigned" name="assigned">
+                                                <option value="">— Select —</option>
+                                                @foreach($getUsers as $u)
+                                                    <option value="{{ $u->id }}">{{ $u->name }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-4 form-group">
-                                        <label for="source">Tags</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class='bx bx-user-check'></i></span>
-                                            <input type="text" class="form-control" id="m_tags" name="tags"
-                                                placeholder="Enter Tags (Search Keywords, K2)">
+                                    <div class="col-md-4">
+                                        <label class="ld-label">Tags</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><i class="bx bx-purchase-tag-alt"></i></span>
+                                            <input type="text" class="form-control" id="m_tags" name="tags" placeholder="K2, Hot, VIP">
                                         </div>
                                     </div>
-                                    <div class="form-group col-md-4">
-                                        <label>Status:</label><br>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class='bx bx-list-check'></i></span>
-                                            <select name="status" id="m_status" class="form-control">
+                                    <div class="col-md-4">
+                                        <label class="ld-label">Status</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><i class="bx bx-list-check"></i></span>
+                                            <select name="status" id="m_status" class="form-select">
                                                 <option value="0">Fresh</option>
                                                 <option value="1">Follow Up</option>
                                                 <option value="5">Converted</option>
@@ -417,85 +482,111 @@
                                             </select>
                                         </div>
                                     </div>
-                                    @if(in_array('leads_edit', $roleArray) || in_array('leads_delete', $roleArray) || in_array('All', $roleArray))
-                                        <div class="form-group col-md-12 mt-3 d-flex justify-content-between">
-                                            @if(in_array('leads_delete', $roleArray) || in_array('All', $roleArray))
-                                                <button type="button" class="btn btn-danger border px-4 leadDelete" id="leadDelete"
-                                                    data-page="leadDelete">Delete</button>
-                                            @else
-                                                <div></div>
-                                            @endif
 
-                                            @if(in_array('leads_edit', $roleArray) || in_array('All', $roleArray))
-                                                <div>
-                                                    <button type="reset" class="btn btn-light ml-auto border px-4">Reset</button>
-                                                    <button type="submit"
-                                                        class="btn btn-indigo px-4">Save</button>
-                                                </div>
-                                            @endif
+                                    <!-- Edit Footer -->
+                                    <div class="col-12">
+                                        <div class="ld-edit-footer">
+                                            <button type="reset" class="ld-btn ld-btn-ghost">
+                                                <i class="bx bx-reset"></i> Reset
+                                            </button>
+                                            <button type="submit" class="ld-btn ld-btn-primary">
+                                                <i class="bx bx-check-circle"></i> Save Changes
+                                            </button>
                                         </div>
-                                    @endif
+                                    </div>
                                 </div>
                             </form>
                         </div>
-
-                        <!-- Conversations Tab -->
-                        <div class="tab-pane fade" id="tab-comments">
-                            <div class="row">
-                                <div class="col-md-7 border-end">
-                                    <div id="commentHistory" class="timeline-box"></div>
-                                </div>
-                                <div class="col-md-5">
-                                    <form id="addCommentForm">
-                                        @csrf <input type="hidden" name="lead_id" id="c_lead_id">
-                                        <div class="mb-3"><label class="form-label">Message</label><textarea name="msg"
-                                                id="c_msg" class="form-control form-control-sm" rows="4"
-                                                required></textarea></div>
-                                        <div class="mb-3"><label class="form-label">Next Reminder</label><input
-                                                type="datetime-local" name="next_date" id="c_next_date"
-                                                class="form-control form-control-sm" required></div>
-                                        <button type="submit"
-                                            class="btn btn-indigo btn-sm w-100 py-2">Save
-                                            Comment</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Proposals Tab -->
-                        <div class="tab-pane fade" id="tab-porposal">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h5 class="mb-0">Proposals</h5>
-                                        <a href="/manage-proposal" class="btn btn-primary btn-sm">
-                                            <i class="fas fa-plus mr-1"></i> New Proposal
-                                        </a>
-                                    </div>
-                                    <div class="table-responsive">
-                                        <table class="table table-hover table-striped rounded mb-0"
-                                            style="width: 100%;border: 1px solid #ccc; border-radius: 5px !important; overflow: hidden;">
-                                            <thead class="thead-light">
-                                                <tr>
-                                                    <th width="110px" class="m-none">#</th>
-                                                    <th>Subject</th>
-                                                    <th>Total</th>
-                                                    <th width="110px" class="m-none">Date</th>
-                                                    <th width="110px" class="m-none">Open Till</th>
-                                                    <th class="m-none">Status</th>
-                                                    <th width="110px" class="m-none text-right">Created Date</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="Proposals"></tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
-        </div>
-    </div>
+                </div>
+
+                <!-- ══ CONVERSATIONS TAB ══ -->
+                <div class="tab-pane fade" id="tab-comments" style="height:100%;">
+                    <div class="ld-convo-wrap">
+                        <!-- Timeline -->
+                        <div class="ld-timeline-col">
+                            <div class="ld-timeline-head">
+                                <i class="bx bx-history"></i> History
+                            </div>
+                            <div id="commentHistory" class="ld-timeline"></div>
+                        </div>
+                        <!-- Add Note Form -->
+                        <div class="ld-note-col">
+                            <div class="ld-note-head"><i class="bx bx-plus-circle"></i> Add Note</div>
+                            <form id="addCommentForm" class="ld-note-form">
+                                @csrf
+                                <input type="hidden" name="lead_id" id="c_lead_id">
+                                <div class="ld-note-field">
+                                    <label class="ld-label">Message *</label>
+                                    <textarea name="msg" id="c_msg" class="form-control" rows="5"
+                                        placeholder="Write a note about this conversation…" required></textarea>
+                                </div>
+                                <div class="ld-note-field">
+                                    <label class="ld-label"><i class="bx bx-alarm"></i> Next Reminder</label>
+                                    <input type="datetime-local" name="next_date" id="c_next_date"
+                                        class="form-control form-control-sm" required>
+                                </div>
+                                <button type="submit" class="ld-btn ld-btn-primary w-100">
+                                    <i class="bx bx-save"></i> Save Note
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══ PROPOSALS TAB ══ -->
+                <div class="tab-pane fade" id="tab-porposal">
+                    <div class="p-3">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="fw-bold" style="color:#202124;font-size:0.95rem;"><i class="bx bx-file me-1" style="color:#006666;"></i> Proposals</span>
+                            <a href="/manage-proposal" class="ld-btn ld-btn-primary" style="font-size:0.78rem;padding:5px 14px;">
+                                <i class="bx bx-plus"></i> New Proposal
+                            </a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" style="font-size:0.82rem;">
+                                <thead style="background:#f8fafb;">
+                                    <tr>
+                                        <th style="color:#5f6368;font-weight:600;">#ID</th>
+                                        <th style="color:#5f6368;font-weight:600;">Subject</th>
+                                        <th style="color:#5f6368;font-weight:600;">Total</th>
+                                        <th style="color:#5f6368;font-weight:600;">Date</th>
+                                        <th style="color:#5f6368;font-weight:600;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="Proposals"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══ ASSIGN TAB ══ -->
+                <div class="tab-pane fade" id="tab-assign">
+                    <div class="p-4">
+                        <div class="ld-assign-card">
+                            <div class="ld-assign-icon"><i class="bx bx-user-plus"></i></div>
+                            <h6 class="mb-1" style="font-weight:700;color:#202124;">Assign Salesperson</h6>
+                            <p class="text-muted mb-3" style="font-size:0.82rem;">Re-assign this lead to a different salesperson instantly.</p>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text"><i class="bx bx-user"></i></span>
+                                <select class="form-select" id="quick_assign_user">
+                                    <option value="">— Select Salesperson —</option>
+                                    @foreach($getUsers as $u)
+                                        <option value="{{ $u->id }}">{{ $u->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <button type="button" class="ld-btn ld-btn-primary w-100" id="quickAssignBtn">
+                                <i class="bx bx-check-circle"></i> Assign Now
+                            </button>
+                            <div id="quickAssignMsg" class="mt-2 text-center" style="font-size:0.82rem;"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>{{-- /tab-content --}}
+        </div>{{-- /offcanvas-body --}}
+    </div>{{-- /offcanvas --}}
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -657,10 +748,55 @@
                 var id = $(this).attr('data-id');
                 if (!id) return;
 
+                // Always reset to view mode on open
+                $('#ld-view-mode').show();
+                $('#ld-edit-mode').hide();
+
                 $('#m_id').val(id); $('#c_lead_id').val(id);
+
                 $.get("/get-lead-details/" + id, function (data) {
                     var l = data.lead;
-                    const location = JSON.parse(l.location);
+                    var location = {};
+                    try { location = JSON.parse(l.location) || {}; } catch(e) {}
+
+                    // ── Header Banner ──
+                    var initials = (l.name || 'L').charAt(0).toUpperCase();
+                    $('#leadAvatarBadge').text(initials);
+                    $('#ld_display_name').text(l.name || '—');
+                    $('#ld_display_company').text(l.company || '—');
+
+                    var statusLabels = {'0':'Fresh','1':'Follow Up','5':'Converted','9':'Loss'};
+                    var statusColors = {'0':'#5f6368','1':'#f9ab00','5':'#1e8e3e','9':'#d93025'};
+                    var sl = statusLabels[l.status] || 'Fresh';
+                    var sc = statusColors[l.status] || '#5f6368';
+                    $('#ld_status_chip').text(sl).css({'background': sc + '18', 'color': sc, 'border-color': sc + '40'});
+
+                    $('#ld_btn_call').attr('href', l.mob ? 'tel:+' + l.mob : '#');
+                    $('#ld_btn_wa').attr('href', l.whatsapp ? 'https://wa.me/' + l.whatsapp : '#');
+                    $('#ld_btn_mail').attr('href', l.email ? 'mailto:' + l.email : '#');
+
+                    // ── View Mode Cards ──
+                    $('#v_mob').text(l.mob ? '+' + l.mob : '—');
+                    $('#v_whatsapp').text(l.whatsapp ? '+' + l.whatsapp : '—');
+                    $('#v_email').text(l.email || '—');
+                    $('#v_language').text(l.language || '—');
+                    $('#v_company').text(l.company || '—');
+                    $('#v_position').text(l.position || '—');
+                    $('#v_industry').text(l.industry || '—');
+                    $('#v_gstno').text(l.gstno || '—');
+                    $('#v_website').html(l.website ? '<a href="'+l.website+'" target="_blank">'+l.website+'</a>' : '—');
+                    $('#v_address').text(location['address'] || '—');
+                    $('#v_city').text(location['city'] || '—');
+                    $('#v_state').text(location['state'] || '—');
+                    $('#v_country').text(location['country'] || '—');
+                    $('#v_zip').text(location['zip'] || '—');
+                    $('#v_purpose').text(l.purpose || '—');
+                    $('#v_value').text(l.values ? '₹' + Number(l.values).toLocaleString('en-IN') : '—');
+                    $('#v_poc').text(l.poc || '—');
+                    $('#v_assigned').text(l.assigned || '—');
+                    $('#v_tags').text(l.tags || '—');
+
+                    // ── Edit Form pre-fill ──
                     $('#m_name').val(l.name);
                     $('#m_email').val(l.email);
                     $('#m_mob').val(l.mob);
@@ -669,30 +805,77 @@
                     $('#m_position').val(l.position);
                     $('#m_industry').val(l.industry);
                     $('#m_gstno').val(l.gstno);
-                    $('#m_address').val(location['address'] ?? '');
-                    $('#m_city').val(location['city'] ?? '');
-                    $('#m_state').val(location['state'] ?? '');
-                    $('#m_country').val(location['country'] ?? '');
-                    $('#m_zip').val(location['zip'] ?? '');
+                    $('#m_address').val(location['address'] || '');
+                    $('#m_city').val(location['city'] || '');
+                    $('#m_state').val(location['state'] || '');
+                    $('#m_country').val(location['country'] || '');
+                    $('#m_zip').val(location['zip'] || '');
                     $('#m_website').val(l.website);
                     $('#m_language').val(l.language);
                     $('#m_purpose').val(l.purpose);
                     $('#m_value').val(l.values);
-                    $('#m_assigned').val(l.assigned);
+                    $('#m_assigned').val(l.assigned); // set dropdown by ID
                     $('#m_poc').val(l.poc);
                     $('#m_status').val(l.status);
                     $('#m_tags').val(l.tags);
 
+                    // Pre-select quick assign tab
+                    $('#quick_assign_user').val(l.assigned || '');
+                    $('#quickAssignMsg').text('');
+
+                    // ── Conversation Timeline ──
                     var html = '';
                     data.comments.forEach(function (c) {
-                        html += '<div class="pb-2 border-bottom mb-2"><small class="text-primary fw-bold">' + c.created_at + '</small><p class="mb-0 small">' + c.msg + '</p></div>';
+                        html += '<div class="ld-timeline-item">'
+                            + '<div class="ld-tl-dot"></div>'
+                            + '<div class="ld-tl-body">'
+                            + '<div class="ld-tl-meta">' + (c.next_date ? c.next_date : c.created_at) + '</div>'
+                            + '<p class="ld-tl-msg">' + c.msg + '</p>'
+                            + '</div></div>';
                     });
-                    $('#commentHistory').html(html || 'No history.');
-                    $('#leadModal').offcanvas('show');
+                    $('#commentHistory').html(html || '<p class="text-muted text-center p-4" style="font-size:0.82rem">No conversations yet.</p>');
+
+                    var modal = new bootstrap.Offcanvas(document.getElementById('leadModal'));
+                    modal.show();
                 });
             });
 
 
+
+            // ── Edit / Cancel Toggle ──
+            $(document).on('click', '#ld_edit_toggle', function () {
+                $('#ld-view-mode').hide();
+                $('#ld-edit-mode').show();
+            });
+            $(document).on('click', '#ld_edit_cancel', function () {
+                $('#ld-edit-mode').hide();
+                $('#ld-view-mode').show();
+            });
+
+            // ── Quick Assign (Assign Tab) ──
+            $(document).on('click', '#quickAssignBtn', function () {
+                var leadId = $('#m_id').val();
+                var userId = $('#quick_assign_user').val();
+                if (!userId) { $('#quickAssignMsg').html('<span class="text-danger">Please select a salesperson.</span>'); return; }
+
+                $(this).prop('disabled', true).html('<i class="bx bx-loader-alt bx-spin"></i> Assigning...');
+
+                $.ajax({
+                    url: "{{ route('leads.bulkAssign') }}",
+                    method: 'POST',
+                    data: { _token: '{{ csrf_token() }}', lead_ids: [leadId], assigned_to: userId },
+                    success: function (res) {
+                        $('#quickAssignMsg').html('<span class="text-success"><i class="bx bx-check"></i> ' + res.message + '</span>');
+                        table.ajax.reload(null, false);
+                    },
+                    error: function (xhr) {
+                        $('#quickAssignMsg').html('<span class="text-danger">' + (xhr.responseJSON?.message || 'Error') + '</span>');
+                    },
+                    complete: function () {
+                        $('#quickAssignBtn').prop('disabled', false).html('<i class="bx bx-check-circle"></i> Assign Now');
+                    }
+                });
+            });
 
             // 6. Submit Forms
             $('#editLeadForm').on('submit', function (e) {
@@ -723,10 +906,7 @@
                     }, function (res) {
                         alert('Lead deleted successfully');
                         $('#leadModal').offcanvas('hide');
-
-                        // FIX: Use this instead of table.ajax.reload()
                         $('#leadslists').DataTable().ajax.reload(null, false);
-
                     }).fail(function (xhr) {
                         alert('Error: ' + xhr.statusText);
                     });
