@@ -14,7 +14,7 @@
     --h1-font-size: 1.75rem;
     --h2-font-size: 1.25rem;
     --h3-font-size: 1.125rem;
-    --normal-font-size: 13.5px;
+    --normal-font-size: 14px;
     --small-font-size: .813rem;
     --smaller-font-size: .75rem;
 
@@ -358,7 +358,7 @@ h2 {
 
 .sidebar li {
     position: relative;
-    margin: 4px 0;
+    margin: 0px 0;
     list-style: none;
 }
 
