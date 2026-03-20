@@ -36,6 +36,46 @@
                 </div>
             </div>
 
+            {{-- Filter Bar --}}
+            <div class="kb-filter-bar" id="kbFilterBar">
+                <div class="kb-filter-row">
+                    {{-- Search --}}
+                    <div class="kb-filter-field">
+                        <label class="kb-filter-label"><i class="bx bx-search"></i> Search</label>
+                        <input type="text" id="kbSearch" class="kb-filter-input" placeholder="Name, company, mobile…">
+                    </div>
+                    {{-- Assigned To --}}
+                    <div class="kb-filter-field">
+                        <label class="kb-filter-label"><i class="bx bx-user"></i> Assigned To</label>
+                        <select id="kbAssigned" class="kb-filter-select">
+                            <option value="">— All Salespersons —</option>
+                            @foreach($getUsers as $u)
+                                <option value="{{ $u->id }}">{{ $u->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    {{-- Date From --}}
+                    <div class="kb-filter-field">
+                        <label class="kb-filter-label"><i class="bx bx-calendar"></i> Date From</label>
+                        <input type="date" id="kbDateFrom" class="kb-filter-input">
+                    </div>
+                    {{-- Date To --}}
+                    <div class="kb-filter-field">
+                        <label class="kb-filter-label"><i class="bx bx-calendar-check"></i> Date To</label>
+                        <input type="date" id="kbDateTo" class="kb-filter-input">
+                    </div>
+                    {{-- Actions --}}
+                    <div class="kb-filter-field kb-filter-actions">
+                        <button class="lb-btn lb-btn-primary" id="kbApplyFilter">
+                            <i class="bx bx-filter-alt"></i> Apply
+                        </button>
+                        <button class="lb-btn lb-btn-ghost" id="kbResetFilter">
+                            <i class="bx bx-x"></i> Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         {{-- Kanban Board --}}

@@ -42,11 +42,35 @@ class LeadUIController extends Controller
             'Lost'      => 9,
         ];
 
-        // Summary-only mode: return counts for all stages (no card data)
+        // ── Shared filter builder ──────────────────────────────────────────
+        $buildQuery = function ($statusInt) use ($request) {
+            $q = Leads::where('cid', Auth::user()->cid)
+                      ->where('status', $statusInt);
+
+            if ($s = trim($request->get('search', ''))) {
+                $q->where(function ($sub) use ($s) {
+                    $sub->where('name', 'like', "%$s%")
+                        ->orWhere('company', 'like', "%$s%")
+                        ->orWhere('mob', 'like', "%$s%");
+                });
+            }
+            if ($assigned = $request->get('assigned')) {
+                $q->where('assigned', (int) $assigned);
+            }
+            if ($from = $request->get('date_from')) {
+                $q->whereDate('created_at', '>=', $from);
+            }
+            if ($to = $request->get('date_to')) {
+                $q->whereDate('created_at', '<=', $to);
+            }
+            return $q;
+        };
+
+        // Summary-only mode: return counts for all stages
         if ($request->missing('stage')) {
             $counts = [];
             foreach ($stageMap as $label => $statusInt) {
-                $counts[$label] = Leads::where('status', $statusInt)->count();
+                $counts[$label] = $buildQuery($statusInt)->count();
             }
             return response()->json(['counts' => $counts]);
         }
@@ -57,20 +81,21 @@ class LeadUIController extends Controller
         $page   = max((int) $request->get('page', 1), 1);
         $offset = ($page - 1) * $limit;
 
-        $total = Leads::where('status', $stage)->count();
+        $query = $buildQuery($stage);
+        $total = $query->count();
 
-        $leads = Leads::where('status', $stage)
+        $leads = (clone $query)
             ->orderBy('updated_at', 'desc')
             ->skip($offset)
             ->take($limit)
-            ->get(['id', 'name', 'company', 'mob', 'whatsapp', 'email', 'values', 'poc', 'source', 'purpose', 'score', 'status']);
+            ->get(['id', 'name', 'company', 'mob', 'whatsapp', 'email', 'values', 'poc', 'source', 'purpose', 'score', 'status', 'assigned']);
 
         return response()->json([
-            'data'      => $leads,
-            'total'     => $total,
-            'page'      => $page,
-            'limit'     => $limit,
-            'has_more'  => ($offset + $limit) < $total,
+            'data'     => $leads,
+            'total'    => $total,
+            'page'     => $page,
+            'limit'    => $limit,
+            'has_more' => ($offset + $limit) < $total,
         ]);
     }
 
