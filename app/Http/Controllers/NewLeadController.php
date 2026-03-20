@@ -120,8 +120,23 @@ class NewLeadController extends Controller
 
                 $data = [];
                 foreach ($leads as $lead) {
-                    $statusMap = ['0' => 'Fresh', '1' => 'Follow Up', '5' => 'Converted', '9' => 'Loss'];
-                    $statusClassMap = ['0' => 'bg-light border text-dark', '1' => 'bg-warning text-dark', '5' => 'bg-success', '9' => 'bg-danger'];
+                    $statusMap = [
+                        '0' => 'Fresh',
+                        '1' => 'Follow Up',
+                        '2' => 'Qualified',
+                        '3' => 'Proposal Sent',
+                        '5' => 'Closed (Won)',
+                        '9' => 'Loss'
+                    ];
+
+                    $statusClassMap = [
+                        '0' => 'bg-light border text-dark',
+                        '1' => 'bg-warning text-dark',
+                        '2' => 'bg-info text-dark',
+                        '3' => 'bg-primary',
+                        '5' => 'bg-success',
+                        '9' => 'bg-danger'
+                    ];
 
                     $statusText = $statusMap[$lead->status] ?? 'Fresh';
                     $statusBadge = '<span class="badge ' . ($statusClassMap[$lead->status] ?? 'bg-secondary') . '">' . $statusText . '</span>';

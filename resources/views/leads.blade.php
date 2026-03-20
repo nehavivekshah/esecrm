@@ -116,7 +116,10 @@
                     <select id="ajaxStatus" class="lb-select">
                         <option value="">All Status</option>
                         <option value="0">🟢 Fresh</option>
-                        <option value="1">🔵 Follow Up</option>
+                        <option value="1">🟡 Follow Up</option>
+                        <option value="2">🟣 Qualified</option>
+                        <option value="3">🟠 Proposal Sent</option>
+                        <option value="5">🔵 Closed (Won)</option>
                         <option value="9">🔴 Loss</option>
                     </select>
                     <button class="lb-icon-btn" id="refreshBtn" title="Refresh">

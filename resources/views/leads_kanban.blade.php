@@ -273,6 +273,9 @@
                 ? `<span class="kb-card-value-chip"><i class="bx bx-rupee"></i>${escHtml(String(lead.values))}</span>` : '';
 
             // Contact action buttons — always visible
+            const assignedName = kbUserMap[lead.assigned] || lead.assigned || 'Unassigned';
+            const assignedHtml = `<div class="kb-card-poc mt-2"><i class="bx bx-user-circle"></i> ${escHtml(assignedName)}</div>`;
+
             const waBtn    = lead.whatsapp
                 ? `<a href="https://api.whatsapp.com/send/?phone=${encodeURIComponent(lead.whatsapp)}&text=Hi&type=phone_number&app_absent=0" target="_blank" class="kb-action-btn kb-action-wa" title="WhatsApp" onclick="event.stopPropagation();"><i class="bx bxl-whatsapp"></i></a>` : '';
             const callBtn  = lead.mob
@@ -300,6 +303,9 @@
                         ${sourceHtml}
                         ${valueHtml}
                     </div>
+
+                    {{-- Assigned To --}}
+                    ${assignedHtml}
 
                     {{-- Action buttons — always visible --}}
                     <div class="kb-card-actions kb-card-actions-visible">
