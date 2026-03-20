@@ -130,6 +130,8 @@ Route::group(['middleware' => 'auth'], function () {
     /*Manage Lead Data*/
     Route::get('/manage-lead', [LeadController::class, 'manageLead'])->name('manageLead');
     Route::post('/manage-lead', [LeadController::class, 'manageLeadPost'])->name('manageLead');
+    Route::post('/bulk-assign-leads', [LeadController::class, 'bulkAssignLeads'])->name('leads.bulkAssign');
+
 
     //Route::get('/get-lead-data', [LeadController::class, 'getLeadData']);
 

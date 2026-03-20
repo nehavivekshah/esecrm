@@ -12,48 +12,85 @@
             background-color: #fff1f1 !important;
             border-left: 5px solid #dc3545 !important;
         }
+        #leadslists tbody tr { cursor: pointer; }
+        .section-divider { font-size: 12px; font-weight: 700; text-transform: uppercase; color: #888; border-bottom: 1px solid #eee; padding-bottom: 5px; margin: 15px 0; }
+        .form-label { font-weight: 600; font-size: 11px; margin-bottom: 2px; }
+        .timeline-box { max-height: 450px; overflow-y: auto; border-left: 2px solid #eee; padding-left: 20px; }
 
-        /*.dataTables_wrapper .dataTables_filter { display: none; }*/
-        #leadslists tbody tr {
+        /* ─── Bulk Select ─── */
+        .lead-cb { width: 16px; height: 16px; cursor: pointer; accent-color: #006666; }
+        #leadslists tbody tr.selected-row { background: rgba(0,102,102,0.06) !important; }
+
+        /* ─── Floating Bulk Action Bar ─── */
+        #bulkActionBar {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            opacity: 0;
+            transition: transform 0.28s cubic-bezier(.4,0,.2,1), opacity 0.22s;
+            z-index: 9999;
+            background: #fff;
+            border: 1px solid #e8eaed;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.16);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 420px;
+            pointer-events: none;
+        }
+        #bulkActionBar.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            pointer-events: all;
+        }
+        #bulkSelCount {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #006666;
+            background: #e6f4f0;
+            padding: 4px 10px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+        #bulkSalesSelect {
+            flex: 1;
+            font-size: 0.82rem;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            padding: 6px 10px;
+            color: #202124;
+            outline: none;
+        }
+        #bulkAssignBtn {
+            background: #006666;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 7px 18px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.18s;
+        }
+        #bulkAssignBtn:hover { background: #004d4d; }
+        #bulkClearBtn {
+            background: none;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 0.80rem;
+            color: #5f6368;
             cursor: pointer;
         }
-
-        .section-divider {
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: #888;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-            margin: 15px 0;
-        }
-
-        .form-label {
-            font-weight: 600;
-            font-size: 11px;
-            margin-bottom: 2px;
-        }
-
-        .timeline-box {
-            max-height: 450px;
-            overflow-y: auto;
-            border-left: 2px solid #eee;
-            padding-left: 20px;
-        }
-
         @media (max-width:767px) {
-            .mob-style {
-                flex-wrap: wrap;
-                gap: 13px !important;
-            }
-
-            .input-group {
-                min-width: 100% !important;
-            }
-
-            #leadslists_previous {
-                display: none;
-            }
+            .mob-style { flex-wrap: wrap; gap: 13px !important; }
+            .input-group { min-width: 100% !important; }
+            #leadslists_previous { display: none; }
+            #bulkActionBar { min-width: 90vw; flex-wrap: wrap; bottom: 14px; }
         }
     </style>
 
@@ -112,6 +149,7 @@
                     <table id="leadslists" class="leads-table" style="width:100%;">
                         <thead>
                             <tr>
+                                <th style="width:36px;"><input type="checkbox" class="lead-cb" id="selectAllLeads" title="Select all"></th>
                                 <th>Name</th>
                                 <th class="m-none">Company</th>
                                 <th class="m-none mw80">Mobile</th>
@@ -135,6 +173,20 @@
             </div>
 
         </div>
+
+    {{-- ─── Floating Bulk Action Bar ─── --}}
+    <div id="bulkActionBar">
+        <span id="bulkSelCount">0 selected</span>
+        <select id="bulkSalesSelect">
+            <option value="">— Assign to Salesperson —</option>
+            @foreach($getUsers as $u)
+                <option value="{{ $u->id }}">{{ $u->name }}</option>
+            @endforeach
+        </select>
+        <button id="bulkAssignBtn"><i class="bx bx-user-check"></i> Assign</button>
+        <button id="bulkClearBtn">✕ Clear</button>
+    </div>
+
     </section>
 
     <!-- Offcanvas for Edit/Profile -->
@@ -462,6 +514,12 @@
                 },
 
                 columns: [
+                    {
+                        data: 'id', orderable: false, searchable: false,
+                        render: function (id) {
+                            return '<input type="checkbox" class="lead-cb lead-row-cb" data-id="' + id + '">';
+                        }
+                    },
                     { data: 'name' },
                     { data: 'company' },
                     { data: 'mobile' },
@@ -476,25 +534,108 @@
                 ],
 
                 columnDefs: [
-                    { targets: 0, className: 'mw150' },
-                    { targets: 1, className: 'm-none' },
-                    { targets: 2, className: 'm-none mw80' },
-                    { targets: 3, className: 'm-none mw60' },
-                    { targets: 4, className: 'm-none mw80' },
+                    { targets: 0, className: 'text-center', width: '36px' },
+                    { targets: 1, className: 'mw150' },
+                    { targets: 2, className: 'm-none' },
+                    { targets: 3, className: 'm-none mw80' },
+                    { targets: 4, className: 'm-none mw60' },
                     { targets: 5, className: 'm-none mw80' },
-                    { targets: 6, className: 'm-none mw60' },
-                    { targets: 7, className: 'm-none mw70 tm' },
-                    { targets: 8, className: 'm-none mw150' },
-                    { targets: 9, className: 'm-none mw60' },
-                    { targets: 10, className: 'position-sticky end-0 bg-default mw60' }
+                    { targets: 6, className: 'm-none mw80' },
+                    { targets: 7, className: 'm-none mw60' },
+                    { targets: 8, className: 'm-none mw70 tm' },
+                    { targets: 9, className: 'm-none mw150' },
+                    { targets: 10, className: 'm-none mw60' },
+                    { targets: 11, className: 'position-sticky end-0 bg-default mw60' }
                 ],
 
                 createdRow: function (row, data, dataIndex) {
-                    if (data.row_class) {
-                        $(row).addClass(data.row_class);
-                    }
+                    if (data.row_class) $(row).addClass(data.row_class);
                     $(row).attr('data-id', data.id);
                 }
+            });
+
+            // ─── Bulk Selection Logic ───────────────────────────────────────
+            function getSelectedIds() {
+                return $('.lead-row-cb:checked').map(function () {
+                    return $(this).data('id');
+                }).get();
+            }
+
+            function updateBulkBar() {
+                var ids = getSelectedIds();
+                var bar = $('#bulkActionBar');
+                if (ids.length > 0) {
+                    $('#bulkSelCount').text(ids.length + ' selected');
+                    bar.addClass('show');
+                } else {
+                    bar.removeClass('show');
+                }
+            }
+
+            // Select-all header checkbox
+            $(document).on('change', '#selectAllLeads', function () {
+                var checked = $(this).prop('checked');
+                $('.lead-row-cb').prop('checked', checked);
+                $('#leadslists tbody tr').toggleClass('selected-row', checked);
+                updateBulkBar();
+            });
+
+            // Individual row checkboxes
+            $(document).on('change', '.lead-row-cb', function () {
+                $(this).closest('tr').toggleClass('selected-row', $(this).prop('checked'));
+                var total = $('.lead-row-cb').length;
+                var checked = $('.lead-row-cb:checked').length;
+                $('#selectAllLeads').prop('indeterminate', checked > 0 && checked < total)
+                                   .prop('checked', checked === total && total > 0);
+                updateBulkBar();
+            });
+
+            // Reset on table redraw
+            table.on('draw', function () {
+                $('#selectAllLeads').prop('checked', false).prop('indeterminate', false);
+                updateBulkBar();
+            });
+
+            // Clear selection
+            $('#bulkClearBtn').on('click', function () {
+                $('.lead-row-cb, #selectAllLeads').prop('checked', false).prop('indeterminate', false);
+                $('#leadslists tbody tr').removeClass('selected-row');
+                updateBulkBar();
+            });
+
+            // Bulk Assign
+            $('#bulkAssignBtn').on('click', function () {
+                var ids = getSelectedIds();
+                var salesId = $('#bulkSalesSelect').val();
+                if (!ids.length) { return; }
+                if (!salesId) { alert('Please select a salesperson first.'); return; }
+
+                $(this).prop('disabled', true).html('<i class="bx bx-loader-alt bx-spin"></i> Assigning...');
+
+                $.ajax({
+                    url: "{{ route('leads.bulkAssign') }}",
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        lead_ids: ids,
+                        assigned_to: salesId
+                    },
+                    success: function (res) {
+                        // Toast-style feedback
+                        var msg = res.message || 'Assigned successfully!';
+                        alert(msg);
+                        $('.lead-row-cb, #selectAllLeads').prop('checked', false).prop('indeterminate', false);
+                        $('#leadslists tbody tr').removeClass('selected-row');
+                        updateBulkBar();
+                        table.ajax.reload(null, false);
+                    },
+                    error: function (xhr) {
+                        alert('Error: ' + (xhr.responseJSON?.message || xhr.statusText));
+                    },
+                    complete: function () {
+                        $('#bulkAssignBtn').prop('disabled', false).html('<i class="bx bx-user-check"></i> Assign');
+                    }
+                });
             });
 
 
@@ -507,7 +648,8 @@
 
             // 4. Modal Open & Row Click
             $(document).on('click', '#leadslists tbody tr', function (e) {
-                if ($(e.target).closest('input, a, button').length) return;
+                // Prevent modal opening when clicking the checkbox or bulk-action elements
+                if ($(e.target).closest('input.lead-row-cb, input.lead-cb, a, button, select').length) return;
                 var id = $(this).attr('data-id');
                 if (!id) return;
 
