@@ -704,19 +704,150 @@ body {
     border-radius: 12px !important;
 }
 
-/* Responsive — compact header on small screens */
+/* ==========================================================================
+   HEADER — Full Mobile Responsive
+   Breakpoints: 768 → 576 → 480 → 360
+   ========================================================================== */
+
+/* ── 768px and below: tablet portrait ── */
+@media (max-width: 768px) {
+    .dashboard-header {
+        padding: 0 16px !important;
+    }
+    /* Hide user name & role, show only avatar */
+    .header-user-info,
+    .header-user-chevron {
+        display: none !important;
+    }
+    /* Tighten right side gap */
+    .header-right {
+        gap: 4px !important;
+    }
+    /* Shrink/hide vertical divider */
+    .header-divider {
+        display: none !important;
+    }
+}
+
+/* ── 576px and below: large phones ── */
 @media (max-width: 576px) {
     .dashboard-header {
         padding: 0 12px !important;
-        height: 56px;
+        height: 56px !important;
     }
-
     .header-page-title {
-        font-size: 0.95rem !important;
+        font-size: 0.9rem !important;
     }
-
+    .header-greeting {
+        display: none !important;
+    }
+    /* Avatar smaller */
+    .header-avatar {
+        width: 32px !important;
+        height: 32px !important;
+    }
+    /* Tasks button — icon only */
+    .header-right > button.header-action-btn span.d-md-inline {
+        display: none !important;
+    }
+    /* Reduce action button padding */
     .header-action-btn {
-        padding: 6px 12px;
+        padding: 7px 10px !important;
+        font-size: 13px !important;
+    }
+    /* Notification icon button smaller */
+    .header-icon-btn {
+        width: 36px !important;
+        height: 36px !important;
+    }
+    /* Menu toggle smaller */
+    .header-menu-btn {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 1.1rem !important;
+    }
+    /* Prevent left side overflow */
+    .header-left {
+        min-width: 0;
+        flex: 1;
+        overflow: hidden;
+    }
+    .header-title-block {
+        min-width: 0;
+        overflow: hidden;
+    }
+    .header-page-title {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+/* ── 480px and below: small phones ── */
+@media (max-width: 480px) {
+    .dashboard-header {
+        padding: 0 10px !important;
+        height: 54px !important;
+    }
+    /* Hide Quick Add label text — icon only */
+    .header-action-btn span.d-none {
+        display: none !important;
+    }
+    .header-action-btn.header-action-primary {
+        padding: 8px 10px !important;
+        border-radius: 12px !important;
+    }
+    /* Tighten right side even more */
+    .header-right {
+        gap: 3px !important;
+    }
+    /* Slim down dropdowns on mobile */
+    .header-dropdown {
+        min-width: 240px !important;
+    }
+    .header-user-btn {
+        padding: 4px !important;
+    }
+}
+
+/* ── 360px and below: very small phones ── */
+@media (max-width: 360px) {
+    .dashboard-header {
+        padding: 0 8px !important;
+        height: 52px !important;
+    }
+    .header-right {
+        gap: 2px !important;
+    }
+    .header-page-title {
+        font-size: 0.82rem !important;
+        max-width: 120px;
+    }
+    .header-action-btn.header-action-primary {
+        padding: 7px 9px !important;
+    }
+    .header-icon-btn {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 1rem !important;
+    }
+    .header-avatar {
+        width: 28px !important;
+        height: 28px !important;
+    }
+    /* Notification dot adjust */
+    .header-notif-dot {
+        top: 4px !important;
+        right: 4px !important;
+        width: 7px !important;
+        height: 7px !important;
+    }
+}
+
+/* Prevent horizontal scroll on the whole page on mobile */
+@media (max-width: 576px) {
+    .dashboard-header {
+        overflow: hidden;
     }
 }
 
@@ -4979,7 +5110,8 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
 .ld-header-bg {
     position: absolute;
     inset: 0;
-    background: url(" data:image/svg+xml,%3Csvg width=60 height=60 viewBox=0 0 60 60 xmlns=http://www.w3.org/2000/svg%3E%3Cg fill=none fill-rule=evenodd%3E%3Cg fill=%23ffffff fill-opacity=0.04%3E%3Cpath d=M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\);
+    background: rgba(255,255,255,0.04);
+    pointer-events: none;
 }
 .ld-header-content {
  position: relative;
