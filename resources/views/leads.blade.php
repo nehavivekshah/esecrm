@@ -149,7 +149,7 @@
                     <table id="leadslists" class="leads-table" style="width:100%;">
                         <thead>
                             <tr>
-                                <th style="width:36px;"><input type="checkbox" class="lead-cb" id="selectAllLeads" title="Select all"></th>
+                                <th class="p-0" style="width:36px;"><input type="checkbox" class="lead-cb" id="selectAllLeads" title="Select all"></th>
                                 <th>Name</th>
                                 <th class="m-none">Company</th>
                                 <th class="m-none mw80">Mobile</th>
