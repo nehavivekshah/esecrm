@@ -205,33 +205,44 @@
          style="width:860px;max-width:100vw;">
 
         <!-- ── Header Banner ── -->
+        <!-- ── Header Banner ── -->
         <div class="ld-header">
-            <div class="ld-header-bg"></div>
             <div class="ld-header-content">
                 <div class="d-flex align-items-center gap-3 flex-1 min-w-0">
                     <div class="ld-avatar" id="leadAvatarBadge">L</div>
                     <div class="min-w-0">
-                        <h5 class="ld-name mb-0" id="ld_display_name">Lead Details</h5>
+                        <h5 class="ld-name" id="ld_display_name">Lead Details</h5>
                         <span class="ld-company" id="ld_display_company">—</span>
+                        <div class="mt-2 text-white-50" style="font-size:0.75rem;">
+                             <i class="bx bx-calendar-plus me-1"></i> Added on <span id="ld_display_since">—</span>
+                        </div>
                     </div>
                 </div>
                 <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                    <span class="ld-status-chip" id="ld_status_chip">Fresh</span>
-                    <a class="ld-quick-btn" id="ld_btn_call" href="#" title="Call"><i class="bx bx-phone"></i></a>
-                    <a class="ld-quick-btn ld-quick-wa" id="ld_btn_wa" href="#" target="_blank" title="WhatsApp"><i class="bx bxl-whatsapp"></i></a>
-                    <a class="ld-quick-btn ld-quick-mail" id="ld_btn_mail" href="#" title="Email"><i class="bx bx-envelope"></i></a>
-                    <button type="button" class="ld-close-btn" data-bs-dismiss="offcanvas"><i class="bx bx-x"></i></button>
+                    <span class="ld-status-chip" id="ld_status_chip" style="background:#f29900 !important; color:#fff !important;">Fresh</span>
+                    <a class="ld-quick-btn" id="ld_btn_call" href="#" title="Call">
+                        <i class="bx bx-phone"></i>
+                    </a>
+                    <a class="ld-quick-btn" id="ld_btn_wa" style="background:rgba(37,211, green, 0.2) !important; color:#25D366 !important; border-color:rgba(37,211,102,0.3) !important;" href="#" target="_blank" title="WhatsApp">
+                        <i class="bx bxl-whatsapp"></i>
+                    </a>
+                    <a class="ld-quick-btn" id="ld_btn_mail" href="#" title="Email">
+                        <i class="bx bx-envelope"></i>
+                    </a>
+                    <button type="button" class="btn text-white ps-2 pe-0" data-bs-dismiss="offcanvas" aria-label="Close" style="box-shadow:none;">
+                        <i class="bx bx-x" style="font-size:1.8rem;"></i>
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- ── Tab Nav ── -->
+        <!-- ── Segmented Control Tabs ── -->
         <div class="ld-tab-nav">
             <button class="ld-tab active" onclick="ldShowTab('tab-profile', this)">
                 <i class="bx bx-user-circle"></i> Profile
             </button>
             <button class="ld-tab" onclick="ldShowTab('tab-comments', this)">
-                <i class="bx bx-message-detail"></i> Conversations
+                <i class="bx bx-message-detail"></i> Timeline
             </button>
             <button class="ld-tab" onclick="ldShowTab('tab-porposal', this)">
                 <i class="bx bx-file"></i> Proposals
@@ -253,44 +264,85 @@
                         <div id="ld-view-mode">
                             <!-- Info Cards Grid -->
                             <div class="ld-info-grid">
-
-                                <!-- Contact -->
+                                <!-- Contact Card -->
                                 <div class="ld-info-card">
-                                    <div class="ld-info-card-header"><i class="bx bx-user"></i> Contact</div>
-                                    <div class="ld-info-row"><span class="ld-info-label">Mobile</span><span class="ld-info-val" id="v_mob">—</span></div>
-                                    <div class="ld-info-row"><span class="ld-info-label">WhatsApp</span><span class="ld-info-val" id="v_whatsapp">—</span></div>
-                                    <div class="ld-info-row"><span class="ld-info-label">Email</span><span class="ld-info-val" id="v_email">—</span></div>
-                                    <div class="ld-info-row"><span class="ld-info-label">Language</span><span class="ld-info-val" id="v_language">—</span></div>
+                                    <div class="ld-info-card-header"><i class="bx bx-phone-call"></i> Contact Details</div>
+                                    <div class="ld-info-row">
+                                        <span class="ld-info-label"><i class="bx bx-mobile-alt"></i> Mobile</span>
+                                        <span class="ld-info-val" id="v_mob">—</span>
+                                    </div>
+                                    <div class="ld-info-row">
+                                        <span class="ld-info-label"><i class="bx bxl-whatsapp"></i> WhatsApp</span>
+                                        <span class="ld-info-val" id="v_whatsapp">—</span>
+                                    </div>
+                                    <div class="ld-info-row">
+                                        <span class="ld-info-label"><i class="bx bx-envelope"></i> Email</span>
+                                        <span class="ld-info-val" id="v_email">—</span>
+                                    </div>
+                                    <div class="ld-info-row">
+                                        <span class="ld-info-label"><i class="bx bx-world"></i> Language</span>
+                                        <span class="ld-info-val" id="v_language">—</span>
+                                    </div>
                                 </div>
 
-                                <!-- Business -->
+                                <!-- Business Card -->
                                 <div class="ld-info-card">
-                                    <div class="ld-info-card-header"><i class="bx bx-briefcase"></i> Business</div>
-                                    <div class="ld-info-row"><span class="ld-info-label">Company</span><span class="ld-info-val" id="v_company">—</span></div>
-                                    <div class="ld-info-row"><span class="ld-info-label">Position</span><span class="ld-info-val" id="v_position">—</span></div>
-                                    <div class="ld-info-row"><span class="ld-info-label">Industry</span><span class="ld-info-val" id="v_industry">—</span></div>
-                                    <div class="ld-info-row"><span class="ld-info-label">GST No.</span><span class="ld-info-val" id="v_gstno">—</span></div>
-                                    <div class="ld-info-row"><span class="ld-info-label">Website</span><span class="ld-info-val" id="v_website">—</span></div>
+                                    <div class="ld-info-card-header"><i class="bx bx-buildings"></i> Business Info</div>
+                                    <div class="ld-info-row">
+                                        <span class="ld-info-label"><i class="bx bx-briefcase"></i> Company</span>
+                                        <span class="ld-info-val" id="v_company">—</span>
+                                    </div>
+                                    <div class="ld-info-row">
+                                        <span class="ld-info-label"><i class="bx bx-user-pin"></i> Position</span>
+                                        <span class="ld-info-val" id="v_position">—</span>
+                                    </div>
+                                    <div class="ld-info-row">
+                                        <span class="ld-info-label"><i class="bx bx-trending-up"></i> Industry</span>
+                                        <span class="ld-info-val" id="v_industry">—</span>
+                                    </div>
+                                    <div class="ld-info-row">
+                                        <span class="ld-info-label"><i class="bx bx-id-card"></i> GST No.</span>
+                                        <span class="ld-info-val" id="v_gstno">—</span>
+                                    </div>
+                                    <div class="ld-info-row">
+                                        <span class="ld-info-label"><i class="bx bx-globe"></i> Website</span>
+                                        <span class="ld-info-val" id="v_website">—</span>
+                                    </div>
                                 </div>
 
-                                <!-- Address -->
-                                <div class="ld-info-card">
-                                    <div class="ld-info-card-header"><i class="bx bx-map"></i> Address</div>
-                                    <div class="ld-info-row"><span class="ld-info-label">Street</span><span class="ld-info-val" id="v_address">—</span></div>
-                                    <div class="ld-info-row"><span class="ld-info-label">City</span><span class="ld-info-val" id="v_city">—</span></div>
-                                    <div class="ld-info-row"><span class="ld-info-label">State</span><span class="ld-info-val" id="v_state">—</span></div>
-                                    <div class="ld-info-row"><span class="ld-info-label">Country</span><span class="ld-info-val" id="v_country">—</span></div>
-                                    <div class="ld-info-row"><span class="ld-info-label">ZIP</span><span class="ld-info-val" id="v_zip">—</span></div>
-                                </div>
-
-                                <!-- CRM Intelligence -->
-                                <div class="ld-info-card">
+                                <!-- Intelligence Card (Full Width) -->
+                                <div class="ld-info-card" style="grid-column: 1 / -1;">
                                     <div class="ld-info-card-header"><i class="bx bx-brain"></i> CRM Intelligence</div>
-                                    <div class="ld-info-row"><span class="ld-info-label">Purpose</span><span class="ld-info-val" id="v_purpose">—</span></div>
-                                    <div class="ld-info-row"><span class="ld-info-label">Lead Value</span><span class="ld-info-val" id="v_value">—</span></div>
-                                    <div class="ld-info-row"><span class="ld-info-label">POC</span><span class="ld-info-val" id="v_poc">—</span></div>
-                                    <div class="ld-info-row"><span class="ld-info-label">Assigned</span><span class="ld-info-val" id="v_assigned">—</span></div>
-                                    <div class="ld-info-row"><span class="ld-info-label">Tags</span><span class="ld-info-val" id="v_tags">—</span></div>
+                                    <div class="row g-0">
+                                        <div class="col-md-6 pe-md-3 border-end">
+                                            <div class="ld-info-row">
+                                                <span class="ld-info-label"><i class="bx bx-target-lock"></i> Purpose</span>
+                                                <span class="ld-info-val" id="v_purpose">—</span>
+                                            </div>
+                                            <div class="ld-info-row">
+                                                <span class="ld-info-label"><i class="bx bx-rupee"></i> Lead Value</span>
+                                                <span class="ld-info-val fw-bold text-success" id="v_value">—</span>
+                                            </div>
+                                            <div class="ld-info-row">
+                                                <span class="ld-info-label"><i class="bx bx-user-check"></i> POC</span>
+                                                <span class="ld-info-val" id="v_poc">—</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 ps-md-3">
+                                            <div class="ld-info-row">
+                                                <span class="ld-info-label"><i class="bx bx-user-pin"></i> Assigned To</span>
+                                                <span class="ld-info-val text-primary fw-bold" id="v_assigned">—</span>
+                                            </div>
+                                            <div class="ld-info-row">
+                                                <span class="ld-info-label"><i class="bx bx-purchase-tag-alt"></i> Tags</span>
+                                                <span class="ld-info-val" id="v_tags">—</span>
+                                            </div>
+                                            <div class="ld-info-row">
+                                                <span class="ld-info-label"><i class="bx bx-map-pin"></i> Location</span>
+                                                <span class="ld-info-val text-muted" id="v_address_full" style="font-size:0.75rem;">—</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -774,12 +826,16 @@
                     $('#leadAvatarBadge').text(initials);
                     $('#ld_display_name').text(l.name || '—');
                     $('#ld_display_company').text(l.company || '—');
+                    
+                    // Added on date
+                    var addDate = l.created_at ? new Date(l.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+                    $('#ld_display_since').text(addDate);
 
-                    var statusLabels = {'0':'Fresh','1':'Follow Up','5':'Converted','9':'Loss'};
-                    var statusColors = {'0':'#5f6368','1':'#f9ab00','5':'#1e8e3e','9':'#d93025'};
+                    var statusLabels = {'0':'Fresh','1':'Follow Up','2':'Qualified','3':'Proposal Sent','5':'Converted','9':'Loss'};
+                    var statusColors = {'0':'#5f6368','1':'#f9ab00','2':'#673ab7','3':'#00bcd4','5':'#1e8e3e','9':'#d93025'};
                     var sl = statusLabels[l.status] || 'Fresh';
                     var sc = statusColors[l.status] || '#5f6368';
-                    $('#ld_status_chip').text(sl).css({'background': sc + '18', 'color': sc, 'border-color': sc + '40'});
+                    $('#ld_status_chip').text(sl).css({'background': sc, 'color': '#ffffff', 'border-color': sc});
 
                     $('#ld_btn_call').attr('href', l.mob ? 'tel:+' + l.mob : '#');
                     $('#ld_btn_wa').attr('href', l.whatsapp ? 'https://wa.me/' + l.whatsapp : '#');
@@ -795,11 +851,7 @@
                     $('#v_industry').text(l.industry || '—');
                     $('#v_gstno').text(l.gstno || '—');
                     $('#v_website').html(l.website ? '<a href="'+l.website+'" target="_blank">'+l.website+'</a>' : '—');
-                    $('#v_address').text(location['address'] || '—');
-                    $('#v_city').text(location['city'] || '—');
-                    $('#v_state').text(location['state'] || '—');
-                    $('#v_country').text(location['country'] || '—');
-                    $('#v_zip').text(location['zip'] || '—');
+                    $('#v_address_full').text([location.address, location.city, location.state, location.zip, location.country].filter(Boolean).join(', ') || '—');
                     $('#v_purpose').text(l.purpose || '—');
                     $('#v_value').text(l.values ? '₹' + Number(l.values).toLocaleString('en-IN') : '—');
                     $('#v_poc').text(l.poc || '—');

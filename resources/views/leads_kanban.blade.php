@@ -155,60 +155,121 @@
                 {{-- Header Banner --}}
                 <div class="ld-header">
                     <div class="ld-header-content">
-                        <div class="ld-avatar" id="kb_leadAvatar">L</div>
-                        <div style="flex:1; min-width:0;">
-                            <div class="ld-name" id="kb_leadName">—</div>
-                            <span class="ld-company" id="kb_leadCompany">—</span>
-                            <div class="mt-1">
-                                <span class="ld-status-chip" id="kb_leadStatus">—</span>
+                        <div class="d-flex align-items-center gap-3 flex-1 min-w-0">
+                            <div class="ld-avatar" id="kb_leadAvatar">L</div>
+                            <div class="min-w-0">
+                                <h5 class="ld-name" id="kb_leadName">Lead Details</h5>
+                                <span class="ld-company" id="kb_leadCompany">—</span>
+                                <div class="mt-2 text-white-50" style="font-size:0.75rem;">
+                                     <i class="bx bx-calendar-plus me-1"></i> Added on <span id="kb_leadSince">—</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="d-flex gap-1 align-items-center">
-                            <a href="#" class="ld-quick-btn" id="kb_btnCall" title="Call"><i class="bx bx-phone"></i></a>
-                            <a href="#" class="ld-quick-btn ld-quick-wa" id="kb_btnWa" title="WhatsApp"><i class="bx bxl-whatsapp"></i></a>
-                            <a href="#" class="ld-quick-btn ld-quick-mail" id="kb_btnMail" title="Email"><i class="bx bx-envelope"></i></a>
-                            <button type="button" class="ld-close-btn" data-bs-dismiss="modal"><i class="bx bx-x"></i></button>
+                        <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                            <span class="ld-status-chip" id="kb_leadStatus" style="background:#f29900 !important; color:#fff !important;">Fresh</span>
+                            <a class="ld-quick-btn" id="kb_btnCall" href="#" title="Call">
+                                <i class="bx bx-phone"></i>
+                            </a>
+                            <a class="ld-quick-btn" id="kb_btnWa" style="background:rgba(37,211,102,0.2) !important; color:#25D366 !important;" href="#" target="_blank" title="WhatsApp">
+                                <i class="bx bxl-whatsapp"></i>
+                            </a>
+                            <a class="ld-quick-btn" id="kb_btnMail" href="#" title="Email">
+                                <i class="bx bx-envelope"></i>
+                            </a>
+                            <button type="button" class="btn text-white ps-2 pe-0" data-bs-dismiss="modal" aria-label="Close" style="box-shadow:none;">
+                                <i class="bx bx-x" style="font-size:1.8rem;"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
 
                 {{-- Modal Body --}}
                 <div class="modal-body p-0">
+                    <input type="hidden" id="kb_card_id">
 
-                    {{-- Tabs --}}
+                    {{-- Tabs Navigation --}}
                     <div class="ld-tab-nav">
                         <button class="ld-tab active" onclick="kbTab(this,'kb-tab-info')">
-                            <i class="bx bx-user"></i> Info
+                            <i class="bx bx-user-circle"></i> Profile
                         </button>
                         <button class="ld-tab" onclick="kbTab(this,'kb-tab-conv')">
-                            <i class="bx bx-message-dots"></i> Conversations
+                            <i class="bx bx-message-detail"></i> Timeline
+                        </button>
+                        <button class="ld-tab" onclick="kbTab(this,'kb-tab-props')">
+                            <i class="bx bx-file"></i> Proposals
+                        </button>
+                        <button class="ld-tab" onclick="kbTab(this,'kb-tab-assign')">
+                            <i class="bx bx-user-plus"></i> Assign
                         </button>
                     </div>
 
-                    {{-- Info Tab --}}
                     <div id="kb-tab-info" style="padding:16px;">
                         <div class="ld-info-grid" id="kb_infoGrid">
                             {{-- Contact Card --}}
                             <div class="ld-info-card">
-                                <div class="ld-info-card-header"><i class="bx bx-phone-call"></i> Contact</div>
-                                <div class="ld-info-row"><span class="ld-info-label">Mobile</span><span class="ld-info-val" id="kb_mob">—</span></div>
-                                <div class="ld-info-row"><span class="ld-info-label">WhatsApp</span><span class="ld-info-val" id="kb_wa">—</span></div>
-                                <div class="ld-info-row"><span class="ld-info-label">Email</span><span class="ld-info-val" id="kb_email">—</span></div>
+                                <div class="ld-info-card-header"><i class="bx bx-phone-call"></i> Contact Details</div>
+                                <div class="ld-info-row">
+                                    <span class="ld-info-label"><i class="bx bx-mobile-alt"></i> Mobile</span>
+                                    <span class="ld-info-val" id="kb_mob">—</span>
+                                </div>
+                                <div class="ld-info-row">
+                                    <span class="ld-info-label"><i class="bx bxl-whatsapp"></i> WhatsApp</span>
+                                    <span class="ld-info-val" id="kb_wa">—</span>
+                                </div>
+                                <div class="ld-info-row">
+                                    <span class="ld-info-label"><i class="bx bx-envelope"></i> Email</span>
+                                    <span class="ld-info-val" id="kb_email">—</span>
+                                </div>
                             </div>
+
                             {{-- Business Card --}}
                             <div class="ld-info-card">
-                                <div class="ld-info-card-header"><i class="bx bx-buildings"></i> Business</div>
-                                <div class="ld-info-row"><span class="ld-info-label">Company</span><span class="ld-info-val" id="kb_company">—</span></div>
-                                <div class="ld-info-row"><span class="ld-info-label">Industry</span><span class="ld-info-val" id="kb_industry">—</span></div>
-                                <div class="ld-info-row"><span class="ld-info-label">Website</span><span class="ld-info-val" id="kb_website">—</span></div>
+                                <div class="ld-info-card-header"><i class="bx bx-buildings"></i> Business Info</div>
+                                <div class="ld-info-row">
+                                    <span class="ld-info-label"><i class="bx bx-briefcase"></i> Company</span>
+                                    <span class="ld-info-val" id="kb_company_val">—</span>
+                                </div>
+                                <div class="ld-info-row">
+                                    <span class="ld-info-label"><i class="bx bx-user-pin"></i> Position</span>
+                                    <span class="ld-info-val" id="kb_position">—</span>
+                                </div>
+                                <div class="ld-info-row">
+                                    <span class="ld-info-label"><i class="bx bx-trending-up"></i> Industry</span>
+                                    <span class="ld-info-val" id="kb_industry">—</span>
+                                </div>
                             </div>
-                            {{-- CRM Card (full width) --}}
+
+                            {{-- CRM Card --}}
                             <div class="ld-info-card" style="grid-column:1/-1;">
                                 <div class="ld-info-card-header"><i class="bx bx-brain"></i> CRM Intelligence</div>
-                                <div class="ld-info-row"><span class="ld-info-label">Purpose</span><span class="ld-info-val" id="kb_purpose">—</span></div>
-                                <div class="ld-info-row"><span class="ld-info-label">Lead Value</span><span class="ld-info-val" id="kb_value">—</span></div>
-                                <div class="ld-info-row"><span class="ld-info-label">Assigned</span><span class="ld-info-val" id="kb_assigned">—</span></div>
-                                <div class="ld-info-row"><span class="ld-info-label">Tags</span><span class="ld-info-val" id="kb_tags">—</span></div>
+                                <div class="row g-0">
+                                    <div class="col-6 pe-2 border-end">
+                                        <div class="ld-info-row">
+                                            <span class="ld-info-label"><i class="bx bx-target-lock"></i> Purpose</span>
+                                            <span class="ld-info-val" id="kb_purpose">—</span>
+                                        </div>
+                                        <div class="ld-info-row">
+                                            <span class="ld-info-label"><i class="bx bx-rupee"></i> Value</span>
+                                            <span class="ld-info-val fw-bold text-success" id="kb_value">—</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 ps-2">
+                                        <div class="ld-info-row">
+                                            <span class="ld-info-label"><i class="bx bx-user-pin"></i> Assigned To</span>
+                                            <span class="ld-info-val text-primary fw-bold" id="kb_assigned">—</span>
+                                        </div>
+                                        <div class="ld-info-row">
+                                            <span class="ld-info-label"><i class="bx bx-purchase-tag-alt"></i> Tags</span>
+                                            <span class="ld-info-val" id="kb_tags">—</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 mt-2 pt-2 border-top">
+                                        <div class="ld-info-row">
+                                            <span class="ld-info-label"><i class="bx bx-map-pin"></i> Location</span>
+                                            <span class="ld-info-val text-muted" id="kb_location_val" style="font-size:0.75rem;">—</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="ld-action-bar">
@@ -216,11 +277,63 @@
                         </div>
                     </div>
 
-                    {{-- Conversations Tab --}}
+                    {{-- Timeline Tab --}}
                     <div id="kb-tab-conv" style="display:none; padding:16px;">
-                        <div id="kb_timeline" style="padding-left:8px;">
+                         <div class="ld-timeline-head mb-3">
+                            <i class="bx bx-history"></i> Conversation History
+                        </div>
+                        <div id="kb_timeline">
                             <p class="text-muted text-center" style="font-size:0.82rem;">Loading…</p>
                         </div>
+                    </div>
+
+                    {{-- Proposals Tab --}}
+                    <div id="kb-tab-props" style="display:none; padding:16px;">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                             <div class="ld-timeline-head mb-0">
+                                <i class="bx bx-file"></i> Lead Proposals
+                            </div>
+                            <a href="/manage-proposal" class="ld-btn ld-btn-primary py-1 px-3" style="font-size:0.75rem;">
+                                <i class="bx bx-plus"></i> New
+                            </a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" style="font-size:0.80rem;">
+                                <thead style="background:#006666 !important;">
+                                    <tr>
+                                        <th style="color:#ffffff !important;">#ID</th>
+                                        <th style="color:#ffffff !important;">Subject</th>
+                                        <th style="color:#ffffff !important;">Total</th>
+                                        <th style="color:#ffffff !important;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="kb_proposals"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    {{-- Assign Tab --}}
+                    <div id="kb-tab-assign" style="display:none; padding:30px 20px;">
+                        <div class="text-center mb-4">
+                            <div class="ld-avatar mx-auto mb-3" style="background:#e6f4ea; color:#006666; width:64px; height:64px; border:none;">
+                                <i class="bx bx-user-plus" style="font-size:2rem;"></i>
+                            </div>
+                            <h6 class="fw-bold mb-1">Assign Salesperson</h6>
+                            <p class="text-muted small">Update the ownership of this lead instantly.</p>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="bx bx-user"></i></span>
+                            <select class="form-select" id="kb_quick_assign">
+                                <option value="">— Select —</option>
+                                @foreach($getUsers as $u)
+                                    <option value="{{ $u->id }}">{{ $u->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <button type="button" class="ld-btn ld-btn-primary w-100 py-2" id="kb_quickAssignBtn">
+                            <i class="bx bx-check-circle"></i> Assign Lead
+                        </button>
+                        <div id="kb_assignMsg" class="mt-3 text-center small"></div>
                     </div>
 
                 </div>
@@ -455,6 +568,7 @@
             modal.show();
 
             $.get('/get-lead-details/' + id, function (data) {
+                $('#kb_card_id').val(id);
                 var l = data.lead;
                 var loc = {};
                 try { loc = JSON.parse(l.location) || {}; } catch(e) {}
@@ -463,10 +577,14 @@
                 $('#kb_leadAvatar').text((l.name || 'L').charAt(0).toUpperCase());
                 $('#kb_leadName').text(l.name || '—');
                 $('#kb_leadCompany').text(l.company || '—');
+                
+                // Added on date
+                var addDate = l.created_at ? new Date(l.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+                $('#kb_leadSince').text(addDate);
 
                 var sl = kbStatusLabels[l.status] || 'New';
                 var sc = kbStatusColors[l.status] || '#5f6368';
-                $('#kb_leadStatus').text(sl).css({'background': sc+'18','color': sc,'border-color': sc+'40'});
+                $('#kb_leadStatus').text(sl).css({'background': sc, 'color': '#ffffff', 'border-color': sc});
 
                 $('#kb_btnCall').attr('href', l.mob   ? 'tel:+'+l.mob                    : '#');
                 $('#kb_btnWa').attr('href',   l.whatsapp ? 'https://wa.me/'+l.whatsapp  : '#');
@@ -476,16 +594,36 @@
                 $('#kb_mob').text(l.mob ? '+'+l.mob : '—');
                 $('#kb_wa').text(l.whatsapp ? '+'+l.whatsapp : '—');
                 $('#kb_email').text(l.email || '—');
-                $('#kb_company').text(l.company || '—');
+                $('#kb_company_val').text(l.company || '—');
+                $('#kb_position').text(l.position || '—');
                 $('#kb_industry').text(l.industry || '—');
-                $('#kb_website').html(l.website ? '<a href="'+l.website+'" target="_blank">'+l.website+'</a>' : '—');
+                
                 $('#kb_purpose').text(l.purpose || '—');
                 $('#kb_value').text(l.values ? '₹'+Number(l.values).toLocaleString('en-IN') : '—');
                 $('#kb_assigned').text(kbUserMap[l.assigned] || l.assigned || '—');
                 $('#kb_tags').text(l.tags || '—');
+                
+                // Location combined
+                $('#kb_location_val').text([loc.address, loc.city, loc.state, loc.zip, loc.country].filter(Boolean).join(', ') || '—');
 
                 // Edit button
                 $('#kb_editBtn').attr('href', '/manage-lead?id='+id+'&from=kanban');
+                
+                // Pre-select quick assign
+                $('#kb_quick_assign').val(l.assigned || '');
+                $('#kb_assignMsg').html('');
+
+                // Proposals
+                var propHtml = '';
+                (l.proposals || []).forEach(function(p){
+                    propHtml += `<tr>
+                        <td>#${p.id}</td>
+                        <td>${p.subject || '—'}</td>
+                        <td>₹${Number(p.total).toLocaleString('en-IN')}</td>
+                        <td><span class="badge bg-info">${p.status || 'Draft'}</span></td>
+                    </tr>`;
+                });
+                $('#kb_proposals').html(propHtml || '<tr><td colspan="4" class="text-center text-muted py-3">No proposals found.</td></tr>');
 
                 // Conversations timeline
                 var html = '';
@@ -501,10 +639,30 @@
             });
         });
 
+        // Quick Assign in Kanban Modal
+        $(document).on('click', '#kb_quickAssignBtn', function(){
+            var leadId = $('#kb_card_id').val(); // I'll need to set this ID when modal opens
+            var salesId = $('#kb_quick_assign').val();
+            if(!salesId) { $('#kb_assignMsg').html('<span class="text-danger">Select a salesperson</span>'); return; }
+
+            $(this).prop('disabled', true).html('<i class="bx bx-loader-alt bx-spin"></i> Assigning...');
+            
+            $.post("{{ route('leads.bulkAssign') }}", {
+                _token: CSRF_TOKEN,
+                lead_ids: [leadId],
+                assigned_to: salesId
+            }, function(res){
+                $('#kb_assignMsg').html('<span class="text-success"><i class="bx bx-check"></i> ' + (res.message || 'Assigned!') + '</span>');
+                initBoard(); // reload columns
+            }).always(() => {
+                $(this).prop('disabled', false).html('<i class="bx bx-check-circle"></i> Assign Lead');
+            });
+        });
+
         function kbTab(btn, tabId) {
             $('.ld-tab').removeClass('active');
             $(btn).addClass('active');
-            $('#kb-tab-info, #kb-tab-conv').hide();
+            $('#kb-tab-info, #kb-tab-conv, #kb-tab-props, #kb-tab-assign').hide();
             $('#' + tabId).show();
         }
 

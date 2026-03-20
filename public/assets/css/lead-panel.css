@@ -1,12 +1,16 @@
 /* =================================================================
-   Lead Details Panel – Bootstrap Override Fixes
-   Scoped to #leadModal to avoid affecting other components
+   Lead Details Panel – Modern CRM Redesign
+   Scoped to #leadModal and .offcanvas for the list view
 ================================================================= */
 
-/* Offcanvas layout fix */
-#leadModal { display: flex; flex-direction: column; }
+/* Container & Global Base */
+#leadModal, .offcanvas-end {
+    display: flex;
+    flex-direction: column;
+    background: #f8f9fa !important;
+}
 
-#leadModal .offcanvas-body.ld-body {
+.ld-body {
     padding: 0 !important;
     overflow: hidden !important;
     flex: 1;
@@ -14,188 +18,266 @@
     flex-direction: column;
 }
 
-#leadModal .tab-content {
-    flex: 1;
-    overflow: hidden;
+/* ── Premium Header ── */
+.ld-header {
+    position: relative;
+    padding: 24px;
+    background: #004d4d; /* Darker teal for premium feel */
+    background: linear-gradient(135deg, #004d4d 0%, #006666 100%);
+    color: #ffffff;
+    border-bottom: none;
+}
+
+.ld-header-content {
     display: flex;
-    flex-direction: column;
-    min-height: 0;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 2;
 }
 
-#leadModal .tab-pane.active {
-    display: flex !important;
-    flex-direction: column;
-    overflow: hidden;
-    flex: 1;
-    min-height: 0;
-}
-
-#leadModal .ld-scroll {
-    overflow-y: auto !important;
-    flex: 1 !important;
-    padding: 16px !important;
-    min-height: 0;
-}
-
-/* ── Info Grid Cards ── */
-#leadModal .ld-info-grid {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 12px !important;
-    margin-bottom: 16px !important;
-}
-
-#leadModal .ld-info-card {
-    background: #fff !important;
-    border: 1px solid #dee2e6 !important;
-    border-radius: 12px !important;
-    padding: 14px !important;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.06) !important;
-}
-
-#leadModal .ld-info-card-header {
-    font-size: 0.72rem !important;
-    font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.05em !important;
-    color: #006666 !important;
-    margin-bottom: 10px !important;
-    padding-bottom: 8px !important;
-    border-bottom: 1px solid #e8eaed !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 5px !important;
-}
-
-#leadModal .ld-info-row {
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: flex-start !important;
-    gap: 8px !important;
-    padding: 5px 0 !important;
-    font-size: 0.80rem !important;
-    border-bottom: 1px dashed #f1f3f4 !important;
-}
-
-#leadModal .ld-info-row:last-child { border-bottom: none !important; }
-
-#leadModal .ld-info-label {
-    color: #80868b !important;
-    font-size: 0.74rem !important;
-    flex-shrink: 0 !important;
-    min-width: 70px !important;
-    padding-top: 1px;
-}
-
-#leadModal .ld-info-val {
-    color: #202124 !important;
-    font-weight: 500 !important;
-    text-align: right !important;
-    word-break: break-word !important;
-    max-width: 60%;
-}
-
-#leadModal .ld-info-val a { color: #006666 !important; text-decoration: none; }
-#leadModal .ld-info-val a:hover { text-decoration: underline; }
-
-/* ── Action Bar ── */
-#leadModal .ld-action-bar {
-    display: flex !important;
-    gap: 10px !important;
-    justify-content: flex-end !important;
-    margin-top: 8px !important;
-    padding-top: 12px !important;
-    border-top: 1px solid #e8eaed !important;
-}
-
-/* ── Edit Banner & Sections ── */
-#leadModal .ld-edit-banner {
-    background: #fff8e1;
-    border-left: 4px solid #f9ab00;
-    padding: 10px 16px;
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: #5d4a00;
+.ld-avatar {
+    width: 56px;
+    height: 56px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 14px;
     display: flex;
     align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.ld-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+    color: #ffffff;
+    line-height: 1.2;
+}
+
+.ld-company {
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.8);
+    display: block;
+    margin-top: 2px;
+}
+
+.ld-status-chip {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: inline-block;
+}
+
+.ld-quick-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ld-quick-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.ld-quick-btn i { font-size: 1.1rem; }
+
+/* ── Segmented Control Tabs ── */
+.ld-tab-nav {
+    display: flex;
+    background: #ffffff;
+    padding: 8px 16px;
     gap: 8px;
-    position: sticky;
+    border-bottom: 1px solid #e8eaed;
+}
+
+.ld-tab {
+    padding: 8px 16px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #5f6368;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ld-tab i { font-size: 1rem; color: #80868b; }
+
+.ld-tab:hover { background: #f1f3f4; color: #202124; }
+
+.ld-tab.active {
+    background: #e6f4ea; /* Light green/teal tint */
+    color: #006666;
+}
+
+.ld-tab.active i { color: #006666; }
+
+/* ── Content Layout ── */
+.tab-content { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+.ld-tab-pane { flex: 1; display: none; overflow-y: auto; padding: 20px; }
+.ld-tab-pane.active { display: block; }
+
+/* ── Info Grid & Cards ── */
+.ld-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.ld-info-card {
+    background: #ffffff;
+    border: 1px solid #e8eaed;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.ld-info-card-header {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #006666;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 1px solid #f1f3f4;
+    padding-bottom: 8px;
+}
+
+.ld-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.ld-info-row:last-child { border-bottom: none; }
+
+.ld-info-label {
+    font-size: 0.78rem;
+    color: #5f6368;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ld-info-label i { font-size: 1rem; color: #80868b; width: 18px; text-align: center; }
+
+.ld-info-val {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #202124;
+    text-align: right;
+}
+
+.ld-info-val a { color: #006666; text-decoration: none; }
+.ld-info-val a:hover { text-decoration: underline; }
+
+/* ── Vertical Timeline ── */
+.ld-timeline {
+    position: relative;
+    padding-left: 24px;
+    margin-top: 10px;
+}
+
+.ld-timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
     top: 0;
-    z-index: 10;
+    bottom: 0;
+    width: 2px;
+    background: #e8eaed;
 }
 
-#leadModal .ld-section-label {
-    font-size: 0.69rem !important;
-    font-weight: 800 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.06em !important;
-    color: #006666 !important;
-    background: #f0f9f9 !important;
-    padding: 3px 12px !important;
-    border-radius: 20px !important;
-    display: inline-block !important;
-    margin-top: 8px !important;
+.ld-timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+    padding-left: 24px;
 }
 
-#leadModal .ld-label {
-    font-size: 0.72rem !important;
-    font-weight: 600 !important;
-    color: #5f6368 !important;
-    margin-bottom: 3px !important;
-    display: block !important;
+.ld-tl-dot {
+    position: absolute;
+    left: -21px;
+    top: 5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2px solid #006666;
+    z-index: 2;
 }
 
-#leadModal .ld-edit-footer {
-    display: flex !important;
-    justify-content: flex-end !important;
-    gap: 10px !important;
-    padding: 14px 0 6px !important;
-    border-top: 1px solid #e8eaed !important;
-    margin-top: 4px !important;
+.ld-tl-meta {
+    font-size: 0.72rem;
+    color: #80868b;
+    margin-bottom: 4px;
+    font-weight: 500;
 }
 
-/* ── Conversations Tab ── */
-#leadModal .tab-pane#tab-comments {
-    flex: 1;
-    min-height: 0;
-    overflow: hidden;
+.ld-tl-body {
+    background: #ffffff;
+    border: 1px solid #e8eaed;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 0.82rem;
+    color: #3c4043;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
-#leadModal .ld-convo-wrap {
-    display: flex !important;
-    height: 100% !important;
-    overflow: hidden !important;
-    min-height: 0;
+/* ── Form Controls & Edit Mode ── */
+.ld-form-group { margin-bottom: 16px; }
+
+.ld-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    transition: border-color 0.2s;
 }
 
-#leadModal .ld-timeline-col {
-    flex: 1.3 !important;
-    border-right: 1px solid #e8eaed !important;
-    display: flex !important;
-    flex-direction: column !important;
-    min-height: 0;
-    overflow: hidden;
+.ld-input:focus {
+    outline: none;
+    border-color: #006666;
+    box-shadow: 0 0 0 2px rgba(0,102,102,0.1);
 }
 
-#leadModal .ld-note-col {
-    width: 280px !important;
-    flex-shrink: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden;
-}
-
-#leadModal .ld-timeline {
-    overflow-y: auto !important;
-    flex: 1 !important;
-    padding: 14px 14px 14px 26px !important;
-    min-height: 0;
+.ld-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #5f6368;
+    margin-bottom: 6px;
+    display: block;
 }
 
 /* ── Responsive ── */
-@media (max-width: 700px) {
-    #leadModal .ld-info-grid { grid-template-columns: 1fr !important; }
-    #leadModal .ld-convo-wrap { flex-direction: column !important; }
-    #leadModal .ld-note-col { width: 100% !important; border-top: 1px solid #e8eaed; border-right: none; }
-    #leadModal .ld-timeline-col { border-right: none !important; max-height: 40vh; }
+@media (max-width: 768px) {
+    .ld-info-grid { grid-template-columns: 1fr; }
+    .ld-header { padding: 16px; }
+    .ld-avatar { width: 44px; height: 44px; font-size: 1.25rem; }
 }
