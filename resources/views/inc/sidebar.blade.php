@@ -98,6 +98,16 @@
             </li>
         @endif
 
+        @if(in_array('projects', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
+            <li>
+                <a href="/projects" @if(Request::segment(1) == 'projects' || Request::segment(1) == 'manage-project') class="active" @endif>
+                    <i class="bx bx-briefcase"></i>
+                    <span class="link_name">Projects</span>
+                </a>
+                <span class="tooltip">Projects</span>
+            </li>
+        @endif
+
 
 
 
