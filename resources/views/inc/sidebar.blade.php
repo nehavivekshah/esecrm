@@ -41,6 +41,16 @@
             </a>
         </li>
 
+        @if(in_array('tasks', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
+            <li>
+                <a href="/task" @if(Request::segment(1) == 'task' || Request::segment(1) == 'edit-task') class="active" @endif>
+                    <i class="bx bx-task"></i>
+                    <span class="link_name">Project Tasks</span>
+                </a>
+                <span class="tooltip">Project Tasks</span>
+            </li>
+        @endif
+
         @if(Auth::user()->role == 'master')
             <li>
                 <a href="/companies" @if(Request::segment(1) == 'companies') class="active" @endif><i
@@ -90,37 +100,6 @@
 
 
 
-        @if(in_array('tasks', $roleArray) || in_array('crm_tasks', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
-            <li>
-                <span class="divider" data-bs-toggle="collapse" data-bs-target="#tasks-menu">
-                    <span class="divider-left"><i class="bx bx-task"></i><label>Tasks</label></span>
-                    <i class="bx bx-chevron-down"></i>
-                </span>
-                <div id="tasks-menu"
-                    class="collapse @if(Request::segment(1) == 'task' || Request::segment(1) == 'edit-task' || Request::segment(1) == 'crm-tasks') show @endif"
-                    data-bs-parent="#accordion">
-                    <ul class="sb_submenu">
-                        @if(in_array('crm_tasks', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
-                            <li>
-                                <a href="/crm-tasks" @if(Request::segment(1) == 'crm-tasks') class="active" @endif>
-                                    <i class="bx bx-phone-call"></i>
-                                    <span class="link_name">CRM Follow-ups</span>
-                                </a>
-                            </li>
-                        @endif
-                        @if(in_array('tasks', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
-                            <li>
-                                <a href="/task" @if(Request::segment(1) == 'task' || Request::segment(1) == 'edit-task')
-                                class="active" @endif>
-                                    <i class="bx bx-task"></i>
-                                    <span class="link_name">Project Tasks</span>
-                                </a>
-                            </li>
-                        @endif
-                    </ul>
-                </div>
-            </li>
-        @endif
 
         <li class="nav-title">SALES</li>
         <li>
