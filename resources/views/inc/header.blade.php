@@ -114,7 +114,7 @@
                 </li>
                 <li><hr class="dropdown-divider my-1 mx-2"></li>
                 <li>
-                    <a class="dropdown-item header-dropdown-item-sm" href="/manageUser?id={{ Auth::id() }}">
+                    <a class="dropdown-item header-dropdown-item-sm" href="/my-profile">
                         <i class="bx bx-user"></i> My Profile
                     </a>
                 </li>
