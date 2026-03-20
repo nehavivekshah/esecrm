@@ -134,6 +134,10 @@
                             <span class="d-none d-sm-inline">Sample</span>
                         </a>
                     @endif
+                    <a href="{{ route('leads.kanban') }}" class="lb-btn lb-btn-ghost" title="Switch to Kanban View">
+                        <i class="bx bx-layout"></i>
+                        <span class="d-none d-sm-inline">Kanban</span>
+                    </a>
                     @if(in_array('leads_add', $roleArray) || in_array('All', $roleArray))
                         <a href="/manage-lead" class="lb-btn lb-btn-primary">
                             <i class="bx bx-plus"></i>
