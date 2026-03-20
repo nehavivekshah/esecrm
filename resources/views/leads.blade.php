@@ -224,16 +224,16 @@
 
         <!-- ── Tab Nav ── -->
         <div class="ld-tab-nav">
-            <button class="ld-tab active" data-bs-toggle="tab" data-bs-target="#tab-profile">
+            <button class="ld-tab active" onclick="ldShowTab('tab-profile', this)">
                 <i class="bx bx-user-circle"></i> Profile
             </button>
-            <button class="ld-tab" data-bs-toggle="tab" data-bs-target="#tab-comments">
+            <button class="ld-tab" onclick="ldShowTab('tab-comments', this)">
                 <i class="bx bx-message-detail"></i> Conversations
             </button>
-            <button class="ld-tab" data-bs-toggle="tab" data-bs-target="#tab-porposal">
+            <button class="ld-tab" onclick="ldShowTab('tab-porposal', this)">
                 <i class="bx bx-file"></i> Proposals
             </button>
-            <button class="ld-tab" data-bs-toggle="tab" data-bs-target="#tab-assign">
+            <button class="ld-tab" onclick="ldShowTab('tab-assign', this)">
                 <i class="bx bx-user-plus"></i> Assign
             </button>
         </div>
@@ -243,7 +243,7 @@
             <div class="tab-content h-100">
 
                 <!-- ══ PROFILE TAB ══ -->
-                <div class="tab-pane fade show active h-100" id="tab-profile">
+                <div class="ld-tab-pane" id="tab-profile" style="display:block;">
                     <div class="ld-scroll">
 
                         <!-- View Mode -->
@@ -505,7 +505,7 @@
                 </div>
 
                 <!-- ══ CONVERSATIONS TAB ══ -->
-                <div class="tab-pane fade" id="tab-comments" style="height:100%;">
+                <div class="ld-tab-pane" id="tab-comments" style="display:none;">
                     <div class="ld-convo-wrap">
                         <!-- Timeline -->
                         <div class="ld-timeline-col">
@@ -539,7 +539,7 @@
                 </div>
 
                 <!-- ══ PROPOSALS TAB ══ -->
-                <div class="tab-pane fade" id="tab-porposal">
+                <div class="ld-tab-pane" id="tab-porposal" style="display:none;">
                     <div class="p-3">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <span class="fw-bold" style="color:#202124;font-size:0.95rem;"><i class="bx bx-file me-1" style="color:#006666;"></i> Proposals</span>
@@ -565,7 +565,7 @@
                 </div>
 
                 <!-- ══ ASSIGN TAB ══ -->
-                <div class="tab-pane fade" id="tab-assign">
+                <div class="ld-tab-pane" id="tab-assign" style="display:none;">
                     <div class="p-4">
                         <div class="ld-assign-card">
                             <div class="ld-assign-icon"><i class="bx bx-user-plus"></i></div>
@@ -919,6 +919,33 @@
                     });
                 }
             });
+        });
+        /* ── Tab Switcher for Lead Details Panel ────────────────── */
+        function ldShowTab(tabId, btnEl) {
+            // Hide all panes
+            document.querySelectorAll('#leadModal .ld-tab-pane').forEach(function (p) {
+                p.style.display = 'none';
+            });
+            // Show target pane
+            var pane = document.getElementById(tabId);
+            if (pane) pane.style.display = 'block';
+
+            // Update active tab button
+            document.querySelectorAll('#leadModal .ld-tab').forEach(function (b) {
+                b.classList.remove('active');
+            });
+            if (btnEl) btnEl.classList.add('active');
+        }
+
+        // Reset to Profile tab every time the offcanvas opens
+        document.getElementById('leadModal').addEventListener('show.bs.offcanvas', function () {
+            var firstBtn = this.querySelector('.ld-tab-nav .ld-tab');
+            ldShowTab('tab-profile', firstBtn);
+            // Also reset edit mode back to view mode
+            var viewMode = document.getElementById('ld-view-mode');
+            var editMode = document.getElementById('ld-edit-mode');
+            if (viewMode) viewMode.style.display = '';
+            if (editMode) editMode.style.display = 'none';
         });
     </script>
 
