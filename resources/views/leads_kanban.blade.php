@@ -3,7 +3,7 @@
 
 <style>
 /* Kanban Filter Bar */
-.kb-filter-bar{background:#fff;border:1px solid #e8eaed;border-radius:12px;padding:12px 16px;margin:0 16px 12px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.kb-filter-bar{background:#fff;border:1px solid #e8eaed;border-radius:12px;padding:12px 16px;margin:0 0px 12px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .kb-filter-row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
 .kb-filter-field{display:flex;flex-direction:column;gap:4px;flex:1 1 150px;min-width:120px}
 .kb-filter-label{font-size:.72rem;font-weight:600;color:#5f6368;text-transform:uppercase;letter-spacing:.3px;display:flex;align-items:center;gap:4px}
