@@ -2149,7 +2149,7 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting_disabled {
 }
 
 .kb-col-header-qualified {
-    border-bottom-color: #9334e9;
+    border-bottom-color: #7c3aed;
 }
 
 .kb-col-header-proposal {
@@ -2572,6 +2572,104 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting_disabled {
 /* Push edit to the right */
 .kb-action-spacer {
     flex: 1;
+}
+
+/* ── Kanban Mobile Responsive ───────────────────────────────── */
+
+/* Tablet: 768px */
+@media (max-width: 768px) {
+    .kb-board {
+        padding: 0 12px 24px;
+        gap: 10px;
+        min-height: calc(100vh - 220px);
+    }
+    .kb-col {
+        min-width: 240px;
+        max-width: 240px;
+    }
+    .kb-items {
+        max-height: calc(100vh - 280px);
+    }
+    .leads-toolbar {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .leads-toolbar-left {
+        flex: 1 1 100%;
+    }
+    .kb-stage-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 10px;
+    }
+}
+
+/* Mobile: 576px — switch to horizontal snap-scroll, always-visible actions */
+@media (max-width: 576px) {
+    .kb-board {
+        padding: 0 8px 20px;
+        gap: 8px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+    }
+    .kb-col {
+        min-width: 220px;
+        max-width: 220px;
+        scroll-snap-align: start;
+        flex-shrink: 0;
+    }
+    .kb-items {
+        max-height: 60vh;
+    }
+    /* Always show action buttons on touch screens */
+    .kb-card-actions {
+        opacity: 1 !important;
+    }
+    .kb-card {
+        padding: 10px;
+    }
+    .kb-card-name {
+        font-size: 0.80rem;
+    }
+    .kb-col-title {
+        font-size: 0.72rem;
+    }
+    /* Toolbar: stack into two rows */
+    .leads-toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    .leads-toolbar-right {
+        width: 100%;
+        justify-content: flex-end;
+    }
+    /* Legend: wrap */
+    .kb-stage-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 8px;
+        font-size: 0.72rem;
+    }
+}
+
+/* Very small phones: 400px */
+@media (max-width: 400px) {
+    .kb-col {
+        min-width: 200px;
+        max-width: 200px;
+    }
+    .kb-board {
+        padding: 0 6px 16px;
+    }
+    .kb-card {
+        padding: 8px;
+    }
+    .kb-action-btn {
+        width: 26px;
+        height: 26px;
+        font-size: 0.85rem;
+    }
 }
 
 /* ==========================================================================
