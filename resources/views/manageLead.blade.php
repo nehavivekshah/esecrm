@@ -243,14 +243,21 @@
                             <div class="ml-card-body">
                                 <div class="row g-3">
                                     <div class="col-md-6">
-                                        <label class="ml-label">Assigned To</label>
+                                        <label class="ml-label">Assign Salesperson</label>
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="bx bx-user-plus"></i></span>
-                                            <input type="text" class="form-control" name="source"
-                                                placeholder="Assignee Name"
-                                                value="{{ $leads->source ?? '' }}">
+                                            <select class="form-select" name="assigned">
+                                                <option value="">— Select Salesperson —</option>
+                                                @foreach($salesUsers ?? [] as $u)
+                                                    <option value="{{ $u->id }}"
+                                                        {{ ($leads->assigned ?? '') == $u->id ? 'selected' : '' }}>
+                                                        {{ $u->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
+
                                     <div class="col-md-6">
                                         <label class="ml-label">Purpose</label>
                                         <div class="input-group">

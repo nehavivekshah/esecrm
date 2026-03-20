@@ -239,9 +239,19 @@ class LeadController extends Controller
 
         $leadComments = Lead_comments::where('lead_id', '=', ($leads->id ?? ''))->get();
 
-        return view('manageLead', ['leads' => $leads, 'leadComments' => $leadComments]);
+        $salesUsers = User::where('cid', Auth::user()->cid)
+            ->where('status', '1')
+            ->orderBy('name')
+            ->get();
+
+        return view('manageLead', [
+            'leads'       => $leads,
+            'leadComments'=> $leadComments,
+            'salesUsers'  => $salesUsers,
+        ]);
 
     }
+
 
     public function manageLeadPost(Request $request)
     {
