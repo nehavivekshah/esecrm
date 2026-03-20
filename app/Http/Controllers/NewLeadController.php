@@ -34,9 +34,11 @@ class NewLeadController extends Controller
                     $query->where('status', $request->status);
                 }
 
-                // Filter by Assigned User (Sales Rep)
-                if ($request->filled('assign_user') || (Auth::user()->name && Auth::user()->role != 'master' && $roles->features != 'All')) {
-                    $query->where('assigned', ($request->assign_user ?? Auth::user()->name));
+                // Filter by Assigned User (Sales Rep) — assigned stores user ID
+                if ($request->filled('assign_user')) {
+                    $query->where('assigned', $request->assign_user);
+                } elseif (Auth::user()->role != 'master' && ($roles->features ?? '') != 'All') {
+                    $query->where('assigned', Auth::user()->id);
                 }
 
                 // Global Search Logic
@@ -111,6 +113,11 @@ class NewLeadController extends Controller
                     ->limit($request->input('length', 50))
                     ->get();
 
+                // Build a userId → name lookup for the assigned column
+                $userMap = User::where('cid', Auth::user()->cid)
+                    ->pluck('name', 'id')
+                    ->toArray();
+
                 $data = [];
                 foreach ($leads as $lead) {
                     $statusMap = ['0' => 'Fresh', '1' => 'Follow Up', '5' => 'Converted', '9' => 'Loss'];
@@ -178,7 +185,9 @@ class NewLeadController extends Controller
 
 
                     $company = (!empty($lead->company)) ? '<br><small class="text-muted d-none">' . e($lead->company) . '</small>' : '';
-                    $poc = ($roles->features != 'All') ? e($lead->poc) : e($lead->assigned);
+                    // Resolve assigned ID to user name
+                    $assignedName = $userMap[$lead->assigned] ?? ($lead->assigned ?: '—');
+                    $poc = ($roles->features != 'All') ? e($lead->poc) : e($assignedName);
 
                     // --- Phase 2: Score & Duplicate Badges ---
                     $scoreBadge = '';

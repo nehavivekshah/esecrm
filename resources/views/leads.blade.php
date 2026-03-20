@@ -107,7 +107,7 @@
                         <select id="ajaxSalesRep" class="lb-select">
                             <option value="">All Sales Reps</option>
                             @foreach($getUsers as $user)
-                                <option value="{{ $user->name }}">{{ $user->name }}</option>
+                                <option value="{{ $user->id }}">{{ $user->name }}</option>
                             @endforeach
                         </select>
                     @endif
