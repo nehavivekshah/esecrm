@@ -552,13 +552,13 @@
                         </div>
                         <div class="table-responsive">
                             <table class="table table-hover mb-0" style="font-size:0.82rem;">
-                                <thead style="background:#f8fafb;">
+                                <thead style="background:#006666 !important;">
                                     <tr>
-                                        <th style="color:#5f6368;font-weight:600;">#ID</th>
-                                        <th style="color:#5f6368;font-weight:600;">Subject</th>
-                                        <th style="color:#5f6368;font-weight:600;">Total</th>
-                                        <th style="color:#5f6368;font-weight:600;">Date</th>
-                                        <th style="color:#5f6368;font-weight:600;">Status</th>
+                                        <th style="color:#ffffff !important;font-weight:600;">#ID</th>
+                                        <th style="color:#ffffff !important;font-weight:600;">Subject</th>
+                                        <th style="color:#ffffff !important;font-weight:600;">Total</th>
+                                        <th style="color:#ffffff !important;font-weight:600;">Date</th>
+                                        <th style="color:#ffffff !important;font-weight:600;">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody id="Proposals"></tbody>
