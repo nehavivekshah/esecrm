@@ -7,6 +7,8 @@
         $roleArray = is_array($roles->permissions ?? '') ? $roles->permissions : explode(',', (string) ($roles->permissions ?? ''));
     @endphp
 
+    <link rel="stylesheet" href="{{ asset('assets/css/lead-panel.css') }}">
+
     <style>
         .bg-alert {
             background-color: #fff1f1 !important;
@@ -593,6 +595,9 @@
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
     <script>
+        // User ID → Name map (from server)
+        var userMap = {!! json_encode($getUsers->pluck('name', 'id')) !!};
+
         $(document).ready(function () {
             // 1. Init DataTable
             var table = $('#leadslists').DataTable({
@@ -793,7 +798,7 @@
                     $('#v_purpose').text(l.purpose || '—');
                     $('#v_value').text(l.values ? '₹' + Number(l.values).toLocaleString('en-IN') : '—');
                     $('#v_poc').text(l.poc || '—');
-                    $('#v_assigned').text(l.assigned || '—');
+                    $('#v_assigned').text(userMap[l.assigned] || l.assigned || '—');
                     $('#v_tags').text(l.tags || '—');
 
                     // ── Edit Form pre-fill ──

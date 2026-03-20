@@ -1,0 +1,201 @@
+/* =================================================================
+   Lead Details Panel – Bootstrap Override Fixes
+   Scoped to #leadModal to avoid affecting other components
+================================================================= */
+
+/* Offcanvas layout fix */
+#leadModal { display: flex; flex-direction: column; }
+
+#leadModal .offcanvas-body.ld-body {
+    padding: 0 !important;
+    overflow: hidden !important;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+#leadModal .tab-content {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+#leadModal .tab-pane.active {
+    display: flex !important;
+    flex-direction: column;
+    overflow: hidden;
+    flex: 1;
+    min-height: 0;
+}
+
+#leadModal .ld-scroll {
+    overflow-y: auto !important;
+    flex: 1 !important;
+    padding: 16px !important;
+    min-height: 0;
+}
+
+/* ── Info Grid Cards ── */
+#leadModal .ld-info-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+    margin-bottom: 16px !important;
+}
+
+#leadModal .ld-info-card {
+    background: #fff !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 12px !important;
+    padding: 14px !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06) !important;
+}
+
+#leadModal .ld-info-card-header {
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    color: #006666 !important;
+    margin-bottom: 10px !important;
+    padding-bottom: 8px !important;
+    border-bottom: 1px solid #e8eaed !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+}
+
+#leadModal .ld-info-row {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+    padding: 5px 0 !important;
+    font-size: 0.80rem !important;
+    border-bottom: 1px dashed #f1f3f4 !important;
+}
+
+#leadModal .ld-info-row:last-child { border-bottom: none !important; }
+
+#leadModal .ld-info-label {
+    color: #80868b !important;
+    font-size: 0.74rem !important;
+    flex-shrink: 0 !important;
+    min-width: 70px !important;
+    padding-top: 1px;
+}
+
+#leadModal .ld-info-val {
+    color: #202124 !important;
+    font-weight: 500 !important;
+    text-align: right !important;
+    word-break: break-word !important;
+    max-width: 60%;
+}
+
+#leadModal .ld-info-val a { color: #006666 !important; text-decoration: none; }
+#leadModal .ld-info-val a:hover { text-decoration: underline; }
+
+/* ── Action Bar ── */
+#leadModal .ld-action-bar {
+    display: flex !important;
+    gap: 10px !important;
+    justify-content: flex-end !important;
+    margin-top: 8px !important;
+    padding-top: 12px !important;
+    border-top: 1px solid #e8eaed !important;
+}
+
+/* ── Edit Banner & Sections ── */
+#leadModal .ld-edit-banner {
+    background: #fff8e1;
+    border-left: 4px solid #f9ab00;
+    padding: 10px 16px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #5d4a00;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+#leadModal .ld-section-label {
+    font-size: 0.69rem !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    color: #006666 !important;
+    background: #f0f9f9 !important;
+    padding: 3px 12px !important;
+    border-radius: 20px !important;
+    display: inline-block !important;
+    margin-top: 8px !important;
+}
+
+#leadModal .ld-label {
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    color: #5f6368 !important;
+    margin-bottom: 3px !important;
+    display: block !important;
+}
+
+#leadModal .ld-edit-footer {
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 10px !important;
+    padding: 14px 0 6px !important;
+    border-top: 1px solid #e8eaed !important;
+    margin-top: 4px !important;
+}
+
+/* ── Conversations Tab ── */
+#leadModal .tab-pane#tab-comments {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+#leadModal .ld-convo-wrap {
+    display: flex !important;
+    height: 100% !important;
+    overflow: hidden !important;
+    min-height: 0;
+}
+
+#leadModal .ld-timeline-col {
+    flex: 1.3 !important;
+    border-right: 1px solid #e8eaed !important;
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0;
+    overflow: hidden;
+}
+
+#leadModal .ld-note-col {
+    width: 280px !important;
+    flex-shrink: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden;
+}
+
+#leadModal .ld-timeline {
+    overflow-y: auto !important;
+    flex: 1 !important;
+    padding: 14px 14px 14px 26px !important;
+    min-height: 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 700px) {
+    #leadModal .ld-info-grid { grid-template-columns: 1fr !important; }
+    #leadModal .ld-convo-wrap { flex-direction: column !important; }
+    #leadModal .ld-note-col { width: 100% !important; border-top: 1px solid #e8eaed; border-right: none; }
+    #leadModal .ld-timeline-col { border-right: none !important; max-height: 40vh; }
+}
