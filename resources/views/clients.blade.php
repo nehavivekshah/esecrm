@@ -7,6 +7,8 @@
         $roleArray = explode(',', ($roles->permissions ?? ''));
     @endphp
 
+    <link rel="stylesheet" href="{{ asset('assets/css/lead-panel.css') }}">
+
     <section class="task__section">
         @include('inc.header', ['title' => 'Customers'])
 
@@ -15,10 +17,17 @@
             {{-- Toolbar --}}
             <div class="leads-toolbar mb-3">
                 <div class="leads-toolbar-left">
-                    <span class="lb-page-count" id="clientCount">
-                        <i class="bx bx-group"></i>
-                        {{ count($clients) }} Customers
-                    </span>
+                    <form action="/clients" method="GET" id="clientFilterForm" class="d-flex align-items-center gap-2">
+                        <div class="lb-search-box">
+                            <i class="bx bx-search"></i>
+                            <input type="text" name="search" id="clientSearch" placeholder="Search customers..." value="{{ $search ?? '' }}">
+                        </div>
+                        <select name="status" id="clientStatusFilter" class="lb-select-sm">
+                            <option value="">All Status</option>
+                            <option value="1" {{ ($status ?? '') == '1' ? 'selected' : '' }}>Active</option>
+                            <option value="0" {{ ($status ?? '') == '0' ? 'selected' : '' }}>Inactive</option>
+                        </select>
+                    </form>
                 </div>
                 <div class="leads-toolbar-right">
                     <button class="lb-icon-btn" onclick="location.reload()" title="Refresh">
@@ -135,231 +144,180 @@
         <input type="file" name="impClientFile" id="impClientFile" accept=".csv, .xls" style="display:none;" />
     </form>
 
-    {{-- Offcanvas: Client Details / Edit --}}
+    {{-- Offcanvas: Client Details --}}
     <div class="offcanvas offcanvas-end" tabindex="-1" id="clientModal" aria-labelledby="clientModalLabel"
-         style="width:800px; max-width:100vw; border-top-left-radius:20px; border-bottom-left-radius:20px; box-shadow:-10px 0 30px rgba(0,0,0,0.1);">
+         style="width:800px; max-width:100vw; border:none; box-shadow:-10px 0 30px rgba(0,0,0,0.15);">
 
-        <div class="offcanvas-header lb-offcanvas-header">
+        <div class="offcanvas-header lb-offcanvas-banner">
             <div class="d-flex align-items-center gap-3">
                 <div class="lb-offcanvas-avatar" id="clientAvatarBadge">C</div>
-                <div>
-                    <h5 class="offcanvas-title" id="clientModalLabel">Customer Details</h5>
-                    <span class="lb-offcanvas-subtitle" id="clientAvatarSub">Loading...</span>
+                <div class="text-white">
+                    <h5 class="offcanvas-title mb-0" id="clientModalLabel">Customer Details</h5>
+                    <div class="d-flex align-items-center gap-2 small opacity-75 mt-1">
+                        <span id="clientAvatarSub">Loading...</span>
+                        <span class="lb-dot"></span>
+                        <span id="clientSince">Added on —</span>
+                    </div>
                 </div>
             </div>
-            <button type="button" class="lb-offcanvas-close" data-bs-dismiss="offcanvas" aria-label="Close">
-                <i class="bx bx-x"></i>
-            </button>
+            <div class="d-flex align-items-center gap-2">
+                <div class="lb-header-actions me-3">
+                    <a href="#" id="c_btnCall" class="lb-action-btn-circle" title="Call"><i class="bx bx-phone"></i></a>
+                    <a href="#" id="c_btnWa" class="lb-action-btn-circle" title="WhatsApp"><i class="bx bxl-whatsapp"></i></a>
+                    <a href="#" id="c_btnMail" class="lb-action-btn-circle" title="Email"><i class="bx bx-envelope"></i></a>
+                </div>
+                <button type="button" class="lb-btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close">
+                    <i class="bx bx-x"></i>
+                </button>
+            </div>
         </div>
 
-        <div class="offcanvas-body lb-offcanvas-body">
+        <div class="offcanvas-body p-0">
+            {{-- Tabs Navigation --}}
+            <div class="ld-tab-nav">
+                <button class="ld-tab active" onclick="cTab(this, 'c-tab-info')">
+                    <i class="bx bx-user"></i> Profile
+                </button>
+                <button class="ld-tab" onclick="cTab(this, 'c-tab-timeline')">
+                    <i class="bx bx-history"></i> Timeline
+                </button>
+                <button class="ld-tab" onclick="cTab(this, 'c-tab-props')">
+                    <i class="bx bx-file"></i> Proposals
+                </button>
+                <button class="ld-tab" onclick="cTab(this, 'c-tab-projects')">
+                    <i class="bx bx-briefcase"></i> Projects
+                </button>
+            </div>
 
-            {{-- Tabs --}}
-            <ul class="nav nav-tabs" id="clientTab" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#client-details" type="button">
-                        <i class="bx bx-user me-1"></i> Profile
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#new-comment" type="button">
-                        <i class="bx bx-calendar me-1"></i> Reminder
-                    </button>
-                </li>
-            </ul>
-
-            <div class="tab-content">
-
+            <div class="ld-tab-container">
+                
                 {{-- Profile Tab --}}
-                <div class="tab-pane fade show active" id="client-details" role="tabpanel">
-                    <form action="manage-client" method="post" class="row g-3">
-                        @csrf
-                        <input type="hidden" id="id" name="id" value="{{ $_GET['id'] ?? '' }}">
-
-                        {{-- Contact Info --}}
-                        <div class="col-12">
-                            <p class="lb-offcanvas-body divider">Contact Information</p>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Full Name <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bx bx-user"></i></span>
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name" required>
+                <div id="c-tab-info" class="ld-tab-content active">
+                    <div class="ld-info-grid">
+                        {{-- Contact Card --}}
+                        <div class="ld-info-card">
+                            <h6><i class="bx bx-phone-call"></i> Contact Information</h6>
+                            <div class="ld-info-row">
+                                <span class="label">Primary Phone</span>
+                                <span class="value" id="c_mob">—</span>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Email Address</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bx bx-envelope-open"></i></span>
-                                <input type="email" class="form-control" id="email" name="email" placeholder="Enter Email">
+                            <div class="ld-info-row">
+                                <span class="label">WhatsApp</span>
+                                <span class="value" id="c_wa">—</span>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Mobile Number <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bx bx-phone"></i></span>
-                                <input type="text" class="form-control" id="mob" name="mob" placeholder="91XXXXXXXXXX" value="91" required>
+                            <div class="ld-info-row">
+                                <span class="label">Email Address</span>
+                                <span class="value" id="c_email">—</span>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Alternative Mobile</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bx bx-phone"></i></span>
-                                <input type="text" class="form-control" id="alterMob" name="alterMob" placeholder="91XXXXXXXXXX" value="91">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">WhatsApp</label>
-                            <div class="input-group">
-                                <span class="input-group-text" style="color:#25d366;"><i class="bx bxl-whatsapp"></i></span>
-                                <input type="text" class="form-control" id="whatsapp" name="whatsapp" placeholder="91XXXXXXXXXX" value="91">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Website</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bx bx-link"></i></span>
-                                <input type="url" class="form-control" id="website" name="website" placeholder="https://example.com">
+                            <div class="ld-info-row">
+                                <span class="label">Website</span>
+                                <span class="value"><a href="#" id="c_website" target="_blank">—</a></span>
                             </div>
                         </div>
 
-                        {{-- Business Info --}}
-                        <div class="col-12 mt-2">
-                            <p class="lb-offcanvas-body divider">Business Details</p>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Company</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bx bx-briefcase"></i></span>
-                                <input type="text" class="form-control" id="company" name="company" placeholder="Company Name">
+                        {{-- Business Card --}}
+                        <div class="ld-info-card">
+                            <h6><i class="bx bx-building-house"></i> Business Details</h6>
+                            <div class="ld-info-row">
+                                <span class="label">Company Name</span>
+                                <span class="value" id="c_company_val">—</span>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">GST No.</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bx bx-id-card"></i></span>
-                                <input type="text" class="form-control" id="gst" name="gst" placeholder="GSTIN">
+                            <div class="ld-info-row">
+                                <span class="label">GST Number</span>
+                                <span class="value" id="c_gst">—</span>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Position / Role</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bx bx-user-pin"></i></span>
-                                <input type="text" class="form-control" id="position" name="position" placeholder="e.g. Manager">
+                            <div class="ld-info-row">
+                                <span class="label">Position</span>
+                                <span class="value" id="c_position">—</span>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Industry</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bx bx-building"></i></span>
-                                <input type="text" class="form-control" id="industry" name="industry" placeholder="e.g. IT, Retail">
+                            <div class="ld-info-row">
+                                <span class="label">Industry</span>
+                                <span class="value" id="c_industry">—</span>
                             </div>
                         </div>
 
-                        {{-- Address --}}
-                        <div class="col-12 mt-2">
-                            <p class="lb-offcanvas-body divider">Address</p>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label">Street / Building</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bx bx-home"></i></span>
-                                <input type="text" class="form-control" id="address" name="address[address]" placeholder="Address">
+                        {{-- Location Card --}}
+                        <div class="ld-info-card full-width">
+                            <h6><i class="bx bx-map"></i> Location & Address</h6>
+                            <div class="ld-info-row">
+                                <span class="label">Full Address</span>
+                                <span class="value" id="c_location_val">—</span>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label">City</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bx bx-map"></i></span>
-                                <input type="text" class="form-control" id="city" name="address[city]" placeholder="City">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">State</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bx bx-map-pin"></i></span>
-                                <input type="text" class="form-control" id="state" name="address[state]" placeholder="State">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Country</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bx bx-globe"></i></span>
-                                <input type="text" class="form-control" id="country" name="address[country]" placeholder="Country">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Zip / Postal Code</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bx bx-pin"></i></span>
-                                <input type="text" class="form-control" id="zip" name="address[zip]" placeholder="Zip Code">
-                            </div>
-                        </div>
+                    </div>
 
-                        {{-- Status & Save --}}
-                        <div class="col-md-6">
-                            <label class="form-label">Status</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bx bx-list-check"></i></span>
-                                <select class="form-control" id="status" name="status"></select>
-                            </div>
-                        </div>
-
-                        @if(in_array('clients_edit', $roleArray) || in_array('All', $roleArray))
-                            <div class="col-12">
-                                <div class="lb-form-footer">
-                                    <span class="text-muted small">Fields marked <span class="text-danger">*</span> are required</span>
-                                    <div class="d-flex gap-2">
-                                        <button type="reset" class="lb-btn lb-btn-ghost">
-                                            <i class="bx bx-reset"></i> Reset
-                                        </button>
-                                        <button type="submit" class="lb-btn lb-btn-primary">
-                                            <i class="bx bx-check-circle"></i> Save
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-                    </form>
-                </div>
-
-                {{-- Reminder Tab --}}
-                <div class="tab-pane fade" id="new-comment" role="tabpanel">
-                    <div class="cmtArea">
-                        <form action="manage-lead-comment" method="post" class="cmt-form row g-3">
-                            @csrf
-                            <input type="hidden" name="client_id" id="commentClientId">
-                            <div class="col-12">
-                                <label class="form-label">Message <span class="text-danger">*</span></label>
-                                <textarea class="form-control" rows="5" id="message" name="message"
-                                    placeholder="Write your note here..." required></textarea>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Next Follow-up Date <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-                                    <input type="datetime-local" class="form-control" id="nxtDate" name="nxtDate" required>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="lb-form-footer">
-                                    <span></span>
-                                    <div class="d-flex gap-2">
-                                        <button type="reset" class="lb-btn lb-btn-ghost">
-                                            <i class="bx bx-reset"></i> Reset
-                                        </button>
-                                        <button type="submit" class="lb-btn lb-btn-primary">
-                                            <i class="bx bx-check-circle"></i> Submit
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
+                    <div class="p-4 pt-0">
+                        <a href="#" id="c_editBtn" class="lb-btn lb-btn-primary w-100">
+                            <i class="bx bx-pencil"></i> Edit Customer Full Profile
+                        </a>
                     </div>
                 </div>
 
-            </div>{{-- /tab-content --}}
-        </div>{{-- /offcanvas-body --}}
+                {{-- Timeline Tab --}}
+                <div id="c-tab-timeline" class="ld-tab-content">
+                    <div class="p-4">
+                        <div class="ld-timeline" id="c_timeline">
+                            {{-- Timeline items will be injected here --}}
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Proposals Tab --}}
+                <div id="c-tab-props" class="ld-tab-content">
+                    <div class="p-0">
+                        <table class="table leads-table mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Subject</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="c_proposals">
+                                <tr><td colspan="4" class="text-center py-4">Loading proposals...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {{-- Projects Tab --}}
+                <div id="c-tab-projects" class="ld-tab-content">
+                    <div class="p-0">
+                        <table class="table leads-table mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th>Project</th>
+                                    <th>Value</th>
+                                    <th>Created</th>
+                                </tr>
+                            </thead>
+                            <tbody id="c_projects">
+                                <tr><td colspan="3" class="text-center py-4">Loading projects...</td></tr>
+                            </tbody>
+                        </table>
+
+                        <div class="p-3 bg-light border-top">
+                            <h6 class="mb-3 small text-uppercase fw-bold text-muted">Related Invoices</h6>
+                            <table class="table leads-table mb-0 bg-white shadow-sm rounded">
+                                <thead>
+                                    <tr>
+                                        <th>Inv #</th>
+                                        <th>Amount</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="c_invoices">
+                                    <tr><td colspan="4" class="text-center py-3 small text-muted">No invoices found.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
 
 @endsection

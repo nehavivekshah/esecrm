@@ -404,38 +404,42 @@ class ClientController extends Controller
         return back()->with('error', 'Failed to process license.');
     }
 
-    public function clients()
+    public function clients(Request $request)
     {
+        $search = $request->input('search');
+        $status = $request->input('status');
 
-        if (Auth::user()->role == 'master') {
+        $query = Clients::where('name', '!=', '');
 
-            $clients = Clients::orderBy('id', 'DESC')->get();
-
-        } else {
-
-            $clients = Clients::where('cid', '=', Auth::user()->cid)->orderBy('status', 'DESC')->get();
-
+        if (Auth::user()->role != 'master') {
+            $query->where('cid', '=', Auth::user()->cid);
         }
 
-        return view('clients', ['clients' => $clients]);
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('company', 'LIKE', "%{$search}%")
+                  ->orWhere('email', 'LIKE', "%{$search}%")
+                  ->orWhere('mob', 'LIKE', "%{$search}%");
+            });
+        }
 
+        if ($status !== null && $status !== '') {
+            $query->where('status', '=', $status);
+        }
+
+        $clients = $query->orderBy('status', 'DESC')->orderBy('id', 'DESC')->get();
+
+        return view('clients', [
+            'clients' => $clients,
+            'search' => $search,
+            'status' => $status
+        ]);
     }
 
     public function clientPost(Request $request)
     {
-
-        if (Auth::user()->role == 'master') {
-
-            $clients = Clients::orderBy('id', 'DESC')->get();
-
-        } else {
-
-            $clients = Clients::where('cid', '=', Auth::user()->cid)->orderBy('status', 'ASC')->get();
-
-        }
-
-        return view('clients', ['clients' => $clients]);
-
+        return $this->clients($request);
     }
 
     public function manageClient(Request $request)
@@ -638,11 +642,41 @@ class ClientController extends Controller
         $page = ($request->pagename ?? '');
         if ($page == 'client') {
 
-            $client = Clients::where('id', '=', $request->id)->first();
+            $client = Clients::with('departments')->where('id', '=', $id)->first();
+            if (!$client) return response()->json(['error' => 'Client not found'], 404);
 
-            $leadComments = Lead_comments::where('lead_id', '=', ($client->commentLeadID ?? ''))->get();
+            $interactions = \App\Models\Interaction::where('rel_type', 'Client')
+                ->where('rel_id', $id)
+                ->orderBy('created_at', 'desc')
+                ->get();
 
-            return json_encode(['clients' => $client, 'leadComments' => $leadComments]);
+            $leadOrigin = null;
+            if (!empty($client->commentLeadID)) {
+                $leadOrigin = \App\Models\Leads::find($client->commentLeadID);
+            }
+
+            $leadIds = [$client->id];
+            if ($leadOrigin) $leadIds[] = $leadOrigin->id;
+
+            $proposals = \App\Models\Proposals::whereIn('lead_id', $leadIds)
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            $projects = \App\Models\Projects::where('client_id', $id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            $invoices = \App\Models\Invoices::where('client_id', $id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            return response()->json([
+                'clients' => $client,
+                'interactions' => $interactions,
+                'proposals' => $proposals,
+                'projects' => $projects,
+                'invoices' => $invoices
+            ]);
         }
     }
 

@@ -960,6 +960,24 @@
                     searchForm.submit();
                 });
             }
+
+            // --- Customer Filters (clients page) ---
+            const clientFilterForm = document.getElementById('clientFilterForm');
+            if (clientFilterForm) {
+                const clientSearch = document.getElementById('clientSearch');
+                const clientStatusFilter = document.getElementById('clientStatusFilter');
+
+                let clientFilterTimer;
+                if (clientSearch) {
+                    clientSearch.addEventListener('input', () => {
+                        clearTimeout(clientFilterTimer);
+                        clientFilterTimer = setTimeout(() => clientFilterForm.submit(), 800);
+                    });
+                }
+                if (clientStatusFilter) {
+                    clientStatusFilter.addEventListener('change', () => clientFilterForm.submit());
+                }
+            }
         });
     </script>
 
@@ -1005,75 +1023,116 @@
             $('.view').dblclick(function () {
                 let id = $(this).attr('id');
                 let pagename = "client";
-                let locationParts = [];
 
-                $('#commentClientId').val(id);
-
-                function formatDate(dateString) {
-                    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-                    const date = new Date(dateString);
-                    return date.toLocaleDateString(undefined, options);
-                }
+                // Reset to Info tab
+                cTab($('.ld-tab').first()[0], 'c-tab-info');
+                
+                // Show modal immediately with loading state
+                $('#clientModal').offcanvas('show');
 
                 $.ajax({
-                    url: '/view-single-client', // Replace with your server endpoint URL
-                    type: 'GET', // You can use 'GET' or 'POST' depending on your requirement
-                    data: {
-                        id: id,
-                        pagename: pagename
-                    },
+                    url: '/view-single-client', 
+                    type: 'GET', 
+                    data: { id: id, pagename: pagename },
                     success: function (response) {
-                        let purpose;
-                        // Parsing the JSON data
-                        var parsedData = JSON.parse(response);
-                        let client = parsedData.clients;
-                        let leadComments = parsedData.leadComments;
-                        let location = client.location || '';
+                        let l = response.clients;
+                        let loc = {};
+                        try { loc = JSON.parse(l.location) || {}; } catch(e) {}
 
-                        if (location != '') { locationParts = JSON.parse(location) ?? []; }
+                        // Header & Actions
+                        $('#clientAvatarBadge').text((l.name || 'C').charAt(0).toUpperCase());
+                        $('#clientModalLabel').text(l.name || '—');
+                        $('#clientAvatarSub').text(l.company || 'Individual');
+                        
+                        var sinceDate = l.created_at ? new Date(l.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+                        $('#clientSince').text('Joined on ' + sinceDate);
 
-                        let address = locationParts[0] ? locationParts[0].trim() : '';
-                        let city = locationParts[1] ? locationParts[1].trim() : '';
-                        let state = locationParts[2] ? locationParts[2].trim() : '';
-                        let country = locationParts[3] ? locationParts[3].trim() : '';
-                        let zip = locationParts[4] ? locationParts[4].trim() : '';
+                        $('#c_btnCall').attr('href', l.mob ? 'tel:'+l.mob : '#');
+                        $('#c_btnWa').attr('href', l.whatsapp ? 'https://wa.me/'+l.whatsapp : '#');
+                        $('#c_btnMail').attr('href', l.email ? 'mailto:'+l.email : '#');
 
-                        // Injecting HTML content into the modal
-                        $('#id').val(client.id);
-                        $('#name').val(client.name);
-                        $('#email').val(client.email);
-                        $('#mob').val(client.mob);
-                        $('#alterMob').val(client.alterMob);
-                        $('#whatsapp').val(client.whatsapp);
-                        $('#company').val(client.company);
-                        $('#gst').val(client.gstno);
-                        $('#position').val(client.position);
-                        $('#industry').val(client.industry);
-                        $('#address').val(address);
-                        $('#city').val(city);
-                        $('#state').val(state);
-                        $('#country').val(country);
-                        $('#website').val(client.website);
+                        // Info Cards
+                        $('#c_mob').text(l.mob ? '+'+l.mob : '—');
+                        $('#c_wa').text(l.whatsapp ? '+'+l.whatsapp : '—');
+                        $('#c_email').text(l.email || '—');
+                        $('#c_website').text(l.website || '—').attr('href', l.website || '#');
+                        
+                        $('#c_company_val').text(l.company || '—');
+                        $('#c_gst').text(l.gstno || '—');
+                        $('#c_position').text(l.position || '—');
+                        $('#c_industry').text(l.industry || '—');
+                        
+                        // Combined Address
+                        let addressParts = [
+                            loc.address, loc.city, loc.state, loc.zip, loc.country
+                        ].filter(Boolean).join(', ');
+                        $('#c_location_val').text(addressParts || '—');
 
-                        var status = client.status;
+                        $('#c_editBtn').attr('href', '/manage-client?id='+id);
 
-                        let option = `
-                                    <option value="0" ${status == '0' ? 'selected' : ''}>Inactive</option>
-                                    <option value="1" ${status == '1' ? 'selected' : ''}>Active</option>
-                                `;
+                        // Timeline (Interactions)
+                        var timelineHtml = '';
+                        (response.interactions || []).forEach(function(i){
+                            var date = new Date(i.created_at).toLocaleString();
+                            timelineHtml += `
+                                <div class="ld-timeline-item">
+                                    <div class="ld-timeline-icon"><i class="bx bx-chat"></i></div>
+                                    <div class="ld-timeline-content">
+                                        <div class="d-flex justify-content-between">
+                                            <strong>${i.type}</strong>
+                                            <small class="text-muted">${date}</small>
+                                        </div>
+                                        <p class="mb-0 mt-1">${i.content || ''}</p>
+                                    </div>
+                                </div>`;
+                        });
+                        $('#c_timeline').html(timelineHtml || '<p class="text-muted text-center pt-3">No history found.</p>');
 
-                        $('#status').html(option);
+                        // Proposals
+                        var propHtml = '';
+                        (response.proposals || []).forEach(function(p){
+                            propHtml += `<tr>
+                                <td>#${p.id}</td>
+                                <td>${p.subject || '—'}</td>
+                                <td>₹${Number(p.grand_total).toLocaleString('en-IN')}</td>
+                                <td><span class="badge bg-info">${p.status || 'Draft'}</span></td>
+                            </tr>`;
+                        });
+                        $('#c_proposals').html(propHtml || '<tr><td colspan="4" class="text-center text-muted py-3">No proposals found.</td></tr>');
 
-                        // Show the modal
-                        $('#clientModal').offcanvas('show');
-                    },
-                    error: function (xhr, status, error) {
-                        // Handle errors here
-                        console.log('Error:', error);
+                        // Projects
+                        var projHtml = '';
+                        (response.projects || []).forEach(function(p){
+                            projHtml += `<tr>
+                                <td>${p.name || '—'}</td>
+                                <td>₹${Number(p.amount).toLocaleString('en-IN')}</td>
+                                <td>${new Date(p.created_at).toLocaleDateString()}</td>
+                            </tr>`;
+                        });
+                        $('#c_projects').html(projHtml || '<tr><td colspan="3" class="text-center text-muted py-3">No projects found.</td></tr>');
+
+                        // Invoices
+                        var invHtml = '';
+                        (response.invoices || []).forEach(function(v){
+                            invHtml += `<tr>
+                                <td>${v.invoice_number || '—'}</td>
+                                <td>₹${Number(v.total_amount).toLocaleString('en-IN')}</td>
+                                <td>${new Date(v.date).toLocaleDateString()}</td>
+                                <td><span class="badge bg-secondary">${v.status || 'unpaid'}</span></td>
+                            </tr>`;
+                        });
+                        $('#c_invoices').html(invHtml || '<tr><td colspan="4" class="text-center text-muted py-3">No invoices found.</td></tr>');
                     }
                 });
             });
         });
+
+        function cTab(btn, tabId) {
+            $('.ld-tab').removeClass('active');
+            $(btn).addClass('active');
+            $('#c-tab-info, #c-tab-timeline, #c-tab-props, #c-tab-projects').hide();
+            $('#' + tabId).show();
+        }
 
     </script>
 
