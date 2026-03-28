@@ -230,7 +230,7 @@
 
             const projectModal = new bootstrap.Offcanvas(document.getElementById('projectModal'));
 
-            $('.view').dblclick(function(){
+            $('.view').click(function(){
                 const id = $(this).attr('id');
                 
                 // Set default tab
