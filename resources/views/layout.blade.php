@@ -23,6 +23,7 @@
         
         @include('inc.loginHeadLink')
         <link rel="stylesheet" href="{{ asset('public/assets/css/premium.css') }}">
+        <link rel="stylesheet" href="{{ asset('public/assets/css/modern-ui.css') }}">
         
         <style>
             /* Loader Styles */

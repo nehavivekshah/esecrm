@@ -1,0 +1,320 @@
+/* ==========================================================================
+   ESE CRM - MODERN UI ENHANCEMENTS (2026 UPDATE)
+   Goal: Premium, user-friendly, clean aesthetic globally.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --primary-color: #006666;
+    --primary-hover: #004d4d;
+    --primary-light: rgba(0, 102, 102, 0.08);
+    --primary-glow: rgba(0, 102, 102, 0.2);
+    
+    --surface-color: #ffffff;
+    --background-color: #f4f7f6;
+    
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    
+    --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+    --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+    --shadow-floating: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+
+    --transition-snappy: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Typography & Body */
+body {
+    background-color: var(--background-color) !important;
+    color: var(--text-main) !important;
+    font-family: 'Inter', 'Roboto', sans-serif !important;
+    letter-spacing: -0.01em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600 !important;
+    color: var(--text-main) !important;
+    letter-spacing: -0.02em;
+}
+
+/* ================== OVERHAUL FORMS & INPUTS ================== */
+.form-control, .form-select {
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--radius-sm) !important;
+    padding: 0.65rem 1rem !important;
+    font-size: 0.95rem !important;
+    color: var(--text-main) !important;
+    background-color: var(--surface-color) !important;
+    transition: var(--transition-snappy) !important;
+    box-shadow: none !important;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 4px var(--primary-glow) !important;
+    background-color: #ffffff !important;
+}
+
+/* Bootstrap Select override */
+.bootstrap-select > .dropdown-toggle {
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--radius-sm) !important;
+    background: var(--surface-color) !important;
+    padding: 0.65rem 1rem !important;
+    box-shadow: none !important;
+}
+.bootstrap-select > .dropdown-toggle.bs-placeholder {
+    color: var(--text-muted) !important;
+}
+.bootstrap-select.show > .dropdown-toggle {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 4px var(--primary-glow) !important;
+}
+.dropdown-menu {
+    border: 1px solid rgba(0,0,0,0.05) !important;
+    box-shadow: var(--shadow-floating) !important;
+    border-radius: var(--radius-md) !important;
+    padding: 0.5rem !important;
+}
+.dropdown-item {
+    border-radius: 6px !important;
+    padding: 0.5rem 1rem !important;
+    font-weight: 500 !important;
+    transition: background 0.15s ease !important;
+}
+.dropdown-item:active, .dropdown-item.active {
+    background-color: var(--primary-light) !important;
+    color: var(--primary-color) !important;
+}
+
+/* ================== BUTTONS ================== */
+.btn {
+    border-radius: var(--radius-sm) !important;
+    padding: 0.6rem 1.2rem !important;
+    font-weight: 500 !important;
+    transition: var(--transition-snappy) !important;
+    letter-spacing: 0.01em !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.btn:active {
+    transform: translateY(1px) !important;
+}
+
+.btn-primary {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: #fff !important;
+    box-shadow: 0 2px 4px var(--primary-glow) !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover) !important;
+    box-shadow: 0 4px 8px var(--primary-glow) !important;
+    transform: translateY(-1px);
+}
+
+.btn-outline-primary {
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    background-color: transparent !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-light) !important;
+    color: var(--primary-hover) !important;
+    border-color: var(--primary-hover) !important;
+}
+
+.btn-light {
+    background-color: #f1f5f9 !important;
+    border-color: transparent !important;
+    color: var(--text-main) !important;
+}
+.btn-light:hover {
+    background-color: #e2e8f0 !important;
+}
+
+/* ================== CARDS & CONTAINERS ================== */
+.card, .dash-container {
+    background: var(--surface-color) !important;
+    border: 1px solid rgba(226, 232, 240, 0.6) !important;
+    border-radius: var(--radius-md) !important;
+    box-shadow: var(--shadow-soft) !important;
+    transition: var(--transition-snappy) !important;
+    margin-bottom: 1.5rem;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-hover) !important;
+}
+
+.card-header {
+    background-color: transparent !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    padding: 1.25rem 1.5rem !important;
+    font-weight: 600 !important;
+    color: var(--text-main) !important;
+}
+
+/* ================== DATATABLES REDESIGN ================== */
+.table-responsive {
+    border-radius: var(--radius-md) !important;
+    background-color: var(--surface-color);
+    padding: 0.5rem;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+table.dataTable {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    width: 100% !important;
+    border: none !important;
+    margin-top: 1rem !important;
+}
+
+table.dataTable thead th {
+    border-bottom: 2px solid var(--border-color) !important;
+    border-top: none !important;
+    color: var(--text-muted) !important;
+    font-weight: 600 !important;
+    font-size: 0.75rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    padding: 1rem !important;
+    background: transparent !important;
+}
+
+table.dataTable tbody td {
+    padding: 1rem !important;
+    vertical-align: middle !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    color: var(--text-main) !important;
+    font-size: 0.9rem !important;
+    transition: background 0.15s ease !important;
+}
+
+table.dataTable tbody tr {
+    transition: all 0.2s ease;
+}
+
+/* Hover Effect: Soft float and light background */
+table.dataTable tbody tr:hover {
+    background-color: var(--primary-light) !important;
+}
+
+table.dataTable tbody tr:hover td {
+    color: var(--primary-color) !important;
+}
+
+table.dataTable tbody tr:last-child td {
+    border-bottom: none !important;
+}
+
+/* Pagination Modernization */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    border: none !important;
+    background: transparent !important;
+    padding: 0.5rem 0.9rem !important;
+    margin: 0 4px !important;
+    border-radius: var(--radius-sm) !important;
+    color: var(--text-muted) !important;
+    font-weight: 500 !important;
+    transition: var(--transition-snappy) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: var(--border-color) !important;
+    color: var(--text-main) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    background: var(--primary-color) !important;
+    color: #fff !important;
+    box-shadow: 0 2px 4px var(--primary-glow) !important;
+}
+
+/* DataTables Search input */
+.dataTables_filter input {
+    border: 1px solid var(--border-color) !important;
+    border-radius: 20px !important;
+    padding: 0.4rem 1rem !important;
+    outline: none !important;
+    box-shadow: none !important;
+    transition: var(--transition-snappy) !important;
+}
+
+.dataTables_filter input:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 3px var(--primary-glow) !important;
+}
+
+/* ================== SIDEBAR ENHANCEMENTS ================== */
+.sidebar {
+    background: rgba(0, 51, 51, 0.95) !important;
+    backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
+}
+
+.sidebar li a {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.sidebar li a:hover {
+    background-color: rgba(255, 255, 255, 0.12) !important;
+    transform: translateX(4px) !important;
+}
+
+.sidebar li a.active {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-left: 4px solid #fff !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+}
+
+/* ================== HEADER ENHANCEMENTS ================== */
+.dashboard-header {
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(16px) !important;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.4) !important;
+    box-shadow: 0 4px 20px -10px rgba(0,0,0,0.05) !important;
+}
+
+/* Badge Standardization */
+.badge {
+    padding: 0.4em 0.8em !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.02em !important;
+    border-radius: 6px !important;
+}
+.badge.bg-success { background-color: #10b981 !important; color: #fff !important; }
+.badge.bg-danger { background-color: #ef4444 !important; color: #fff !important; }
+.badge.bg-warning { background-color: #f59e0b !important; color: #fff !important; }
+.badge.bg-info { background-color: #3b82f6 !important; color: #fff !important; }
+
+/* Custom Scrollbar for a premium feel */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 102, 102, 0.2);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 102, 102, 0.4);
+}
