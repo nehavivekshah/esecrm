@@ -345,6 +345,24 @@ class ClientController extends Controller
         ]);
     }
 
+    public function viewProject(Request $request, $id)
+    {
+        $project = Projects::leftJoin('clients', 'projects.client_id', '=', 'clients.id')
+            ->select('projects.*', 'clients.name as client_name', 'clients.company as client_company', 'clients.email as client_email', 'clients.mob as client_mob', 'clients.location as client_location', 'clients.whatsapp as client_whatsapp')
+            ->where('projects.id', $id)
+            ->first();
+
+        if (!$project) {
+            abort(404, 'Project not found');
+        }
+
+        $recoveries = Recoveries::where('project_id', $id)->orderBy('id', 'DESC')->get();
+        $license = Eselicenses::where('project_id', $id)->orderBy('id', 'DESC')->first();
+        $invoices = Invoices::where('client_id', $project->client_id)->orderBy('id', 'DESC')->get();
+
+        return view('project-view', compact('project', 'recoveries', 'license', 'invoices'));
+    }
+
     public function licensing()
     {
 

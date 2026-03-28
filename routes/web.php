@@ -213,6 +213,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     /*Project's Account Management Router*/
     Route::get('/projects', [ClientController::class, 'projects']);
+    Route::get('/project/view/{id}', [ClientController::class, 'viewProject'])->name('project.view');
     Route::get('/get-projects/{clientId}', [ClientController::class, 'getProjects']);
     Route::get('/view-single-project', [ClientController::class, 'singleProjectGet'])->name('singleProject');
     Route::get('/manage-project', [ClientController::class, 'manageProject'])->name('manageProject');
