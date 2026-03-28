@@ -69,8 +69,18 @@
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link ld-tab px-4 py-3 border-0 fw-semibold fs-6" id="invoices-tab" data-bs-toggle="tab" data-bs-target="#invoices" type="button" role="tab" aria-controls="invoices" aria-selected="false" style="border-radius: 8px 8px 0 0;">
+                <button class="nav-link ld-tab px-4 py-3 border-0 fw-semibold fs-6" id="invoices-tab" data-bs-toggle="tab" data-bs-target="#invoices" type="button" role="tab" aria-controls="invoices" aria-selected="false" style="border-radius: 8px 8px 0 0; margin-right: 5px;">
                     <i class="bx bx-file fs-5 me-1 align-bottom"></i> Client Invoices
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link ld-tab px-4 py-3 border-0 fw-semibold fs-6" id="tasks-tab" data-bs-toggle="tab" data-bs-target="#tasks" type="button" role="tab" aria-controls="tasks" aria-selected="false" style="border-radius: 8px 8px 0 0; margin-right: 5px;">
+                    <i class="bx bx-task fs-5 me-1 align-bottom"></i> Tasks
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link ld-tab px-4 py-3 border-0 fw-semibold fs-6" id="proposals-tab" data-bs-toggle="tab" data-bs-target="#proposals" type="button" role="tab" aria-controls="proposals" aria-selected="false" style="border-radius: 8px 8px 0 0;">
+                    <i class="bx bx-paper-plane fs-5 me-1 align-bottom"></i> Proposals
                 </button>
             </li>
         </ul>
@@ -264,6 +274,106 @@
                                     <td colspan="5" class="text-center py-5 text-muted">
                                         <div class="fs-1 mb-2"><i class="bx bx-receipt fs-1 text-light"></i></div>
                                         <p class="mb-0">No invoices found for this client.</p>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TASKS TAB -->
+            <div class="tab-pane fade" id="tasks" role="tabpanel" aria-labelledby="tasks-tab">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="lb-section-title mb-0"><i class="bx bx-task me-2 text-primary"></i>Project Tasks</h5>
+                    <a href="/crm-tasks" class="btn btn-sm btn-primary"><i class="bx bx-plus"></i> Go to Tasks</a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover lb-table-premium align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Task Name</th>
+                                <th>Type</th>
+                                <th>Due Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($tasks as $t)
+                                <tr>
+                                    <td class="fw-bold text-primary">{{ $t->name }}</td>
+                                    <td><span class="badge bg-secondary">{{ $t->type }}</span></td>
+                                    <td>
+                                        <span class="{{ \Carbon\Carbon::parse($t->due_date)->isPast() && $t->status != 'Completed' ? 'text-danger fw-bold' : '' }}">
+                                        {{ \Carbon\Carbon::parse($t->due_date)->format('d M, Y') }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if($t->status == 'Completed')
+                                            <span class="badge bg-success px-2 py-1 text-white">Completed</span>
+                                        @else
+                                            <span class="badge bg-warning px-2 py-1 text-dark">{{ $t->status }}</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center py-5 text-muted">
+                                        <div class="fs-1 mb-2"><i class="bx bx-task fs-1 text-light"></i></div>
+                                        <p class="mb-0">No tasks assigned to this project.</p>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- PROPOSALS TAB -->
+            <div class="tab-pane fade" id="proposals" role="tabpanel" aria-labelledby="proposals-tab">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="lb-section-title mb-0"><i class="bx bx-paper-plane me-2 text-primary"></i>Client Proposals</h5>
+                    <a href="/manage-proposal" class="btn btn-sm btn-primary"><i class="bx bx-plus"></i> Create Proposal</a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover lb-table-premium align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Subject</th>
+                                <th>Date Sent</th>
+                                <th>Open Till</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($proposals as $prop)
+                                <tr>
+                                    <td class="fw-bold text-primary">{{ $prop->subject }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($prop->proposal_date)->format('d M, Y') }}</td>
+                                    <td>
+                                        <span class="{{ \Carbon\Carbon::parse($prop->open_till)->isPast() && !in_array($prop->status, ['Accepted', 'Declined']) ? 'text-danger fw-bold' : '' }}">
+                                        {{ \Carbon\Carbon::parse($prop->open_till)->format('d M, Y') }}
+                                        </span>
+                                    </td>
+                                    <td class="fw-bold">₹{{ number_format($prop->grand_total, 2) }}</td>
+                                    <td>
+                                        @if($prop->status == 'Accepted')
+                                            <span class="badge bg-success px-2 py-1 text-white">Accepted</span>
+                                        @elseif($prop->status == 'Declined')
+                                            <span class="badge bg-danger px-2 py-1 text-white">Declined</span>
+                                        @else
+                                            <span class="badge bg-info px-2 py-1 text-white">{{ $prop->status ?: 'Sent' }}</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center py-5 text-muted">
+                                        <div class="fs-1 mb-2"><i class="bx bx-paper-plane fs-1 text-light"></i></div>
+                                        <p class="mb-0">No proposals found for this client.</p>
                                     </td>
                                 </tr>
                             @endforelse

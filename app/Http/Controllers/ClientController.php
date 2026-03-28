@@ -360,7 +360,18 @@ class ClientController extends Controller
         $license = Eselicenses::where('project_id', $id)->orderBy('id', 'DESC')->first();
         $invoices = Invoices::where('client_id', $project->client_id)->orderBy('id', 'DESC')->get();
 
-        return view('project-view', compact('project', 'recoveries', 'license', 'invoices'));
+        // Tasks related to project
+        $tasks = \App\Models\CrmTask::where('rel_type', 'Project')->where('rel_id', $id)->orderBy('due_date', 'asc')->get();
+
+        // Proposals related to client/lead
+        $client = \App\Models\Clients::find($project->client_id);
+        $leadIds = [$project->client_id];
+        if ($client && !empty($client->commentLeadID)) {
+            $leadIds[] = $client->commentLeadID;
+        }
+        $proposals = \App\Models\Proposals::whereIn('lead_id', $leadIds)->orderBy('id', 'DESC')->get();
+
+        return view('project-view', compact('project', 'recoveries', 'license', 'invoices', 'tasks', 'proposals'));
     }
 
     public function licensing()
