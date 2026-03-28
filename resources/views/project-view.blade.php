@@ -10,80 +10,63 @@
     <div class="dash-container px-4 py-3">
         
         <!-- Premium Header Area -->
-        <div class="lb-offcanvas-header p-4 position-relative overflow-hidden rounded-4 mb-4 shadow-sm" style="background: var(--dark-navy); color: white;">
-            <div class="lb-offcanvas-banner" style="position: absolute; top:0; left:0; right:0; height:100px; background: var(--teal-gradient); opacity:0.8;"></div>
-            
-            <div class="d-flex align-items-center justify-content-between position-relative z-1 mb-3 pt-4 border-bottom border-secondary pb-3">
-                <div class="d-flex align-items-center gap-4">
-                    <div class="lb-avatar-lg shadow-lg border border-3 border-white d-flex align-items-center justify-content-center fw-bold fs-2" style="width: 80px; height: 80px; border-radius: 50%; background: var(--teal-gradient); color: white;">
-                        {{ substr($project->name, 0, 1) }}
+        <div class="lb-offcanvas-banner rounded-4 mb-4" style="height: auto; padding: 20px;">
+            <div class="d-flex align-items-center justify-content-between p-2">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="lb-offcanvas-avatar shadow-sm border border-2 border-white" style="width: 55px; height: 55px; font-size: 24px;">
+                        {{ strtoupper(substr($project->name, 0, 1)) }}
                     </div>
-                    <div>
-                        <h2 class="mb-1 text-white fw-bold">{{ $project->name }}</h2>
-                        <h6 class="mb-0 text-light opacity-75">
-                            <i class='bx bx-building'></i> {{ $project->client_name }} 
-                            @if($project->client_company) | {{ $project->client_company }} @endif
-                        </h6>
+                    <div class="text-white">
+                        <h5 class="offcanvas-title mb-0 fs-4 fw-bold">{{ $project->name }}</h5>
+                        <div class="d-flex align-items-center gap-2 small opacity-75 mt-1">
+                            <i class='bx bx-building'></i> <span>{{ $project->client_name }}</span>
+                            <span class="lb-dot"></span>
+                            <span>Added {{ \Carbon\Carbon::parse($project->created_at)->format('d M, Y') }}</span>
+                            <span class="lb-dot"></span>
+                            <span>ID: #PROU-{{ str_pad($project->id, 4, '0', STR_PAD_LEFT) }}</span>
+                        </div>
                     </div>
                 </div>
-                <div>
-                     <a href="{{ url('/projects') }}" class="btn btn-outline-light d-flex align-items-center gap-1"><i class="bx bx-arrow-back"></i> Back to Projects</a>
-                </div>
-            </div>
-            
-            <div class="d-flex gap-2 position-relative z-1 mt-3">
-                @if($project->client_mob)
-                    <a href="tel:{{ $project->client_mob }}" class="lb-btn-light text-decoration-none d-flex align-items-center gap-1"><i class="bx bx-phone"></i> Call</a>
-                    
-                    @php 
-                       $waNumber = $project->client_whatsapp ?? $project->client_mob; 
-                    @endphp
-                    <a href="https://api.whatsapp.com/send/?phone={{ $waNumber }}&text=Regarding Project: {{ urlencode($project->name) }}" target="_blank" class="lb-btn-light text-decoration-none d-flex align-items-center gap-1"><i class="bx bxl-whatsapp"></i> WhatsApp</a>
-                @endif
-                
-                @if($project->deployment_url)
-                    <a href="{{ $project->deployment_url }}" target="_blank" class="lb-btn-light text-decoration-none d-flex align-items-center gap-1"><i class="bx bx-link-external"></i> Deployment</a>
-                @endif
-                
-                <div class="ms-auto pt-2">
-                    <span class="text-white small opacity-75"><i class='bx bx-calendar'></i> Created on: {{ \Carbon\Carbon::parse($project->created_at)->format('d M, Y') }}</span>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="lb-header-actions me-2">
+                        @if($project->client_mob || $project->client_whatsapp)
+                            <a href="tel:{{ $project->client_mob }}" class="lb-action-btn-circle" title="Call"><i class="bx bx-phone"></i></a>
+                            @php $waNumber = $project->client_whatsapp ?? $project->client_mob; @endphp
+                            <a href="https://api.whatsapp.com/send/?phone={{ $waNumber }}&text=Regarding Project: {{ urlencode($project->name) }}" target="_blank" class="lb-action-btn-circle" title="WhatsApp"><i class="bx bxl-whatsapp"></i></a>
+                        @endif
+                        @if($project->client_email)
+                            <a href="mailto:{{ $project->client_email }}" class="lb-action-btn-circle" title="Email"><i class="bx bx-envelope"></i></a>
+                        @endif
+                        @if($project->deployment_url)
+                            <a href="{{ $project->deployment_url }}" target="_blank" class="lb-action-btn-circle" title="Deployment"><i class="bx bx-link-external"></i></a>
+                        @endif
+                    </div>
+                    <a href="{{ url('/projects') }}" class="btn btn-sm btn-light rounded-pill px-3 shadow-sm fw-bold" style="color: #006666;"><i class="bx bx-arrow-back me-1"></i> Back</a>
                 </div>
             </div>
         </div>
 
         <!-- Navigation Tabs -->
-        <ul class="nav nav-tabs ld-tabs-container border-0 mb-4" id="projectTab" role="tablist" style="background: transparent; box-shadow: none; padding: 0;">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link ld-tab active px-4 py-3 border-0 fw-semibold fs-6" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true" style="border-radius: 8px 8px 0 0; margin-right: 5px;">
-                    <i class="bx bx-info-circle fs-5 me-1 align-bottom"></i> Project Overview
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link ld-tab px-4 py-3 border-0 fw-semibold fs-6" id="billing-tab" data-bs-toggle="tab" data-bs-target="#billing" type="button" role="tab" aria-controls="billing" aria-selected="false" style="border-radius: 8px 8px 0 0; margin-right: 5px;">
-                    <i class="bx bx-receipt fs-5 me-1 align-bottom"></i> Billing & Recoveries
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link ld-tab px-4 py-3 border-0 fw-semibold fs-6" id="license-tab" data-bs-toggle="tab" data-bs-target="#license" type="button" role="tab" aria-controls="license" aria-selected="false" style="border-radius: 8px 8px 0 0; margin-right: 5px;">
-                    <i class="bx bx-key fs-5 me-1 align-bottom"></i> License Details
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link ld-tab px-4 py-3 border-0 fw-semibold fs-6" id="invoices-tab" data-bs-toggle="tab" data-bs-target="#invoices" type="button" role="tab" aria-controls="invoices" aria-selected="false" style="border-radius: 8px 8px 0 0; margin-right: 5px;">
-                    <i class="bx bx-file fs-5 me-1 align-bottom"></i> Client Invoices
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link ld-tab px-4 py-3 border-0 fw-semibold fs-6" id="tasks-tab" data-bs-toggle="tab" data-bs-target="#tasks" type="button" role="tab" aria-controls="tasks" aria-selected="false" style="border-radius: 8px 8px 0 0; margin-right: 5px;">
-                    <i class="bx bx-task fs-5 me-1 align-bottom"></i> Tasks
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link ld-tab px-4 py-3 border-0 fw-semibold fs-6" id="proposals-tab" data-bs-toggle="tab" data-bs-target="#proposals" type="button" role="tab" aria-controls="proposals" aria-selected="false" style="border-radius: 8px 8px 0 0;">
-                    <i class="bx bx-paper-plane fs-5 me-1 align-bottom"></i> Proposals
-                </button>
-            </li>
-        </ul>
+        <div class="ld-tab-nav mb-4" role="tablist">
+            <button class="ld-tab active" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">
+                <i class="bx bx-info-circle"></i> Overview
+            </button>
+            <button class="ld-tab" data-bs-toggle="tab" data-bs-target="#billing" type="button" role="tab">
+                <i class="bx bx-receipt"></i> Billing & Recoveries
+            </button>
+            <button class="ld-tab" data-bs-toggle="tab" data-bs-target="#license" type="button" role="tab">
+                <i class="bx bx-key"></i> License Details
+            </button>
+            <button class="ld-tab" data-bs-toggle="tab" data-bs-target="#invoices" type="button" role="tab">
+                <i class="bx bx-file"></i> Client Invoices
+            </button>
+            <button class="ld-tab" data-bs-toggle="tab" data-bs-target="#tasks" type="button" role="tab">
+                <i class="bx bx-task"></i> Tasks
+            </button>
+            <button class="ld-tab" data-bs-toggle="tab" data-bs-target="#proposals" type="button" role="tab">
+                <i class="bx bx-paper-plane"></i> Proposals
+            </button>
+        </div>
 
         <!-- Tab Content Zones -->
         <div class="tab-content bg-white p-4 rounded-4 shadow-sm border border-light" id="projectTabContent" style="min-height: 400px;">
@@ -137,7 +120,7 @@
                 </div>
                 
                 <div class="table-responsive">
-                    <table class="table table-hover lb-table-premium align-middle">
+                    <table class="table leads-table mb-0">
                         <thead class="table-light">
                             <tr>
                                 <th>Date Received</th>
@@ -235,7 +218,7 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-hover lb-table-premium align-middle">
+                    <table class="table leads-table mb-0">
                         <thead class="table-light">
                             <tr>
                                 <th>Invoice #</th>
@@ -290,7 +273,7 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-hover lb-table-premium align-middle">
+                    <table class="table leads-table mb-0">
                         <thead class="table-light">
                             <tr>
                                 <th>Task Name</th>
@@ -338,7 +321,7 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-hover lb-table-premium align-middle">
+                    <table class="table leads-table mb-0">
                         <thead class="table-light">
                             <tr>
                                 <th>Subject</th>
@@ -386,28 +369,5 @@
     </div>
 </section>
 
-<style>
-/* Sub-navigation Tabs Styling Override for Project View */
-.ld-tabs-container .nav-link {
-    color: var(--dark-navy) !important;
-    background: transparent !important;
-    border-bottom: 3px solid transparent !important;
-    transition: all 0.3s ease;
-}
-.ld-tabs-container .nav-link:hover {
-    color: var(--primary) !important;
-    background: #f8f9fa !important;
-}
-.ld-tabs-container .nav-link.active {
-    color: var(--primary) !important;
-    background: white !important;
-    border-bottom: 3px solid var(--primary) !important;
-}
-.lb-table-premium th {
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    color: #6c757d;
-}
-</style>
+
 @endsection
