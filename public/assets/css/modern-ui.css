@@ -110,7 +110,7 @@ h6 {
 /* ================== BUTTONS ================== */
 .btn {
     border-radius: var(--radius-sm) !important;
-    padding: 0.6rem 1.2rem !important;
+    /* padding: 0.6rem 1.2rem !important; */
     font-weight: 500 !important;
     transition: var(--transition-snappy) !important;
     letter-spacing: 0.01em !important;
