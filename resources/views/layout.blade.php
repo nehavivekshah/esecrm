@@ -197,7 +197,7 @@
             });
             </script>
 
-        
+        @include('inc.todo-modal')
     </body>
 
 </html>
