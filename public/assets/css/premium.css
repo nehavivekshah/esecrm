@@ -1551,6 +1551,12 @@ li.nav-title {
     flex-wrap: wrap;
 }
 
+.leads-toolbar-left select {
+    height: 36px;
+    padding: 0 14px !important;
+    border-radius: 20px !important;
+}
+
 .leads-toolbar-right {
     display: flex;
     align-items: center;
