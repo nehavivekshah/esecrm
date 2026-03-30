@@ -1,183 +1,212 @@
 @extends('layout')
-@section('title','Manage Recovery - eseCRM')
+@section('title', 'Manage Recovery - eseCRM')
 
 @section('content')
-
     @php
-    
         $sessionroles = session('roles');
-        $roleArray = explode(',',($sessionroles->permissions ?? ''));
-        $userAssign = explode(',',($recoveries->assign ?? ''));
-        $userFeaturs = explode(',',($recoveries->features ?? ''));
-        
+        $roleArray = explode(',', ($sessionroles->permissions ?? ''));
+        $isEdit = !empty($_GET['id']);
+        $title = $isEdit ? 'Edit Recovery Details' : 'Add New Recovery';
     @endphp
-    
-    <section class="task__section">
-        <div class="text">
-            <i class="bx bx-menu" id="mbtn"></i> 
-            Manage Recovery
-            <a href="/signout" class="logoutbtn"><i class="bx bx-log-out"></i></a>
-        </div>
-        <div class="container-fluid">
-            <div class="board-title board-title-flex mb-2">
-                <a href="recoveries" class="btn btn-primary btn-sm back-btn"><i class="bx bx-arrow-back"></i></a>
-                @if(!empty($_GET['id'])) 
-                    <h1>Edit Details</h1> 
-                @else 
-                    <h1>Add New Details</h1> 
-                @endif
-            </div>
 
-            <div class="row g-3 px-2">
-                <div class="col-md-12 bg-white py-3 px-4 rounded">
-                    <form action="manage-recovery" method="post" class="row" enctype="multipart/form-data">
-                        @csrf
-                        <div class="form-group col-md-3 col-sm-6">
-                            <label for="customer">Customers*</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-list-ul'></i></span>
-                                <select class="selectpicker form-select" name="clientId" id="clientId" data-live-search="true" title="Select a customer..." required>
-                                    <option value="new">+ New Customer</option>
-                                    <option data-divider="true"></option>
-                                    @foreach($clients as $client)
-                                    <option value="{{ $client->id ?? '' }}" @if($client->id == ($recoveries->client_id ?? '')) selected @endif>{{ $client->name ?? '' }} - {{ $client->company ?? '' }}</option>
-                                    @endforeach
-                                </select>
+    <section class="task__section">
+        @include('inc.header', ['title' => 'Project Management', 'subtitle' => $title])
+
+        <div class="dash-container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    
+                    <div class="ml-card">
+                        <div class="ml-card-header d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-2">
+                                <a href="{{ url()->previous() == url()->current() ? '/recoveries' : url()->previous() }}" class="btn btn-light btn-sm rounded-circle">
+                                    <i class="bx bx-arrow-back"></i>
+                                </a>
+                                <h5 class="mb-0">{{ $title }}</h5>
                             </div>
+                            @if($isEdit)
+                                <span class="badge bg-soft-primary text-primary">ID: #REC-{{ str_pad($_GET['id'], 4, '0', STR_PAD_LEFT) }}</span>
+                            @endif
                         </div>
-                        <div class="form-group col-md-3 col-sm-6">
-                            <label for="project">Projects*</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-list-ul'></i></span>
-                                <select class="selectpicker form-select" name="projectId" id="projectId" data-live-search="true" title="Select a project..." required>
-                                    <option value="new">+ New Project</option>
-                                    @if(!empty($_GET['id']))
-                                    <option data-divider="true"></option>
-                                    @foreach($projects as $project)
-                                    <option value="{{ $project->id ?? '' }}" @if($project->id == ($recoveries->project_id ?? '')) selected @endif>{{ $project->name ?? '' }} - {{ $project->amount ?? '' }}</option>
-                                    @endforeach
+
+                        <div class="ml-card-body p-4">
+                            <form action="manage-recovery" method="post" enctype="multipart/form-data">
+                                @csrf
+                                <input type="hidden" name="id" value="{{ $_GET['id'] ?? '' }}">
+
+                                <div class="row g-4">
+                                    {{-- Primary Context --}}
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold small text-uppercase text-muted">Customer Context</label>
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text bg-light"><i class='bx bx-user-pin'></i></span>
+                                            <select class="form-select selectpicker" name="clientId" id="clientId" data-live-search="true" required>
+                                                <option value="">Select a Customer...</option>
+                                                <option value="new" data-content="<span class='text-primary fw-bold'>+ New Customer</span>">+ New Customer</option>
+                                                @foreach($clients as $client)
+                                                    <option value="{{ $client->id }}" @if($recoveries && $client->id == ($recoveries->client_id ?? '')) selected @endif>
+                                                        {{ $client->name }} {{ $client->company ? "({$client->company})" : "" }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold small text-uppercase text-muted">Project Context</label>
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text bg-light"><i class='bx bx-briefcase'></i></span>
+                                            <select class="form-select selectpicker" name="projectId" id="projectId" data-live-search="true" required>
+                                                <option value="">Select a Project...</option>
+                                                <option value="new" data-content="<span class='text-primary fw-bold'>+ New Project</span>">+ New Project</option>
+                                                @if(!empty($projects))
+                                                    @foreach($projects as $project)
+                                                        <option value="{{ $project->id }}" @if($recoveries && $project->id == ($recoveries->project_id ?? '')) selected @endif>
+                                                            {{ $project->name }} - ₹{{ number_format($project->amount, 0) }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <hr class="my-2 opacity-50">
+
+                                    {{-- Basic Information --}}
+                                    <div class="col-md-4">
+                                        <label class="form-label">Batch No.*</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light"><i class='bx bx-barcode-reader'></i></span>
+                                            <input type="text" class="form-control" name="btno" placeholder="Batch Number" value="{{ $recoveries->batchNo ?? '' }}" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label">Client Name*</label>
+                                        <input type="text" class="form-control" id="name" name="name" placeholder="Full Name" value="{{ $recoveries->name ?? '' }}" required>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label">Company*</label>
+                                        <input type="text" class="form-control" id="company" name="company" placeholder="Company Name" value="{{ $recoveries->company ?? '' }}" required>
+                                    </div>
+
+                                    <div class="col-md-6" id="pDiv" style="display: {{ !empty($recoveries->project) ? 'block' : 'none' }}">
+                                        <label class="form-label">Manual Project Name*</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light"><i class='bx bx-box'></i></span>
+                                            <input type="text" class="form-control border-primary" id="project" name="project" placeholder="Enter custom project name" value="{{ $recoveries->project ?? '' }}">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label">Total Amount*</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light">₹</span>
+                                            <input type="number" class="form-control fw-bold" name="amount" placeholder="0.00" value="{{ $recoveries->amount ?? '' }}" required>
+                                        </div>
+                                    </div>
+
+                                    @if(!$isEdit)
+                                        <div class="col-md-3">
+                                            <label class="form-label">Received Amount</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-soft-success text-success">₹</span>
+                                                <input type="number" class="form-control border-success" name="received" placeholder="0.00" value="{{ $recoveries->paid ?? '0' }}">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label">Next Reminder</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light"><i class="bx bx-bell"></i></span>
+                                                <input type="datetime-local" class="form-control" name="reminder" value="{{ $recoveries->reminder ?? '' }}">
+                                            </div>
+                                        </div>
                                     @endif
-                                </select>
-                            </div>
+
+                                    <hr class="my-2 opacity-50">
+
+                                    {{-- Contact & Details --}}
+                                    <div class="col-md-3 col-sm-6">
+                                        <label class="form-label">Mobile Number*</label>
+                                        <input type="tel" class="form-control" name="phone" placeholder="+91" value="{{ $recoveries->mob ?? '91' }}" required>
+                                    </div>
+
+                                    <div class="col-md-3 col-sm-6">
+                                        <label class="form-label">WhatsApp*</label>
+                                        <input type="tel" class="form-control" name="whatsapp" placeholder="+91" value="{{ $recoveries->whatsapp ?? '91' }}" required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Email Address</label>
+                                        <input type="email" class="form-control" name="email" placeholder="client@example.com" value="{{ $recoveries->email ?? '' }}">
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label">Executive (POC)</label>
+                                        <input type="text" class="form-control" name="executive" value="{{ $recoveries->poc ?? '' }}">
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label">Industry</label>
+                                        <input type="text" class="form-control" name="industry" value="{{ $recoveries->industry ?? '' }}">
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Website URL</label>
+                                        <input type="url" class="form-control" name="website" placeholder="https://..." value="{{ $recoveries->website ?? '' }}">
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <label class="form-label">Notes / Message</label>
+                                        <textarea class="form-control" name="note" rows="3" placeholder="Add any collection notes here...">{{ $recoveries->msg ?? '' }}</textarea>
+                                    </div>
+
+                                    <div class="col-12 mt-4 pt-2 border-top d-flex gap-2 justify-content-end">
+                                        <button type="reset" class="btn btn-light px-4">Reset Form</button>
+                                        <button type="submit" name="submit" class="btn btn-primary px-5 fw-bold">
+                                            <i class="bx bx-check-double"></i> {{ $isEdit ? 'Save Changes' : 'Record Recovery' }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
-                        <div class="form-group col-md-3 col-sm-6">
-                            <label for="batch">Batch No.*</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-barcode'></i></span>
-                                <input type="text" class="form-control" id="btno" name="btno" placeholder="Enter Batch No.*" value="{{ $recoveries->batchNo ?? '' }}" required>
-                                <input type="hidden" class="form-control" name="id" value="{{ $_GET['id'] ?? '' }}">
-                            </div>
-                        </div>
-                        <div class="form-group col-md-3 col-sm-6">
-                            <label for="name">Client's Name*</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-user'></i></span>
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter Client's Name*" value="{{ $recoveries->name ?? '' }}" required>
-                            </div>
-                        </div>
-                        <div class="form-group col-md-3 col-sm-6">
-                            <label for="company">Company*</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-building'></i></span>
-                                <input type="text" class="form-control" id="company" name="company" placeholder="Enter Company*" value="{{ $recoveries->company ?? '' }}" required>
-                            </div>
-                        </div>
-                        <div class="form-group col-md-3 col-sm-6 @if(empty($recoveries->project)) none @endif" id="pDiv" style="display:none;">
-                            <label for="Amount">Project Name*</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-box'></i></span>
-                                <input type="text" class="form-control" id="project" name="project" placeholder="Enter Project Name*" value="{{ $recoveries->project ?? '' }}">
-                            </div>
-                        </div>
-                        <div class="form-group col-md-3 col-sm-6">
-                            <label for="Amount">Amount*</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-rupee'></i></span>
-                                <input type="number" class="form-control" id="amount" name="amount" placeholder="Enter Amount*" value="{{ $recoveries->amount ?? '' }}" required>
-                            </div>
-                        </div>
-                        @if(empty($_GET['id']))
-                        <div class="form-group col-md-3 col-sm-6">
-                            <label for="Amount">Received Amount</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-rupee'></i></span>
-                                <input type="number" class="form-control" id="received" name="received" placeholder="Enter Received Amount" value="{{ $recoveries->paid ?? '0' }}">
-                            </div>
-                        </div>
-                        <div class="form-group col-md-3 col-sm-6">
-                            <label for="reminder">Reminder</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bx bx-alarm"></i></span>
-                                <input type="datetime-local" class="form-control" id="reminder" name="reminder" placeholder="Enter Reminder" value="{{ $recoveries->reminder ?? '' }}">
-                            </div>
-                        </div>
-                        @endif
-                        <div class="form-group col-md-3 col-sm-6">
-                            <label for="mob">Mobile No.*</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-mobile-alt'></i></span>
-                                <input type="phone" class="form-control" id="phone" name="phone" placeholder="Enter Mobile No." value="{{ $recoveries->mob ?? '91' }}" required>
-                            </div>
-                        </div>
-                        <div class="form-group col-md-3 col-sm-6">
-                            <label for="Whatsapp">Whatsapp No.*</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bxl-whatsapp'></i></span>
-                                <input type="phone" class="form-control" id="whatsapp" name="whatsapp" placeholder="Enter Whatsapp No." value="{{ $recoveries->whatsapp ?? '91' }}" required>
-                            </div>
-                        </div>
-                        <div class="form-group col-md-3 col-sm-6">
-                            <label for="email">Email Id</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-envelope'></i></span>
-                                <input type="email" class="form-control" id="email" name="email" placeholder="Enter Email id" value="{{ $recoveries->email ?? '' }}">
-                            </div>
-                        </div>
-                        <div class="form-group col-md-3 col-sm-6">
-                            <label for="Executive">Executive</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-id-card'></i></span>
-                                <input type="text" class="form-control" id="executive" name="executive" placeholder="Enter Executive" value="{{ $recoveries->poc ?? '' }}">
-                            </div>
-                        </div>
-                        <div class="form-group col-md-3 col-sm-6 @if(empty($recoveries->industry)) none @endif">
-                            <label for="Industry">Industry & Segment</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-category-alt'></i></span>
-                                <input type="text" class="form-control" id="industry" name="industry" placeholder="Enter Industry" value="{{ $recoveries->industry ?? '' }}">
-                            </div>
-                        </div>
-                        <!--<div class="form-group col-md-3 col-sm-6 @if(empty($recoveries->project)) none @endif">
-                            <label for="Product">Product</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-box'></i></span>
-                                <input type="text" class="form-control" id="product" name="product" placeholder="Enter Product" value="{{ $recoveries->project ?? '' }}">
-                            </div>
-                        </div>-->
-                        <div class="form-group col-md-3 col-sm-6 @if(empty($recoveries->website)) none @endif">
-                            <label for="website">Website</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class='bx bx-globe'></i></span>
-                                <input type="url" class="form-control" id="website" name="website" placeholder="Enter Website" value="{{ $recoveries->website ?? '' }}">
-                            </div>
-                        </div>
-                        <div class="form-group col-md-6 @if(empty($recoveries->msg)) none @endif">
-                            <label for="note">Note</label>
-                            <div class="input-group">
-                                <textarea type="text" class="form-control" id="note" name="note" placeholder="Note">{{ $recoveries->msg ?? '' }}</textarea>
-                            </div>
-                        </div>
-                        <div class="form-group mt-2 mb-0">
-                            <a href="javascript:void(0)" class="more">Show Advance Mode</a>
-                        </div>
-                        <div class="form-group col-md-12 text-right">
-                            <button type="submit" name="submit" class="btn btn-primary border px-4">Submit</button>
-                            <button type="reset" class="btn btn-light border px-4">Reset</button>
-                        </div>
-                    </form>
+                    </div>
+
                 </div>
             </div>
         </div>
     </section>
-    
+
+    <script>
+        $(document).ready(function() {
+            // Handle project selection logic
+            $('#projectId').on('change', function() {
+                if ($(this).val() === 'new') {
+                    $('#pDiv').slideDown();
+                    $('#project').attr('required', true).focus();
+                } else {
+                    $('#pDiv').slideUp();
+                    $('#project').attr('required', false);
+                }
+            });
+
+            // Handle client change context if needed
+            $('#clientId').on('change', function() {
+                if ($(this).val() === 'new') {
+                    // Could clear form or toggle fields
+                }
+            });
+        });
+    </script>
+
+    <style>
+        .form-label { font-size: 0.85rem; font-weight: 500; color: #5f6368; margin-bottom: 6px; }
+        .form-control:focus, .form-select:focus { border-color: #006666; box-shadow: 0 0 0 0.2rem rgba(0, 102, 102, 0.15); }
+        .input-group-text { border-right: none; color: #5f6368; }
+        .input-group > .form-control { border-left: none; }
+        .bg-soft-success { background-color: rgba(52, 168, 83, 0.1); }
+        .bg-soft-primary { background-color: rgba(26, 115, 232, 0.1); }
+    </style>
 @endsection

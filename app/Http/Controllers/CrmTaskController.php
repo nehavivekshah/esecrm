@@ -10,8 +10,7 @@ class CrmTaskController extends Controller
 {
     public function index()
     {
-        $tasks = CrmTask::where('user_id', Auth::id() ?? 1)
-            ->orderBy('due_date', 'asc')
+        $tasks = CrmTask::orderBy('due_date', 'asc')
             ->get();
         return view('crm_tasks', compact('tasks'));
     }

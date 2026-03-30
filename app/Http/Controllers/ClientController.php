@@ -120,18 +120,52 @@ class ClientController extends Controller
 
     public function manageRecovery(Request $request)
     {
+        $id = $request->id;
+        $projectId = $request->project_id;
+        $recoveries = null;
 
-        $recoveries = Recoveries::leftjoin('clients', 'recoveries.client_id', '=', 'clients.id')
-            ->leftjoin('projects', 'recoveries.project_id', '=', 'projects.id')
-            ->select('clients.batchNo', 'clients.name', 'clients.company', 'clients.mob', 'clients.whatsapp', 'clients.industry', 'clients.email', 'clients.poc', 'projects.name as project', 'projects.amount', 'projects.deployment_url', 'projects.note as msg', 'recoveries.*')
-            ->where('recoveries.cid', '=', Auth::user()->cid)->where('projects.id', '=', ($request->id ?? ''))->first();
+        if ($id) {
+            $recoveries = Recoveries::leftjoin('clients', 'recoveries.client_id', '=', 'clients.id')
+                ->leftjoin('projects', 'recoveries.project_id', '=', 'projects.id')
+                ->select('clients.batchNo', 'clients.name', 'clients.company', 'clients.mob', 'clients.whatsapp', 'clients.industry', 'clients.email', 'clients.poc', 'projects.name as project', 'projects.amount', 'projects.deployment_url', 'projects.note as msg', 'recoveries.*')
+                ->where('recoveries.id', $id)
+                ->first();
+        } elseif ($projectId) {
+            // Mock a recovery object structure pre-filled with project/client data
+            $project = Projects::leftJoin('clients', 'projects.client_id', '=', 'clients.id')
+                ->select('projects.*', 'clients.name as client_name', 'clients.company as client_company', 'clients.email as client_email', 'clients.mob as client_mob', 'clients.whatsapp as client_whatsapp', 'clients.industry as client_industry', 'clients.poc as client_poc')
+                ->where('projects.id', $projectId)
+                ->first();
 
-        $clients = Clients::get();
+            if ($project) {
+                $recoveries = (object)[
+                    'project_id' => $project->id,
+                    'client_id'  => $project->client_id,
+                    'name'       => $project->client_name,
+                    'company'    => $project->client_company,
+                    'email'      => $project->client_email,
+                    'mob'        => $project->client_mob,
+                    'whatsapp'   => $project->client_whatsapp,
+                    'industry'   => $project->client_industry,
+                    'poc'        => $project->client_poc,
+                    'project'    => $project->name,
+                    'amount'     => $project->amount,
+                    'msg'        => $project->note,
+                ];
+            }
+        }
 
-        $projects = Projects::where('id', '=', ($recoveries->project_id ?? ''))->get();
+        $clients = Clients::where('cid', Auth::user()->cid)->orderBy('name', 'ASC')->get();
+        $projects = [];
+        if ($recoveries && isset($recoveries->client_id)) {
+            $projects = Projects::where('client_id', $recoveries->client_id)->get();
+        }
 
-        return view('manageRecovery', ['recoveries' => $recoveries, 'clients' => $clients, 'projects' => $projects]);
-
+        return view('manageRecovery', [
+            'recoveries' => $recoveries,
+            'clients'    => $clients,
+            'projects'   => $projects
+        ]);
     }
 
     public function updateRecoveryAmount(Request $request)
@@ -327,7 +361,9 @@ class ClientController extends Controller
             });
         }
 
-        $projects = $query->orderBy('projects.id', 'DESC')->get();
+        $projects = $query->orderByRaw('CASE WHEN projects.status = 1 AND COALESCE(rec_totals.total_paid, 0) < projects.amount THEN 0 ELSE 1 END ASC')
+            ->orderBy('projects.id', 'DESC')
+            ->get();
 
         return view('projects', ['projects' => $projects, 'search' => $search]);
     }

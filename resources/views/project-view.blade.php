@@ -172,6 +172,18 @@
                                         ₹{{ number_format($totalAmount, 2) }}
                                     </div>
                                 </div>
+                                 <div class="pv-info-item">
+                                    <div class="pv-info-label"><i class="bx bx-calendar-star"></i> Start Date</div>
+                                    <div class="pv-info-val">
+                                        {{ $project->start_date ? \Carbon\Carbon::parse($project->start_date)->format('d M, Y') : '—' }}
+                                    </div>
+                                </div>
+                                <div class="pv-info-item">
+                                    <div class="pv-info-label"><i class="bx bx-calendar-check"></i> Deadline</div>
+                                    <div class="pv-info-val {{ \Carbon\Carbon::parse($project->deadline)->isPast() && $project->status == 1 ? 'text-danger fw-bold' : '' }}">
+                                        {{ $project->deadline ? \Carbon\Carbon::parse($project->deadline)->format('d M, Y') : '—' }}
+                                    </div>
+                                </div>
                                 @if($project->deployment_url)
                                 <div class="pv-info-item" style="grid-column:span 2;">
                                     <div class="pv-info-label"><i class="bx bx-globe"></i> Deployment URL</div>
@@ -268,7 +280,7 @@
             <div class="tab-pane fade" id="billing" role="tabpanel">
                 <div class="pv-tab-toolbar">
                     <h2 class="pv-tab-title"><i class="bx bx-receipt"></i> Recovery History</h2>
-                    <a href="/manage-recovery?id={{ $project->id }}" class="pv-add-btn">
+                    <a href="/manage-recovery?project_id={{ $project->id }}" class="pv-add-btn">
                         <i class="bx bx-plus"></i> Add Recovery
                     </a>
                 </div>
