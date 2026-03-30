@@ -474,6 +474,8 @@ class ClientController extends Controller
     {
         $search = $request->input('search');
         $status = $request->input('status');
+        $industry = $request->input('industry');
+        $lifecycle_stage = $request->input('lifecycle_stage');
 
         $query = Clients::where('name', '!=', '');
 
@@ -494,12 +496,30 @@ class ClientController extends Controller
             $query->where('status', '=', $status);
         }
 
+        if (!empty($industry)) {
+            $query->where('industry', '=', $industry);
+        }
+
+        if (!empty($lifecycle_stage)) {
+            $query->where('lifecycle_stage', '=', $lifecycle_stage);
+        }
+
         $clients = $query->orderBy('status', 'DESC')->orderBy('id', 'DESC')->get();
+        
+        // Dynamically fetch available industries for the dropdown
+        $industryQuery = Clients::select('industry')->whereNotNull('industry')->where('industry', '!=', '')->distinct();
+        if (Auth::user()->role != 'master') {
+            $industryQuery->where('cid', '=', Auth::user()->cid);
+        }
+        $availableIndustries = $industryQuery->pluck('industry');
 
         return view('clients', [
             'clients' => $clients,
             'search' => $search,
-            'status' => $status
+            'status' => $status,
+            'industry' => $industry,
+            'lifecycle_stage' => $lifecycle_stage,
+            'availableIndustries' => $availableIndustries
         ]);
     }
 

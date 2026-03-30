@@ -66,10 +66,24 @@
             <div class="leads-toolbar mb-3">
                 <div class="leads-toolbar-left">
                     <form action="/clients" method="GET" id="clientFilterForm" class="d-flex align-items-center gap-2">
-                        <select name="status" id="clientStatusFilter" class="form-select" onchange="this.form.submit()" style="width: auto; min-width: 140px;">
+                        <select name="status" id="clientStatusFilter" class="form-select" onchange="this.form.submit()" style="width: auto; min-width: 130px;">
                             <option value="">All Status</option>
                             <option value="1" {{ ($status ?? '') == '1' ? 'selected' : '' }}>Active</option>
                             <option value="0" {{ ($status ?? '') == '0' ? 'selected' : '' }}>Inactive</option>
+                        </select>
+                        <select name="industry" id="clientIndustryFilter" class="form-select" onchange="this.form.submit()" style="width: auto; min-width: 140px;">
+                            <option value="">All Industries</option>
+                            @if(isset($availableIndustries))
+                                @foreach($availableIndustries as $ind)
+                                    <option value="{{ $ind }}" {{ ($industry ?? '') == $ind ? 'selected' : '' }}>{{ $ind }}</option>
+                                @endforeach
+                            @endif
+                        </select>
+                        <select name="lifecycle_stage" id="clientStageFilter" class="form-select" onchange="this.form.submit()" style="width: auto; min-width: 140px;">
+                            <option value="">All Stages</option>
+                            @foreach(['Lead','Marketing Qualified','Sales Qualified','Customer','Evangelist'] as $stage)
+                                <option value="{{ $stage }}" {{ ($lifecycle_stage ?? '') == $stage ? 'selected' : '' }}>{{ $stage }}</option>
+                            @endforeach
                         </select>
                     </form>
                 </div>
