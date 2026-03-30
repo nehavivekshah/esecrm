@@ -25,7 +25,7 @@
 @endphp
 
 {{-- Backdrop overlay --}}
-<div class="et-backdrop" onclick="window.location='{{ route('task') }}';"></div>
+<div class="et-backdrop" onclick="closeTaskAjax();"></div>
 
 <div class="offcanvas offcanvas-end show" tabindex="-1" id="taskOffcanvas"
      style="width:820px; max-width:100vw; border-top-left-radius:16px; border-bottom-left-radius:16px;
@@ -64,7 +64,7 @@
                 </a>
             @endif
             {{-- Close --}}
-            <a href="{{ route('task') }}" class="kb-action-btn" title="Close"
+            <a href="javascript:void(0)" onclick="closeTaskAjax()" class="kb-action-btn" title="Close"
                style="background:rgba(60,64,67,0.07);color:#5f6368;">
                 <i class="bx bx-x"></i>
             </a>

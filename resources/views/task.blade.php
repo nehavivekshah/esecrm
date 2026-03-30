@@ -104,7 +104,7 @@
                                     $whr = floatval($task->whr ?? 0);
                                 @endphp
 
-                                <a href="{{ route('edit-task', ['id' => $task->id]) }}"
+                                <a href="javascript:void(0)" onclick="openTaskAjax(event, '{{ $task->id }}')"
                                    class="tk-card {{ $task->is_highlighted ? 'tk-card-highlighted' : '' }}"
                                    draggable="true" data-taskid="{{ $task->id }}"
                                    style="border-left-color: {{ $sc[0] }};">
@@ -196,9 +196,52 @@
         @include('inc.task.popup')
     @endif
 
+    <div id="taskAjaxContainer"></div>
+
     <script>
+        // Open task modal via AJAX
+        function openTaskAjax(event, taskId) {
+            if(event) event.preventDefault();
+            
+            // Show a basic loading state optionally
+            document.getElementById('taskAjaxContainer').innerHTML = '<div class="et-backdrop"></div><div class="offcanvas offcanvas-end show" tabindex="-1"><div class="offcanvas-header"><h5 class="offcanvas-title">Loading...</h5></div></div>';
+
+            fetch('/task-details/' + taskId)
+                .then(response => response.text())
+                .then(html => {
+                    const container = document.getElementById('taskAjaxContainer');
+                    container.innerHTML = html;
+                    // Properly evaluate dynamically inserted scripts
+                    if (window.jQuery) {
+                        $('#taskAjaxContainer').html(html);
+                    } else {
+                        Array.from(container.querySelectorAll('script')).forEach(oldScript => {
+                            const newScript = document.createElement('script');
+                            Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                            newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                            oldScript.parentNode.replaceChild(newScript, oldScript);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching task details:', error);
+                    document.getElementById('taskAjaxContainer').innerHTML = '';
+                    alert('Could not load task details.');
+                });
+        }
+
+        // Close task modal
+        function closeTaskAjax() {
+            document.getElementById('taskAjaxContainer').innerHTML = '';
+            
+            // If the user accessed it via direct edit-task URL, navigate back to kanban board
+            if(window.location.search.includes('id=')) {
+                window.location = '{{ route("task") }}';
+            }
+        }
+
         // Focus textarea after addtask() unhides the panel
-        document.addEventListener('DOMContentLoaded', function () {
+        document.DOMContentLoaded = function () {
             document.querySelectorAll('.tk-add-btn').forEach(function (btn) {
                 btn.addEventListener('click', function () {
                     const uid = this.dataset.uid;
@@ -208,7 +251,7 @@
                     }, 50);
                 });
             });
-        });
+        };
     </script>
 
 @endsection

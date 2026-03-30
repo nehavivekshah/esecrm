@@ -92,6 +92,36 @@ class TaskController extends Controller
         return view('task', $data);
     }
 
+    public function getTaskDetailsAjax($id)
+    {
+        $taskSingle = Task::select('tasks.*')->where('id', '=', $id)->get();
+        if ($taskSingle->isEmpty()) {
+            return response()->json(['error' => 'Task not found'], 404);
+        }
+
+        $userSingle = User::select('users.name')->where('id', '=', $taskSingle[0]->uid)->get();
+        
+        $taskHistory = Task_working_hours::select('task_working_hours.*')
+            ->where('taskid', '=', $id)
+            ->orderBy('id', 'DESC')->get();
+
+        $taskComments = Task_comments::leftJoin('users', 'users.id', '=', 'task_comments.uid')
+            ->select('users.name', 'task_comments.*')
+            ->where('task_comments.taskid', '=', $id)
+            ->orderBy('task_comments.id', 'DESC')->get();
+
+        $taskAttachments = \App\Models\TaskAttachment::where('task_id', $id)
+            ->orderBy('id', 'DESC')->get();
+
+        return view('inc.task.popup', [
+            'taskSingle' => $taskSingle,
+            'userSingle' => $userSingle,
+            'taskHistory' => $taskHistory,
+            'taskComments' => $taskComments,
+            'taskAttachments' => $taskAttachments
+        ])->render();
+    }
+
     public function tasksubmit(Request $request)
     {
 

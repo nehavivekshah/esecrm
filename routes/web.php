@@ -106,6 +106,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::controller(TaskController::class)->group(function () {
         Route::get('/tasksubmit', 'tasksubmit')->name('tasksubmit');
         Route::post('/tasksubmit', 'tasksubmit')->name('tasksubmit');
+        Route::get('/task-details/{id}', 'getTaskDetailsAjax')->name('task.details.ajax');
         Route::post('/task-attachment/upload', 'uploadAttachment')->name('task.attachment.upload');
         Route::delete('/task-attachment/{id}', 'deleteAttachment')->name('task.attachment.delete');
     });
