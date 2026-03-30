@@ -202,7 +202,7 @@
                         <thead>
                             <tr>
                                 <th>Project</th>
-                                <th class="m-none">Category</th>
+
                                 <th class="m-none">Dates</th>
                                 <th>Payment</th>
                                 <th class="m-none">Type</th>
@@ -235,9 +235,6 @@
                                                 <div class="small text-muted">{{ $project->client_name ?? '—' }}</div>
                                             </div>
                                         </div>
-                                    </td>
-                                    <td class="m-none">
-                                        <span class="text-dark fw-500">{{ $project->category ?: '—' }}</span>
                                     </td>
                                     <td class="m-none">
                                         <div class="small">

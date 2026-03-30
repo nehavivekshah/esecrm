@@ -7,44 +7,57 @@
 
     <div class="dash-container">
 
-        {{-- Page Header --}}
-        <div class="mp-page-header mb-4">
-            <div class="mp-page-header-left">
-                <a href="{{ $project ? url('/project/view/'.$project->id) : url('/projects') }}"
-                   class="mp-back-btn">
+        {{-- Page Top Bar --}}
+        <div class="ml-page-topbar mb-4">
+            <div class="ml-page-topbar-left">
+                <a href="{{ $project ? url('/project/view/'.$project->id) : url('/projects') }}" class="ml-back-btn" title="Back to Projects">
                     <i class="bx bx-arrow-back"></i>
                 </a>
                 <div>
-                    <h1 class="mp-page-title">
+                    <h1 class="ml-page-title">
                         {{ $project ? 'Edit Project' : 'New Project' }}
                     </h1>
-                    <p class="mp-page-sub">
+                    <p class="ml-page-subtitle">
                         @if($project)
-                            Editing <strong>{{ $project->name }}</strong>
-                            · #PROU-{{ str_pad($project->id, 4, '0', STR_PAD_LEFT) }}
+                            Editing <strong>{{ $project->name }}</strong> · #PROU-{{ str_pad($project->id, 4, '0', STR_PAD_LEFT) }}
                         @else
                             Fill in the details to create a new project
                         @endif
                     </p>
                 </div>
             </div>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                @if($project)
+                    <div class="ml-lead-badge">
+                        <i class="bx bx-edit-alt"></i> Editing
+                    </div>
+                @else
+                    <div class="ml-lead-badge ml-lead-badge-new">
+                        <i class="bx bx-plus-circle"></i> New Entry
+                    </div>
+                @endif
+            </div>
         </div>
 
         {{-- Validation Errors --}}
         @if($errors->any())
-        <div class="mp-alert mp-alert-danger mb-4">
-            <i class="bx bx-error-circle"></i>
-            <ul class="mb-0 ps-3">
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+        <div class="alert alert-danger shadow-sm border-0 alert-dismissible" role="alert">
+            <div class="d-flex gap-2">
+                <i class="bx bx-error-circle fs-5" style="margin-top:2px;"></i>
+                <ul class="mb-0 ps-3">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         @endif
 
         @if(session('success'))
-        <div class="mp-alert mp-alert-success mb-4">
-            <i class="bx bx-check-circle"></i> {{ session('success') }}
+        <div class="alert alert-success shadow-sm border-0 alert-dismissible" role="alert">
+            <i class="bx bx-check-circle me-2"></i> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         @endif
 
@@ -58,189 +71,137 @@
 
                 {{-- ── Main Form Card ── --}}
                 <div class="col-lg-8">
-                    <div class="mp-card">
-                        <div class="mp-card-head">
-                            <i class="bx bx-detail"></i> Project Information
-                        </div>
-
-                        {{-- Project Name --}}
-                        <div class="mp-field">
-                            <label class="mp-label" for="name">
-                                Project Name <span class="mp-required">*</span>
-                            </label>
-                            <div class="mp-input-wrap">
-                                <i class="bx bx-layer mp-input-icon"></i>
-                                <input type="text" id="name" name="name"
-                                       class="mp-input @error('name') is-invalid @enderror"
-                                       placeholder="e.g. Website Redesign, ERP Implementation…"
-                                       value="{{ old('name', $project->name ?? '') }}"
-                                       required>
+                    <div class="ml-card">
+                        <div class="ml-card-header">
+                            <div class="ml-card-icon" style="background:rgba(0,102,102,0.1);color:#006666;">
+                                <i class="bx bx-detail"></i>
                             </div>
-                            @error('name')
-                                <div class="mp-error">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        {{-- Client --}}
-                        <div class="mp-field">
-                            <label class="mp-label" for="client_id">
-                                Client <span class="mp-required">*</span>
-                            </label>
-                            <div class="mp-input-wrap">
-                                <i class="bx bx-user-circle mp-input-icon"></i>
-                                <select id="client_id" name="client_id"
-                                        class="mp-input mp-select @error('client_id') is-invalid @enderror"
-                                        required>
-                                    <option value="">— Select a client —</option>
-                                    @foreach($clients as $client)
-                                        <option value="{{ $client->id }}"
-                                            {{ old('client_id', $project->client_id ?? '') == $client->id ? 'selected' : '' }}>
-                                            {{ $client->name }}
-                                            @if($client->company) ({{ $client->company }}) @endif
-                                        </option>
-                                    @endforeach
-                                </select>
+                            <div>
+                                <h6 class="ml-card-title">Project Information</h6>
+                                <span class="ml-card-sub">Core details and categorization</span>
                             </div>
-                            @error('client_id')
-                                <div class="mp-error">{{ $message }}</div>
-                            @enderror
-                            @if($clients->isEmpty())
-                                <div class="mp-hint">
-                                    <i class="bx bx-info-circle"></i>
-                                    No clients found. <a href="/manage-client">Add a client first</a>.
-                                </div>
-                            @endif
                         </div>
-
-                        <div class="row">
-                            {{-- Category --}}
-                            <div class="col-md-6">
-                                <div class="mp-field">
-                                    <label class="mp-label" for="category">Category</label>
-                                    <div class="mp-input-wrap">
-                                        <i class="bx bx-purchase-tag-alt mp-input-icon"></i>
-                                        <input type="text" id="category" name="category"
-                                               class="mp-input"
-                                               placeholder="e.g. Design, Development..."
-                                               value="{{ old('category', $project->category ?? '') }}">
+                        <div class="ml-card-body">
+                            <div class="row g-3">
+                                
+                                {{-- Project Name --}}
+                                <div class="col-12">
+                                    <label class="ml-label" for="name">Project Name <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bx bx-layer"></i></span>
+                                        <input type="text" id="name" name="name" 
+                                               class="form-control @error('name') is-invalid @enderror"
+                                               placeholder="e.g. Website Redesign, ERP Implementation…"
+                                               value="{{ old('name', $project->name ?? '') }}" required>
                                     </div>
+                                    @error('name') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                                 </div>
-                            </div>
-                            {{-- Status --}}
-                            <div class="col-md-6">
-                                <div class="mp-field">
-                                    <label class="mp-label" for="status">Project Status</label>
-                                    <div class="mp-input-wrap">
-                                        <i class="bx bx-check-shield mp-input-icon"></i>
-                                        <select id="status" name="status" class="mp-input mp-select">
+
+                                {{-- Client --}}
+                                <div class="col-12">
+                                    <label class="ml-label" for="client_id">Client <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bx bx-user-circle"></i></span>
+                                        <select id="client_id" name="client_id" class="form-select @error('client_id') is-invalid @enderror" required>
+                                            <option value="">— Select a client —</option>
+                                            @foreach($clients as $client)
+                                                <option value="{{ $client->id }}" {{ old('client_id', $project->client_id ?? '') == $client->id ? 'selected' : '' }}>
+                                                    {{ $client->name }} @if($client->company) ({{ $client->company }}) @endif
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    @error('client_id') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                                    @if($clients->isEmpty())
+                                        <div class="text-muted small mt-1"><i class="bx bx-info-circle"></i> No clients found. <a href="/manage-client">Add a client first</a>.</div>
+                                    @endif
+                                </div>
+
+                                {{-- Status --}}
+                                <div class="col-12">
+                                    <label class="ml-label" for="status">Project Status</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bx bx-check-shield"></i></span>
+                                        <select id="status" name="status" class="form-select">
                                             <option value="1" {{ old('status', $project->status ?? 1) == 1 ? 'selected' : '' }}>Active</option>
                                             <option value="0" {{ old('status', $project->status ?? 1) == 0 ? 'selected' : '' }}>Inactive / Completed</option>
                                         </select>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
 
-                        <div class="row">
-                            {{-- Start Date --}}
-                            <div class="col-md-6">
-                                <div class="mp-field">
-                                    <label class="mp-label" for="start_date">Start Date</label>
-                                    <div class="mp-input-wrap">
-                                        <i class="bx bx-calendar-event mp-input-icon"></i>
-                                        <input type="date" id="start_date" name="start_date"
-                                               class="mp-input"
+                                {{-- Dates --}}
+                                <div class="col-md-6">
+                                    <label class="ml-label" for="start_date">Start Date</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bx bx-calendar-event"></i></span>
+                                        <input type="date" id="start_date" name="start_date" class="form-control"
                                                value="{{ old('start_date', $project->start_date ?? '') }}">
                                     </div>
                                 </div>
-                            </div>
-                            {{-- Deadline --}}
-                            <div class="col-md-6">
-                                <div class="mp-field">
-                                    <label class="mp-label" for="deadline">Deadline</label>
-                                    <div class="mp-input-wrap">
-                                        <i class="bx bx-calendar-x mp-input-icon"></i>
-                                        <input type="date" id="deadline" name="deadline"
-                                               class="mp-input"
+                                <div class="col-md-6">
+                                    <label class="ml-label" for="deadline">Deadline</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bx bx-calendar-x"></i></span>
+                                        <input type="date" id="deadline" name="deadline" class="form-control"
                                                value="{{ old('deadline', $project->deadline ?? '') }}">
                                     </div>
                                 </div>
-                            </div>
-                        </div>
 
-                        {{-- Project Type --}}
-                        <div class="mp-field">
-                            <label class="mp-label" for="type">Project Type</label>
-                            <div class="d-flex gap-2 flex-wrap mb-2" id="typePills">
-                                @foreach(['Web Development','Mobile App','ERP','CRM','E-Commerce','Design','Maintenance','General'] as $t)
-                                    <button type="button" class="mp-type-pill"
-                                            data-val="{{ $t }}"
-                                            onclick="selectType('{{ $t }}')">
-                                        {{ $t }}
-                                    </button>
-                                @endforeach
-                            </div>
-                            <div class="mp-input-wrap">
-                                <i class="bx bx-category mp-input-icon"></i>
-                                <input type="text" id="type" name="type"
-                                       class="mp-input"
-                                       placeholder="Or type a custom category…"
-                                       value="{{ old('type', $project->type ?? '') }}">
-                            </div>
-                        </div>
+                                {{-- Project Type & Amount --}}
+                                <div class="col-md-6">
+                                    <label class="ml-label" for="type">Project Type</label>
+                                    <div class="d-flex gap-1 flex-wrap mb-2" id="typePills">
+                                        @foreach(['Web', 'App', 'ERP', 'CRM', 'Design', 'Other'] as $t)
+                                            <button type="button" class="type-pill" data-val="{{ $t }}" onclick="selectType('{{ $t }}')">{{ $t }}</button>
+                                        @endforeach
+                                    </div>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bx bx-category"></i></span>
+                                        <input type="text" id="type" name="type" class="form-control"
+                                               placeholder="Custom category…" value="{{ old('type', $project->type ?? '') }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="ml-label" for="amount">Contract Amount <span class="text-danger">*</span></label>
+                                    <br><br><br>
+                                    <div class="input-group">
+                                        <span class="input-group-text fw-bold">₹</span>
+                                        <input type="number" id="amount" name="amount" class="form-control @error('amount') is-invalid @enderror"
+                                               placeholder="0.00" step="0.01" min="0" value="{{ old('amount', $project->amount ?? '') }}">
+                                    </div>
+                                    @error('amount') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                                </div>
 
-                        {{-- Contract Amount --}}
-                        <div class="mp-field">
-                            <label class="mp-label" for="amount">
-                                Contract Amount (₹)
-                            </label>
-                            <div class="mp-input-wrap">
-                                <span class="mp-prefix">₹</span>
-                                <input type="number" id="amount" name="amount"
-                                       class="mp-input mp-input-prefix @error('amount') is-invalid @enderror"
-                                       placeholder="0.00" step="0.01" min="0"
-                                       value="{{ old('amount', $project->amount ?? '') }}">
-                            </div>
-                            @error('amount')
-                                <div class="mp-error">{{ $message }}</div>
-                            @enderror
-                        </div>
+                                {{-- Deployment URL & Tags --}}
+                                <div class="col-md-6">
+                                    <label class="ml-label" for="deployment_url">Deployment / Live URL</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bx bx-globe"></i></span>
+                                        <input type="url" id="deployment_url" name="deployment_url" class="form-control @error('deployment_url') is-invalid @enderror"
+                                               placeholder="https://site.com" value="{{ old('deployment_url', $project->deployment_url ?? '') }}">
+                                    </div>
+                                    @error('deployment_url') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="ml-label" for="tags">Tags (comma separated)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bx bx-purchase-tag-alt"></i></span>
+                                        <input type="text" id="tags" name="tags" class="form-control"
+                                               placeholder="e.g. urgent, v2.0..." value="{{ old('tags', $project->tags ?? '') }}">
+                                    </div>
+                                </div>
 
-                        {{-- Deployment URL --}}
-                        <div class="mp-field">
-                            <label class="mp-label" for="deployment_url">
-                                Deployment / Live URL
-                            </label>
-                            <div class="mp-input-wrap">
-                                <i class="bx bx-globe mp-input-icon"></i>
-                                <input type="url" id="deployment_url" name="deployment_url"
-                                       class="mp-input @error('deployment_url') is-invalid @enderror"
-                                       placeholder="https://client-site.com"
-                                       value="{{ old('deployment_url', $project->deployment_url ?? '') }}">
-                            </div>
-                            @error('deployment_url')
-                                <div class="mp-error">{{ $message }}</div>
-                            @enderror
-                        </div>
+                                {{-- Notes --}}
+                                <div class="col-12">
+                                    <label class="ml-label" for="note">Notes / Description</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bx bx-note"></i></span>
+                                        <textarea id="note" name="note" class="form-control"
+                                                  placeholder="Project scope, tech stack…" rows="4">{{ old('note', $project->note ?? '') }}</textarea>
+                                    </div>
+                                </div>
 
-                        {{-- Tags --}}
-                        <div class="mp-field">
-                            <label class="mp-label" for="tags">Tags (comma separated)</label>
-                            <div class="mp-input-wrap">
-                                <i class="bx bx-purchase-tag-alt mp-input-icon"></i>
-                                <input type="text" id="tags" name="tags"
-                                       class="mp-input"
-                                       placeholder="e.g. urgent, v2.0, hot..."
-                                       value="{{ old('tags', $project->tags ?? '') }}">
                             </div>
-                        </div>
-
-                        {{-- Notes --}}
-                        <div class="mp-field">
-                            <label class="mp-label" for="note">Notes / Description</label>
-                            <textarea id="note" name="note" class="mp-input mp-textarea"
-                                      placeholder="Project scope, tech stack, special requirements…"
-                                      rows="4">{{ old('note', $project->note ?? '') }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -249,47 +210,59 @@
                 <div class="col-lg-4">
 
                     {{-- Save Card --}}
-                    <div class="mp-card mp-save-card mb-3">
-                        <button type="submit" class="mp-submit-btn" id="saveBtn">
-                            <i class="bx bx-save"></i>
-                            {{ $project ? 'Save Changes' : 'Create Project' }}
-                        </button>
-                        <a href="{{ $project ? url('/project/view/'.$project->id) : url('/projects') }}"
-                           class="mp-cancel-btn">Cancel</a>
+                    <div class="ml-card mb-3 text-center">
+                        <div class="ml-card-body">
+                            <button type="submit" class="lb-btn lb-btn-primary w-100 mb-2" id="saveBtn" style="justify-content:center;">
+                                <i class="bx bx-save"></i> {{ $project ? 'Save Changes' : 'Create Project' }}
+                            </button>
+                            <a href="{{ $project ? url('/project/view/'.$project->id) : url('/projects') }}" class="text-muted small text-decoration-none">
+                                <i class="bx bx-x"></i> Cancel and return
+                            </a>
+                        </div>
                     </div>
 
                     {{-- Preview Card --}}
-                    <div class="mp-card mp-preview-card" id="previewCard">
-                        <div class="mp-card-head"><i class="bx bx-show"></i> Preview</div>
-                        <div class="mp-preview-avatar" id="prevAvatar">?</div>
-                        <div class="mp-preview-name" id="prevName">Project Name</div>
-                        <div class="mp-preview-type" id="prevType">Type</div>
-                        <div class="mp-preview-amount" id="prevAmount">₹0</div>
-                        @if($project)
-                        <div class="mp-preview-meta">
-                            <i class="bx bx-calendar"></i>
-                            Created {{ \Carbon\Carbon::parse($project->created_at)->format('d M, Y') }}
+                    <div class="ml-card mb-3 text-center" id="previewCard">
+                        <div class="ml-card-header justify-content-center border-0 pb-0">
+                            <span class="text-muted small fw-bold text-uppercase"><i class="bx bx-show"></i> Live Preview</span>
                         </div>
-                        @endif
+                        <div class="ml-card-body pt-2">
+                            <div class="preview-avatar" id="prevAvatar">?</div>
+                            <div class="preview-name" id="prevName">Project Name</div>
+                            <div class="preview-type" id="prevType">Type</div>
+                            <div class="preview-amount" id="prevAmount">₹0</div>
+                            @if($project)
+                            <div class="text-muted small mt-2">
+                                <i class="bx bx-calendar"></i> Created {{ \Carbon\Carbon::parse($project->created_at)->format('d M, Y') }}
+                            </div>
+                            @endif
+                        </div>
                     </div>
 
                     {{-- Quick Links --}}
                     @if($project)
-                    <div class="mp-card mt-3">
-                        <div class="mp-card-head"><i class="bx bx-link"></i> Quick Links</div>
-                        <div class="mp-quick-links">
-                            <a href="/project/view/{{ $project->id }}" class="mp-qlink">
-                                <i class="bx bx-show"></i> View Project
-                            </a>
-                            <a href="/manage-recovery?id={{ $project->id }}" class="mp-qlink">
-                                <i class="bx bx-receipt"></i> Add Recovery
-                            </a>
-                            <a href="/manage-license" class="mp-qlink">
-                                <i class="bx bx-key"></i> Manage License
-                            </a>
+                    <div class="ml-card">
+                        <div class="ml-card-header">
+                            <div>
+                                <h6 class="ml-card-title"><i class="bx bx-link"></i> Quick Links</h6>
+                            </div>
+                        </div>
+                        <div class="ml-card-body p-2">
+                            <div class="d-flex flex-column gap-1">
+                                <a href="/project/view/{{ $project->id }}" class="qlink-item">
+                                    <i class="bx bx-show"></i> View Project
+                                </a>
+                                <a href="/manage-recovery?id={{ $project->id }}" class="qlink-item">
+                                    <i class="bx bx-receipt"></i> Add Recovery
+                                </a>
+                                <a href="/manage-license" class="qlink-item">
+                                    <i class="bx bx-key"></i> Manage License
+                                </a>
+                            </div>
                         </div>
                     </div>
                     @endif
+
                 </div>
 
             </div>{{-- /row --}}
@@ -298,135 +271,41 @@
 </section>
 
 <style>
-/* ── Page Header ── */
-.mp-page-header { display: flex; align-items: center; }
-.mp-page-header-left { display: flex; align-items: center; gap: 14px; }
-.mp-back-btn {
-    width: 40px; height: 40px; border-radius: 50%;
-    background: #fff; border: 1px solid #e8eaed;
-    display: flex; align-items: center; justify-content: center;
-    color: #5f6368; font-size: 1.1rem; text-decoration: none;
-    transition: all 0.15s; flex-shrink: 0;
-}
-.mp-back-btn:hover { background: #f1f3f4; color: #006666; }
-.mp-page-title { font-size: 1.2rem; font-weight: 800; color: #202124; margin: 0; }
-.mp-page-sub { font-size: 0.78rem; color: #80868b; margin: 2px 0 0; }
-
-/* ── Alerts ── */
-.mp-alert {
-    display: flex; align-items: flex-start; gap: 10px;
-    border-radius: 12px; padding: 12px 16px; font-size: 0.84rem;
-}
-.mp-alert i { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
-.mp-alert-danger  { background: rgba(234,67,53,0.08); color: #c62828; border: 1px solid rgba(234,67,53,0.2); }
-.mp-alert-success { background: rgba(52,168,83,0.08); color: #2e7d32; border: 1px solid rgba(52,168,83,0.2); }
-
-/* ── Form Card ── */
-.mp-card {
-    background: #fff; border: 1px solid #e8eaed;
-    border-radius: 16px; padding: 22px;
-}
-.mp-card-head {
-    font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.6px; color: #5f6368; margin-bottom: 18px;
-    display: flex; align-items: center; gap: 6px;
-    border-bottom: 1px solid #f0f0f0; padding-bottom: 12px;
-}
-.mp-card-head i { color: #006666; font-size: 1rem; }
-
-/* ── Fields ── */
-.mp-field { margin-bottom: 18px; }
-.mp-label {
-    display: block; font-size: 0.78rem; font-weight: 600; color: #3c4043;
-    margin-bottom: 6px; letter-spacing: 0.1px;
-}
-.mp-required { color: #ea4335; }
-.mp-input-wrap { position: relative; }
-.mp-input-icon {
-    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-    color: #80868b; font-size: 1rem; pointer-events: none;
-}
-.mp-input {
-    width: 100%; border: 1.5px solid #e0e4e8; border-radius: 10px;
-    padding: 9px 12px 9px 38px;
-    font-size: 0.875rem; color: #202124; background: #fff;
-    transition: border-color 0.18s, box-shadow 0.18s;
-    outline: none; font-family: inherit;
-}
-.mp-input:focus {
-    border-color: #006666;
-    box-shadow: 0 0 0 3px rgba(0,102,102,0.08);
-}
-.mp-select { appearance: none; cursor: pointer; }
-.mp-input.mp-textarea { padding-left: 12px !important; resize: vertical; }
-.mp-prefix {
-    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-    color: #5f6368; font-weight: 700; font-size: 0.9rem; pointer-events: none;
-}
-.mp-input.mp-input-prefix { padding-left: 26px; }
-.mp-error { font-size: 0.72rem; color: #ea4335; margin-top: 4px; }
-.mp-hint { font-size: 0.72rem; color: #80868b; margin-top: 5px; display: flex; align-items: center; gap: 4px; }
-.mp-hint a { color: #006666; }
-
-/* ── Type Pills ── */
-.mp-type-pill {
+/* ── Minimal Custom CSS for Manage Project ── */
+.type-pill {
     background: #f1f3f4; border: 1.5px solid #e0e4e8; border-radius: 20px;
-    padding: 4px 12px; font-size: 0.72rem; font-weight: 600; color: #5f6368;
+    padding: 2px 10px; font-size: 0.72rem; font-weight: 600; color: #5f6368;
     cursor: pointer; transition: all 0.15s;
 }
-.mp-type-pill:hover, .mp-type-pill.active {
+.type-pill:hover, .type-pill.active {
     background: rgba(0,102,102,0.08); border-color: #006666; color: #006666;
 }
-
-/* ── Save Card ── */
-.mp-save-card { text-align: center; padding: 20px; }
-.mp-submit-btn {
-    width: 100%; padding: 11px; border: none; border-radius: 12px;
+.preview-avatar {
+    width: 60px; height: 60px; border-radius: 16px;
     background: linear-gradient(135deg, #006666, #009688);
-    color: #fff; font-size: 0.9rem; font-weight: 700;
-    cursor: pointer; transition: all 0.18s; margin-bottom: 10px;
-    display: flex; align-items: center; justify-content: center; gap: 7px;
-}
-.mp-submit-btn:hover { box-shadow: 0 6px 20px rgba(0,102,102,0.3); transform: translateY(-1px); }
-.mp-cancel-btn {
-    display: block; color: #80868b; font-size: 0.8rem;
-    text-decoration: none; text-align: center; padding: 4px;
-}
-.mp-cancel-btn:hover { color: #ea4335; }
-
-/* ── Preview Card ── */
-.mp-preview-card { text-align: center; }
-.mp-preview-avatar {
-    width: 54px; height: 54px; border-radius: 14px;
-    background: linear-gradient(135deg, #006666, #009688);
-    color: #fff; font-size: 1.3rem; font-weight: 800;
+    color: #fff; font-size: 1.5rem; font-weight: 800;
     display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 10px;
+    margin: 0 auto 12px;
 }
-.mp-preview-name { font-size: 0.95rem; font-weight: 700; color: #202124; margin-bottom: 4px; }
-.mp-preview-type {
+.preview-name { font-size: 1rem; font-weight: 700; color: #202124; margin-bottom: 4px; }
+.preview-type {
     display: inline-block; background: rgba(0,102,102,0.08); color: #006666;
-    font-size: 0.68rem; font-weight: 600; border-radius: 20px;
-    padding: 2px 10px; margin-bottom: 10px;
+    font-size: 0.7rem; font-weight: 600; border-radius: 20px;
+    padding: 2px 10px; margin-bottom: 12px;
 }
-.mp-preview-amount { font-size: 1.1rem; font-weight: 800; color: #006666; }
-.mp-preview-meta { font-size: 0.70rem; color: #80868b; margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 4px; }
-
-/* ── Quick Links ── */
-.mp-quick-links { display: flex; flex-direction: column; gap: 4px; }
-.mp-qlink {
+.preview-amount { font-size: 1.25rem; font-weight: 800; color: #006666; }
+.qlink-item {
     display: flex; align-items: center; gap: 8px;
-    padding: 8px 10px; border-radius: 8px;
-    font-size: 0.80rem; color: #3c4043; text-decoration: none;
+    padding: 10px 12px; border-radius: 8px;
+    font-size: 0.85rem; color: #3c4043; text-decoration: none;
     transition: background 0.12s;
 }
-.mp-qlink:hover { background: #f1f3f4; color: #006666; }
-.mp-qlink i { font-size: 0.95rem; color: #006666; }
+.qlink-item:hover { background: #f1f3f4; color: #006666; }
+.qlink-item i { font-size: 1rem; color: #006666; }
 </style>
 
 <script>
 $(document).ready(function () {
-
     // Live preview
     $('#name').on('input', function () {
         const v = $(this).val().trim();
@@ -435,25 +314,17 @@ $(document).ready(function () {
     });
     $('#type').on('input', function () {
         $('#prevType').text($(this).val().trim() || 'Type');
-        // Sync pills
-        $('.mp-type-pill').removeClass('active');
-        $('.mp-type-pill[data-val="' + $(this).val().trim() + '"]').addClass('active');
+        $('.type-pill').removeClass('active');
+        $('.type-pill[data-val="' + $(this).val().trim() + '"]').addClass('active');
     });
     $('#amount').on('input', function () {
         const n = parseFloat($(this).val()) || 0;
         $('#prevAmount').text('₹' + n.toLocaleString('en-IN'));
     });
 
-    // Trigger on load (edit mode)
+    // Trigger on load
     $('#name, #type, #amount').trigger('input');
 
-    // Mark active pill if match on load
-    const currentType = $('#type').val().trim();
-    if (currentType) {
-        $('.mp-type-pill[data-val="' + currentType + '"]').addClass('active');
-    }
-
-    // Submit loading state
     $('#projectForm').on('submit', function () {
         $('#saveBtn').html('<i class="bx bx-loader-alt bx-spin"></i> Saving…').prop('disabled', true);
     });
@@ -461,8 +332,6 @@ $(document).ready(function () {
 
 function selectType(val) {
     $('#type').val(val).trigger('input');
-    $('.mp-type-pill').removeClass('active');
-    $('.mp-type-pill[data-val="' + val + '"]').addClass('active');
 }
 </script>
 @endsection

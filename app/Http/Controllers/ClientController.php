@@ -1118,7 +1118,7 @@ class ClientController extends Controller
         $request->validate([
             'client_id'      => 'required|exists:clients,id',
             'name'           => 'required|string|max:255',
-            'category'       => 'nullable|string|max:255',
+
             'start_date'     => 'nullable|date',
             'deadline'       => 'nullable|date',
             'type'           => 'nullable|string|max:100',
@@ -1134,7 +1134,7 @@ class ClientController extends Controller
         $project->cid            = Auth::user()->cid;
         $project->client_id      = $request->client_id;
         $project->name           = $request->name;
-        $project->category       = $request->category ?? '';
+
         $project->start_date     = $request->start_date;
         $project->deadline       = $request->deadline;
         $project->type           = $request->type ?? '';
