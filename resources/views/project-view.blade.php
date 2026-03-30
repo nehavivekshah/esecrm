@@ -392,7 +392,7 @@
             <div class="tab-pane fade" id="tasks" role="tabpanel">
                 <div class="pv-tab-toolbar">
                     <h2 class="pv-tab-title"><i class="bx bx-task"></i> Project Tasks</h2>
-                    <a href="/crm-tasks" class="pv-add-btn"><i class="bx bx-plus"></i> Manage Tasks</a>
+                    <a href="/crm-tasks?rel_type=Project&rel_id={{ $project->id }}" class="pv-add-btn"><i class="bx bx-plus"></i> Manage Tasks</a>
                 </div>
                 @forelse($tasks as $t)
                 @php
