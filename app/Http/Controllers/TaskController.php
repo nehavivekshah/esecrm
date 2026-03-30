@@ -37,7 +37,7 @@ class TaskController extends Controller
         $task = new Task();
 
         $task->cid = Auth::user()->cid;
-        $task->uid = $request->uid;
+        $task->uid = $request->uid ?: Auth::id();
         $task->title = $request->msg;
         $task->des = $request->msg;
         $task->label = '5';
