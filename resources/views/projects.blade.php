@@ -65,38 +65,13 @@
         <div class="leads-toolbar mb-3">
             <div class="leads-toolbar-left">
                 <form action="/projects" method="GET" id="projectFilterForm" class="d-flex align-items-center gap-2">
-                    <div class="lb-search-box position-relative">
-                        <i class="bx bx-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
-                        <input type="text" name="search" id="projectSearch"
-                               class="form-control"
-                               style="padding-left: 38px;"
-                               placeholder="Search projects, clients…"
-                               value="{{ $search ?? '' }}"
-                               autocomplete="off">
-                        @if(!empty($search))
-                            <a href="/projects" class="pj-search-clear position-absolute top-50 end-0 translate-middle-y me-2" title="Clear search">
-                                <i class="bx bx-x"></i>
-                            </a>
-                        @endif
-                    </div>
                     <select name="status" id="projectStatusFilter" class="form-select" onchange="this.form.submit()" style="width: auto; min-width: 140px;">
                         <option value="">All Status</option>
                         <option value="1" {{ ($status ?? '') == '1' ? 'selected' : '' }}>Active</option>
                         <option value="0" {{ ($status ?? '') == '0' ? 'selected' : '' }}>Inactive</option>
-                    </select>
                 </form>
 
-                {{-- Active search indicator --}}
-                @if(!empty($search))
-                    <span class="pj-active-filter">
-                        <i class="bx bx-filter-alt"></i>
-                        "{{ $search }}"
-                        <a href="/projects" class="pj-filter-clear" title="Clear">×</a>
-                    </span>
-                @endif
-
                 <span class="lb-page-count">
-                    <i class="bx bx-layer"></i>
                     {{ $totalProjects }} {{ $totalProjects == 1 ? 'Project' : 'Projects' }}
                     @if(!empty($search)) found @endif
                 </span>
