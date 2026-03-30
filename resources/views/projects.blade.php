@@ -64,12 +64,13 @@
         {{-- ── Toolbar ── --}}
         <div class="leads-toolbar mb-3">
             <div class="leads-toolbar-left">
-                <form action="/projects" method="GET" id="projectFilterForm" class="d-flex align-items-center gap-2">
-                    <select name="status" id="projectStatusFilter" class="form-select" onchange="this.form.submit()" style="width: auto; min-width: 140px;">
-                        <option value="">All Status</option>
-                        <option value="1" {{ ($status ?? '') == '1' ? 'selected' : '' }}>Active</option>
-                        <option value="0" {{ ($status ?? '') == '0' ? 'selected' : '' }}>Inactive</option>
-                </form>
+            <form action="/projects" method="GET" id="projectFilterForm" class="d-flex align-items-center gap-2">
+                <select name="status" id="projectStatusFilter" class="form-select" onchange="this.form.submit()" style="width: auto; min-width: 140px;">
+                    <option value="">All Status</option>
+                    <option value="1" {{ ($status ?? '') == '1' ? 'selected' : '' }}>Active</option>
+                    <option value="0" {{ ($status ?? '') == '0' ? 'selected' : '' }}>Inactive</option>
+                </select>
+            </form>
 
                 <span class="lb-page-count">
                     {{ $totalProjects }} {{ $totalProjects == 1 ? 'Project' : 'Projects' }}
