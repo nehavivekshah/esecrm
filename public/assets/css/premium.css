@@ -5731,6 +5731,13 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     text-align: left;
 }
 
+.leads-toolbar-left select {
+    height: 36px;
+    padding: 0 14px !important;
+    border-radius: 20px !important;
+}
+
+
 /* -- Responsive -- */
 @media (max-width: 600px) {
     .ld-info-grid {
