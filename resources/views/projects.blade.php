@@ -80,10 +80,10 @@
             <div class="leads-toolbar-right gap-2">
                 {{-- View Toggle --}}
                 <div class="pj-view-toggle">
-                    <button class="pj-view-btn active" id="cardViewBtn" title="Card View" onclick="setView('card')">
+                    <button class="pj-view-btn" id="cardViewBtn" title="Card View" onclick="setView('card')">
                         <i class="bx bx-grid-alt"></i>
                     </button>
-                    <button class="pj-view-btn" id="tableViewBtn" title="Table View" onclick="setView('table')">
+                    <button class="pj-view-btn active" id="tableViewBtn" title="Table View" onclick="setView('table')">
                         <i class="bx bx-list-ul"></i>
                     </button>
                 </div>
@@ -442,7 +442,7 @@ $(function() {
     });
 
     // Restore view preference
-    const savedView = localStorage.getItem('pjView') || 'card';
+    const savedView = localStorage.getItem('pjView') || 'table';
     setView(savedView);
 });
 
