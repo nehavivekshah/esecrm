@@ -69,6 +69,13 @@ h6 {
     background-color: #ffffff !important;
 }
 
+.leads-toolbar-left .form-control,
+.leads-toolbar-left .form-select {
+    height: 36px;
+    padding: 0 14px !important;
+    border-radius: 20px !important;
+}
+
 /* Bootstrap Select override */
 .bootstrap-select>.dropdown-toggle {
     border: 1px solid var(--border-color) !important;
@@ -332,12 +339,6 @@ table.dataTable tbody tr:last-child td {
 .badge.bg-info {
     background-color: #3b82f6 !important;
     color: #fff !important;
-}
-
-.leads-toolbar-left select {
-    height: 36px;
-    padding: 0 14px !important;
-    border-radius: 20px !important;
 }
 
 /* Custom Scrollbar for a premium feel */
