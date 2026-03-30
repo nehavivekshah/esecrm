@@ -304,7 +304,16 @@ class ClientController extends Controller
     {
         $search = $request->get('search');
         $query = Projects::leftJoin('clients', 'projects.client_id', '=', 'clients.id')
-            ->select('projects.*', 'clients.name as client_name', 'clients.company as client_company');
+            ->leftJoin(
+                DB::raw('(SELECT project_id, SUM(paid) as total_paid FROM recoveries GROUP BY project_id) as rec_totals'),
+                'projects.id', '=', 'rec_totals.project_id'
+            )
+            ->select(
+                'projects.*',
+                'clients.name as client_name',
+                'clients.company as client_company',
+                DB::raw('COALESCE(rec_totals.total_paid, 0) as total_paid')
+            );
 
         if (Auth::user()->role != 'master') {
             $query->where('projects.cid', '=', Auth::user()->cid);
