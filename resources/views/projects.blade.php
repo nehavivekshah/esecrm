@@ -102,7 +102,7 @@
         {{-- ════════════════════════════════
              CARD VIEW
         ════════════════════════════════ --}}
-        <div id="cardView" class="pj-card-grid mb-4">
+        <div id="cardView" class="pj-card-grid mb-4" style="display:none;">
             @forelse($projects as $project)
             @php
                 $paid      = $project->total_paid ?? 0;
@@ -196,7 +196,7 @@
         {{-- ════════════════════════════════
              TABLE VIEW
         ════════════════════════════════ --}}
-        <div id="tableView" class="leads-table-card mb-4" style="display:none;">
+        <div id="tableView" class="leads-table-card mb-4">
             <div class="table-responsive">
                 <table class="leads-table" id="projectTable" style="width:100%;">
                     <thead>
@@ -442,12 +442,12 @@ $(function() {
     });
 
     // Restore view preference
-    const savedView = localStorage.getItem('pjView') || 'table';
+    const savedView = localStorage.getItem('pjView_v2') || 'table';
     setView(savedView);
 });
 
 function setView(view) {
-    localStorage.setItem('pjView', view);
+    localStorage.setItem('pjView_v2', view);
     if (view === 'card') {
         $('#cardView').show(); $('#tableView').hide();
         $('#cardViewBtn').addClass('active'); $('#tableViewBtn').removeClass('active');
