@@ -451,6 +451,28 @@
 .pj-empty { text-align: center; padding: 60px 20px; color: #9aa0a6; }
 .pj-empty i { font-size: 3rem; display: block; margin-bottom: 12px; color: #dadce0; }
 .pj-empty p { font-size: 0.85rem; margin: 0; }
+
+/* ── DataTable Overrides ── */
+.dataTables_wrapper .dataTables_length select {
+    border: 1px solid #e8eaed !important;
+    border-radius: 8px !important;
+    padding: 4px 8px !important;
+    font-size: 0.85rem !important;
+}
+.dataTables_wrapper .dataTables_filter input {
+    border: 1px solid #e8eaed !important;
+    border-radius: 20px !important;
+    padding: 6px 16px !important;
+    font-size: 0.85rem !important;
+    margin-left: 10px !important;
+}
+.dataTables_wrapper .dataTables_info {
+    font-size: 0.8rem !important;
+    color: #5f6368 !important;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    font-size: 0.85rem !important;
+}
 </style>
 
 <script>
@@ -458,15 +480,25 @@ $(function() {
     // Initialize DataTables
     if ($.fn.DataTable) {
         $('#projectTable').DataTable({
-            "order": [], // Let the server/default sorting take precedence initially
+            "order": [], 
             "pageLength": 25,
+            "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
             "language": {
-                "search": "",
-                "searchPlaceholder": "Search projects..."
+                "search": "Search:",
+                "searchPlaceholder": "Search projects...",
+                "lengthMenu": "Show _MENU_ entries",
+                "info": "Showing _START_ to _END_ of _TOTAL_ entries",
+                "paginate": {
+                    "first": "First",
+                    "last": "Last",
+                    "next": "Next",
+                    "previous": "Previous"
+                }
             },
-            "dom": "<'row mb-3'<'col-md-6'l><'col-md-6 d-flex justify-content-end'f>>" +
+            "dom": "<'row mb-3 px-3 pt-3'<'col-md-6'l><'col-md-6 d-flex justify-content-end'f>>" +
                    "<'row'<'col-sm-12'tr>>" +
-                   "<'row mt-3'<'col-md-5'i><'col-md-7 d-flex justify-content-end'p>>"
+                   "<'row mt-3 px-3 pb-3'<'col-md-5'i><'col-md-7 d-flex justify-content-end'p>>",
+            "destroy": true // Allow re-initialization if needed
         });
     }
 
