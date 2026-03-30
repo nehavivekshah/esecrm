@@ -198,7 +198,7 @@
         ════════════════════════════════ --}}
         <div id="tableView" class="leads-table-card mb-4">
             <div class="table-responsive">
-                <table class="leads-table" id="projectTable" style="width:100%;">
+                <table class="leads-table table-hover align-middle" id="projectTable" style="width:100%;">
                     <thead>
                         <tr>
                             <th>Project</th>
@@ -206,7 +206,7 @@
                             <th class="m-none">Type</th>
                             <th>Contract Value</th>
                             <th class="m-none">Recovery %</th>
-                            <th class="text-end position-sticky end-0">Action</th>
+                            <th class="text-end position-sticky end-0" data-orderable="false">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -434,12 +434,20 @@
 
 <script>
 $(function() {
-    // Debounced search
-    let searchTimer;
-    $('#projectSearch').on('input', function() {
-        clearTimeout(searchTimer);
-        searchTimer = setTimeout(() => $('#projectFilterForm').submit(), 500);
-    });
+    // Initialize DataTables
+    if ($.fn.DataTable) {
+        $('#projectTable').DataTable({
+            "order": [], // Let the server/default sorting take precedence initially
+            "pageLength": 25,
+            "language": {
+                "search": "",
+                "searchPlaceholder": "Search projects..."
+            },
+            "dom": "<'row mb-3'<'col-md-6'l><'col-md-6 d-flex justify-content-end'f>>" +
+                   "<'row'<'col-sm-12'tr>>" +
+                   "<'row mt-3'<'col-md-5'i><'col-md-7 d-flex justify-content-end'p>>"
+        });
+    }
 
     // Restore view preference
     const savedView = localStorage.getItem('pjView_v2') || 'table';
