@@ -396,26 +396,35 @@
                 </div>
                 @forelse($tasks as $t)
                 @php
-                    $taskOverdue = \Carbon\Carbon::parse($t->due_date)->isPast() && $t->status != 'Completed';
+                    $isDone = ($t->status == 'Completed');
+                    $taskOverdue = \Carbon\Carbon::parse($t->due_date)->isPast() && !$isDone;
                 @endphp
-                <div class="pv-rec-card">
-                    <div class="pv-rec-icon {{ $t->status == 'Completed' ? 'pv-rec-paid' : ($taskOverdue ? 'pv-rec-danger' : 'pv-rec-pend') }}">
-                        <i class="bx {{ $t->status == 'Completed' ? 'bx-check-circle' : ($taskOverdue ? 'bx-error-circle' : 'bx-time') }}"></i>
+                <div class="pv-rec-card task-item-row" id="task-row-{{ $t->id }}">
+                    <div class="pv-rec-icon {{ $isDone ? 'pv-rec-paid' : ($taskOverdue ? 'pv-rec-danger' : 'pv-rec-pend') }}" id="task-icon-{{ $t->id }}">
+                        <label class="pvt-check-wrap" title="{{ $isDone ? 'Mark pending' : 'Mark done' }}">
+                            <input type="checkbox" class="task-status-check visually-hidden" 
+                                   data-id="{{ $t->id }}" {{ $isDone ? 'checked' : '' }}>
+                            <span class="pvt-check-circle {{ $isDone ? 'pvt-checked' : '' }}">
+                                <i class="bx bx-check"></i>
+                            </span>
+                        </label>
                     </div>
                     <div class="pv-rec-body">
-                        <div class="pv-rec-amount" style="font-size:0.9rem;">{{ $t->name }}</div>
+                        <div class="pv-rec-amount task-name {{ $isDone ? 'pvt-name-done' : '' }}" id="task-name-{{ $t->id }}" style="font-size:0.9rem;">{{ $t->name }}</div>
                         <div class="pv-rec-meta">
                             <span class="pv-badge pv-badge-info me-1">{{ $t->type }}</span>
-                            Due: <span class="{{ $taskOverdue ? 'text-danger' : '' }}">{{ \Carbon\Carbon::parse($t->due_date)->format('d M, Y') }}</span>
+                            Due: <span class="task-due-date {{ $taskOverdue ? 'text-danger fw-bold' : '' }}">{{ \Carbon\Carbon::parse($t->due_date)->format('d M, Y') }}</span>
                         </div>
                     </div>
-                    @if($t->status == 'Completed')
-                        <span class="pv-badge pv-badge-success">Done</span>
-                    @elseif($taskOverdue)
-                        <span class="pv-badge pv-badge-danger">Overdue</span>
-                    @else
-                        <span class="pv-badge pv-badge-warn">{{ $t->status }}</span>
-                    @endif
+                    <div class="task-status-badge-container">
+                        @if($isDone)
+                            <span class="pv-badge pv-badge-success">Done</span>
+                        @elseif($taskOverdue)
+                            <span class="pv-badge pv-badge-danger">Overdue</span>
+                        @else
+                            <span class="pv-badge pv-badge-warn">{{ $t->status }}</span>
+                        @endif
+                    </div>
                 </div>
                 @empty
                 <div class="pv-empty-state">
@@ -823,6 +832,20 @@
 }
 </style>
 
+<style>
+/* Task Interactive States */
+.pvt-check-wrap { cursor: pointer; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
+.pvt-check-circle {
+    width: 22px; height: 22px; border-radius: 50%; border: 2px solid currentColor;
+    display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+    background: transparent;
+}
+.pvt-check-circle i { font-size: 14px; opacity: 0; transform: scale(0.5); transition: all 0.2s; }
+.pvt-checked { background: currentColor !important; }
+.pvt-checked i { opacity: 1; transform: scale(1); color: #fff !important; }
+.pvt-name-done { text-decoration: line-through; opacity: 0.6; }
+</style>
+
 <script>
 function copyKey() {
     const key = document.getElementById('licKey').textContent.trim();
@@ -837,13 +860,52 @@ function copyKey() {
     });
 }
 
-// Animate progress bar on load
-document.addEventListener('DOMContentLoaded', function() {
+$(document).ready(function() {
+    // 1. Animate progress bar on load
     const fills = document.querySelectorAll('.pv-progress-fill');
     fills.forEach(f => {
         const w = f.style.width;
         f.style.width = '0';
         setTimeout(() => { f.style.width = w; }, 100);
+    });
+
+    // 2. Handle task status toggle
+    $('.task-status-check').on('change', function() {
+        const $check = $(this);
+        const taskId = $check.data('id');
+        const isChecked = $check.is(':checked');
+        const $row = $('#task-row-' + taskId);
+        const $icon = $('#task-icon-' + taskId);
+        const $circle = $check.next('.pvt-check-circle');
+        const $name = $('#task-name-' + taskId);
+        const $badgeContainer = $row.find('.task-status-badge-container');
+
+        // Immediate visual feedback
+        if (isChecked) {
+            $circle.addClass('pvt-checked');
+            $name.addClass('pvt-name-done');
+            $icon.removeClass('pv-rec-pend pv-rec-danger').addClass('pv-rec-paid');
+            $badgeContainer.html('<span class="pv-badge pv-badge-success">Done</span>');
+        } else {
+            $circle.removeClass('pvt-checked');
+            $name.removeClass('pvt-name-done');
+            // Assuming it goes back to 'Pending' visually; server state will determine if it stays overdue
+            $icon.removeClass('pv-rec-paid').addClass('pv-rec-pend');
+            $badgeContainer.html('<span class="pv-badge pv-badge-warn">Pending</span>');
+        }
+
+        $.ajax({
+            url: "{{ route('crm_tasks.update_status') }}",
+            method: 'POST',
+            data: {
+                _token: "{{ csrf_token() }}",
+                id: taskId,
+                status: isChecked ? 'Completed' : 'Pending'
+            },
+            error: function() {
+                alert('Connection error while updating task status');
+            }
+        });
     });
 });
 </script>
