@@ -125,10 +125,9 @@ class LeadService extends BaseService
         $task->cid = $lead->cid;
         $task->uid = Auth::id();
         $task->title = "Initial Follow-up: " . $lead->name;
-        $task->des = "New lead acquired. Please verify details and initiate contact with " . $lead->name . " from " . ($lead->company ?? 'direct source') . ".";
+        $task->msg = "New lead acquired. Please verify details and initiate contact with " . $lead->name . " from " . ($lead->company ?? 'direct source') . ".";
         $task->status = '1'; 
         $task->label = '#4e73df';
-        $task->whr = '0';
         return $task->save();
     }
 }
