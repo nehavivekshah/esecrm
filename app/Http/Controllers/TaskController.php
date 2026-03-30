@@ -30,6 +30,10 @@ class TaskController extends Controller
     }
     public function taskPost(Request $request)
     {
+        $request->validate([
+            'msg' => 'required|string|max:5000',
+            'uid' => 'required|exists:users,id'
+        ]);
 
         $tasklist = Task::where('cid', '=', Auth::user()->cid)
             ->where('uid', '=', $request->uid)->orderBy('position', 'asc')->get();
