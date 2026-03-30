@@ -1062,4 +1062,62 @@ class ClientController extends Controller
 
         return $pdf->download('Invoice-' . $invoice->invoice_number . '.pdf');
     }
+
+    /**
+     * Show the form for creating / editing a project.
+     */
+    public function manageProject(Request $request)
+    {
+        $id = $request->id ?? null;
+        $project = null;
+
+        if ($id) {
+            $project = Projects::leftJoin('clients', 'projects.client_id', '=', 'clients.id')
+                ->select('projects.*', 'clients.name as client_name', 'clients.company as client_company')
+                ->where('projects.id', $id)
+                ->first();
+        }
+
+        // Load clients for the dropdown (only current company)
+        $clients = Clients::where('cid', '=', Auth::user()->cid)
+            ->where('name', '!=', '')
+            ->orderBy('name', 'ASC')
+            ->get(['id', 'name', 'company']);
+
+        return view('manageProject', [
+            'project' => $project,
+            'clients' => $clients,
+        ]);
+    }
+
+    /**
+     * Save (create or update) a project.
+     */
+    public function manageProjectPost(Request $request)
+    {
+        $request->validate([
+            'client_id'  => 'required|exists:clients,id',
+            'name'       => 'required|string|max:255',
+            'type'       => 'nullable|string|max:100',
+            'amount'     => 'nullable|numeric|min:0',
+            'note'       => 'nullable|string',
+            'deployment_url' => 'nullable|url|max:255',
+        ]);
+
+        $project = $request->id ? Projects::findOrFail($request->id) : new Projects();
+
+        $project->cid            = Auth::user()->cid;
+        $project->client_id      = $request->client_id;
+        $project->name           = $request->name;
+        $project->type           = $request->type ?? '';
+        $project->amount         = $request->amount ?? 0;
+        $project->note           = $request->note ?? '';
+        $project->deployment_url = $request->deployment_url ?? '';
+        $project->save();
+
+        return redirect('/projects')->with('success', $request->id
+            ? 'Project updated successfully.'
+            : 'Project created successfully.'
+        );
+    }
 }
