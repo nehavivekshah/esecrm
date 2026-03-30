@@ -134,16 +134,23 @@
                                         <div class="tk-card-desc">{{ $displayDesc }}</div>
                                     @endif
 
-                                    {{-- Footer: hours worked --}}
-                                    @if($whr > 0 || !empty($task->label))
-                                        <div class="tk-card-footer">
-                                            @if($whr > 0)
-                                                <span class="tk-card-hours" title="Hours worked">
-                                                    <i class="bx bx-time-five"></i> {{ $whr }}h
-                                                </span>
-                                            @endif
+                                    {{-- Footer: hours worked & attachments --}}
+                                    @if($whr > 0 || !empty($task->label) || ($task->attachment_count ?? 0) > 0)
+                                        <div class="tk-card-footer d-flex align-items-center justify-content-between mt-2 pt-2 border-top border-light">
+                                            <div class="d-flex align-items-center gap-2">
+                                                @if($whr > 0)
+                                                    <span class="tk-card-hours text-muted" title="Hours worked" style="font-size: 0.75rem;">
+                                                        <i class="bx bx-time-five"></i> {{ $whr }}h
+                                                    </span>
+                                                @endif
+                                                @if(($task->attachment_count ?? 0) > 0)
+                                                    <span class="text-muted d-flex align-items-center gap-1" title="{{ $task->attachment_count }} Attachments" style="font-size: 0.75rem;">
+                                                        <i class="bx bx-paperclip"></i> {{ $task->attachment_count }}
+                                                    </span>
+                                                @endif
+                                            </div>
                                             @if(!empty($task->label))
-                                                <span class="tk-card-label-dot" style="background:{{ $task->label }};" title="Label"></span>
+                                                <span class="tk-card-label-dot shadow-sm" style="background:{{ $task->label }};" title="Label"></span>
                                             @endif
                                         </div>
                                     @endif

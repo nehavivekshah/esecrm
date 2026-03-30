@@ -78,11 +78,15 @@ class TaskController extends Controller
             ->where('task_comments.taskid', '=', $request->id)
             ->orderBy('task_comments.id', 'DESC')->get();
 
+        $taskAttachments = \App\Models\TaskAttachment::where('task_id', $request->id)
+            ->orderBy('id', 'DESC')->get();
+
         $data = array_merge($data, [
             'taskSingle' => $taskSingle, 
             'userSingle' => $userSingle, 
             'taskHistory' => $taskHistory, 
-            'taskComments' => $taskComments
+            'taskComments' => $taskComments,
+            'taskAttachments' => $taskAttachments
         ]);
 
         return view('task', $data);
@@ -318,6 +322,48 @@ class TaskController extends Controller
         $task->delete();
 
         return response()->json(['message' => 'Task deleted']);
+    }
+
+    public function uploadAttachment(Request $request)
+    {
+        $request->validate([
+            'task_id' => 'required',
+            'file' => 'required|mimes:pdf,doc,docx,jpg,jpeg,png,xls,xlsx,txt|max:10240' // max 10MB
+        ]);
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $originalName = $file->getClientOriginalName();
+            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('assets/task_attachments'), $fileName);
+
+            $attachment = \App\Models\TaskAttachment::create([
+                'task_id' => $request->task_id,
+                'user_id' => Auth::id(),
+                'original_name' => $originalName,
+                'file_path' => 'assets/task_attachments/' . $fileName
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'attachment' => $attachment
+            ]);
+        }
+
+        return response()->json(['status' => 'error', 'message' => 'File not found'], 400);
+    }
+
+    public function deleteAttachment($id)
+    {
+        $attachment = \App\Models\TaskAttachment::findOrFail($id);
+
+        if (\Illuminate\Support\Facades\File::exists(public_path($attachment->file_path))) {
+            \Illuminate\Support\Facades\File::delete(public_path($attachment->file_path));
+        }
+
+        $attachment->delete();
+
+        return response()->json(['status' => 'success']);
     }
 
     public function clearAll()

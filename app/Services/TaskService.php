@@ -41,6 +41,7 @@ class TaskService
             $enrichedTasks = $tasks->map(function ($task) {
                 $taskHistory = Task_working_hours::where('taskid', '=', $task->id)->get();
                 $task->is_highlighted = (!empty($taskHistory[0]->id) && $taskHistory[0]->status == '0');
+                $task->attachment_count = \App\Models\TaskAttachment::where('task_id', $task->id)->count();
                 return $task;
             });
 

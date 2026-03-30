@@ -193,6 +193,43 @@
                     </form>
                 </div>
 
+                {{-- Attachments --}}
+                <div class="et-panel mt-3">
+                    <div class="et-panel-header d-flex justify-content-between align-items-center p-2 border-bottom">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bx bx-paperclip text-muted"></i>
+                            <span class="fw-semibold" style="font-size: 0.9rem;">Attachments (<span id="attachmentCount">{{ count($taskAttachments ?? []) }}</span>)</span>
+                        </div>
+                        <button type="button" class="lb-btn lb-btn-ghost btn-sm" onclick="document.getElementById('taskAttachmentInput').click()" style="padding: 4px 10px; font-size: 0.8rem;">
+                            <i class="bx bx-upload"></i> Upload File
+                        </button>
+                        <input type="file" id="taskAttachmentInput" style="display:none;" onchange="uploadTaskAttachment(this)" />
+                    </div>
+                    
+                    <div id="attachmentsWrap" class="p-3">
+                        @forelse($taskAttachments ?? [] as $attachment)
+                            <div class="d-flex justify-content-between align-items-center p-2 mb-2 border rounded bg-light" id="attachment-{{ $attachment->id }}">
+                                <a href="{{ asset($attachment->file_path) }}" target="_blank" class="d-flex align-items-center gap-2 text-decoration-none text-truncate" style="max-width: 80%;">
+                                    <i class="bx bxs-file-pdf text-danger" style="font-size:1.6rem;" id="att-icon-{{ $attachment->id }}"></i>
+                                    <span class="text-dark small fw-medium text-truncate">{{ $attachment->original_name }}</span>
+                                </a>
+                                @if(in_array('tasks_edit', $roleArray) || in_array('All', $roleArray))
+                                <button type="button" class="btn btn-sm text-danger border-0 bg-transparent" onclick="deleteAttachment({{ $attachment->id }})">
+                                    <i class="bx bx-trash" style="font-size: 1.1rem;"></i>
+                                </button>
+                                @endif
+                            </div>
+                        @empty
+                            <div class="text-muted small text-center p-3" id="noAttachmentsMsg">No files attached yet.</div>
+                        @endforelse
+                    </div>
+                    <!-- Uploading loader -->
+                    <div id="attachmentLoader" class="text-center p-3" style="display:none;">
+                        <i class="bx bx-loader-alt bx-spin text-primary fs-4"></i>
+                        <div class="small text-muted mt-1">Uploading...</div>
+                    </div>
+                </div>
+
                 {{-- Comments --}}
                 <div class="et-panel">
                     <div class="et-panel-header">
@@ -298,5 +335,80 @@
             }, 1000);
         }
     }
+
+    /* 5. Attachment Logic */
+    window.uploadTaskAttachment = function(input) {
+        if (!input.files || input.files.length === 0) return;
+        
+        let formData = new FormData();
+        formData.append('file', input.files[0]);
+        formData.append('task_id', '{{ $task->id }}');
+        formData.append('_token', '{{ csrf_token() }}');
+
+        document.getElementById('attachmentLoader').style.display = 'block';
+        if(document.getElementById('noAttachmentsMsg')) {
+            document.getElementById('noAttachmentsMsg').style.display = 'none';
+        }
+
+        fetch('{{ route("task.attachment.upload") }}', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('attachmentLoader').style.display = 'none';
+            if (data.status === 'success') {
+                const att = data.attachment;
+                const html = `
+                    <div class="d-flex justify-content-between align-items-center p-2 mb-2 border rounded bg-light" id="attachment-${att.id}">
+                        <a href="/${att.file_path}" target="_blank" class="d-flex align-items-center gap-2 text-decoration-none text-truncate" style="max-width: 80%;">
+                            <i class="bx bxs-file text-primary" style="font-size:1.6rem;"></i>
+                            <span class="text-dark small fw-medium text-truncate">${att.original_name}</span>
+                        </a>
+                        <button type="button" class="btn btn-sm text-danger border-0 bg-transparent" onclick="deleteAttachment(${att.id})">
+                            <i class="bx bx-trash" style="font-size: 1.1rem;"></i>
+                        </button>
+                    </div>
+                `;
+                document.getElementById('attachmentsWrap').insertAdjacentHTML('beforeend', html);
+                
+                let countSpan = document.getElementById('attachmentCount');
+                countSpan.innerText = parseInt(countSpan.innerText) + 1;
+            } else {
+                alert(data.message || 'Error uploading file');
+            }
+        })
+        .catch(error => {
+            document.getElementById('attachmentLoader').style.display = 'none';
+            alert('Error uploading file');
+            console.error(error);
+        });
+        
+        input.value = '';
+    };
+
+    window.deleteAttachment = function(id) {
+        if (!confirm('Delete this attachment?')) return;
+        
+        fetch(`/task-attachment/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                document.getElementById('attachment-' + id).remove();
+                let countSpan = document.getElementById('attachmentCount');
+                let newCount = parseInt(countSpan.innerText) - 1;
+                countSpan.innerText = newCount;
+                if(newCount === 0 && document.getElementById('noAttachmentsMsg')) {
+                     document.getElementById('noAttachmentsMsg').style.display = 'block';
+                }
+            }
+        });
+    };
 })();
 </script>
