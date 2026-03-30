@@ -84,6 +84,7 @@
                                             <option value="Lead">Lead</option>
                                             <option value="Customer">Customer</option>
                                             <option value="Opportunity">Opportunity</option>
+                                            <option value="Project" {{ request('rel_type') == 'Project' ? 'selected' : '' }}>Project</option>
                                         </select>
                                     </div>
                                 </div>
@@ -92,7 +93,7 @@
                                     <label class="ml-label">Related ID</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bx bx-hash"></i></span>
-                                        <input type="number" name="rel_id" class="form-control" placeholder="e.g. 42">
+                                        <input type="number" name="rel_id" class="form-control" placeholder="e.g. 42" value="{{ request('rel_id') }}">
                                     </div>
                                 </div>
 
