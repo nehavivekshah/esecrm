@@ -41,6 +41,11 @@ class NewLeadController extends Controller
                     $query->where('assigned', Auth::user()->id);
                 }
 
+                // Filter by Tags
+                if ($request->filled('tags')) {
+                    $query->where('tags', 'like', '%' . $request->tags . '%');
+                }
+
                 // Global Search Logic
                 $searchData = $request->input('search');
                 $searchValue = is_array($searchData) ? ($searchData['value'] ?? '') : '';
@@ -51,7 +56,8 @@ class NewLeadController extends Controller
                             ->orWhere('company', 'like', "%{$searchValue}%")
                             ->orWhere('mob', 'like', "%{$searchValue}%")
                             ->orWhere('email', 'like', "%{$searchValue}%")
-                            ->orWhere('poc', 'like', "%{$searchValue}%");
+                            ->orWhere('poc', 'like', "%{$searchValue}%")
+                            ->orWhere('tags', 'like', "%{$searchValue}%");
                     });
                 }
 

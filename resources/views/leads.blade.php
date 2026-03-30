@@ -122,6 +122,7 @@
                         <option value="5">🔵 Closed (Won)</option>
                         <option value="9">🔴 Loss</option>
                     </select>
+                    <input type="text" id="ajaxTags" class="lb-select" placeholder="Filter by Tags (e.g. VIP)" style="width: auto; max-width: 150px; padding: 4px 8px;">
                     <button class="lb-icon-btn" id="refreshBtn" title="Refresh">
                         <i class="bx bx-refresh"></i>
                     </button>
@@ -667,6 +668,7 @@
                     data: function (d) {
                         d.status = $('#ajaxStatus').val();
                         d.assign_user = $('#ajaxSalesRep').val();
+                        d.tags = $('#ajaxTags').val();
                     }
                 },
 
@@ -798,6 +800,8 @@
 
             // 2. Filters & Refresh
             $('#ajaxSearch').keyup(function () { table.search($(this).val()).draw(); });
+            $('#ajaxTags').keyup(function () { table.draw(); });
+            $('#ajaxSalesRep, #ajaxStatus').on('change', function () { table.draw(); });
             $('#ajaxStatus, #ajaxSalesRep').change(function () { table.draw(); });
             $('#refreshBtn').click(function () { table.draw(); });
 
