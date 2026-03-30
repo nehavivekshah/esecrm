@@ -112,6 +112,62 @@
                             @endif
                         </div>
 
+                        <div class="row">
+                            {{-- Category --}}
+                            <div class="col-md-6">
+                                <div class="mp-field">
+                                    <label class="mp-label" for="category">Category</label>
+                                    <div class="mp-input-wrap">
+                                        <i class="bx bx-purchase-tag-alt mp-input-icon"></i>
+                                        <input type="text" id="category" name="category"
+                                               class="mp-input"
+                                               placeholder="e.g. Design, Development..."
+                                               value="{{ old('category', $project->category ?? '') }}">
+                                    </div>
+                                </div>
+                            </div>
+                            {{-- Status --}}
+                            <div class="col-md-6">
+                                <div class="mp-field">
+                                    <label class="mp-label" for="status">Project Status</label>
+                                    <div class="mp-input-wrap">
+                                        <i class="bx bx-check-shield mp-input-icon"></i>
+                                        <select id="status" name="status" class="mp-input mp-select">
+                                            <option value="1" {{ old('status', $project->status ?? 1) == 1 ? 'selected' : '' }}>Active</option>
+                                            <option value="0" {{ old('status', $project->status ?? 1) == 0 ? 'selected' : '' }}>Inactive / Completed</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            {{-- Start Date --}}
+                            <div class="col-md-6">
+                                <div class="mp-field">
+                                    <label class="mp-label" for="start_date">Start Date</label>
+                                    <div class="mp-input-wrap">
+                                        <i class="bx bx-calendar-event mp-input-icon"></i>
+                                        <input type="date" id="start_date" name="start_date"
+                                               class="mp-input"
+                                               value="{{ old('start_date', $project->start_date ?? '') }}">
+                                    </div>
+                                </div>
+                            </div>
+                            {{-- Deadline --}}
+                            <div class="col-md-6">
+                                <div class="mp-field">
+                                    <label class="mp-label" for="deadline">Deadline</label>
+                                    <div class="mp-input-wrap">
+                                        <i class="bx bx-calendar-x mp-input-icon"></i>
+                                        <input type="date" id="deadline" name="deadline"
+                                               class="mp-input"
+                                               value="{{ old('deadline', $project->deadline ?? '') }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         {{-- Project Type --}}
                         <div class="mp-field">
                             <label class="mp-label" for="type">Project Type</label>
@@ -165,6 +221,18 @@
                             @error('deployment_url')
                                 <div class="mp-error">{{ $message }}</div>
                             @enderror
+                        </div>
+
+                        {{-- Tags --}}
+                        <div class="mp-field">
+                            <label class="mp-label" for="tags">Tags (comma separated)</label>
+                            <div class="mp-input-wrap">
+                                <i class="bx bx-purchase-tag-alt mp-input-icon"></i>
+                                <input type="text" id="tags" name="tags"
+                                       class="mp-input"
+                                       placeholder="e.g. urgent, v2.0, hot..."
+                                       value="{{ old('tags', $project->tags ?? '') }}">
+                            </div>
                         </div>
 
                         {{-- Notes --}}

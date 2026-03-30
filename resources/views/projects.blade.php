@@ -202,10 +202,12 @@
                     <thead>
                         <tr>
                             <th>Project</th>
-                            <th class="m-none">Client / Company</th>
-                            <th class="m-none text-center">Type</th>
-                            <th>Contract Value</th>
-                            <th class="m-none">Recovery %</th>
+                            <th class="m-none">Category</th>
+                            <th class="m-none">Dates</th>
+                            <th>Payment</th>
+                            <th class="m-none">Type</th>
+                            <th class="text-center">Status</th>
+                            <th class="m-none">Tags</th>
                             <th class="text-center position-sticky end-0 bg-default mw60" data-orderable="false" style="z-index:1;">Action</th>
                         </tr>
                     </thead>
@@ -216,6 +218,7 @@
                             $amt   = $project->amount ?? 0;
                             $pct   = $amt > 0 ? min(100, round(($paid / $amt) * 100)) : 0;
                             $pctColor = $pct >= 80 ? '#34a853' : ($pct >= 40 ? '#fbbc04' : '#ea4335');
+                            $isDone = ($project->status == 0);
                         @endphp
                         <tr class="pointer-cursor selectrow" onclick="window.location.href='/project/view/{{ $project->id }}'">
                             <td>
@@ -223,38 +226,53 @@
                                     <div class="lb-avatar-sm" style="background:linear-gradient(135deg,#006666,#009688);color:#fff;">
                                         {{ strtoupper(substr($project->name, 0, 1)) }}
                                     </div>
-                                    <div>
-                                        <div class="fw-600">{{ $project->name }}</div>
-                                        <div class="small text-muted">#PROU-{{ str_pad($project->id, 4, '0', STR_PAD_LEFT) }}</div>
+                                    <div class="min-w-0">
+                                        <div class="fw-600 text-truncate" style="max-width:180px;">{{ $project->name }}</div>
+                                        <div class="small text-muted">{{ $project->client_name ?? '—' }}</div>
                                     </div>
                                 </div>
                             </td>
                             <td class="m-none">
-                                <div class="fw-500">{{ $project->client_name ?? '—' }}</div>
-                                <div class="small text-muted">{{ Str::limit($project->client_company ?? '', 20) }}</div>
+                                <span class="text-dark fw-500">{{ $project->category ?: '—' }}</span>
                             </td>
-                            <td class="m-none text-center">
-                                <span class="pj-type-pill">{{ $project->type ?? 'General' }}</span>
+                            <td class="m-none">
+                                <div class="small">
+                                    <span class="text-muted">S:</span> {{ $project->start_date ? \Carbon\Carbon::parse($project->start_date)->format('d M') : '—' }}
+                                </div>
+                                <div class="small fw-600 {{ \Carbon\Carbon::parse($project->deadline)->isPast() && !$isDone ? 'text-danger' : 'text-muted' }}">
+                                    <span class="text-muted">D:</span> {{ $project->deadline ? \Carbon\Carbon::parse($project->deadline)->format('d M, Y') : '—' }}
+                                </div>
                             </td>
                             <td>
-                                <span class="fw-bold" style="color:#006666;">₹{{ number_format($project->amount, 0) }}</span>
+                                <div class="fw-bold" style="color:#006666;">₹{{ number_format($project->amount, 0) }}</div>
+                                <div class="d-flex align-items-center gap-1 mt-1" style="font-size:0.65rem;">
+                                    <div style="width:40px;height:4px;background:#f0f0f0;border-radius:2px;overflow:hidden;">
+                                        <div style="width:{{ $pct }}%;height:100%;background:{{ $pctColor }};"></div>
+                                    </div>
+                                    <span style="color:{{ $pctColor }};">{{ $pct }}%</span>
+                                </div>
                             </td>
                             <td class="m-none">
-                                <div class="d-flex align-items-center gap-2">
-                                    <div style="flex:1;height:6px;background:#f0f0f0;border-radius:99px;overflow:hidden;">
-                                        <div style="width:{{ $pct }}%;height:100%;background:{{ $pctColor }};border-radius:99px;"></div>
-                                    </div>
-                                    <span style="font-size:0.72rem;font-weight:700;color:{{ $pctColor }};min-width:30px;">{{ $pct }}%</span>
-                                </div>
+                                <span class="pj-type-pill">{{ $project->type ?? 'General' }}</span>
+                            </td>
+                            <td class="text-center">
+                                @if($project->status == 1)
+                                    <span class="pv-badge pv-badge-success">Active</span>
+                                @else
+                                    <span class="pv-badge pv-badge-info">Closed</span>
+                                @endif
+                            </td>
+                            <td class="m-none">
+                                @if($project->tags)
+                                    @foreach(explode(',', $project->tags) as $tag)
+                                        <span class="badge bg-light text-dark border fw-normal" style="font-size:0.65rem;">{{ trim($tag) }}</span>
+                                    @endforeach
+                                @else
+                                    —
+                                @endif
                             </td>
                             <td class="position-sticky end-0 bg-white" onclick="event.stopPropagation();">
                                 <div class="d-flex align-items-center justify-content-center gap-1">
-                                    @if($project->deployment_url)
-                                        <a href="{{ $project->deployment_url }}" target="_blank"
-                                           class="kb-action-btn kb-action-wa" title="Visit Site">
-                                            <i class="bx bx-link-external"></i>
-                                        </a>
-                                    @endif
                                     <a href="/manage-project?id={{ $project->id }}"
                                        class="kb-action-btn kb-action-edit" title="Edit">
                                         <i class="bx bx-pencil"></i>
@@ -271,7 +289,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6">
+                            <td colspan="8">
                                 <div class="kb-empty-col" style="padding:40px 0;">
                                     <i class="bx bx-layer" style="font-size:2.5rem;"></i>
                                     <span>No projects found.</span>

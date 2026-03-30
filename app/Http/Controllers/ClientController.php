@@ -1116,11 +1116,16 @@ class ClientController extends Controller
     public function manageProjectPost(Request $request)
     {
         $request->validate([
-            'client_id'  => 'required|exists:clients,id',
-            'name'       => 'required|string|max:255',
-            'type'       => 'nullable|string|max:100',
-            'amount'     => 'nullable|numeric|min:0',
-            'note'       => 'nullable|string',
+            'client_id'      => 'required|exists:clients,id',
+            'name'           => 'required|string|max:255',
+            'category'       => 'nullable|string|max:255',
+            'start_date'     => 'nullable|date',
+            'deadline'       => 'nullable|date',
+            'type'           => 'nullable|string|max:100',
+            'amount'         => 'nullable|numeric|min:0',
+            'status'         => 'nullable|integer',
+            'note'           => 'nullable|string',
+            'tags'           => 'nullable|string',
             'deployment_url' => 'nullable|url|max:255',
         ]);
 
@@ -1129,9 +1134,14 @@ class ClientController extends Controller
         $project->cid            = Auth::user()->cid;
         $project->client_id      = $request->client_id;
         $project->name           = $request->name;
+        $project->category       = $request->category ?? '';
+        $project->start_date     = $request->start_date;
+        $project->deadline       = $request->deadline;
         $project->type           = $request->type ?? '';
         $project->amount         = $request->amount ?? 0;
+        $project->status         = $request->status ?? 1;
         $project->note           = $request->note ?? '';
+        $project->tags           = $request->tags ?? '';
         $project->deployment_url = $request->deployment_url ?? '';
         $project->save();
 
