@@ -334,6 +334,12 @@ table.dataTable tbody tr:last-child td {
     color: #fff !important;
 }
 
+.leads-toolbar-left select {
+    height: 36px;
+    padding: 0 14px !important;
+    border-radius: 20px !important;
+}
+
 /* Custom Scrollbar for a premium feel */
 ::-webkit-scrollbar {
     width: 8px;

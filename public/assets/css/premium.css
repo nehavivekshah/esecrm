@@ -1551,12 +1551,6 @@ li.nav-title {
     flex-wrap: wrap;
 }
 
-.leads-toolbar-left select {
-    height: 36px;
-    padding: 0 14px !important;
-    border-radius: 20px !important;
-}
-
 .leads-toolbar-right {
     display: flex;
     align-items: center;
@@ -5729,12 +5723,6 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
 
 .ld-assign-card .input-group {
     text-align: left;
-}
-
-.leads-toolbar-left select {
-    height: 36px;
-    padding: 0 14px !important;
-    border-radius: 20px !important;
 }
 
 
