@@ -46,6 +46,8 @@ Route::group(['middleware' => 'guest'], function () {
     Route::post('/new-password', [AuthController::class, 'newPasswordPost'])->name('newPassword');
 
     Route::get('/export-lead-all', [LeadController::class, 'exportAllLeads'])->name('exportAllLeads');
+    // NOTE: /reminders is also registered inside the auth group (for logged-in use)
+    // This one serves as a cron/scheduler hook (unauthenticated scheduler calls)
     Route::get('/reminders', [LeadController::class, 'reminderScript'])->name('reminderScript');
 
 });
@@ -130,7 +132,7 @@ Route::group(['middleware' => 'auth'], function () {
     /*Manage Lead Data*/
     Route::get('/manage-lead', [LeadController::class, 'manageLead'])->name('manageLead');
     Route::post('/manage-lead', [LeadController::class, 'manageLeadPost'])->name('manageLead');
-    Route::post('/bulk-assign-leads', [LeadController::class, 'bulkAssignLeads'])->name('leads.bulkAssign');
+    /* NOTE: bulk-assign-leads is handled by NewLeadController above */
 
 
     //Route::get('/get-lead-data', [LeadController::class, 'getLeadData']);
@@ -297,6 +299,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/ajax-send', [AjaxController::class, 'ajaxSend']);
     Route::get('/task-search', [AjaxController::class, 'taskSearch'])->name('taskSearch');
+    Route::get('/global-search', [AjaxController::class, 'globalSearch'])->name('globalSearch');
 
     //SMTP Email Setup
     Route::get('/smtp-settings', [SettingController::class, 'smtpSetup'])->name('smtpSetup');

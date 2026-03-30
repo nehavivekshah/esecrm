@@ -234,4 +234,73 @@ class AjaxController extends Controller
         
         return response()->json(['result' => $output]);
     }
+
+    /**
+     * Global Search — AJAX endpoint for Ctrl+K universal CRM search.
+     * Searches Leads, Clients, and Proposals within the authenticated tenant.
+     */
+    public function globalSearch(Request $request)
+    {
+        $q = trim($request->input('q', ''));
+
+        if (strlen($q) < 2) {
+            return response()->json(['leads' => [], 'clients' => [], 'proposals' => []]);
+        }
+
+        $cid  = Auth::user()->cid;
+        $like = '%' . $q . '%';
+
+        // Search Leads
+        $leads = Leads::where('cid', $cid)
+            ->where(function($query) use ($like) {
+                $query->where('name', 'like', $like)
+                      ->orWhere('company', 'like', $like)
+                      ->orWhere('email', 'like', $like)
+                      ->orWhere('mob', 'like', $like);
+            })
+            ->limit(5)
+            ->get(['id', 'name', 'company', 'email', 'mob'])
+            ->map(fn($l) => [
+                'title' => $l->name ?: '(No Name)',
+                'sub'   => implode(' · ', array_filter([$l->company, $l->email ?: $l->mob])),
+                'url'   => '/newleads?id=' . $l->id,
+            ]);
+
+        // Search Clients
+        $clients = Clients::where('cid', $cid)
+            ->where(function($query) use ($like) {
+                $query->where('name', 'like', $like)
+                      ->orWhere('company', 'like', $like)
+                      ->orWhere('email', 'like', $like)
+                      ->orWhere('mob', 'like', $like);
+            })
+            ->limit(5)
+            ->get(['id', 'name', 'company', 'email', 'mob'])
+            ->map(fn($c) => [
+                'title' => $c->name ?: '(No Name)',
+                'sub'   => implode(' · ', array_filter([$c->company, $c->email ?: $c->mob])),
+                'url'   => '/clients?id=' . $c->id,
+            ]);
+
+        // Search Proposals
+        $proposals = Proposals::where('cid', $cid)
+            ->where(function($query) use ($like) {
+                $query->where('subject', 'like', $like)
+                      ->orWhere('client_name', 'like', $like)
+                      ->orWhere('client_email', 'like', $like);
+            })
+            ->limit(5)
+            ->get(['id', 'subject', 'client_name', 'status', 'grand_total'])
+            ->map(fn($p) => [
+                'title' => $p->subject ?: '(No Subject)',
+                'sub'   => implode(' · ', array_filter([$p->client_name, $p->status])),
+                'url'   => '/manage-proposal?id=' . $p->id,
+            ]);
+
+        return response()->json([
+            'leads'     => $leads->values(),
+            'clients'   => $clients->values(),
+            'proposals' => $proposals->values(),
+        ]);
+    }
 }
