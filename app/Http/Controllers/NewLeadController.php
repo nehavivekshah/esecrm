@@ -256,9 +256,9 @@ class NewLeadController extends Controller
 
     public function bulkAssign(Request $request)
     {
-        $request->validate(['leads' => 'required|array', 'user_id' => 'required']);
-        $user = User::findOrFail($request->user_id);
-        Leads::whereIn('id', $request->leads)->update(['assigned' => $user->name]);
+        $request->validate(['lead_ids' => 'required|array', 'assigned_to' => 'required']);
+        $user = User::findOrFail($request->assigned_to);
+        Leads::whereIn('id', $request->lead_ids)->update(['assigned' => $user->id]);
         return response()->json(['status' => 'success']);
     }
 
