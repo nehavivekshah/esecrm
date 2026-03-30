@@ -3155,7 +3155,7 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
 }
 
 .tb-search-input {
-    border: none;
+    border: none !important;
     background: transparent;
     outline: none;
     font-size: 0.82rem;
