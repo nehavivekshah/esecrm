@@ -352,8 +352,3 @@ table.dataTable tbody tr:last-child td {
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 102, 102, 0.4);
 }
-
-.table-btn a {
-    padding: 3px 3px 2px !important;
-    font-size: 14px !important;
-}
