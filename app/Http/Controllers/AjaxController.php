@@ -237,14 +237,14 @@ class AjaxController extends Controller
 
     /**
      * Global Search — AJAX endpoint for Ctrl+K universal CRM search.
-     * Searches Leads, Clients, and Proposals within the authenticated tenant.
+     * Searches Leads, Clients, Proposals, and Projects within the authenticated tenant.
      */
     public function globalSearch(Request $request)
     {
         $q = trim($request->input('q', ''));
 
         if (strlen($q) < 2) {
-            return response()->json(['leads' => [], 'clients' => [], 'proposals' => []]);
+            return response()->json(['leads' => [], 'clients' => [], 'proposals' => [], 'projects' => []]);
         }
 
         $cid  = Auth::user()->cid;
@@ -279,7 +279,7 @@ class AjaxController extends Controller
             ->map(fn($c) => [
                 'title' => $c->name ?: '(No Name)',
                 'sub'   => implode(' · ', array_filter([$c->company, $c->email ?: $c->mob])),
-                'url'   => '/clients?id=' . $c->id,
+                'url'   => '/manage-client?id=' . $c->id,
             ]);
 
         // Search Proposals
@@ -297,10 +297,28 @@ class AjaxController extends Controller
                 'url'   => '/manage-proposal?id=' . $p->id,
             ]);
 
+        // Search Projects
+        $projects = \App\Models\Projects::leftJoin('clients', 'projects.client_id', '=', 'clients.id')
+            ->where('projects.cid', $cid)
+            ->where(function($query) use ($like) {
+                $query->where('projects.name', 'like', $like)
+                      ->orWhere('clients.name', 'like', $like)
+                      ->orWhere('clients.company', 'like', $like);
+            })
+            ->limit(5)
+            ->get(['projects.id', 'projects.name', 'projects.type',
+                   'clients.name as client_name', 'clients.company as client_company'])
+            ->map(fn($p) => [
+                'title' => $p->name ?: '(No Name)',
+                'sub'   => implode(' · ', array_filter([$p->client_name, $p->client_company, $p->type])),
+                'url'   => '/project/view/' . $p->id,
+            ]);
+
         return response()->json([
             'leads'     => $leads->values(),
             'clients'   => $clients->values(),
             'proposals' => $proposals->values(),
+            'projects'  => $projects->values(),
         ]);
     }
 }

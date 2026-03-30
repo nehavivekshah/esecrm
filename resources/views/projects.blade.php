@@ -65,16 +65,33 @@
         <div class="leads-toolbar mb-3">
             <div class="leads-toolbar-left">
                 <form action="/projects" method="GET" id="projectFilterForm" class="d-flex align-items-center gap-2">
-                    <div class="lb-search-box">
+                    <div class="lb-search-box" style="position:relative;">
                         <i class="bx bx-search"></i>
                         <input type="text" name="search" id="projectSearch"
                                placeholder="Search projects, clients…"
-                               value="{{ $search ?? '' }}">
+                               value="{{ $search ?? '' }}"
+                               autocomplete="off">
+                        @if(!empty($search))
+                            <a href="/projects" class="pj-search-clear" title="Clear search">
+                                <i class="bx bx-x"></i>
+                            </a>
+                        @endif
                     </div>
                 </form>
+
+                {{-- Active search indicator --}}
+                @if(!empty($search))
+                    <span class="pj-active-filter">
+                        <i class="bx bx-filter-alt"></i>
+                        "{{ $search }}"
+                        <a href="/projects" class="pj-filter-clear" title="Clear">×</a>
+                    </span>
+                @endif
+
                 <span class="lb-page-count">
                     <i class="bx bx-layer"></i>
-                    {{ $totalProjects }} Projects
+                    {{ $totalProjects }} {{ $totalProjects == 1 ? 'Project' : 'Projects' }}
+                    @if(!empty($search)) found @endif
                 </span>
             </div>
             <div class="leads-toolbar-right gap-2">
@@ -293,6 +310,34 @@
 }
 @media (max-width: 768px) { .pj-stat-row { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 480px) { .pj-stat-row { grid-template-columns: 1fr; } }
+
+/* ── Search Clear Button ── */
+.pj-search-clear {
+    position: absolute; right: 10px; top: 50%;
+    transform: translateY(-50%);
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #dadce0; color: #5f6368;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem; text-decoration: none; transition: background 0.15s;
+    z-index: 2;
+}
+.pj-search-clear:hover { background: #ea4335; color: #fff; }
+
+/* ── Active Filter Badge ── */
+.pj-active-filter {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: rgba(0,102,102,0.08); border: 1px solid rgba(0,102,102,0.2);
+    color: #006666; border-radius: 20px;
+    padding: 3px 10px; font-size: 0.75rem; font-weight: 600;
+    white-space: nowrap;
+}
+.pj-active-filter i { font-size: 0.85rem; }
+.pj-filter-clear {
+    color: #ea4335; font-weight: 800; font-size: 1rem;
+    text-decoration: none; line-height: 1; margin-left: 2px;
+}
+.pj-filter-clear:hover { color: #c62828; }
+
 
 .pj-stat-card {
     background: #fff;

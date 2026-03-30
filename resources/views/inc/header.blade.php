@@ -169,7 +169,7 @@
 <div id="globalSearchModal" style="display:none;" role="dialog" aria-label="Global Search">
     <div class="gs-header">
         <i class="bx bx-search gs-icon"></i>
-        <input type="text" id="gsInput" class="gs-input" placeholder="Search leads, clients, proposals…" autocomplete="off" spellcheck="false">
+        <input type="text" id="gsInput" class="gs-input" placeholder="Search leads, clients, projects, proposals…" autocomplete="off" spellcheck="false">
         <button class="gs-close" onclick="closeGlobalSearch()" title="Close (Esc)"><i class="bx bx-x"></i></button>
     </div>
     <div id="gsResults" class="gs-results">
@@ -371,9 +371,10 @@
         let html = '';
 
         const sections = [
-            { key: 'leads',    label: 'Leads',    icon: 'bx bx-user-check',  color: '#1a73e8', bg: 'rgba(26,115,232,0.08)' },
-            { key: 'clients',  label: 'Clients',  icon: 'bx bx-group',       color: '#34a853', bg: 'rgba(52,168,83,0.08)' },
-            { key: 'proposals',label: 'Proposals', icon: 'bx bx-file',       color: '#f29900', bg: 'rgba(242,153,0,0.08)' },
+            { key: 'leads',     label: 'Leads',     icon: 'bx bx-user-check',   color: '#1a73e8', bg: 'rgba(26,115,232,0.08)' },
+            { key: 'clients',   label: 'Clients',   icon: 'bx bx-group',        color: '#34a853', bg: 'rgba(52,168,83,0.08)'  },
+            { key: 'projects',  label: 'Projects',  icon: 'bx bx-layer',        color: '#006666', bg: 'rgba(0,102,102,0.08)'  },
+            { key: 'proposals', label: 'Proposals', icon: 'bx bx-file',         color: '#f29900', bg: 'rgba(242,153,0,0.08)'  },
         ];
 
         let hasAny = false;
