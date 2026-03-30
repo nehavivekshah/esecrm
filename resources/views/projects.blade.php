@@ -196,17 +196,17 @@
         {{-- ════════════════════════════════
              TABLE VIEW
         ════════════════════════════════ --}}
-        <div id="tableView" class="leads-table-card mb-4">
+        <div id="tableView" class="dash-card mb-4" style="background: #fff; border: 1px solid #e8eaed; border-radius: 12px; overflow: hidden;">
             <div class="table-responsive">
-                <table class="leads-table table-hover align-middle" id="projectTable" style="width:100%;">
+                <table class="leads-table projects align-middle" id="projectTable" style="width:100%;">
                     <thead>
                         <tr>
                             <th>Project</th>
                             <th class="m-none">Client / Company</th>
-                            <th class="m-none">Type</th>
+                            <th class="m-none text-center">Type</th>
                             <th>Contract Value</th>
                             <th class="m-none">Recovery %</th>
-                            <th class="text-end position-sticky end-0" data-orderable="false">Action</th>
+                            <th class="text-center position-sticky end-0 bg-default mw60" data-orderable="false" style="z-index:1;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -217,10 +217,10 @@
                             $pct   = $amt > 0 ? min(100, round(($paid / $amt) * 100)) : 0;
                             $pctColor = $pct >= 80 ? '#34a853' : ($pct >= 40 ? '#fbbc04' : '#ea4335');
                         @endphp
-                        <tr class="pointer-cursor" onclick="window.location.href='/project/view/{{ $project->id }}'">
+                        <tr class="pointer-cursor selectrow" onclick="window.location.href='/project/view/{{ $project->id }}'">
                             <td>
                                 <div class="d-flex align-items-center gap-2">
-                                    <div class="lb-avatar-sm" style="background:linear-gradient(135deg,#006666,#009688);">
+                                    <div class="lb-avatar-sm" style="background:linear-gradient(135deg,#006666,#009688);color:#fff;">
                                         {{ strtoupper(substr($project->name, 0, 1)) }}
                                     </div>
                                     <div>
@@ -233,7 +233,7 @@
                                 <div class="fw-500">{{ $project->client_name ?? '—' }}</div>
                                 <div class="small text-muted">{{ Str::limit($project->client_company ?? '', 20) }}</div>
                             </td>
-                            <td class="m-none">
+                            <td class="m-none text-center">
                                 <span class="pj-type-pill">{{ $project->type ?? 'General' }}</span>
                             </td>
                             <td>
@@ -247,15 +247,11 @@
                                     <span style="font-size:0.72rem;font-weight:700;color:{{ $pctColor }};min-width:30px;">{{ $pct }}%</span>
                                 </div>
                             </td>
-                            <td class="text-end position-sticky end-0" onclick="event.stopPropagation();">
-                                <div class="d-flex align-items-center justify-content-end gap-1">
-                                    <a href="/project/view/{{ $project->id }}" class="kb-action-btn"
-                                       style="background:rgba(26,115,232,0.08);color:#1a73e8;" title="View">
-                                        <i class="bx bx-show"></i>
-                                    </a>
+                            <td class="position-sticky end-0 bg-white" onclick="event.stopPropagation();">
+                                <div class="d-flex align-items-center justify-content-center gap-1">
                                     @if($project->deployment_url)
                                         <a href="{{ $project->deployment_url }}" target="_blank"
-                                           class="kb-action-btn kb-action-call" title="Visit Site">
+                                           class="kb-action-btn kb-action-wa" title="Visit Site">
                                             <i class="bx bx-link-external"></i>
                                         </a>
                                     @endif
@@ -263,6 +259,13 @@
                                        class="kb-action-btn kb-action-edit" title="Edit">
                                         <i class="bx bx-pencil"></i>
                                     </a>
+                                    @if(in_array('projects_delete', $roleArray) || in_array('All', $roleArray))
+                                        <a href="javascript:void(0)"
+                                           class="kb-action-btn kb-action-del delete"
+                                           id="{{ $project->id }}" date-page="projectDelete" title="Delete">
+                                            <i class="bx bx-trash"></i>
+                                        </a>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
