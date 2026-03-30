@@ -5,6 +5,14 @@
     @php
         $roles     = session('roles');
         $roleArray = explode(',', ($roles->permissions ?? ''));
+
+        $totalClients    = $clients->count();
+        $activeClients   = $clients->where('status', '1')->count();
+        $inactiveClients = $clients->where('status', '0')->count();
+        $newThisMonth    = $clients->filter(fn($c) =>
+            !empty($c->created_at) &&
+            \Carbon\Carbon::parse($c->created_at)->isCurrentMonth()
+        )->count();
     @endphp
 
     <link rel="stylesheet" href="{{ asset('assets/css/lead-panel.css') }}">
@@ -13,6 +21,46 @@
         @include('inc.header', ['title' => 'Customers'])
 
         <div class="dash-container">
+
+            {{-- ── Stat Cards ── --}}
+            <div class="cl-stat-row mb-4">
+                <div class="cl-stat-card">
+                    <div class="cl-stat-icon" style="background:rgba(0,102,102,0.10);color:#006666;">
+                        <i class="bx bx-group"></i>
+                    </div>
+                    <div>
+                        <div class="cl-stat-num">{{ $totalClients }}</div>
+                        <div class="cl-stat-label">Total Customers</div>
+                    </div>
+                </div>
+                <div class="cl-stat-card">
+                    <div class="cl-stat-icon" style="background:rgba(52,168,83,0.10);color:#34a853;">
+                        <i class="bx bx-check-circle"></i>
+                    </div>
+                    <div>
+                        <div class="cl-stat-num" style="color:#34a853;">{{ $activeClients }}</div>
+                        <div class="cl-stat-label">Active</div>
+                    </div>
+                </div>
+                <div class="cl-stat-card">
+                    <div class="cl-stat-icon" style="background:rgba(234,67,53,0.10);color:#ea4335;">
+                        <i class="bx bx-minus-circle"></i>
+                    </div>
+                    <div>
+                        <div class="cl-stat-num" style="color:#ea4335;">{{ $inactiveClients }}</div>
+                        <div class="cl-stat-label">Inactive</div>
+                    </div>
+                </div>
+                <div class="cl-stat-card">
+                    <div class="cl-stat-icon" style="background:rgba(26,115,232,0.10);color:#1a73e8;">
+                        <i class="bx bx-user-plus"></i>
+                    </div>
+                    <div>
+                        <div class="cl-stat-num" style="color:#1a73e8;">{{ $newThisMonth }}</div>
+                        <div class="cl-stat-label">New This Month</div>
+                    </div>
+                </div>
+            </div>
 
             {{-- Toolbar --}}
             <div class="leads-toolbar mb-3">
@@ -63,7 +111,7 @@
                                     {{-- Name --}}
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
-                                            <div class="lb-avatar-sm">{{ strtoupper(substr($client->name ?? 'C', 0, 1)) }}</div>
+                                            <div class="lb-avatar-sm" style="background:linear-gradient(135deg,#006666,#009688);color:#fff;">{{ strtoupper(substr($client->name ?? 'C', 0, 1)) }}</div>
                                             <div>
                                                 <div class="fw-500">{{ $client->name ?? '' }}</div>
                                                 <div class="text-muted small d-none">{{ $client->company ?? '' }}</div>
@@ -87,9 +135,13 @@
                                     {{-- Status --}}
                                     <td>
                                         @if($client->status == '1')
-                                            <span class="leads-status-badge leads-status-fresh">Active</span>
+                                            <span class="inv-status-pill" style="background:rgba(52,168,83,0.10);color:#34a853;">
+                                                <i class="bx bx-check-circle"></i> Active
+                                            </span>
                                         @else
-                                            <span class="leads-status-badge leads-status-loss">Inactive</span>
+                                            <span class="inv-status-pill" style="background:rgba(234,67,53,0.10);color:#ea4335;">
+                                                <i class="bx bx-minus-circle"></i> Inactive
+                                            </span>
                                         @endif
                                     </td>
                                     {{-- Actions --}}
@@ -137,6 +189,38 @@
 
         </div>
     </section>
+
+<style>
+/* ── Client Stat Row ── */
+.cl-stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+}
+@media (max-width: 768px) { .cl-stat-row { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .cl-stat-row { grid-template-columns: 1fr 1fr; } }
+
+.cl-stat-card {
+    background: #fff; border: 1px solid #e8eaed; border-radius: 16px;
+    padding: 16px; display: flex; align-items: center; gap: 14px;
+    transition: box-shadow 0.15s;
+}
+.cl-stat-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+.cl-stat-icon {
+    width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
+}
+.cl-stat-num { font-size: 1.35rem; font-weight: 800; color: #202124; line-height: 1; }
+.cl-stat-label { font-size: 0.72rem; color: #80868b; margin-top: 3px; font-weight: 500; }
+
+/* Reuse inv-status-pill from invoices page */
+.inv-status-pill {
+    display: inline-flex; align-items: center; gap: 3px;
+    border-radius: 20px; padding: 3px 9px; font-size: 0.71rem; font-weight: 600;
+    white-space: nowrap;
+}
+.inv-status-pill i { font-size: 0.85rem; }
+</style>
 
     {{-- Hidden import form --}}
     <form id="Clientsubmit" action="/import-client-file" method="post" enctype="multipart/form-data">

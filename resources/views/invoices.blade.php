@@ -1,139 +1,315 @@
 @extends('layout')
-@section('title','Invoices - eseCRM')
+@section('title', 'Invoices - eseCRM')
 
 @section('content')
-    @php
-        // Retrieve role permissions from session
-        $roles = session('roles');
-        $roleArray = explode(',', ($roles->permissions ?? ''));
-    @endphp
+@php
+    $roles     = session('roles');
+    $roleArray = explode(',', ($roles->permissions ?? ''));
 
-    <section class="task__section">
-        @include('inc.header', ['title' => 'Invoices'])
-        <div class="container-fluid">
-            <div class="board-title board-title-flex">
-                <h1>Invoice Board</h1>
-                @if(in_array('invoice_add', $roleArray) || in_array('All', $roleArray))
-                    <div class="btn-group">
-                        <a href="/manage-invoice" class="btn btn-indigo rounded-pill btn-sm">
-                            <i class="bx bx-plus"></i> 
-                            <span>Create New Invoice</span>
-                        </a>
-                    </div>
-                @endif
+    $total        = $invoices->count();
+    $paidCount    = $invoices->where('status', 'paid')->count();
+    $unpaidCount  = $invoices->where('status', 'unpaid')->count();
+    $partialCount = $invoices->whereNotIn('status', ['paid', 'unpaid'])->count();
+    $totalValue   = $invoices->sum('total_amount');
+    $paidValue    = $invoices->where('status', 'paid')->sum('total_amount');
+
+    $statusConfig = [
+        'paid'    => ['#34a853', 'Paid',    'bx bx-check-circle'],
+        'unpaid'  => ['#ea4335', 'Unpaid',  'bx bx-x-circle'],
+        'partial' => ['#f29900', 'Partial', 'bx bx-time-five'],
+    ];
+@endphp
+
+<section class="task__section">
+    @include('inc.header', ['title' => 'Invoices'])
+
+    <div class="dash-container">
+
+        {{-- ── Stat Cards ── --}}
+        <div class="inv-stat-row mb-4">
+            <div class="inv-stat-card">
+                <div class="inv-stat-icon" style="background:rgba(0,102,102,0.10);color:#006666;">
+                    <i class="bx bx-file-blank"></i>
+                </div>
+                <div>
+                    <div class="inv-stat-num">{{ $total }}</div>
+                    <div class="inv-stat-label">Total Invoices</div>
+                </div>
             </div>
-            <div class="row">
-                <div class="col-md-12 py-3 table-responsive">
-                    <table id="lists" class="table table-condensed m-table" style="width:100%;border-radius: 5px!important;overflow: hidden;">
-                        <thead>
-                            <tr>
-                                <th class="m-none">#</th>
-                                <th class="m-none">Invoice #</th>
-                                <th>Client</th>
-                                <th>Company</th>
-                                <th>Amount</th>
-                                <th>Type</th>
-                                <th class="m-none">Date</th>
-                                <th class="m-none">Due Date</th>
-                                <!--<th>Amount</th>
-                                <th>Total Tax</th>-->
-                                <th width="50px">Status</th>
-                                <th width="50px" class="position-sticky end-0">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($invoices as $k=>$invoice)
-                                <tr>
-                                    <td>{{ $k+1 }}</td>
-                                    <td class="m-none">INV-{{ $invoice->invoice_number }}</td>
-                                    <td>{{ $invoice->client_name }}</td>
-                                    <td>{{ $invoice->client_company }}</td>
-                                    <td>Rs. {{ $invoice->total_amount ?? 0.00 }}</td>
-                                    <td>{{ $invoice->invoice }}</td>
-                                    <td class="m-none">{!! date_format(date_create($invoice->date),'d M, Y') !!}</td>
-                                    <td class="m-none">{!! date_format(date_create($invoice->due_date),'d M, Y') !!}</td>
-                                    <!--<td>{{ $invoice->total_amount }}</td>-->
-                                    <td>
-                                        @if($invoice->status == 'paid')
-                                            <span class="badge bg-success">Paid</span>
-                                        @elseif($invoice->status == 'unpaid')
-                                            <span class="badge bg-danger">Unpaid</span>
-                                        @else
-                                            <span class="badge bg-warning">{{ ucfirst($invoice->status) }}</span>
-                                        @endif
-                                    </td>
-                                    <td class="position-sticky end-0">
-                                        <div class="table-btn d-flex align-items-center gap-2">
-                                            <a href="/invoices/pdf/preview/{{ $invoice->id }}" 
-                                               class="btn btn-outline-primary btn-sm rounded-circle shadow-sm" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;"
-                                               title="View"
-                                               target="_blank">
-                                                <i class="bx bx-file"></i>
-                                            </a>
-                                            @if(in_array('invoice_edit', $roleArray) || in_array('All', $roleArray))
-                                                <a href="/manage-invoice?id={{ $invoice->id }}" 
-                                                   class="btn btn-outline-info btn-sm rounded-circle shadow-sm" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;"
-                                                   title="Edit">
-                                                    <i class="bx bx-edit"></i>
-                                                </a>
-                                            @endif
-                                            
-                                            <!-- Send Invoice -->
-                                            <a href="mailto:{{ $invoice->client_email ?? '' }}?subject=Invoice INV-{{ $invoice->invoice_number }}&body=Please find attached invoice." 
-                                               class="btn btn-outline-warning btn-sm send-invoice-btn rounded-circle shadow-sm" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;"
-                                               title="Send Email">
-                                                <i class="bx bx-envelope"></i>
-                                            </a>
-
-                                            @if(in_array('invoice_delete', $roleArray) || in_array('All', $roleArray))
-                                                <a href="javascript:void(0)" 
-                                                   class="btn btn-outline-danger btn-sm delete rounded-circle shadow-sm" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;"
-                                                   data-id="{{ $invoice->id }}" 
-                                                   data-page="invoiceDelete" 
-                                                   title="Delete">
-                                                    <i class="bx bx-trash"></i>
-                                                </a>
-                                            @endif
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+            <div class="inv-stat-card">
+                <div class="inv-stat-icon" style="background:rgba(52,168,83,0.10);color:#34a853;">
+                    <i class="bx bx-check-circle"></i>
+                </div>
+                <div>
+                    <div class="inv-stat-num" style="color:#34a853;">{{ $paidCount }}</div>
+                    <div class="inv-stat-label">Paid</div>
+                </div>
+            </div>
+            <div class="inv-stat-card">
+                <div class="inv-stat-icon" style="background:rgba(234,67,53,0.10);color:#ea4335;">
+                    <i class="bx bx-x-circle"></i>
+                </div>
+                <div>
+                    <div class="inv-stat-num" style="color:#ea4335;">{{ $unpaidCount }}</div>
+                    <div class="inv-stat-label">Unpaid</div>
+                </div>
+            </div>
+            <div class="inv-stat-card">
+                <div class="inv-stat-icon" style="background:rgba(0,102,102,0.08);color:#006666;">
+                    <i class="bx bx-rupee"></i>
+                </div>
+                <div>
+                    <div class="inv-stat-num" style="color:#006666;">₹{{ number_format($totalValue, 0) }}</div>
+                    <div class="inv-stat-label">Total Value</div>
+                </div>
+            </div>
+            <div class="inv-stat-card">
+                <div class="inv-stat-icon" style="background:rgba(52,168,83,0.08);color:#34a853;">
+                    <i class="bx bx-trending-up"></i>
+                </div>
+                <div>
+                    <div class="inv-stat-num" style="color:#34a853;">₹{{ number_format($paidValue, 0) }}</div>
+                    <div class="inv-stat-label">Collected</div>
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- Client Filter Logic & Send Action -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // 1. Add Filter Dropdown
-            const table = $('#lists').DataTable();
-            
-            // Create filter container
-            const filterContainer = $('<div class="d-flex gap-2 mb-3"></div>').insertBefore('#lists_wrapper');
-            
-            // Client Filter
-            const clientSelect = $('<select class="form-select form-select-sm" style="width: 200px;"><option value="">All Clients</option></select>')
-                .appendTo(filterContainer)
-                .on('change', function () {
-                    const val = $.fn.dataTable.util.escapeRegex($(this).val());
-                    table.column(2).search(val ? '^' + val + '$' : '', true, false).draw();
-                });
- 
-            // Populate Client Filter
-            table.column(2).data().unique().sort().each(function (d, j) {
-                // Strip HTML if present (though client name usually plain text)
-                const cleanData = $('<div>').html(d).text(); 
-                if(cleanData) clientSelect.append('<option value="' + cleanData + '">' + cleanData + '</option>');
-            });
+        {{-- ── Toolbar ── --}}
+        <div class="leads-toolbar mb-3">
+            <div class="leads-toolbar-left">
+                <span class="lb-page-count">
+                    <i class="bx bx-file-blank"></i>
+                    {{ $total }} {{ $total == 1 ? 'Invoice' : 'Invoices' }}
+                </span>
+            </div>
+            <div class="leads-toolbar-right gap-2">
+                <button class="lb-icon-btn" onclick="location.reload()" title="Refresh">
+                    <i class="bx bx-refresh"></i>
+                </button>
+                @if(in_array('invoice_add', $roleArray) || in_array('All', $roleArray))
+                    <a href="/manage-invoice" class="lb-btn lb-btn-primary">
+                        <i class="bx bx-plus"></i>
+                        <span class="d-none d-sm-inline">New Invoice</span>
+                    </a>
+                @endif
+            </div>
+        </div>
 
-            // 2. Add Send Logic (Placeholder)
-            /*$('.send-invoice-btn').click(function(e) {
-                e.preventDefault();
-                alert('Send Invoice functionality to be implemented.');
-            });*/
+        {{-- ── Table Card ── --}}
+        <div class="dash-card mb-4">
+            <div class="table-responsive">
+                <table id="lists" class="leads-table" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th class="m-none" style="width:40px;">#</th>
+                            <th>Invoice #</th>
+                            <th>Client</th>
+                            <th class="m-none">Company</th>
+                            <th>Amount</th>
+                            <th class="m-none">Type</th>
+                            <th class="m-none">Date</th>
+                            <th class="m-none">Due Date</th>
+                            <th style="width:80px;">Status</th>
+                            <th class="text-center position-sticky end-0 bg-default" style="width:120px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($invoices as $k => $invoice)
+                        @php
+                            $isPaid    = $invoice->status == 'paid';
+                            $isUnpaid  = $invoice->status == 'unpaid';
+                            $isOverdue = !$isPaid && !empty($invoice->due_date) &&
+                                         \Carbon\Carbon::parse($invoice->due_date)->isPast();
+                        @endphp
+                        <tr>
+                            <td class="m-none text-muted" style="font-size:0.78rem;">{{ $k + 1 }}</td>
+                            <td>
+                                <span class="inv-number">INV-{{ $invoice->invoice_number }}</span>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="lb-avatar-sm"
+                                         style="background:linear-gradient(135deg,#006666,#009688);color:#fff;flex-shrink:0;">
+                                        {{ strtoupper(substr($invoice->client_name ?? 'C', 0, 1)) }}
+                                    </div>
+                                    <div>
+                                        <div class="fw-500">{{ $invoice->client_name ?? '—' }}</div>
+                                        <div class="text-muted m-none" style="font-size:0.72rem;">{{ $invoice->client_email ?? '' }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="m-none text-muted">{{ substr($invoice->client_company ?? '—', 0, 22) }}</td>
+                            <td>
+                                <span class="fw-600" style="color:#202124;">
+                                    ₹{{ number_format($invoice->total_amount ?? 0, 0) }}
+                                </span>
+                            </td>
+                            <td class="m-none">
+                                <span class="inv-type-pill">{{ $invoice->invoice ?? '—' }}</span>
+                            </td>
+                            <td class="m-none text-muted" style="font-size:0.8rem;">
+                                {{ !empty($invoice->date) ? date_format(date_create($invoice->date), 'd M, Y') : '—' }}
+                            </td>
+                            <td class="m-none" style="font-size:0.8rem;">
+                                @if(!empty($invoice->due_date))
+                                    <span class="{{ $isOverdue && !$isPaid ? 'text-danger fw-600' : 'text-muted' }}">
+                                        {{ date_format(date_create($invoice->due_date), 'd M, Y') }}
+                                        @if($isOverdue && !$isPaid)
+                                            <span class="inv-overdue-dot">Overdue</span>
+                                        @endif
+                                    </span>
+                                @else
+                                    <span class="text-muted">—</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if($invoice->status == 'paid')
+                                    <span class="inv-status-pill" style="background:rgba(52,168,83,0.10);color:#34a853;">
+                                        <i class="bx bx-check-circle"></i> Paid
+                                    </span>
+                                @elseif($invoice->status == 'unpaid')
+                                    <span class="inv-status-pill" style="background:rgba(234,67,53,0.10);color:#ea4335;">
+                                        <i class="bx bx-x-circle"></i> Unpaid
+                                    </span>
+                                @else
+                                    <span class="inv-status-pill" style="background:rgba(242,153,0,0.10);color:#f29900;">
+                                        <i class="bx bx-time-five"></i> {{ ucfirst($invoice->status) }}
+                                    </span>
+                                @endif
+                            </td>
+                            <td class="position-sticky end-0 bg-default">
+                                <div class="d-flex align-items-center justify-content-center gap-1">
+                                    {{-- View PDF --}}
+                                    <a href="/invoices/pdf/preview/{{ $invoice->id }}"
+                                       class="kb-action-btn" target="_blank" title="View PDF"
+                                       style="background:rgba(26,115,232,0.10);color:#1a73e8;">
+                                        <i class="bx bx-file"></i>
+                                    </a>
+                                    {{-- Edit --}}
+                                    @if(in_array('invoice_edit', $roleArray) || in_array('All', $roleArray))
+                                        <a href="/manage-invoice?id={{ $invoice->id }}"
+                                           class="kb-action-btn" title="Edit"
+                                           style="background:rgba(0,102,102,0.10);color:#006666;">
+                                            <i class="bx bx-edit"></i>
+                                        </a>
+                                    @endif
+                                    {{-- Send Email --}}
+                                    <a href="mailto:{{ $invoice->client_email ?? '' }}?subject=Invoice INV-{{ $invoice->invoice_number }}&body=Please find attached invoice."
+                                       class="kb-action-btn send-invoice-btn" title="Send Email"
+                                       style="background:rgba(251,188,4,0.10);color:#f9a825;">
+                                        <i class="bx bx-envelope"></i>
+                                    </a>
+                                    {{-- Delete --}}
+                                    @if(in_array('invoice_delete', $roleArray) || in_array('All', $roleArray))
+                                        <a href="javascript:void(0)"
+                                           class="kb-action-btn delete"
+                                           data-id="{{ $invoice->id }}"
+                                           data-page="invoiceDelete"
+                                           title="Delete"
+                                           style="background:rgba(234,67,53,0.08);color:#ea4335;">
+                                            <i class="bx bx-trash"></i>
+                                        </a>
+                                    @endif
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            @if($invoices->isEmpty())
+                <div class="rv-empty">
+                    <i class="bx bx-file-blank"></i>
+                    <span>No invoices created yet.</span>
+                    @if(in_array('invoice_add', $roleArray) || in_array('All', $roleArray))
+                        <a href="/manage-invoice" class="lb-btn lb-btn-primary mt-2">
+                            <i class="bx bx-plus"></i> Create Invoice
+                        </a>
+                    @endif
+                </div>
+            @endif
+        </div>
+
+    </div>
+</section>
+
+<style>
+/* ── Stat Row ── */
+.inv-stat-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+}
+@media (max-width: 900px) { .inv-stat-row { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 576px) { .inv-stat-row { grid-template-columns: repeat(2, 1fr); } }
+
+.inv-stat-card {
+    background: #fff; border: 1px solid #e8eaed; border-radius: 16px;
+    padding: 16px; display: flex; align-items: center; gap: 14px;
+    transition: box-shadow 0.15s;
+}
+.inv-stat-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+.inv-stat-icon {
+    width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
+}
+.inv-stat-num { font-size: 1.35rem; font-weight: 800; color: #202124; line-height: 1; }
+.inv-stat-label { font-size: 0.72rem; color: #80868b; margin-top: 3px; font-weight: 500; }
+
+/* ── Invoice Number ── */
+.inv-number {
+    font-size: 0.82rem; font-weight: 700; color: #006666;
+    font-family: 'Courier New', monospace;
+}
+
+/* ── Type pill ── */
+.inv-type-pill {
+    display: inline-block; background: #f1f3f4; border-radius: 20px;
+    padding: 2px 9px; font-size: 0.71rem; font-weight: 600; color: #5f6368;
+}
+
+/* ── Status pill ── */
+.inv-status-pill {
+    display: inline-flex; align-items: center; gap: 3px;
+    border-radius: 20px; padding: 3px 9px; font-size: 0.71rem; font-weight: 600;
+    white-space: nowrap;
+}
+.inv-status-pill i { font-size: 0.85rem; }
+
+/* ── Overdue dot ── */
+.inv-overdue-dot {
+    display: inline-block; background: rgba(234,67,53,0.10);
+    color: #ea4335; border-radius: 20px;
+    padding: 1px 6px; font-size: 0.65rem; font-weight: 700;
+    margin-left: 3px;
+}
+
+/* ── Empty state ── */
+.rv-empty {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 50px 20px; color: #9aa0a6; text-align: center; gap: 8px;
+}
+.rv-empty i { font-size: 2.5rem; }
+.rv-empty span { font-size: 0.87rem; }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const table = $('#lists').DataTable();
+    // Dynamic client filter dropdown
+    const filterContainer = $('<div class="d-flex gap-2 mb-3"></div>').insertBefore('#lists_wrapper');
+    const clientSelect = $('<select class="lb-select" style="max-width:200px;"><option value="">All Clients</option></select>')
+        .appendTo(filterContainer)
+        .on('change', function () {
+            const val = $.fn.dataTable.util.escapeRegex($(this).val());
+            table.column(2).search(val ? '^' + val + '$' : '', true, false).draw();
         });
-    </script>
+    table.column(2).data().unique().sort().each(function (d) {
+        const clean = $('<div>').html(d).text();
+        if (clean) clientSelect.append('<option value="' + clean + '">' + clean + '</option>');
+    });
+});
+</script>
+
 @endsection
