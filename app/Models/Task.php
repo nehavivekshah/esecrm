@@ -18,7 +18,6 @@ class Task extends Model
         'parent_id',
         'due_date',
         'title',
-        'msg',
         'des',
         'label',
         'whr',

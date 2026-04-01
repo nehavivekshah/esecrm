@@ -109,7 +109,7 @@
                                 <th>Pending (₹)</th>
                                 <th class="m-none">Reminder</th>
                                 <th class="m-none">Executive</th>
-                                <th class="text-center position-sticky end-0 bg-default" style="width:130px;">Action</th>
+                                <th class="text-center position-sticky end-0" style="width:130px;">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -166,7 +166,7 @@
                                         @endif
                                     </td>
                                     <td class="m-none text-muted" style="font-size:0.82rem;">{{ $recovery->poc ?? '—' }}</td>
-                                    <td class="position-sticky end-0 bg-default">
+                                    <td class="position-sticky end-0">
                                         <div class="d-flex align-items-center justify-content-center gap-1">
                                             {{-- Reminder --}}
                                             <button class="btn kb-action-btn reminder" data-id="{{ $recovery->id ?? '' }}"

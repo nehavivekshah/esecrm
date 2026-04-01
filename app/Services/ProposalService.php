@@ -82,7 +82,7 @@ class ProposalService extends BaseService
         $task->cid = $proposal->cid ?? Auth::user()->cid;
         $task->uid = Auth::id();
         $task->title = "Proposal Follow-up: " . $proposal->subject;
-        $task->msg = "Proposal was sent. Coordinate with client for feedback in 48 hours.";
+        $task->des = "Proposal was sent. Coordinate with client for feedback in 48 hours.";
         $task->status = '3'; // Pending/Follow-up
         $task->label = '#17a2b8';
         return $task->save();
