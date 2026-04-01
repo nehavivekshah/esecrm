@@ -235,10 +235,9 @@
 
                 {{-- ── Sidebar ── --}}
                 <div class="col-lg-4">
-
-                    {{-- Save Card --}}
-                    <div class="ml-card mb-3 text-center">
-                        <div class="ml-card-body">
+                    <div class="ml-card">
+                        {{-- Section: Actions --}}
+                        <div class="ml-card-body text-center border-bottom">
                             <button type="submit" class="lb-btn lb-btn-primary w-100 mb-2" id="saveBtn" style="justify-content:center;">
                                 <i class="bx bx-save"></i> {{ $project ? 'Save Changes' : 'Create Project' }}
                             </button>
@@ -246,14 +245,14 @@
                                 <i class="bx bx-x"></i> Cancel and return
                             </a>
                         </div>
-                    </div>
 
-                    {{-- Preview Card --}}
-                    <div class="ml-card mb-3 text-center" id="previewCard">
-                        <div class="ml-card-header justify-content-center border-0 pb-0">
-                            <span class="text-muted small fw-bold text-uppercase"><i class="bx bx-show"></i> Live Preview</span>
-                        </div>
-                        <div class="ml-card-body pt-2">
+                        {{-- Section: Live Preview --}}
+                        <div class="ml-card-body text-center border-bottom bg-light" style="background-color:rgba(0,102,102,0.02) !important;" id="previewCard">
+                            <div class="mb-3">
+                                <span class="text-muted small fw-bold text-uppercase text-center">
+                                    <i class="bx bx-show"></i> Live Preview
+                                </span>
+                            </div>
                             <div class="preview-avatar" id="prevAvatar">?</div>
                             <div class="preview-name" id="prevName">Project Name</div>
                             <div class="preview-type" id="prevType">Type</div>
@@ -264,15 +263,11 @@
                             </div>
                             @endif
                         </div>
-                    </div>
 
-                    {{-- Quick Links --}}
-                    @if($project)
-                    <div class="ml-card">
-                        <div class="ml-card-header">
-                            <div>
-                                <h6 class="ml-card-title"><i class="bx bx-link"></i> Quick Links</h6>
-                            </div>
+                        {{-- Section: Quick Links --}}
+                        @if($project)
+                        <div class="ml-card-header border-0 pb-0">
+                            <h6 class="ml-card-title"><i class="bx bx-link"></i> Quick Links</h6>
                         </div>
                         <div class="ml-card-body p-2">
                             <div class="d-flex flex-column gap-1">
@@ -287,9 +282,12 @@
                                 </a>
                             </div>
                         </div>
+                        @else
+                        <div class="ml-card-body p-3 text-center">
+                            <span class="text-muted small italic">Quick links will be available after project creation</span>
+                        </div>
+                        @endif
                     </div>
-                    @endif
-
                 </div>
 
             </div>{{-- /row --}}
