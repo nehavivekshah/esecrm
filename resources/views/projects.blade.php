@@ -215,6 +215,7 @@
                     <table class="leads-table projects align-middle" id="projectTable" style="width:100%;">
                         <thead>
                             <tr>
+                                <th>ID</th>
                                 <th>Project</th>
                                 <th class="m-none">Sales</th>
                                 <th class="m-none">Dates</th>
@@ -237,6 +238,13 @@
                                 @endphp
                                 <tr class="pointer-cursor selectrow"
                                     onclick="window.location.href='/project/view/{{ $project->id }}'">
+                                    <td class="fw-bold text-muted" style="font-size:0.75rem;">
+                                        @if($project->project_id_custom)
+                                            <span class="text-primary">{{ $project->project_id_custom }}</span>
+                                        @else
+                                            #PROJ-{{ str_pad($project->id, 4, '0', STR_PAD_LEFT) }}
+                                        @endif
+                                    </td>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
                                             <div class="lb-avatar-sm"
@@ -248,9 +256,6 @@
                                                 </div>
                                                 <div class="small text-muted d-flex align-items-center gap-1">
                                                     {{ $project->client_name ?? '—' }}
-                                                    @if($project->project_id_custom)
-                                                        <span class="badge bg-light text-primary border fw-bold" style="font-size:0.55rem; padding:1px 4px;">{{ $project->project_id_custom }}</span>
-                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
