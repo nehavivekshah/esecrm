@@ -625,180 +625,171 @@
 
         // Recalculate Invoice Totals
         function recalculateTotals() {
-            // --- Get Control Elements ---
-            const discountApplicationTypeSelect = document.getElementById('discountApplicationType');
-            const discountValueTypeSelect = document.getElementById('discountValueType');
-            const discountValueInput = document.getElementById('discountValue');
-            const adjustmentInput = document.getElementById('adjustment');
+            try {
+                // --- Get Control Elements ---
+                const discountApplicationTypeSelect = document.getElementById('discountApplicationType');
+                const discountValueTypeSelect = document.getElementById('discountValueType');
+                const discountValueInput = document.getElementById('discountValue');
+                const adjustmentInput = document.getElementById('adjustment');
 
-            // --- Get Control Values ---
-            const discountApplicationType = discountApplicationTypeSelect.value; // 'none', 'before-tax', 'after-tax'
-            const discountValueType = discountValueTypeSelect.value;         // 'flat', 'percentage'
-            const discountValue = parseFloat(discountValueInput.value) || 0;
-            const adjustment = parseFloat(adjustmentInput.value) || 0;
+                if (!discountApplicationTypeSelect || !discountValueTypeSelect || !discountValueInput || !adjustmentInput) return;
 
-            // --- Initialize Calculation Variables ---
-            let initialSubTotal = 0;
-            let finalSubTotal = 0; // Subtotal after potential 'before-tax' discount
-            let totalTax = 0;
-            let calculatedDiscountAmount = 0;
+                // --- Get Control Values ---
+                const discountApplicationType = discountApplicationTypeSelect.value;
+                const discountValueType = discountValueTypeSelect.value;
+                const discountValue = parseFloat(discountValueInput.value) || 0;
+                const adjustment = parseFloat(adjustmentInput.value) || 0;
 
-            // --- Stage 1: Calculate Initial Subtotal and Tax (per line) ---
-            const itemRows = document.querySelectorAll('#invoiceItemsBody tr');
-            itemRows.forEach((row) => {
-                const qtyInput = row.querySelector('.item-qty');
-                const priceInput = row.querySelector('.item-price');
-                const taxSelect = row.querySelector('.item-tax');
-                const lineTotalEl = row.querySelector('.line-total');
+                let initialSubTotal = 0;
+                let finalSubTotal = 0;
+                let totalTax = 0;
+                let calculatedDiscountAmount = 0;
 
-                const qty = parseFloat(qtyInput.value) || 0;
-                const price = parseFloat(priceInput.value) || 0;
-                const lineSubTotal = qty * price;
-
-                let lineTaxAmount = 0;
-                if (taxSelect) {
-                    for (const option of taxSelect.selectedOptions) {
-                        const valueParts = option.value.split(':');
-                        if (valueParts.length === 2) {
-                            const rate = parseFloat(valueParts[1]);
-                            if (!isNaN(rate) && rate > 0) {
-                                // Tax is initially calculated on the original line subtotal
-                                lineTaxAmount += lineSubTotal * rate;
-                            }
-                        }
-                    }
-                }
-
-                // Store the initial subtotal and tax *before* any overall discount is applied
-                row.dataset.initialSubtotal = lineSubTotal; // Store on the row for potential later use
-                row.dataset.initialTax = lineTaxAmount;     // Store on the row
-
-                initialSubTotal += lineSubTotal;
-
-                // Temporarily update line total display (might be adjusted later if 'before-tax' discount)
-                lineTotalEl.textContent = formatCurrency(lineSubTotal + lineTaxAmount);
-
-                // We sum initial tax here, but it might be recalculated if discount is 'before-tax'
-                // totalTax += lineTaxAmount; // Let's calculate final tax later
-            });
-
-            // --- Stage 2: Calculate Discount Amount ---
-            if (discountApplicationType !== 'none' && discountValue > 0) {
-                let discountBase = 0;
-                if (discountApplicationType === 'before-tax') {
-                    discountBase = initialSubTotal;
-                } else { // 'after-tax'
-                    // For 'after-tax', we need the tax calculated on the *initial* subtotal first
-                    let initialTotalTax = 0;
-                    itemRows.forEach(row => {
-                        initialTotalTax += parseFloat(row.dataset.initialTax || 0);
-                    });
-                    discountBase = initialSubTotal + initialTotalTax;
-                }
-
-                if (discountValueType === 'percentage') {
-                    calculatedDiscountAmount = discountBase * (discountValue / 100.0);
-                } else { // 'flat'
-                    calculatedDiscountAmount = discountValue;
-                }
-
-                // Ensure discount doesn't exceed the base it applies to
-                calculatedDiscountAmount = Math.min(calculatedDiscountAmount, discountBase > 0 ? discountBase : 0); // Prevent negative total
-            } else {
-                calculatedDiscountAmount = 0; // No discount applied
-            }
-
-            // --- Stage 3: Calculate Final Subtotal, Tax, and Line Totals ---
-            totalTax = 0; // Reset tax, recalculate based on discount type
-
-            if (discountApplicationType === 'before-tax') {
-                finalSubTotal = initialSubTotal - calculatedDiscountAmount;
-                // Now, recalculate tax based on the *discounted* line subtotals
-                itemRows.forEach(row => {
-                    const lineInitialSub = parseFloat(row.dataset.initialSubtotal || 0);
-                    // Apply discount proportionally to the line item's subtotal
-                    const lineDiscountRatio = initialSubTotal > 0 ? (lineInitialSub / initialSubTotal) : 0;
-                    const lineDiscountAmount = calculatedDiscountAmount * lineDiscountRatio;
-                    const lineFinalSubtotal = lineInitialSub - lineDiscountAmount;
-
-                    let lineFinalTaxAmount = 0;
+                // --- Stage 1: Line Item Calculations ---
+                const itemRows = document.querySelectorAll('#invoiceItemsBody tr');
+                itemRows.forEach((row) => {
+                    const qtyInput = row.querySelector('.item-qty');
+                    const priceInput = row.querySelector('.item-price');
                     const taxSelect = row.querySelector('.item-tax');
+                    const lineTotalEl = row.querySelector('.line-total');
+
+                    if (!qtyInput || !priceInput) return;
+
+                    const qty = parseFloat(qtyInput.value) || 0;
+                    const price = parseFloat(priceInput.value) || 0;
+                    const lineSubTotal = qty * price;
+
+                    let lineTaxAmount = 0;
                     if (taxSelect) {
                         for (const option of taxSelect.selectedOptions) {
                             const valueParts = option.value.split(':');
                             if (valueParts.length === 2) {
                                 const rate = parseFloat(valueParts[1]);
                                 if (!isNaN(rate) && rate > 0) {
-                                    // Calculate tax on the *discounted* line subtotal
-                                    lineFinalTaxAmount += lineFinalSubtotal * rate;
+                                    lineTaxAmount += lineSubTotal * rate;
                                 }
                             }
                         }
                     }
-                    totalTax += lineFinalTaxAmount; // Sum up the final tax
 
-                    // Update line total display based on discounted subtotal + recalculated tax
-                    const lineTotalEl = row.querySelector('.line-total');
-                    lineTotalEl.textContent = formatCurrency(lineFinalSubtotal + lineFinalTaxAmount);
+                    row.dataset.initialSubtotal = lineSubTotal;
+                    row.dataset.initialTax = lineTaxAmount;
+                    initialSubTotal += lineSubTotal;
+
+                    if (lineTotalEl) {
+                        lineTotalEl.textContent = formatCurrency(lineSubTotal + lineTaxAmount);
+                    }
                 });
-                // Subtotal displayed is the one *after* the before-tax discount
-                document.getElementById('subtotalLabelSuffix').textContent = '(After Discount)';
 
+                // --- Stage 2: Overall Discount ---
+                if (discountApplicationType !== 'none' && discountValue > 0) {
+                    let discountBase = 0;
+                    if (discountApplicationType === 'before-tax') {
+                        discountBase = initialSubTotal;
+                    } else {
+                        let initialTotalTax = 0;
+                        itemRows.forEach(row => {
+                            initialTotalTax += parseFloat(row.dataset.initialTax || 0);
+                        });
+                        discountBase = initialSubTotal + initialTotalTax;
+                    }
 
-            } else {
-                // For 'none' or 'after-tax', the final subtotal is the initial one
-                finalSubTotal = initialSubTotal;
-                // Tax is the sum of initially calculated taxes
-                itemRows.forEach(row => {
-                    totalTax += parseFloat(row.dataset.initialTax || 0);
-                    // Line total remains initial subtotal + initial tax
-                    const lineTotalEl = row.querySelector('.line-total');
-                    lineTotalEl.textContent = formatCurrency(parseFloat(row.dataset.initialSubtotal || 0) + parseFloat(row.dataset.initialTax || 0));
-                });
-                document.getElementById('subtotalLabelSuffix').textContent = ''; // No suffix needed
-
-            }
-
-
-            // --- Stage 4: Calculate Grand Total ---
-            let grandTotal = 0;
-            if (discountApplicationType === 'before-tax') {
-                grandTotal = finalSubTotal + totalTax - adjustment;
-                // Note: calculatedDiscountAmount was already subtracted to get finalSubTotal
-            } else if (discountApplicationType === 'after-tax') {
-                grandTotal = finalSubTotal + totalTax - calculatedDiscountAmount - adjustment;
-            } else { // 'none'
-                grandTotal = finalSubTotal + totalTax - adjustment;
-            }
-
-            // --- Stage 5: Update Summary Display ---
-            document.getElementById('subTotal').textContent = formatCurrency(finalSubTotal);
-            document.getElementById('totalTax').textContent = formatCurrency(totalTax);
-
-            // Display calculated discount amount
-            const discountAmountRow = document.getElementById('discountAmountRow');
-            const discountBeforeTaxRow = document.getElementById('discountBeforeTaxRow'); // Get the specific before-tax row
-            const discountAmountCalculatedEl = document.getElementById('discountAmountCalculated');
-            const discountBeforeTaxAmountEl = document.getElementById('discountBeforeTaxAmount');
-
-            discountAmountRow.style.display = 'none'; // Hide initially
-            discountBeforeTaxRow.style.display = 'none'; // Hide initially
-
-            if (calculatedDiscountAmount > 0) {
-                const formattedDiscount = `(-${formatCurrency(calculatedDiscountAmount)})`;
-                // Show the total discount applied row always if > 0
-                discountAmountCalculatedEl.textContent = formattedDiscount;
-                discountAmountRow.style.display = ''; // Show total discount row
-
-                // Also show the specific "before tax" row if applicable
-                if (discountApplicationType === 'before-tax') {
-                    discountBeforeTaxAmountEl.textContent = formattedDiscount;
-                    discountBeforeTaxRow.style.display = '';
+                    if (discountValueType === 'percentage') {
+                        calculatedDiscountAmount = discountBase * (discountValue / 100.0);
+                    } else {
+                        calculatedDiscountAmount = discountValue;
+                    }
+                    calculatedDiscountAmount = Math.min(calculatedDiscountAmount, discountBase > 0 ? discountBase : 0);
                 }
-            }
 
-            document.getElementById('grandTotal').textContent = formatCurrency(grandTotal);
-            document.getElementById('gtAmount').value = formatCurrency(grandTotal);
+                // --- Stage 3: Final Totals & Line Update ---
+                totalTax = 0;
+                if (discountApplicationType === 'before-tax') {
+                    finalSubTotal = initialSubTotal - calculatedDiscountAmount;
+                    itemRows.forEach(row => {
+                        const lineInitialSub = parseFloat(row.dataset.initialSubtotal || 0);
+                        const lineDiscountRatio = initialSubTotal > 0 ? (lineInitialSub / initialSubTotal) : 0;
+                        const lineDiscountAmount = calculatedDiscountAmount * lineDiscountRatio;
+                        const lineFinalSubtotal = lineInitialSub - lineDiscountAmount;
+
+                        let lineFinalTaxAmount = 0;
+                        const taxSelect = row.querySelector('.item-tax');
+                        if (taxSelect) {
+                            for (const option of taxSelect.selectedOptions) {
+                                const valueParts = option.value.split(':');
+                                if (valueParts.length === 2) {
+                                    const rate = parseFloat(valueParts[1]);
+                                    if (!isNaN(rate) && rate > 0) {
+                                        lineFinalTaxAmount += lineFinalSubtotal * rate;
+                                    }
+                                }
+                            }
+                        }
+                        totalTax += lineFinalTaxAmount;
+                        const lineTotalEl = row.querySelector('.line-total');
+                        if (lineTotalEl) {
+                            lineTotalEl.textContent = formatCurrency(lineFinalSubtotal + lineFinalTaxAmount);
+                        }
+                    });
+                    const suffixEl = document.getElementById('subtotalLabelSuffix');
+                    if (suffixEl) suffixEl.textContent = '(After Discount)';
+                } else {
+                    finalSubTotal = initialSubTotal;
+                    itemRows.forEach(row => {
+                        totalTax += parseFloat(row.dataset.initialTax || 0);
+                        const lineTotalEl = row.querySelector('.line-total');
+                        if (lineTotalEl) {
+                            lineTotalEl.textContent = formatCurrency(parseFloat(row.dataset.initialSubtotal || 0) + parseFloat(row.dataset.initialTax || 0));
+                        }
+                    });
+                    const suffixEl = document.getElementById('subtotalLabelSuffix');
+                    if (suffixEl) suffixEl.textContent = '';
+                }
+
+                // --- Stage 4: Grand Total ---
+                let grandTotal = 0;
+                if (discountApplicationType === 'before-tax') {
+                    grandTotal = finalSubTotal + totalTax - adjustment;
+                } else if (discountApplicationType === 'after-tax') {
+                    grandTotal = finalSubTotal + totalTax - calculatedDiscountAmount - adjustment;
+                } else {
+                    grandTotal = finalSubTotal + totalTax - adjustment;
+                }
+
+                // --- Stage 5: Update Summary Display ---
+                const subTotalEl = document.getElementById('subTotal');
+                const totalTaxEl = document.getElementById('totalTax');
+                const grandTotalEl = document.getElementById('grandTotal');
+                const gtAmountInput = document.getElementById('gtAmount');
+
+                if (subTotalEl) subTotalEl.textContent = formatCurrency(finalSubTotal);
+                if (totalTaxEl) totalTaxEl.textContent = formatCurrency(totalTax);
+
+                const discountAmountRow = document.getElementById('discountAmountRow');
+                const discountBeforeTaxRow = document.getElementById('discountBeforeTaxRow');
+                const discountAmountCalculatedEl = document.getElementById('discountAmountCalculated');
+                const discountBeforeTaxAmountEl = document.getElementById('discountBeforeTaxAmount');
+
+                if (discountAmountRow) discountAmountRow.style.display = 'none';
+                if (discountBeforeTaxRow) discountBeforeTaxRow.style.display = 'none';
+
+                if (calculatedDiscountAmount > 0) {
+                    const formattedDiscount = `(-${formatCurrency(calculatedDiscountAmount)})`;
+                    if (discountAmountCalculatedEl) discountAmountCalculatedEl.textContent = formattedDiscount;
+                    if (discountAmountRow) discountAmountRow.style.display = '';
+
+                    if (discountApplicationType === 'before-tax') {
+                        if (discountBeforeTaxAmountEl) discountBeforeTaxAmountEl.textContent = formattedDiscount;
+                        if (discountBeforeTaxRow) discountBeforeTaxRow.style.display = '';
+                    }
+                }
+
+                if (grandTotalEl) grandTotalEl.textContent = formatCurrency(grandTotal);
+                if (gtAmountInput) gtAmountInput.value = parseFloat(grandTotal).toFixed(2); // Clean numeric value for DB
+
+            } catch (error) {
+                console.error("Error in recalculateTotals:", error);
+            }
         }
 
         // --- Event Listeners ---
@@ -820,26 +811,34 @@
             const newIndex = tbody.querySelectorAll('tr').length;
 
             const newRow = document.createElement('tr');
-            // Simplified new row HTML (same structure as before)
             newRow.innerHTML = `
                 <td class="align-top"><input type="text" class="form-control item-name" name="invoice_items[${newIndex}][short_description]" placeholder="Item Name"></td>
                 <td class="align-top"><textarea class="form-control item-longdesc" rows="1" name="invoice_items[${newIndex}][long_description]" placeholder="Description"></textarea></td>
                 <td class="align-top"><input type="number" class="form-control text-end item-sac_code" name="invoice_items[${newIndex}][sac_code]" value="998314" min="0" step="any"></td>
                 <td class="align-top"><input type="number" class="form-control text-end item-qty" name="invoice_items[${newIndex}][quantity]" value="1" min="0" step="any" required></td>
                 <td class="align-top"><input type="number" class="form-control text-end item-price" name="invoice_items[${newIndex}][price]" value="0.00" min="0" step="any" placeholder="Rate" required></td>
-                <td class="align-top"><select class="selectpicker form-control item-tax" multiple data-selected-text-format="count > 2" data-container="body" name="invoice_items[${newIndex}][tax_rate][]" aria-label="Select Taxes">${availableTaxes.map(tax => `<option value="${tax.value}">${tax.label}</option>`).join('')}</select></td>
-                <td class="text-end align-middle line-total">0.00</td>
-                <td class="text-center align-middle"><button type="button" class="btn btn-sm btn-danger removeRowButton" title="Remove Item"><i class='bx bx-trash'></i></button></td>
+                <td class="align-top">
+                    <select class="selectpicker form-control item-tax" multiple data-selected-text-format="count > 2" data-container="body" name="invoice_items[${newIndex}][tax_rate][]" aria-label="Select Taxes">
+                        ${availableTaxes.map(tax => `<option value="${tax.value}">${tax.label}</option>`).join('')}
+                    </select>
+                </td>
+                <td class="text-end align-middle"><span class="line-total fw-bold">0.00</span></td>
+                <td class="text-center align-middle"><button type="button" class="btn btn-link link-danger p-0 removeRowButton" title="Remove Item"><i class="bi bi-trash"></i></button></td>
             `;
+
             tbody.appendChild(newRow);
+
+            // Re-initialize selectpicker for the new row with standard settings
+            const $newPicker = $(newRow).find('.item-tax');
+            if ($newPicker.length) {
+                $newPicker.selectpicker({
+                    liveSearch: true,
+                    style: '',
+                    styleBase: 'form-control'
+                });
+            }
             
-            // Final Robust Init: Ensure only one selectpicker instance
-            const $newSelects = $(newRow).find('.selectpicker');
-            $newSelects.each(function() {
-                $(this).selectpicker('destroy').selectpicker();
-            });
-            
-            updateItemIndices(); // Update indices before recalculating
+            updateItemIndices();
             recalculateTotals();
         });
 
