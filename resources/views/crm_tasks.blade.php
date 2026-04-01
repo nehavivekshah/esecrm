@@ -81,10 +81,10 @@
                                         <span class="input-group-text"><i class="bx bx-link"></i></span>
                                         <select name="rel_type" class="form-select">
                                             <option value="">None</option>
-                                            <option value="Lead">Lead</option>
-                                            <option value="Customer">Customer</option>
-                                            <option value="Opportunity">Opportunity</option>
-                                            <option value="Project" {{ request('rel_type') == 'Project' ? 'selected' : '' }}>Project</option>
+                                            <option value="Lead" {{ request('rel_type') == 'Lead' ? 'selected' : '' }}>Lead</option>
+                                            <option value="Customer" {{ request('rel_type') == 'Customer' ? 'selected' : '' }}>Customer</option>
+                                            <option value="Opportunity" {{ request('rel_type') == 'Opportunity' ? 'selected' : '' }}>Opportunity</option>
+                                            <option value="Project" {{ (request('rel_type') == 'Project' || request('project_id')) ? 'selected' : '' }}>Project</option>
                                         </select>
                                     </div>
                                 </div>
@@ -96,6 +96,9 @@
                                         <input type="number" name="rel_id" class="form-control" placeholder="e.g. 42" value="{{ request('rel_id') }}">
                                     </div>
                                 </div>
+
+                                <input type="hidden" name="project_id" value="{{ request('project_id') }}">
+                                <input type="hidden" name="parent_id" value="{{ request('parent_id') }}">
 
                                 <div class="col-12">
                                     <label class="ml-label">Due Date &amp; Time <span class="text-danger">*</span></label>

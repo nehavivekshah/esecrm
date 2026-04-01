@@ -22,13 +22,17 @@ class CrmTaskController extends Controller
             'type' => 'required|string',
             'due_date' => 'nullable|date',
             'rel_type' => 'nullable|string',
-            'rel_id' => 'nullable|integer'
+            'rel_id' => 'nullable|integer',
+            'project_id' => 'nullable|integer',
+            'parent_id' => 'nullable|integer',
         ]);
 
         CrmTask::create([
             'user_id' => Auth::id() ?? 1,
             'rel_type' => $request->rel_type,
             'rel_id' => $request->rel_id,
+            'project_id' => $request->project_id,
+            'parent_id' => $request->parent_id,
             'name' => $request->name,
             'type' => $request->type,
             'due_date' => $request->due_date,

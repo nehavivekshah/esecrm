@@ -402,7 +402,7 @@
                                     <div class="pv-empty-state">
                                         <i class="bx bx-file"></i>
                                         <p>No invoices found.</p>
-                                        <a href="/manage-invoice" class="pv-add-btn">Create Invoice</a>
+                                        <a href="/manage-invoice?project_id={{ $project->id }}" class="pv-add-btn">Create Invoice</a>
                                     </div>
                                 </td>
                             </tr>
@@ -416,7 +416,7 @@
             <div class="tab-pane fade" id="tasks" role="tabpanel">
                 <div class="pv-tab-toolbar">
                     <h2 class="pv-tab-title"><i class="bx bx-task"></i> Project Tasks</h2>
-                    <a href="/crm-tasks?rel_type=Project&rel_id={{ $project->id }}" class="pv-add-btn"><i class="bx bx-plus"></i> Manage Tasks</a>
+                    <a href="/crm-tasks?rel_type=Project&rel_id={{ $project->id }}&project_id={{ $project->id }}" class="pv-add-btn"><i class="bx bx-plus"></i> Manage Tasks</a>
                 </div>
                 @forelse($tasks as $t)
                 @php
@@ -438,6 +438,9 @@
                         <div class="pv-rec-meta">
                             <span class="pv-badge pv-badge-info me-1">{{ $t->type }}</span>
                             Due: <span class="task-due-date {{ $taskOverdue ? 'text-danger fw-bold' : '' }}">{{ \Carbon\Carbon::parse($t->due_date)->format('d M, Y') }}</span>
+                            <a href="/crm-tasks?project_id={{ $project->id }}&parent_id={{ $t->id }}" class="ms-2 text-primary small" title="Add Subtask">
+                                <i class="bx bx-plus-circle"></i> Subtask
+                            </a>
                         </div>
                     </div>
                     <div class="task-status-badge-container">
@@ -450,6 +453,41 @@
                         @endif
                     </div>
                 </div>
+
+                {{-- --- Subtasks --- --}}
+                @foreach($t->subtasks as $st)
+                @php
+                    $stDone = ($st->status == 'Completed');
+                    $stOverdue = \Carbon\Carbon::parse($st->due_date)->isPast() && !$stDone;
+                @endphp
+                <div class="pv-rec-card task-item-row ms-5 border-start" id="task-row-{{ $st->id }}" style="background: rgba(0,0,0,0.02);">
+                    <div class="pv-rec-icon {{ $stDone ? 'pv-rec-paid' : ($stOverdue ? 'pv-rec-danger' : 'pv-rec-pend') }}" id="task-icon-{{ $st->id }}" style="transform: scale(0.85);">
+                        <label class="pvt-check-wrap" title="{{ $stDone ? 'Mark pending' : 'Mark done' }}">
+                            <input type="checkbox" class="task-status-check visually-hidden" 
+                                   data-id="{{ $st->id }}" {{ $stDone ? 'checked' : '' }}>
+                            <span class="pvt-check-circle {{ $stDone ? 'pvt-checked' : '' }}">
+                                <i class="bx bx-check"></i>
+                            </span>
+                        </label>
+                    </div>
+                    <div class="pv-rec-body">
+                        <div class="pv-rec-amount task-name {{ $stDone ? 'pvt-name-done' : '' }}" id="task-name-{{ $st->id }}" style="font-size:0.85rem;">{{ $st->name }}</div>
+                        <div class="pv-rec-meta" style="font-size:0.75rem;">
+                            <span class="pv-badge pv-badge-info me-1" style="font-size:0.65rem;">{{ $st->type }}</span>
+                            Due: <span class="task-due-date {{ $stOverdue ? 'text-danger fw-bold' : '' }}">{{ \Carbon\Carbon::parse($st->due_date)->format('d M, Y') }}</span>
+                        </div>
+                    </div>
+                    <div class="task-status-badge-container">
+                        @if($stDone)
+                            <span class="pv-badge pv-badge-success" style="font-size:0.65rem;">Done</span>
+                        @elseif($stOverdue)
+                            <span class="pv-badge pv-badge-danger" style="font-size:0.65rem;">Overdue</span>
+                        @else
+                            <span class="pv-badge pv-badge-warn" style="font-size:0.65rem;">{{ $st->status }}</span>
+                        @endif
+                    </div>
+                </div>
+                @endforeach
                 @empty
                 <div class="pv-empty-state">
                     <i class="bx bx-task"></i>
