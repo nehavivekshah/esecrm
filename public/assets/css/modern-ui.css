@@ -52,7 +52,6 @@ h6 {
 .form-control,
 .form-select {
     border: 1px solid var(--border-color) !important;
-    border-radius: var(--radius-sm) !important;
     padding: 0.65rem 1rem !important;
     font-size: 0.95rem !important;
     color: var(--text-main) !important;
