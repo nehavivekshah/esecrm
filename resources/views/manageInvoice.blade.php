@@ -639,10 +639,14 @@
     </div>
 
     <script>
-        const availableTaxes = @json($available_taxes);
+        const availableTaxes = @json($taxes);
+        const taxNames = ['CGST','SGST','IGST','VAT'];
 
         function formatCurrency(amount) {
-            return parseFloat(amount || 0).toFixed(2);
+            return parseFloat(amount || 0).toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
         }
 
         function recalculateTotals() {
@@ -654,7 +658,7 @@
 
                 let initialSubTotal = 0;
                 let totalTax = 0;
-                let calculatedDiscountAmount = 0;
+                let taxBreakdown = {};
 
                 const $rows = $('.mp-item-row');
                 $rows.each(function() {
@@ -669,7 +673,10 @@
                     if (selectedTaxValues) {
                         selectedTaxValues.forEach(val => {
                             const rate = parseFloat(val.split(':')[1]);
-                            if (rate > 0) lineTaxAmount += lineSubTotal * rate;
+                            const amt = lineSubTotal * rate;
+                            lineTaxAmount += amt;
+                            const label = $row.find(`.item-tax option[value="${val}"]`).text().trim();
+                            taxBreakdown[label] = (taxBreakdown[label] || 0) + amt;
                         });
                     }
 
@@ -681,6 +688,7 @@
                 });
 
                 // Calculate Net Discount
+                let calculatedDiscountAmount = 0;
                 if (discountValue > 0) {
                     let discountBase = (discountAppType === 'before-tax') ? initialSubTotal : 
                                        (initialSubTotal + $rows.toArray().reduce((sum, el) => sum + parseFloat($(el).data('initialTax') || 0), 0));
@@ -689,7 +697,7 @@
                     calculatedDiscountAmount = Math.min(calculatedDiscountAmount, discountBase);
                 }
 
-                // Distribution & Final Taxes
+                // Final Taxes & Subtotal
                 let finalSubTotal = initialSubTotal;
                 totalTax = 0;
 
@@ -701,10 +709,9 @@
                         const rowDiscount = calculatedDiscountAmount * rowRatio;
                         const rowFinalSub = rowSub - rowDiscount;
                         
-                        const $taxSelect = $(this).find('.item-tax');
-                        const selectedTaxes = $taxSelect.val();
-                        if (selectedTaxes) {
-                            selectedTaxes.forEach(val => {
+                        const selectedTares = $(this).find('.item-tax').val();
+                        if (selectedTares) {
+                            selectedTares.forEach(val => {
                                 const rate = parseFloat(val.split(':')[1]);
                                 totalTax += rowFinalSub * rate;
                             });
@@ -714,53 +721,120 @@
                     $rows.each(function() { totalTax += parseFloat($(this).data('initialTax') || 0); });
                 }
 
-                const grandTotal = (discountAppType === 'before-tax') ? (finalSubTotal + totalTax - adjustment) : 
+                const grandTotal = Math.max(0, (discountAppType === 'before-tax') ? (finalSubTotal + totalTax - adjustment) : 
                                    (discountAppType === 'after-tax') ? (initialSubTotal + totalTax - calculatedDiscountAmount - adjustment) : 
-                                   (initialSubTotal + totalTax - adjustment);
+                                   (initialSubTotal + totalTax - adjustment));
 
-                $('#subTotal').text(formatCurrency(initialSubTotal));
-                $('#totalTax').text(formatCurrency(totalTax));
-                $('#grandTotal').text(formatCurrency(grandTotal));
-                $('#gtAmount').val(formatCurrency(grandTotal));
+                $('#subTotal').text('₹ ' + formatCurrency(initialSubTotal));
+                $('#totalTax').text('₹ ' + formatCurrency(totalTax));
+                $('#grandTotal').text('₹ ' + formatCurrency(grandTotal));
+                $('#gtAmount').val(grandTotal.toFixed(2));
 
-                $('#discountAmountRow').toggle(calculatedDiscountAmount > 0);
-                $('#discountAmountCalculated').text(`(-${formatCurrency(calculatedDiscountAmount)})`);
-                $('#discountBeforeTaxRow').toggle(discountAppType === 'before-tax' && calculatedDiscountAmount > 0);
-                $('#discountBeforeTaxAmount').text(`(-${formatCurrency(calculatedDiscountAmount)})`);
+                $('#discountAmountRow').toggle(calculatedDiscountAmount > 0).css('display', calculatedDiscountAmount > 0 ? 'flex' : 'none');
+                $('#discountAmountCalculated').text(`(-₹ ${formatCurrency(calculatedDiscountAmount)})`);
+
+                // Tax breakdown for summary
+                let taxHtml = '';
+                for (let label in taxBreakdown) {
+                    taxHtml += `<div class="mp-summary-row small"><span class="mp-summary-label">${label}</span><span class="mp-summary-val">₹ ${formatCurrency(taxBreakdown[label])}</span></div>`;
+                }
+                if (taxHtml) {
+                    $('#tax-summary-rows').html(taxHtml + `<div class="divider my-1 border-top border-dashed"></div><div class="mp-summary-row"><span class="mp-summary-label">Total Tax</span><span class="mp-summary-val">₹ ${formatCurrency(totalTax)}</span></div>`);
+                }
 
             } catch (e) { console.error("Calc Error:", e); }
         }
 
-        $('#addItemButton').on('click', function() {
-            const index = $('.mp-item-row').length;
-            $('.no-items-msg').hide();
-
-            let taxOptions = '';
-            availableTaxes.forEach(t => { taxOptions += `<option value="${t.value}">${t.label}</option>`; });
-
-            const html = `
-                <div class="mp-item-row shadow-sm animate__animated animate__fadeInUp">
-                    <div class="mp-item-header">
-                        <div class="flex-grow-1">
-                            <input type="text" class="form-control fw-600 border-0 bg-transparent p-0 fs-5 item-name"
-                                name="invoice_items[${index}][short_description]" placeholder="Item Name">
-                        </div>
-                        <button type="button" class="btn btn-link text-danger p-0 removeRowButton"><i class="bx bx-trash fs-5"></i></button>
-                    </div>
-                    <div class="mb-2">
-                        <textarea class="form-control border-0 bg-light small item-longdesc" rows="1"
-            $('#billing_address').val(`${opt.data('name')}\n${opt.data('company')}\n${opt.data('address')}`);
-            $('#shipping_address').val($('#billing_address').val());
-            $('#client_gst').val(opt.data('gstno') || '');
-        });
-
-        // Event Listeners for calculations
-        $(document).on('input', '.item-qty, .item-price, #discountValue, #adjustment', recalculateTotals);
-        $(document).on('change', '.item-tax, #discountApplicationType, #discountValueType', recalculateTotals);
-
         $(document).ready(function() {
-            $('.selectpicker').selectpicker('refresh');
-            recalculateTotals();
+            // Add Item Logic
+            $('#addItemButton, #addItemButtonSecondary').on('click', function() {
+                const index = $('.mp-item-row').length;
+                let taxOptions = '';
+                availableTaxes.forEach((val, i) => {
+                    const rate = (val || 0) / 100;
+                    taxOptions += `<option value="${i}:${rate}">${taxNames[i] || 'Tax'} ${val}%</option>`;
+                });
+
+                const html = `
+                    <div class="mp-item-row shadow-sm animate__animated animate__fadeInUp">
+                        <div class="mp-item-row-header">
+                            <span class="mp-item-num">${index + 1}</span>
+                            <span class="mp-item-row-title">Item ${index + 1}</span>
+                            <button type="button" class="btn btn-link text-danger p-0 ms-auto removeRowButton"><i class="bx bx-trash fs-5"></i></button>
+                        </div>
+                        <div class="mp-item-row-body">
+                            <div class="mp-item-field" style="grid-column: span 2;">
+                                <label class="mp-item-label">Item Name</label>
+                                <textarea class="form-control form-control-sm item-name mp-autoresize" name="invoice_items[${index}][short_description]" rows="1" required></textarea>
+                            </div>
+                            <div class="mp-item-field" style="grid-column: span 2;">
+                                <label class="mp-item-label">Description</label>
+                                <textarea class="form-control form-control-sm item-longdesc mp-autoresize" name="invoice_items[${index}][long_description]" rows="1"></textarea>
+                            </div>
+                            <div class="mp-item-field">
+                                <label class="mp-item-label">Qty</label>
+                                <input type="number" class="form-control form-control-sm item-qty text-center" name="invoice_items[${index}][quantity]" value="1" min="1">
+                            </div>
+                            <div class="mp-item-field">
+                                <label class="mp-item-label">Rate (₹)</label>
+                                <input type="number" class="form-control form-control-sm item-price text-end" name="invoice_items[${index}][price]" placeholder="0.00" required>
+                            </div>
+                            <div class="mp-item-field">
+                                <label class="mp-item-label">Tax</label>
+                                <select class="selectpicker form-control form-control-sm item-tax" multiple data-container="body" name="invoice_items[${index}][tax_rate][]" title="No Tax">
+                                    ${taxOptions}
+                                </select>
+                            </div>
+                            <div class="mp-item-field">
+                                <label class="mp-item-label">Amount</label>
+                                <span class="line-total mp-item-amount-val">₹ 0.00</span>
+                            </div>
+                        </div>
+                    </div>`;
+
+                $('#invoiceItemsBody').append(html);
+                $('.selectpicker').selectpicker('render');
+                recalculateTotals();
+            });
+
+            // Remove Item Logic
+            $(document).on('click', '.removeRowButton', function() {
+                if ($('.mp-item-row').length > 1) {
+                    $(this).closest('.mp-item-row').fadeOut(300, function() {
+                        $(this).remove();
+                        // Update numbering
+                        $('.mp-item-row').each((i, el) => {
+                            $(el).find('.mp-item-num').text(i + 1);
+                            $(el).find('.mp-item-row-title').text('Item ' + (i + 1));
+                        });
+                        recalculateTotals();
+                    });
+                } else {
+                    Swal.fire('Warning', 'At least one item is required.', 'warning');
+                }
+            });
+
+            // Client Auto-fill
+            $('#client_id').on('change', function() {
+                const opt = $(this).find(':selected');
+                if (opt.val()) {
+                    const addr = opt.data('address') || '';
+                    $('#billing_address').val(addr);
+                    $('#shipping_address').val(addr);
+                    $('#client_gst').val(opt.data('gstno') || '');
+                }
+            });
+
+            // Event Listeners for calculations
+            $(document).on('input', '.item-qty, .item-price, #discountValue, #adjustment', recalculateTotals);
+            $(document).on('change', '.item-tax, #discountApplicationType, #discountValueType', recalculateTotals);
+
+            // Initial calc
+            setTimeout(() => {
+                $('.selectpicker').selectpicker('refresh');
+                recalculateTotals();
+            }, 300);
         });
     </script>
+@endsection
 @endsection
