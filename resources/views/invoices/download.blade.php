@@ -502,7 +502,7 @@
             </div>-->
             <br><br>
             <h4>Authorized Signature</h4>
-            <img src="{!! ('/public/assets/images/signs/'.(Auth::User()->imgsign ?? 'default.png')) !!}" style="height: 90px;" />
+            <img src="{{ asset('assets/images/signs/'.(Auth::User()->imgsign ?? 'default.png')) }}" style="height: 90px;" />
             <div class="signature-line"></div>
         </div>
 

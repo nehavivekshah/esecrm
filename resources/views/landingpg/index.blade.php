@@ -238,61 +238,61 @@
                     data-slider-options='{"breakpoints":{"0":{"slidesPerView":1},"576":{"slidesPerView":"2","centeredSlides":"true"},"768":{"slidesPerView":"4","centeredSlides":"true"},"992":{"slidesPerView":"4","centeredSlides":"true"},"1200":{"slidesPerView":"4","centeredSlides":"true"},"1400":{"slidesPerView":"6","centeredSlides":"true"}}}'>
                     <div class="swiper-wrapper">
                         <div class="swiper-slide">
-                            <img src="public/assets/landingpg/images/gallery/1.png" alt="Brand Logo">
+                            <img src="{{ asset('assets/landingpg/images/gallery/1.png') }}" alt="Brand Logo">
                         </div>
                         <div class="swiper-slide">
-                            <img src="public/assets/landingpg/images/gallery/2.png" alt="Brand Logo">
+                            <img src="{{ asset('assets/landingpg/images/gallery/2.png') }}" alt="Brand Logo">
                         </div>
                         <div class="swiper-slide">
-                            <img src="public/assets/landingpg/images/gallery/3.png" alt="Brand Logo">
+                            <img src="{{ asset('assets/landingpg/images/gallery/3.png') }}" alt="Brand Logo">
                         </div>
                         <div class="swiper-slide">
-                            <img src="public/assets/landingpg/images/gallery/4.png" alt="Brand Logo">
+                            <img src="{{ asset('assets/landingpg/images/gallery/4.png') }}" alt="Brand Logo">
                         </div>
                         <div class="swiper-slide">
-                            <img src="public/assets/landingpg/images/gallery/5.png" alt="Brand Logo">
+                            <img src="{{ asset('assets/landingpg/images/gallery/5.png') }}" alt="Brand Logo">
                         </div>
                         <div class="swiper-slide">
-                            <img src="public/assets/landingpg/images/gallery/6.png" alt="Brand Logo">
+                            <img src="{{ asset('assets/landingpg/images/gallery/6.png') }}" alt="Brand Logo">
                         </div>
                         <div class="swiper-slide">
-                            <img src="public/assets/landingpg/images/gallery/7.png" alt="Brand Logo">
+                            <img src="{{ asset('assets/landingpg/images/gallery/7.png') }}" alt="Brand Logo">
                         </div>
                         <div class="swiper-slide">
-                            <img src="public/assets/landingpg/images/gallery/8.png" alt="Brand Logo">
+                            <img src="{{ asset('assets/landingpg/images/gallery/8.png') }}" alt="Brand Logo">
                         </div>
                         <div class="swiper-slide">
-                            <img src="public/assets/landingpg/images/gallery/9.png" alt="Brand Logo">
+                            <img src="{{ asset('assets/landingpg/images/gallery/9.png') }}" alt="Brand Logo">
                         </div>
                         <div class="swiper-slide">
-                            <img src="public/assets/landingpg/images/gallery/10.png" alt="Brand Logo">
+                            <img src="{{ asset('assets/landingpg/images/gallery/10.png') }}" alt="Brand Logo">
                         </div>
                         <div class="swiper-slide">
-                            <img src="public/assets/landingpg/images/gallery/11.png" alt="Brand Logo">
+                            <img src="{{ asset('assets/landingpg/images/gallery/11.png') }}" alt="Brand Logo">
                         </div>
                         <div class="swiper-slide">
-                            <img src="public/assets/landingpg/images/gallery/12.png" alt="Brand Logo">
+                            <img src="{{ asset('assets/landingpg/images/gallery/12.png') }}" alt="Brand Logo">
                         </div>
                         <div class="swiper-slide">
-                            <img src="public/assets/landingpg/images/gallery/13.png" alt="Brand Logo">
+                            <img src="{{ asset('assets/landingpg/images/gallery/13.png') }}" alt="Brand Logo">
                         </div>
                         <div class="swiper-slide">
-                            <img src="public/assets/landingpg/images/gallery/14.png" alt="Brand Logo">
+                            <img src="{{ asset('assets/landingpg/images/gallery/14.png') }}" alt="Brand Logo">
                         </div>
                         <div class="swiper-slide">
-                            <img src="public/assets/landingpg/images/gallery/15.png" alt="Brand Logo">
+                            <img src="{{ asset('assets/landingpg/images/gallery/15.png') }}" alt="Brand Logo">
                         </div>
                         <div class="swiper-slide">
-                            <img src="public/assets/landingpg/images/gallery/16.png" alt="Brand Logo">
+                            <img src="{{ asset('assets/landingpg/images/gallery/16.png') }}" alt="Brand Logo">
                         </div>
                         <div class="swiper-slide">
-                            <img src="public/assets/landingpg/images/gallery/17.png" alt="Brand Logo">
+                            <img src="{{ asset('assets/landingpg/images/gallery/17.png') }}" alt="Brand Logo">
                         </div>
                         <div class="swiper-slide">
-                            <img src="public/assets/landingpg/images/gallery/18.png" alt="Brand Logo">
+                            <img src="{{ asset('assets/landingpg/images/gallery/18.png') }}" alt="Brand Logo">
                         </div>
                         <div class="swiper-slide">
-                            <img src="public/assets/landingpg/images/gallery/19.png" alt="Brand Logo">
+                            <img src="{{ asset('assets/landingpg/images/gallery/19.png') }}" alt="Brand Logo">
                         </div>
                     </div>
                     <div class="slider-pagination"></div>
@@ -465,96 +465,96 @@
             </div>
             <div class="row g-3 mt-1 mt-sm-1 smt-0">
                 <div class="col-6 col-sm-4 col-md-2">
-                    <img src="public/assets/landingpg/images/client/1.jpg" alt="Nikon" class="img-fluid w-100">
+                    <img src="{{ asset('assets/landingpg/images/client/1.jpg') }}" alt="Nikon" class="img-fluid w-100">
                 </div>
                 <div class="col-6 col-sm-4 col-md-2">
-                    <img src="public/assets/landingpg/images/client/2.jpg" alt="Myntra" class="img-fluid w-100 ">
+                    <img src="{{ asset('assets/landingpg/images/client/2.jpg') }}" alt="Myntra" class="img-fluid w-100 ">
                 </div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/3.jpg" alt="Shoppers Stop"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/3.jpg') }}" alt="Shoppers Stop"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/4.jpg" alt="Lodha"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/4.jpg') }}" alt="Lodha"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/5.jpg"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/5.jpg') }}"
                         alt="Website Design Company Mumbai" class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/6.jpg" alt="Godrej"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/6.jpg') }}" alt="Godrej"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/7.jpg" alt="DBS"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/7.jpg') }}" alt="DBS"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/8.jpg" alt="Hypercity"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/8.jpg') }}" alt="Hypercity"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/9.jpg" alt="Dr Batras"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/9.jpg') }}" alt="Dr Batras"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/10.jpg" alt="Westside"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/10.jpg') }}" alt="Westside"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/11.jpg" alt="Godrej"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/11.jpg') }}" alt="Godrej"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/12.jpg" alt="Goldmines"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/12.jpg') }}" alt="Goldmines"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/13.jpg" alt="Emerson"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/13.jpg') }}" alt="Emerson"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/14.jpg" alt="Pioneer Creations"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/14.jpg') }}" alt="Pioneer Creations"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/15.jpg" alt="Abhijeet Rajput"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/15.jpg') }}" alt="Abhijeet Rajput"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/16.jpg" alt="Hotel Barbareek"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/16.jpg') }}" alt="Hotel Barbareek"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/17.jpg" alt="Great Odisha"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/17.jpg') }}" alt="Great Odisha"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/18.jpg" alt="Creative Art"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/18.jpg') }}" alt="Creative Art"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/19.jpg" alt="Blue Melon"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/19.jpg') }}" alt="Blue Melon"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/20.jpg" alt="Tatat Docomo"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/20.jpg') }}" alt="Tatat Docomo"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/21.jpg" alt="Fastrack"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/21.jpg') }}" alt="Fastrack"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/22.jpg" alt="Quick Heal"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/22.jpg') }}" alt="Quick Heal"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/23.jpg" alt="Raghu Pool"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/23.jpg') }}" alt="Raghu Pool"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/24.jpg" alt="Titan Eye"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/24.jpg') }}" alt="Titan Eye"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/25.jpg" alt="Quick Heal"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/25.jpg') }}" alt="Quick Heal"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/26.jpg" alt="Raghu Pool"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/26.jpg') }}" alt="Raghu Pool"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/27.jpg" alt="Titan Eye"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/27.jpg') }}" alt="Titan Eye"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/28.jpg" alt="Blue Melon"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/28.jpg') }}" alt="Blue Melon"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/29.jpg" alt="Tatat Docomo"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/29.jpg') }}" alt="Tatat Docomo"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/30.jpg" alt="Fastrack"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/30.jpg') }}" alt="Fastrack"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/31.jpg" alt="Quick Heal"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/31.jpg') }}" alt="Quick Heal"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/32.jpg" alt="Raghu Pool"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/32.jpg') }}" alt="Raghu Pool"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/33.jpg" alt="Titan Eye"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/33.jpg') }}" alt="Titan Eye"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/34.jpg" alt="Quick Heal"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/34.jpg') }}" alt="Quick Heal"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/35.jpg" alt="Raghu Pool"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/35.jpg') }}" alt="Raghu Pool"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/36.jpg" alt="Titan Eye"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/36.jpg') }}" alt="Titan Eye"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/37.jpg" alt="Blue Melon"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/37.jpg') }}" alt="Blue Melon"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/38.jpg" alt="Tatat Docomo"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/38.jpg') }}" alt="Tatat Docomo"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/39.jpg" alt="Fastrack"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/39.jpg') }}" alt="Fastrack"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/40.jpg" alt="Quick Heal"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/40.jpg') }}" alt="Quick Heal"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/41.jpg" alt="Raghu Pool"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/41.jpg') }}" alt="Raghu Pool"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/42.jpg" alt="Titan Eye"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/42.jpg') }}" alt="Titan Eye"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/43.jpg" alt="Quick Heal"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/43.jpg') }}" alt="Quick Heal"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/44.jpg" alt="Raghu Pool"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/44.jpg') }}" alt="Raghu Pool"
                         class="img-fluid w-100"></div>
-                <div class="col-6 col-sm-4 col-md-2"><img src="public/assets/landingpg/images/client/45.jpg" alt="Titan Eye"
+                <div class="col-6 col-sm-4 col-md-2"><img src="{{ asset('assets/landingpg/images/client/45.jpg') }}" alt="Titan Eye"
                         class="img-fluid w-100"></div>
             </div>
         </div>

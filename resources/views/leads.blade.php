@@ -135,7 +135,7 @@
                             <i class="bx bx-upload"></i>
                             <span class="d-none d-sm-inline">Import</span>
                         </a>
-                        <a href="/public/assets/leads.csv" class="lb-btn lb-btn-ghost" target="_blank" download="leads.csv" title="Download CSV Sample">
+                        <a href="{{ asset('assets/leads.csv') }}" class="lb-btn lb-btn-ghost" target="_blank" download="leads.csv" title="Download CSV Sample">
                             <i class="bx bx-download"></i>
                             <span class="d-none d-sm-inline">Sample</span>
                         </a>

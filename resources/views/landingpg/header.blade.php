@@ -17,11 +17,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Favicons -->
-    <link rel="apple-touch-icon" href="public/assets/landingpg/images/logo/favicon.ico">
-    <link rel="icon" type="image/x-icon" href="public/assets/landingpg/images/logo/favicon.ico">
+    <link rel="apple-touch-icon" href="{{ asset('assets/landingpg/images/logo/favicon.ico') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets/landingpg/images/logo/favicon.ico') }}">
 
     <!-- Manifest -->
-    <link rel="manifest" href="public/assets/landingpg/img/favicons/manifest.json">
+    <link rel="manifest" href="{{ asset('assets/landingpg/img/favicons/manifest.json') }}">
     <meta name="theme-color" content="#ffffff">
 
     <!-- Fonts -->
@@ -30,13 +30,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 
     <!-- CSS -->
-    <link rel="stylesheet" href="public/assets/landingpg/css/bootstrap.min.css">
-    <link rel="stylesheet" href="public/assets/landingpg/css/fontawesome.min.css">
-    <link rel="stylesheet" href="public/assets/landingpg/css/magnific-popup.min.css">
-    <link rel="stylesheet" href="public/assets/landingpg/css/swiper-bundle.min.css">
-    <link rel="stylesheet" href="public/assets/landingpg/css/imageRevealHover.css">
-    <link rel="stylesheet" href="public/assets/landingpg/css/style.css">
-    <link rel="stylesheet" href="public/assets/landingpg/my-style.css">
+    <link rel="stylesheet" href="{{ asset('assets/landingpg/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/landingpg/css/fontawesome.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/landingpg/css/magnific-popup.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/landingpg/css/swiper-bundle.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/landingpg/css/imageRevealHover.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/landingpg/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/landingpg/my-style.css') }}">
 </head>
 
 <body class="theme-blue">
@@ -60,7 +60,7 @@
             <button class="th-menu-toggle"><i class="fal fa-times"></i></button>
             <div class="mobile-logo">
                 <a class="icon-masking" href="index.php">
-                    <img src="public/assets/landingpg/images/logo/logo.png" alt="Webbrella">
+                    <img src="{{ asset('assets/landingpg/images/logo/logo.png') }}" alt="Webbrella">
                 </a>
             </div>
             <div class="th-mobile-menu">
@@ -84,7 +84,7 @@
                         <div class="col-auto">
                             <div class="header-logo">
                                 <a class="icon-masking" href="index.php">
-                                    <img src="public/assets/landingpg/images/logo/logo.png" alt="Webbrella">
+                                    <img src="{{ asset('assets/landingpg/images/logo/logo.png') }}" alt="Webbrella">
                                 </a>
                             </div>
                         </div>

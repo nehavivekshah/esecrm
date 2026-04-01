@@ -13,7 +13,7 @@
                 <h1>List Board</h1>
                 <div class="btn-group">
                     <!--<a href="javascript:void(0)" class="btn btn-warning btn-sm" id="importFile"><i class="bx bx-upload"></i> <span>Import</span></a>
-                    <a href="/public/assets/leads.csv" class="btn btn-danger btn-sm" target="_blank" download="leads.csv" title="Download CSV Sample File"><i class="bx bx-download"></i> <span>Sample File</span></a>-->
+                    <a href="{{ asset('assets/leads.csv') }}" class="btn btn-danger btn-sm" target="_blank" download="leads.csv" title="Download CSV Sample File"><i class="bx bx-download"></i> <span>Sample File</span></a>-->
                     <a href="/manage-company" class="btn btn-primary btn-sm"><i class="bx bx-plus"></i> <span>Add New</span></a>
                 </div>
             </div>

@@ -21,7 +21,7 @@
                         <div class="th-widget-about">
                             <div class="about-logo">
                                 <a class="icon-masking" href="index.php">
-                                    <img src="public/assets/landingpg/images/logo/logo.png" alt="Webbrella">
+                                    <img src="{{ asset('assets/landingpg/images/logo/logo.png') }}" alt="Webbrella">
                                 </a>
                             </div>
                             <p class="about-text">Ese crm is a leading CRM solution provider based in
@@ -96,22 +96,22 @@
             style="transition: stroke-dashoffset 10ms linear 0s; stroke-dasharray: 307.919, 307.919; stroke-dashoffset: 307.919;">
         </path>
     </svg></div>
-<script src="public/assets/landingpg/js/vendor/jquery-3.7.1.min.js"></script>
-<script src="public/assets/landingpg/js/swiper-bundle.min.js"></script>
-<script src="public/assets/landingpg/js/bootstrap.min.js"></script>
-<script src="public/assets/landingpg/js/jquery.magnific-popup.min.js"></script>
-<script src="public/assets/landingpg/js/jquery.counterup.min.js"></script>
-<script src="public/assets/landingpg/js/circle-progress.js"></script>
-<script src="public/assets/landingpg/js/jquery-ui.min.js"></script>
-<script src="public/assets/landingpg/js/imagesloaded.pkgd.min.js"></script>
-<script src="public/assets/landingpg/js/isotope.pkgd.min.js"></script>
-<script src="public/assets/landingpg/js/tilt.jquery.min.js"></script>
-<script src="public/assets/landingpg/js/gsap.min.js"></script>
-<script src="public/assets/landingpg/js/ScrollTrigger.min.js"></script>
-<script src="public/assets/landingpg/js/smooth-scroll.js"></script>
-<script src="public/assets/landingpg/js/particles.min.js"></script>
-<script src="public/assets/landingpg/js/particles-config.js"></script>
-<script src="public/assets/landingpg/js/imageRevealHover.js"></script>
-<script src="public/assets/landingpg/js/main.js"></script>
+<script src="{{ asset('assets/landingpg/js/vendor/jquery-3.7.1.min.js') }}"></script>
+<script src="{{ asset('assets/landingpg/js/swiper-bundle.min.js') }}"></script>
+<script src="{{ asset('assets/landingpg/js/bootstrap.min.js') }}"></script>
+<script src="{{ asset('assets/landingpg/js/jquery.magnific-popup.min.js') }}"></script>
+<script src="{{ asset('assets/landingpg/js/jquery.counterup.min.js') }}"></script>
+<script src="{{ asset('assets/landingpg/js/circle-progress.js') }}"></script>
+<script src="{{ asset('assets/landingpg/js/jquery-ui.min.js') }}"></script>
+<script src="{{ asset('assets/landingpg/js/imagesloaded.pkgd.min.js') }}"></script>
+<script src="{{ asset('assets/landingpg/js/isotope.pkgd.min.js') }}"></script>
+<script src="{{ asset('assets/landingpg/js/tilt.jquery.min.js') }}"></script>
+<script src="{{ asset('assets/landingpg/js/gsap.min.js') }}"></script>
+<script src="{{ asset('assets/landingpg/js/ScrollTrigger.min.js') }}"></script>
+<script src="{{ asset('assets/landingpg/js/smooth-scroll.js') }}"></script>
+<script src="{{ asset('assets/landingpg/js/particles.min.js') }}"></script>
+<script src="{{ asset('assets/landingpg/js/particles-config.js') }}"></script>
+<script src="{{ asset('assets/landingpg/js/imageRevealHover.js') }}"></script>
+<script src="{{ asset('assets/landingpg/js/main.js') }}"></script>
 </body>
 </html>

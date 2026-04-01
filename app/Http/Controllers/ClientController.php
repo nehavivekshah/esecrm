@@ -363,7 +363,8 @@ class ClientController extends Controller
             });
         }
 
-        $projects = $query->orderByRaw('CASE WHEN projects.status = 1 AND COALESCE(rec_totals.total_paid, 0) < projects.amount THEN 0 ELSE 1 END ASC')
+        $projects = $query->orderByRaw('CASE WHEN COALESCE(rec_totals.total_paid, 0) < projects.amount THEN 0 ELSE 1 END ASC')
+            ->orderBy('projects.status', 'DESC')
             ->orderBy('projects.id', 'DESC')
             ->get();
 
