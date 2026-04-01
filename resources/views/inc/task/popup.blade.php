@@ -118,6 +118,34 @@
                     </span>
                 </div>
 
+                {{-- Project Association --}}
+                @if($task->project)
+                    <div class="et-section">
+                        <div class="et-section-title">
+                            <i class="bx bx-briefcase-alt-2"></i> Project
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="pv-badge pv-badge-info" style="font-size: 0.75rem;">
+                                {{ $task->project->project_title }}
+                            </span>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Parent Task Association --}}
+                @if($task->parent)
+                    <div class="et-section">
+                        <div class="et-section-title">
+                            <i class="bx bx-subdirectory-right"></i> Parent Task
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="text-muted small">
+                                {{ $task->parent->title }}
+                            </span>
+                        </div>
+                    </div>
+                @endif
+
                 {{-- Assigned to --}}
                 <div class="et-section">
                     <div class="et-section-title">

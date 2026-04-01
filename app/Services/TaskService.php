@@ -35,7 +35,10 @@ class TaskService
         $kanbanData = [];
 
         foreach ($users as $user) {
-            $tasks = Task::where('uid', '=', $user->id)->orderBy('position', 'asc')->get();
+            $tasks = Task::where('uid', '=', $user->id)
+                ->with(['project', 'parent'])
+                ->orderBy('position', 'asc')
+                ->get();
             
             // Enrich tasks with history/highlight info
             $enrichedTasks = $tasks->map(function ($task) {

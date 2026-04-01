@@ -134,6 +134,22 @@
                                         <div class="tk-card-desc">{{ $displayDesc }}</div>
                                     @endif
 
+                                    {{-- Project & Subtask Info --}}
+                                    @if($task->project || $task->parent)
+                                        <div class="tk-card-relation mt-2 d-flex flex-wrap gap-1">
+                                            @if($task->project)
+                                                <span class="pv-badge pv-badge-info" style="font-size: 0.65rem; padding: 1px 6px;">
+                                                    <i class="bx bx-briefcase-alt-2"></i> {{ $task->project->project_title }}
+                                                </span>
+                                            @endif
+                                            @if($task->parent)
+                                                <span class="pv-badge pv-badge-warn" style="font-size: 0.65rem; padding: 1px 6px;">
+                                                    <i class="bx bx-subdirectory-right"></i> Subtask
+                                                </span>
+                                            @endif
+                                        </div>
+                                    @endif
+
                                     {{-- Footer: hours worked & attachments --}}
                                     @if($whr > 0 || !empty($task->label) || ($task->attachment_count ?? 0) > 0)
                                         <div class="tk-card-footer d-flex align-items-center justify-content-between mt-2 pt-2 border-top border-light">
