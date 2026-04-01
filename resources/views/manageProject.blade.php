@@ -254,12 +254,27 @@
                                 </span>
                             </div>
                             <div class="preview-avatar" id="prevAvatar">?</div>
+                            
+                            <div class="mb-1" id="prevCustomIdRow" style="display:none;">
+                                <span id="prevCustomId" class="badge bg-light text-primary border fw-bold" style="font-size:0.65rem; padding:2px 6px;"></span>
+                            </div>
+
                             <div class="preview-name" id="prevName">Project Name</div>
+                            <div class="small text-muted mb-2" id="prevClient">— No Client Selected —</div>
+                            
                             <div class="preview-type" id="prevType">Type</div>
                             <div class="preview-amount" id="prevAmount">₹0</div>
+
+                            <div class="mt-3 d-flex flex-column gap-1 align-items-center">
+                                <div id="prevStatusBadge"></div>
+                                <div class="small text-muted mt-1" id="prevTimelineRow" style="display:none; font-size:0.7rem;">
+                                    <i class="bx bx-calendar-event"></i> <span id="prevDates"></span>
+                                </div>
+                            </div>
+
                             @if($project)
-                            <div class="text-muted small mt-2">
-                                <i class="bx bx-calendar"></i> Created {{ \Carbon\Carbon::parse($project->created_at)->format('d M, Y') }}
+                            <div class="text-muted small mt-3 pt-2 border-top" style="font-size:0.65rem;">
+                                <i class="bx bx-history"></i> Created {{ \Carbon\Carbon::parse($project->created_at)->format('d M, Y') }}
                             </div>
                             @endif
                         </div>
@@ -312,13 +327,13 @@
     display: flex; align-items: center; justify-content: center;
     margin: 0 auto 12px;
 }
-.preview-name { font-size: 1rem; font-weight: 700; color: #202124; margin-bottom: 4px; }
+.preview-name { font-size: 1.1rem; font-weight: 700; color: #202124; margin-bottom: 2px; }
 .preview-type {
     display: inline-block; background: rgba(0,102,102,0.08); color: #006666;
-    font-size: 0.7rem; font-weight: 600; border-radius: 20px;
-    padding: 2px 10px; margin-bottom: 12px;
+    font-size: 0.72rem; font-weight: 600; border-radius: 20px;
+    padding: 2px 12px; margin-bottom: 8px;
 }
-.preview-amount { font-size: 1.25rem; font-weight: 800; color: #006666; }
+.preview-amount { font-size: 1.35rem; font-weight: 800; color: #006666; letter-spacing: -0.02em; }
 .qlink-item {
     display: flex; align-items: center; gap: 8px;
     padding: 10px 12px; border-radius: 8px;
@@ -331,24 +346,74 @@
 
 <script>
 $(document).ready(function () {
-    // Live preview
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    function formatDate(dateStr) {
+        if (!dateStr) return null;
+        const d = new Date(dateStr);
+        return d.getDate() + " " + months[d.getMonth()];
+    }
+
+    // Live preview core fields
     $('#name').on('input', function () {
         const v = $(this).val().trim();
         $('#prevName').text(v || 'Project Name');
         $('#prevAvatar').text(v ? v.charAt(0).toUpperCase() : '?');
     });
+    
+    $('#project_id_custom').on('input', function () {
+        const v = $(this).val().trim();
+        if(v) {
+            $('#prevCustomId').text(v);
+            $('#prevCustomIdRow').show();
+        } else {
+            $('#prevCustomIdRow').hide();
+        }
+    });
+
+    $('#client_id').on('change', function () {
+        const text = $(this).find('option:selected').text().trim();
+        if ($(this).val()) {
+            $('#prevClient').text(text.split('(')[0].trim()); // Just name, remove company part from preview for brevity
+        } else {
+            $('#prevClient').text('— No Client Selected —');
+        }
+    });
+
+    $('#status').on('change', function () {
+        const val = $(this).val();
+        if (val == "1") {
+            $('#prevStatusBadge').html('<span class="pv-badge pv-badge-success">Active</span>');
+        } else {
+            $('#prevStatusBadge').html('<span class="pv-badge pv-badge-info">Closed</span>');
+        }
+    });
+
+    $('#start_date, #deadline').on('change input', function () {
+        const start = formatDate($('#start_date').val());
+        const end = formatDate($('#deadline').val());
+        if (start || end) {
+            $('#prevDates').text((start || '—') + ' to ' + (end || '—'));
+            $('#prevTimelineRow').show();
+        } else {
+            $('#prevTimelineRow').hide();
+        }
+    });
+
     $('#type').on('input', function () {
         $('#prevType').text($(this).val().trim() || 'Type');
         $('.type-pill').removeClass('active');
         $('.type-pill[data-val="' + $(this).val().trim() + '"]').addClass('active');
     });
+
     $('#amount').on('input', function () {
         const n = parseFloat($(this).val()) || 0;
         $('#prevAmount').text('₹' + n.toLocaleString('en-IN'));
     });
 
-    // Trigger on load
-    $('#name, #type, #amount').trigger('input');
+    // Trigger on load to populate preview with existing data
+    $('#name, #project_id_custom, #type, #amount').trigger('input');
+    $('#client_id, #status, #start_date').trigger('change');
 
     $('#projectForm').on('submit', function () {
         $('#saveBtn').html('<i class="bx bx-loader-alt bx-spin"></i> Saving…').prop('disabled', true);
