@@ -121,7 +121,13 @@
                             <div class="pj-card-avatar">{{ strtoupper(substr($project->name, 0, 1)) }}</div>
                             <div class="pj-card-meta">
                                 <div class="pj-card-name">{{ $project->name }}</div>
-                                <div class="pj-card-id">#PROU-{{ str_pad($project->id, 4, '0', STR_PAD_LEFT) }}</div>
+                                <div class="pj-card-id">
+                                    @if($project->project_id_custom)
+                                        <span class="badge bg-light text-dark border-0 fw-bold" style="font-size:0.6rem;">{{ $project->project_id_custom }}</span>
+                                    @else
+                                        #PROU-{{ str_pad($project->id, 4, '0', STR_PAD_LEFT) }}
+                                    @endif
+                                </div>
                             </div>
                             <div class="pj-card-actions" onclick="event.stopPropagation();">
                                 @if($project->deployment_url)
@@ -146,6 +152,14 @@
                                 <span class="text-muted">{{ Str::limit($project->client_company, 20) }}</span>
                             @endif
                         </div>
+
+                        {{-- Sales / Manager --}}
+                        @if($project->salesperson_name)
+                        <div class="pj-card-client mt-1" title="Closed by">
+                            <i class="bx bx-badge-check" style="color:#1a73e8;"></i>
+                            <span class="text-muted" style="font-size:0.7rem;">Sales: {{ $project->salesperson_name }}</span>
+                        </div>
+                        @endif
 
                         {{-- Type badge --}}
                         @if($project->type)
@@ -202,7 +216,7 @@
                         <thead>
                             <tr>
                                 <th>Project</th>
-
+                                <th class="m-none">Sales</th>
                                 <th class="m-none">Dates</th>
                                 <th>Payment</th>
                                 <th class="m-none">Type</th>
@@ -232,8 +246,22 @@
                                             <div class="min-w-0">
                                                 <div class="fw-600 text-truncate" style="max-width:180px;">{{ $project->name }}
                                                 </div>
-                                                <div class="small text-muted">{{ $project->client_name ?? '—' }}</div>
+                                                <div class="small text-muted d-flex align-items-center gap-1">
+                                                    {{ $project->client_name ?? '—' }}
+                                                    @if($project->project_id_custom)
+                                                        <span class="badge bg-light text-primary border fw-bold" style="font-size:0.55rem; padding:1px 4px;">{{ $project->project_id_custom }}</span>
+                                                    @endif
+                                                </div>
                                             </div>
+                                        </div>
+                                    </td>
+                                    <td class="m-none">
+                                        <div class="small text-muted">
+                                            @if($project->salesperson_name)
+                                                <i class="bx bx-user-check"></i> {{ $project->salesperson_name }}
+                                            @else
+                                                —
+                                            @endif
                                         </div>
                                     </td>
                                     <td class="m-none">

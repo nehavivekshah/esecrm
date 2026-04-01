@@ -10,4 +10,14 @@ use App\Traits\BelongsToCompany;
 class Projects extends Model
 {
     use HasFactory, BelongsToCompany;
+
+    public function salesperson()
+    {
+        return $this->belongsTo(User::class, 'closed_by');
+    }
+
+    public function client()
+    {
+        return $this->belongsTo(Clients::class, 'client_id');
+    }
 }

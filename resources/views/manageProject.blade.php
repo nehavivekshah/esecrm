@@ -97,6 +97,34 @@
                                     @error('name') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                                 </div>
 
+                                {{-- Custom Project ID --}}
+                                <div class="col-md-6">
+                                    <label class="ml-label" for="project_id_custom">Project ID (e.g. ESE-2023-001)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bx bx-id-card"></i></span>
+                                        <input type="text" id="project_id_custom" name="project_id_custom" 
+                                               class="form-control"
+                                               placeholder="Custom identifier…"
+                                               value="{{ old('project_id_custom', $project->project_id_custom ?? '') }}">
+                                    </div>
+                                </div>
+
+                                {{-- Closed By (Sales) --}}
+                                <div class="col-md-6">
+                                    <label class="ml-label" for="closed_by">Closed By (Sales)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bx bx-user-plus"></i></span>
+                                        <select id="closed_by" name="closed_by" class="form-select">
+                                            <option value="">— Select Sales Person —</option>
+                                            @foreach($users as $user)
+                                                <option value="{{ $user->id }}" {{ old('closed_by', $project->closed_by ?? '') == $user->id ? 'selected' : '' }}>
+                                                    {{ $user->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
                                 {{-- Client --}}
                                 <div class="col-12">
                                     <label class="ml-label" for="client_id">Client <span class="text-danger">*</span></label>

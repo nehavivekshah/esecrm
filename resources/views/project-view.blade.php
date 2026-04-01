@@ -35,7 +35,13 @@
                             <span class="pv-sep">·</span>
                             <span><i class="bx bx-calendar"></i> {{ \Carbon\Carbon::parse($project->created_at)->format('d M, Y') }}</span>
                             <span class="pv-sep">·</span>
-                            <span class="pv-id">#PROU-{{ str_pad($project->id, 4, '0', STR_PAD_LEFT) }}</span>
+                            <span class="pv-id">
+                                @if($project->project_id_custom)
+                                    <span class="badge bg-white text-primary border fw-bold">{{ $project->project_id_custom }}</span>
+                                @else
+                                    #PROU-{{ str_pad($project->id, 4, '0', STR_PAD_LEFT) }}
+                                @endif
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -178,12 +184,18 @@
                                         {{ $project->start_date ? \Carbon\Carbon::parse($project->start_date)->format('d M, Y') : '—' }}
                                     </div>
                                 </div>
-                                <div class="pv-info-item">
-                                    <div class="pv-info-label"><i class="bx bx-calendar-check"></i> Deadline</div>
-                                    <div class="pv-info-val {{ \Carbon\Carbon::parse($project->deadline)->isPast() && $project->status == 1 ? 'text-danger fw-bold' : '' }}">
-                                        {{ $project->deadline ? \Carbon\Carbon::parse($project->deadline)->format('d M, Y') : '—' }}
-                                    </div>
-                                </div>
+                                 <div class="pv-info-item">
+                                     <div class="pv-info-label"><i class="bx bx-calendar-check"></i> Deadline</div>
+                                     <div class="pv-info-val {{ \Carbon\Carbon::parse($project->deadline)->isPast() && $project->status == 1 ? 'text-danger fw-bold' : '' }}">
+                                         {{ $project->deadline ? \Carbon\Carbon::parse($project->deadline)->format('d M, Y') : '—' }}
+                                     </div>
+                                 </div>
+                                 <div class="pv-info-item">
+                                     <div class="pv-info-label"><i class="bx bx-user-check"></i> Closed By</div>
+                                     <div class="pv-info-val fw-bold" style="color:#1a73e8;">
+                                         {{ $project->salesperson_name ?: '—' }}
+                                     </div>
+                                 </div>
                                 @if($project->deployment_url)
                                 <div class="pv-info-item" style="grid-column:span 2;">
                                     <div class="pv-info-label"><i class="bx bx-globe"></i> Deployment URL</div>

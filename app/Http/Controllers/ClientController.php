@@ -338,6 +338,7 @@ class ClientController extends Controller
     {
         $search = $request->get('search');
         $query = Projects::leftJoin('clients', 'projects.client_id', '=', 'clients.id')
+            ->leftJoin('users as sales', 'projects.closed_by', '=', 'sales.id')
             ->leftJoin(
                 DB::raw('(SELECT project_id, SUM(paid) as total_paid FROM recoveries GROUP BY project_id) as rec_totals'),
                 'projects.id', '=', 'rec_totals.project_id'
@@ -346,6 +347,7 @@ class ClientController extends Controller
                 'projects.*',
                 'clients.name as client_name',
                 'clients.company as client_company',
+                'sales.name as salesperson_name',
                 DB::raw('COALESCE(rec_totals.total_paid, 0) as total_paid')
             );
 
@@ -393,7 +395,8 @@ class ClientController extends Controller
     public function viewProject(Request $request, $id)
     {
         $project = Projects::leftJoin('clients', 'projects.client_id', '=', 'clients.id')
-            ->select('projects.*', 'clients.name as client_name', 'clients.company as client_company', 'clients.email as client_email', 'clients.mob as client_mob', 'clients.location as client_location', 'clients.whatsapp as client_whatsapp')
+            ->leftJoin('users as sales', 'projects.closed_by', '=', 'sales.id')
+            ->select('projects.*', 'clients.name as client_name', 'clients.company as client_company', 'clients.email as client_email', 'clients.mob as client_mob', 'clients.location as client_location', 'clients.whatsapp as client_whatsapp', 'sales.name as salesperson_name')
             ->where('projects.id', $id)
             ->first();
 
@@ -1140,9 +1143,16 @@ class ClientController extends Controller
             ->orderBy('name', 'ASC')
             ->get(['id', 'name', 'company']);
 
+        // Load users for "Closed by" dropdown (only current company)
+        $users = User::where('cid', '=', Auth::user()->cid)
+            ->where('status', '=', '1')
+            ->orderBy('name', 'ASC')
+            ->get(['id', 'name']);
+
         return view('manageProject', [
             'project' => $project,
             'clients' => $clients,
+            'users'   => $users,
         ]);
     }
 
@@ -1152,8 +1162,10 @@ class ClientController extends Controller
     public function manageProjectPost(Request $request)
     {
         $request->validate([
-            'client_id'      => 'required|exists:clients,id',
-            'name'           => 'required|string|max:255',
+            'client_id'          => 'required|exists:clients,id',
+            'name'               => 'required|string|max:255',
+            'project_id_custom'  => 'nullable|string|max:100',
+            'closed_by'          => 'nullable|exists:users,id',
 
             'start_date'     => 'nullable|date',
             'deadline'       => 'nullable|date',
@@ -1167,9 +1179,11 @@ class ClientController extends Controller
 
         $project = $request->id ? Projects::findOrFail($request->id) : new Projects();
 
-        $project->cid            = Auth::user()->cid;
-        $project->client_id      = $request->client_id;
-        $project->name           = $request->name;
+        $project->cid                = Auth::user()->cid;
+        $project->client_id          = $request->client_id;
+        $project->name               = $request->name;
+        $project->project_id_custom  = $request->project_id_custom;
+        $project->closed_by          = $request->closed_by;
 
         $project->start_date     = $request->start_date;
         $project->deadline       = $request->deadline;
