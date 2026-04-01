@@ -72,13 +72,24 @@
                 {{-- ── Main Form Card ── --}}
                 <div class="col-lg-8">
                     <div class="ml-card">
-                        <div class="ml-card-header">
-                            <div class="ml-card-icon" style="background:rgba(0,102,102,0.1);color:#006666;">
-                                <i class="bx bx-detail"></i>
+                        <div class="ml-card-header d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="ml-card-icon" style="background:rgba(0,102,102,0.1);color:#006666;">
+                                    <i class="bx bx-detail"></i>
+                                </div>
+                                <div>
+                                    <h6 class="ml-card-title">Project Information</h6>
+                                    <span class="ml-card-sub">Core details and categorization</span>
+                                </div>
                             </div>
-                            <div>
-                                <h6 class="ml-card-title">Project Information</h6>
-                                <span class="ml-card-sub">Core details and categorization</span>
+                            <div class="d-flex align-items-center gap-2">
+                                <a href="{{ $project ? url('/project/view/'.$project->id) : url('/projects') }}"
+                                    class="lb-btn lb-btn-ghost btn-sm text-decoration-none">
+                                    <i class="bx bx-x"></i> Cancel
+                                </a>
+                                <button type="submit" class="lb-btn lb-btn-primary btn-sm" id="saveBtn">
+                                    <i class="bx bx-save"></i> {{ $project ? 'Save Changes' : 'Create Project' }}
+                                </button>
                             </div>
                         </div>
                         <div class="ml-card-body">
@@ -236,15 +247,7 @@
                 {{-- ── Sidebar ── --}}
                 <div class="col-lg-4">
                     <div class="ml-card">
-                        {{-- Section: Actions --}}
-                        <div class="ml-card-body text-center border-bottom">
-                            <button type="submit" class="lb-btn lb-btn-primary w-100 mb-2" id="saveBtn" style="justify-content:center;">
-                                <i class="bx bx-save"></i> {{ $project ? 'Save Changes' : 'Create Project' }}
-                            </button>
-                            <a href="{{ $project ? url('/project/view/'.$project->id) : url('/projects') }}" class="text-muted small text-decoration-none">
-                                <i class="bx bx-x"></i> Cancel and return
-                            </a>
-                        </div>
+                        {{-- Actions migrated to Card Header --}}
 
                         {{-- Section: Live Preview --}}
                         <div class="ml-card-body text-center border-bottom bg-light" style="background-color:rgba(0,102,102,0.02) !important;" id="previewCard">
