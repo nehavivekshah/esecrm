@@ -65,7 +65,7 @@
                     
                     @if(in_array('leads_import',$roleArray) || in_array('All',$roleArray))
                     <a href="javascript:void(0)" class="btn btn-warning btn-sm" id="importFile"><i class="bx bx-upload"></i> <span>Import</span></a>
-                    <a href="/public/assets/leads.csv" class="btn btn-danger btn-sm" target="_blank" download="leads.csv" title="Download CSV Sample File"><i class="bx bx-download"></i> <span>Sample File</span></a>
+                    <a href="{{ asset('assets/leads.csv') }}" class="btn btn-danger btn-sm" target="_blank" download="leads.csv" title="Download CSV Sample File"><i class="bx bx-download"></i> <span>Sample File</span></a>
                     @endif
                     
                     @if(in_array('leads_add',$roleArray) || in_array('All',$roleArray))
@@ -503,6 +503,7 @@
                                 <div class="form-group col-md-12 mt-3 d-flex justify-content-between">
                                     <button type="button" class="btn btn-danger border px-4 leadDelete" id="leadDelete" data-page="leadDelete">Delete</button>
                                     <div>
+                                        <img src="{{ asset('logo.png') }}" style="height:60px;margin:auto;" />
                                         <button type="reset" class="btn btn-light ml-auto border px-4">Reset</button>
                                         <button type="submit" class="btn btn-success bg-success text-white px-4">Save</button>
                                     </div>

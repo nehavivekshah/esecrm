@@ -9,7 +9,7 @@
 <div class="sidebar @if(isset($_COOKIE['sidebarOpen']) && $_COOKIE['sidebarOpen'] == 'open') open @endif">
     <div class="logo_details">
         @if(!empty($company->logo))
-            <img src="{{ asset('/public/assets/images/company/logos/' . ($company->logo ?? '')) }}"
+            <img src="{{ asset('assets/images/company/logos/' . ($company->logo ?? '')) }}"
                 alt="{{$company->name ?? ''}}">
         @else
             <div class="logo_name text-white">{{ $company->name ?? 'Admin Panel' }}</div>
@@ -21,10 +21,10 @@
         <li class="profile">
             <div class="profile_details">
                 @if(!empty(Auth::user()->photo))
-                    <img src="{{ asset('/public/assets/images/profile/' . (Auth::user()->photo ?? '')) }}" class="shadow-sm"
+                    <img src="{{ asset('assets/images/profile/' . (Auth::user()->photo ?? '')) }}" class="shadow-sm"
                         alt="{{Auth::user()->name ?? ''}}">
                 @else
-                    <img src="{{ asset('public/assets/images/profile/user.png') }}" alt="profile image">
+                    <img src="{{ asset('assets/images/profile/user.png') }}" alt="profile image">
                 @endif
                 <div class="profile_content">
                     <div class="name">{{ Auth::user()->name ?? '' }}</div>
@@ -292,9 +292,9 @@
         <!--<li class="profile">
             <div class="profile_details">
                 @if(!empty(Auth::user()->photo))
-                <img src="{{ asset('/public/assets/images/profile/'.(Auth::user()->photo ?? '')) }}" class="shadow-sm" alt="{{Auth::user()->name ?? ''}}">
+                <img src="{{ asset('assets/images/profile/'.(Auth::user()->photo ?? '')) }}" class="shadow-sm" alt="{{Auth::user()->name ?? ''}}">
                 @else
-                <img src="{{ asset('public/assets/images/profile/user.png') }}" alt="profile image">
+                <img src="{{ asset('assets/images/profile/user.png') }}" alt="profile image">
                 @endif
                 <div class="profile_content">
                     <div class="name">{{ Auth::user()->name ?? '' }}</div>

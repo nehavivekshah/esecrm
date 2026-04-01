@@ -6,7 +6,7 @@
     <div class="row justify-content-center align-items-center h-90">
         <div class="col-md-4">
             <div class="col-md-12 text-center py-2">
-                <img src="{{ asset('/public/logo.png'); }}" class="w-50" />
+                <img src="{{ asset('logo.png') }}" class="w-50" />
             </div>
             <div class="card w-100 shadow pl-3 pr-3">
                 <form action="{{ route('register') }}" method="POST" class="card-body"  autocomplete="off">
@@ -16,7 +16,7 @@
                     
                     <div class="form-group">
                         <div class="input-group">
-                            <img src="{{ asset('/public/assets/icons/user.svg'); }}" class="input-icon" />
+                            <img src="{{ asset('assets/icons/user.svg') }}" class="input-icon" />
                             <input type="text" name="reg_name" class="form-control" placeholder="Enter your name" required />
                         </div>
                          @error('reg_name')
@@ -25,7 +25,7 @@
                     </div>
                     <div class="form-group">
                         <div class="input-group">
-                            <img src="{{ asset('/public/assets/icons/mob.svg'); }}" class="input-icon" />
+                            <img src="{{ asset('assets/icons/mob.svg') }}" class="input-icon" />
                             <input type="text" name="reg_mob" class="form-control" placeholder="Enter your mobile no." required />
                         </div>
                         @error('reg_mob')
@@ -34,7 +34,7 @@
                     </div>
                     <div class="form-group">
                         <div class="input-group">
-                            <img src="{{ asset('/public/assets/icons/email.svg'); }}" class="input-icon" />
+                            <img src="{{ asset('assets/icons/email.svg') }}" class="input-icon" />
                             <input type="email" name="reg_email" class="form-control" placeholder="Enter your email id" required />
                         </div>
                          @error('reg_email')
@@ -43,7 +43,7 @@
                     </div>
                     <div class="form-group">
                         <div class="input-group">
-                            <img src="{{ asset('/public/assets/icons/lock.svg'); }}" class="input-icon" />
+                            <img src="{{ asset('assets/icons/lock.svg') }}" class="input-icon" />
                             <input type="password" name="reg_password" class="form-control" placeholder="Password" required />
                         </div>
                          @error('reg_password')
@@ -54,7 +54,7 @@
                     <h4 class="h5 card-title-2">Company Details</h4>
                     <div class="form-group">
                         <div class="input-group">
-                            <img src="{{ asset('/public/assets/icons/edit.svg'); }}" class="input-icon" />
+                            <img src="{{ asset('assets/icons/edit.svg'); }}" class="input-icon" />
                             <input type="text" name="reg_company" class="form-control" placeholder="Enter your company name" required />
                         </div>
                         @error('reg_company')
@@ -63,7 +63,7 @@
                     </div>
                     <div class="form-group">
                         <div class="input-group">
-                            <img src="{{ asset('/public/assets/icons/edit.svg'); }}" class="input-icon" />
+                            <img src="{{ asset('assets/icons/edit.svg'); }}" class="input-icon" />
                             <input type="text" name="reg_gst" class="form-control" placeholder="Enter your gst no." />
                         </div>
                          @error('reg_gst')

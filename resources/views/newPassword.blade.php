@@ -13,7 +13,7 @@
                     <div class="form-group">
                         <input type="hidden" name="uid" value="{{ $id ?? '' }}">
                         <div class="input-group">
-                            <img src="{{ asset('/public/assets/icons/lock.svg'); }}" class="input-icon" />
+                            <img src="{{ asset('assets/icons/lock.svg'); }}" class="input-icon" />
                             <input type="password" name="new_password" id="new_password" class="form-control" placeholder="new Password" required />
                             <button type="button" class="btn btn-trans" 
                                 onclick="togglePassword('new_password', 'toggleIconNew')">
@@ -24,7 +24,7 @@
                     
                     <div class="form-group">
                         <div class="input-group">
-                            <img src="{{ asset('/public/assets/icons/lock.svg'); }}" class="input-icon" />
+                            <img src="{{ asset('assets/icons/lock.svg'); }}" class="input-icon" />
                             <input type="password" name="cn_password" id="cn_password" class="form-control" placeholder="Confirm new Password" required />
                             <button type="button" class="btn btn-trans" 
                                 onclick="togglePassword('cn_password', 'toggleIconCn')">
@@ -87,3 +87,4 @@ function validatePasswordMatch() {
 </script>
 
 @endsection
+

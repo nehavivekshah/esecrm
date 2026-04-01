@@ -44,7 +44,7 @@
                         <div class="input-group">
                             @if(!empty($company->logo))
                                 <span class="input-group-text" style="padding:5px;">
-                                    <img src="{{ asset('public/assets/images/company/logos/'.$company->logo) }}" style="width:30px;border-radius:30px">
+                                    <img src="{{ asset('assets/images/company/logos/'.$company->logo) }}" style="width:30px;border-radius:30px">
                                 </span>
                             @else
                                 <span class="input-group-text"><i class="bx bx-image"></i></span>
@@ -62,7 +62,7 @@
                         <div class="input-group">
                             @if(!empty($company->pdf_logo))
                                 <span class="input-group-text" style="padding:5px;">
-                                    <img src="{{ asset('public/assets/images/company/'.$company->pdf_logo) }}" style="width:30px;border-radius:30px">
+                                    <img src="{{ asset('assets/images/company/'.$company->pdf_logo) }}" style="width:30px;border-radius:30px">
                                 </span>
                             @else
                                 <span class="input-group-text"><i class="bx bx-image"></i></span>
@@ -271,3 +271,4 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 @endsection
+

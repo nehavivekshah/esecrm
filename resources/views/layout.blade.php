@@ -7,7 +7,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <link rel="shortcut icon" href="{{ asset('public/assets/images/favicon.ico') }}" type="image/x-icon">
+        <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}" type="image/x-icon">
     
         <title>@yield('title', 'Customer Relationship Management')</title>
         
@@ -22,8 +22,8 @@
         <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
         
         @include('inc.loginHeadLink')
-        <link rel="stylesheet" href="{{ asset('public/assets/css/premium.css') }}">
-        <link rel="stylesheet" href="{{ asset('public/assets/css/modern-ui.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/premium.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/modern-ui.css') }}">
         
         <style>
             /* Loader Styles */

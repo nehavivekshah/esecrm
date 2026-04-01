@@ -1,6 +1,6 @@
 @if(Request::segment(1) != 'login')
     <!-- Scripts -->
-    <script src="{{ asset('/public/assets/js/script.js') }}"></script>
+    <script src="{{ asset('assets/js/script.js') }}"></script>
 @else
 
     <script>

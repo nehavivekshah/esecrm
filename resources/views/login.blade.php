@@ -7,7 +7,7 @@
     <div class="row justify-content-center align-items-center h-90">
         <div class="col-md-4">
             <div class="col-md-12 text-center py-2">
-                <img src="{{ asset('/public/logo.png'); }}" class="w-50" />
+                <img src="{{ asset('logo.png') }}" class="w-50" />
             </div>
             <div class="card w-100 shadow pl-3 pr-3">
                 <form action="{{ route('login') }}" method="POST" class="card-body" id="loginFRM">
@@ -18,7 +18,7 @@
                     <div class="form-group">
                         <!--label for="Username" class="text-muted">Username*:</label-->
                         <div class="input-group">
-                            <img src="{{ asset('/public/assets/icons/email.svg'); }}" class="input-icon" />
+                            <img src="{{ asset('assets/icons/email.svg') }}" class="input-icon" />
                             <input type="email" id="email" name="login_email" class="form-control" placeholder="Email Id" />
                         </div>
                     </div>
@@ -26,7 +26,7 @@
                     <div class="form-group">
                         <!--label for="Username" class="text-muted">Password*:</label-->
                         <div class="input-group">
-                            <img src="{{ asset('/public/assets/icons/lock.svg'); }}" class="input-icon" />
+                            <img src="{{ asset('assets/icons/lock.svg') }}" class="input-icon" />
                             <input type="password" id="password" name="login_password" class="form-control" placeholder="Password" />
                         </div>
                         <br><a href="/forgot-password" class="forgotPassword">Forgot Password?</a>

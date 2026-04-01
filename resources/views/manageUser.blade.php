@@ -42,7 +42,7 @@
                             <label for="role">Profile Photo</label>
                             <div class="input-group">
                                 @if(!empty($users->photo))
-                                <span class="input-group-text" style="padding:5px;"><img src="/public/assets/images/profile/{{$users->photo ?? ''}}" style="width:30px;height:26px;object-fit:contain;border-radius:30px" /></span>
+                                <span class="input-group-text" style="padding:5px;"><img src="{{ asset('assets/images/profile/' . ($users->photo ?? '')) }}" style="width:30px;height:26px;object-fit:contain;border-radius:30px" /></span>
                                 @else
                                 <span class="input-group-text"><i class='bx bx-image'></i></span>
                                 @endif
@@ -54,7 +54,7 @@
                             <label for="role">Signature</label>
                             <div class="input-group">
                                 @if(!empty($users->imgsign))
-                                <span class="input-group-text" style="padding:5px;"><img src="/public/assets/images/signs/{{$users->imgsign ?? ''}}" style="width:30px;height:26px;object-fit:contain;border-radius:30px" /></span>
+                                <span class="input-group-text" style="padding:5px;"><img src="{{ asset('assets/images/signs/' . ($users->imgsign ?? '')) }}" style="width:30px;height:26px;object-fit:contain;border-radius:30px" /></span>
                                 @else
                                 <span class="input-group-text"><i class='bx bx-image'></i></span>
                                 @endif

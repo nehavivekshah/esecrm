@@ -210,3 +210,4 @@
         .bg-soft-primary { background-color: rgba(26, 115, 232, 0.1); }
     </style>
 @endsection
+

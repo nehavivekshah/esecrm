@@ -49,6 +49,7 @@
                                 </td>
                                 <td width="50px" class="position-sticky end-0">
                                     <div class="table-btn">
+                                        <img src="{{ asset('assets/images/company/logos/' . ($company->logo ?? '')) }}" style="width:30px;">
                                         <a href="/manage-company?id={{ $company->id }}" class="btn btn-info btn-sm" title="Edit"><i class="bx bx-edit"></i></a>
                                         <a href="javascript:void(0)" class="btn btn-danger btn-sm delete" id="{{ $company->id }}" date-page="companyDelete" title="Delete"><i class="bx bx-trash"></i></a>
                                     </div>

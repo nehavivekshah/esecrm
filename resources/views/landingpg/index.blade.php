@@ -2,7 +2,7 @@
 <body class="theme-blue">
     <div class="th-hero-wrapper hero-8" id="hero">
         <div class="hero-inner">
-            <div class="th-hero-bg" data-bg-src="public/assets/landingpg/img/hero/hero_bg_8_1.png"></div>
+            <div class="th-hero-bg" data-bg-src="{{ asset('assets/landingpg/img/hero/hero_bg_8_1.png') }}"></div>
             <div class="container th-container4">
                 <div class="row justify-content-center align-items-center">
                     <div class="col-xxl-5 col-xl-6">
@@ -13,16 +13,16 @@
                             <div class="btn-group mt-30">
                                 <a href="https://play.google.com/store/apps/details?id=com.esecrm.app&pcampaignid=web_share"
                                     target="_blank" class="th-btn style7 style-radius">
-                                    <img src="public/assets/landingpg/img/theme-img/play-store-btn.png" alt="img"></a>
+                                    <img src="{{ asset('assets/landingpg/img/theme-img/play-store-btn.png') }}" alt="img"></a>
                                 <a href="https://play.google.com/store/apps/details?id=com.esecrm.app&pcampaignid=web_share"
                                     class="th-btn style7 style-radius">
-                                    <img src="public/assets/landingpg/img/theme-img/apple-btn.png" alt="img">
+                                    <img src="{{ asset('assets/landingpg/img/theme-img/apple-btn.png') }}" alt="img">
                                 </a>
                             </div>
                         </div>
                     </div>
                     <div class="col-xxl-7 col-xl-6">
-                        <div class="th-hero-thumb"><img src="public/assets/landingpg/images/home/banner.png" alt="img"></div>
+                        <div class="th-hero-thumb"><img src="{{ asset('assets/landingpg/images/home/banner.png') }}" alt="img"></div>
                     </div>
                 </div>
             </div>
@@ -40,7 +40,7 @@
             <div class="row gy-4 justify-content-center">
                 <div class="col-xl-3 col-lg-4 col-md-6 feature-card-wrap2">
                     <div class="feature-card style2">
-                        <div class="feature-card-icon"><img src="public/assets/landingpg/images/icon/dashboard.png" alt="icon"></div>
+                        <div class="feature-card-icon"><img src="{{ asset('assets/landingpg/images/icon/dashboard.png') }}" alt="icon"></div>
                         <h3 class="box-title">Dashboard</h3>
                         <p class="feature-card_text">Our powerful CRM dashboard gives you a clear, customizable overview
                             of your entire sales process — from leads and deals to follow-ups and performance metrics.
@@ -49,7 +49,7 @@
                 </div>
                 <div class="col-xl-3 col-lg-4 col-md-6 feature-card-wrap2">
                     <div class="feature-card style2">
-                        <div class="feature-card-icon"><img src="public/assets/landingpg/images/icon/3.png" alt="icon"></div>
+                        <div class="feature-card-icon"><img src="{{ asset('assets/landingpg/images/icon/3.png') }}" alt="icon"></div>
                         <h3 class="box-title">Task</h3>
                         <p class="feature-card_text">
                             Manage your day with ease using our built-in task system. Assign tasks, set deadlines, and
@@ -59,7 +59,7 @@
                 </div>
                 <div class="col-xl-3 col-lg-4 col-md-6 feature-card-wrap2">
                     <div class="feature-card style2">
-                        <div class="feature-card-icon"><img src="public/assets/landingpg/images/icon/2.png" alt="icon"></div>
+                        <div class="feature-card-icon"><img src="{{ asset('assets/landingpg/images/icon/2.png') }}" alt="icon"></div>
                         <h3 class="box-title">Proposals</h3>
                         <p class="feature-card_text">
                             With Ese CRM, you can generate beautifully branded proposals in minutes. Add pricing
@@ -69,7 +69,7 @@
                 </div>
                 <div class="col-xl-3 col-lg-4 col-md-6 feature-card-wrap2">
                     <div class="feature-card style2">
-                        <div class="feature-card-icon"><img src="public/assets/landingpg/images/icon/4.png" alt="icon"></div>
+                        <div class="feature-card-icon"><img src="{{ asset('assets/landingpg/images/icon/4.png') }}" alt="icon"></div>
                         <h3 class="box-title"> Leads</h3>
                         <p class="feature-card_text">Never let a lead slip through the cracks. Ese CRM helps you
                             capture leads from multiple channels website forms, emails, ads and automatically organizes
@@ -109,7 +109,7 @@
                 </div>
                 <div class="col-xl-6 align-self-center">
                     <div class="img-box10 text-center mb-xl-0 mt-xl-0 mt-n4">
-                        <div class="img1"><img src="public/assets/landingpg/images/home/about-us.png" alt="About">
+                        <div class="img1"><img src="{{ asset('assets/landingpg/images/home/about-us.png') }}" alt="About">
                             <!-- <div class="img2 jump"><img src="public/assets/landingpg/img/normal/about_8_2.jpg" alt="About"> -->
                         </div>
                     </div>
@@ -119,7 +119,7 @@
     </div>
     </div>
     <div class="space-top" id="how-it-works">
-        <div class="why-sec-4" data-bg-src="public/assets/landingpg/img/bg/why_bg_8.png">
+        <div class="why-sec-4" data-bg-src="{{ asset('assets/landingpg/img/bg/why_bg_8.png') }}">
             <div class="container th-container4">
                 <div class="row justify-content-center">
                     <div class="col-xl-5">
@@ -136,7 +136,7 @@
                     <div class="col-lg-4">
                         <div class="why-feature-wrap-4-1">
                             <div class="about-feature style3">
-                                <div class="about-feature_icon"><img src="public/assets/landingpg/images/how-it-work/1.png" alt="icon">
+                                <div class="about-feature_icon"><img src="{{ asset('assets/landingpg/images/how-it-work/1.png') }}" alt="icon">
                                 </div>
                                 <div class="media-body">
                                     <h3 class="about-feature_title">Sign Up & Set Up</h3>
@@ -146,7 +146,7 @@
                                 </div>
                             </div>
                             <div class="about-feature style3">
-                                <div class="about-feature_icon"><img src="public/assets/landingpg/images/how-it-work/2.png" alt="icon">
+                                <div class="about-feature_icon"><img src="{{ asset('assets/landingpg/images/how-it-work/2.png') }}" alt="icon">
                                 </div>
                                 <div class="media-body">
                                     <h3 class="about-feature_title">Add Leads & Contacts</h3>
@@ -161,7 +161,7 @@
                     <div class="col-lg-4 order-lg-3">
                         <div class="why-feature-wrap-4-2">
                             <div class="about-feature style3">
-                                <div class="about-feature_icon"><img src="public/assets/landingpg/images/how-it-work/3.png" alt="icon">
+                                <div class="about-feature_icon"><img src="{{ asset('assets/landingpg/images/how-it-work/3.png') }}" alt="icon">
                                 </div>
                                 <div class="media-body">
                                     <h3 class="about-feature_title"> Manage, Track & Follow Up</h3>
@@ -170,7 +170,7 @@
                                 </div>
                             </div>
                             <div class="about-feature style3">
-                                <div class="about-feature_icon"><img src="public/assets/landingpg/images/how-it-work/4.png" alt="icon">
+                                <div class="about-feature_icon"><img src="{{ asset('assets/landingpg/images/how-it-work/4.png') }}" alt="icon">
                                 </div>
                                 <div class="media-body">
                                     <h3 class="about-feature_title">Monitor Progress & Grow</h3>
@@ -182,7 +182,7 @@
                         </div>
                     </div>
                     <div class="col-lg-4 order-lg-2">
-                        <div class="why-thumb-4"><img src="public/assets/landingpg/images/home/how-it-work.png" alt="img"></div>
+                        <div class="why-thumb-4"><img src="{{ asset('assets/landingpg/images/home/how-it-work.png') }}" alt="img"></div>
                     </div>
                 </div>
             </div>
@@ -332,7 +332,7 @@
                     </div>
                     <div class="col-xl-4 col-md-6">
                         <div class="price-box style2 th-ani">
-                            <div class="price-title-wrap"><img src="public/assets/landingpg/images/icon/primium.png" alt="icon">
+                            <div class="price-title-wrap"><img src="{{ asset('assets/landingpg/images/icon/primium.png') }}" alt="icon">
                                 <div class="media-body">
                                     <p class="subtitle">FREE</p>
                                     <h3 class="box-title">Basic Plan</h3>
@@ -362,7 +362,7 @@
                     </div>
                     <div class="col-xl-4 col-md-6">
                         <div class="price-box style2 th-ani">
-                            <div class="price-title-wrap"><img src="public/assets/landingpg/images/icon/primium.png" alt="icon">
+                            <div class="price-title-wrap"><img src="{{ asset('assets/landingpg/images/icon/primium.png') }}" alt="icon">
                                 <div class="media-body">
                                     <p class="subtitle">PRO</p>
                                     <h3 class="box-title">Premium Plan</h3>
@@ -396,7 +396,7 @@
                     </div>
                     <div class="col-xl-4 col-md-6">
                         <div class="price-box bg-pricing style2 th-ani">
-                            <div class="price-title-wrap"><img src="public/assets/landingpg/images/icon/primium.png" alt="icon">
+                            <div class="price-title-wrap"><img src="{{ asset('assets/landingpg/images/icon/primium.png') }}" alt="icon">
                                 <div class="media-body">
                                     <p class="subtitle">FREE</p>
                                     <h3 class="box-title">Basic Plan</h3>
@@ -427,7 +427,7 @@
                     </div>
                     <div class="col-xl-4 col-md-6">
                         <div class="price-box bg-pricing style2 th-ani">
-                            <div class="price-title-wrap"><img src="public/assets/landingpg/images/icon/primium.png" alt="icon">
+                            <div class="price-title-wrap"><img src="{{ asset('assets/landingpg/images/icon/primium.png') }}" alt="icon">
                                 <div class="media-body">
                                     <p class="subtitle">PRO</p>
                                     <h3 class="box-title">Premium Plan</h3>
@@ -566,7 +566,7 @@
                     <div class="title-area mb-35 text-xl-start text-center">
                         <span class="sub-title">
                             <div class="icon-masking me-2">
-                                <img src="public/assets/landingpg/images/icon/5.png" alt="shape">
+                                <img src="{{ asset('assets/landingpg/images/icon/5.png') }}" alt="shape">
                             </div>
                             contact us!
                         </span>

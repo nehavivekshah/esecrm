@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <link rel="shortcut icon" href="https://esecrm.com/public/assets/images/favicon.ico" type="image/x-icon">
+        <link rel="shortcut icon" href="https://esecrm.com/assets/images/favicon.ico" type="image/x-icon">
         <title>Proposal: {{ $proposal->subject ?? 'Details' }}</title>
         {{-- Bootstrap CSS --}}
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
@@ -409,7 +409,7 @@
         <div class="proposal-header row">
             <div class="col-md-7">
                 @isset($proposal->companyImg)
-                    <img src="{{ asset('/public/assets/images/company/'.$proposal->companyImg) }}" alt="{{ $proposal->companyName ?? 'Company Logo' }}" class="logo"><br><br>
+                    <img src="{{ asset('assets/images/company/'.$proposal->companyImg) }}" alt="{{ $proposal->companyName ?? 'Company Logo' }}" class="logo"><br><br>
                 @endisset
             </div>
             <div class="col-md-5 text-right">
@@ -498,21 +498,20 @@
                     <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>
-                            <strong>{{ $item->item_name ?? 'Item Name' }}</strong>
-                            @if(!empty($item->description))
-                            <div class="item-description">{!! nl2br(e($item->description)) !!}</div>
+                            <strong>{{ optional($item)->item_name ?? 'Item Name' }}</strong>
+                            <div class="item-description">{!! nl2br(e(optional($item)->description ?? '')) !!}</div>
                             @endif
                         </td>
-                        <td class="text-center">{{ $item->hsn ?? '--' }}</td>
-                        <td class="text-end">{{ $item->quantity ?? 1 }}</td>
-                        <td class="text-end">{{ number_format($item->rate ?? 0, 2) }}</td>
+                        <td class="text-center">{{ optional($item)->hsn ?? '--' }}</td>
+                        <td class="text-end">{{ optional($item)->quantity ?? 1 }}</td>
+                        <td class="text-end">{{ number_format(optional($item)->rate ?? 0, 2) }}</td>
                         <td class="text-end">
-                            @if(!empty(($item->cgst_percent ?? 0)*100)) CGST {{ ($item->cgst_percent ?? 0)*100 }}%<br> @endif
-                            @if(!empty(($item->sgst_percent ?? 0)*100)) SGST {{ ($item->sgst_percent ?? 0)*100 }}%<br> @endif
-                            @if(!empty(($item->igst_percent ?? 0)*100)) IGST {{ ($item->igst_percent ?? 0)*100 }}%<br> @endif
-                            @if(!empty(($item->vat_percent ?? 0)*100)) VAT {{ ($item->vat_percent ?? 0)*100 }}% @endif
+                            @if(!empty((optional($item)->cgst_percent ?? 0)*100)) CGST {{ (optional($item)->cgst_percent ?? 0)*100 }}%<br> @endif
+                            @if(!empty((optional($item)->sgst_percent ?? 0)*100)) SGST {{ (optional($item)->sgst_percent ?? 0)*100 }}%<br> @endif
+                            @if(!empty((optional($item)->igst_percent ?? 0)*100)) IGST {{ (optional($item)->igst_percent ?? 0)*100 }}%<br> @endif
+                            @if(!empty((optional($item)->vat_percent ?? 0)*100)) VAT {{ (optional($item)->vat_percent ?? 0)*100 }}% @endif
                         </td>
-                        <td class="text-end">{{ number_format($item->amount ?? ($item->quantity ?? 1) * ($item->rate ?? 0), 2) }}</td>
+                        <td class="text-end">{{ number_format(optional($item)->amount ?? (optional($item)->quantity ?? 1) * (optional($item)->rate ?? 0), 2) }}</td>
                     </tr>
                     @empty
                     <tr>
@@ -599,7 +598,7 @@
         {{-- Signature Section --}}
         <div class="signature-section">
             <p>Authorized Signature</p>
-            <img src="{!! ('/public/assets/images/signs/'.(Auth::User()->imgsign ?? 'default.png')) !!}" style="height: 90px;" />
+            <img src="{{ asset('assets/images/signs/'.(Auth::User()->imgsign ?? 'default.png')) }}" style="height: 90px;" />
             <div class="signature-line"></div>
         </div>
 

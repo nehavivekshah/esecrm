@@ -12,7 +12,7 @@
                     <div class="form-group">
                         <!--label for="Username" class="text-muted">Username*:</label-->
                         <div class="input-group">
-                            <img src="{{ asset('/public/assets/icons/email.svg'); }}" class="input-icon" />
+                            <img src="{{ asset('assets/icons/email.svg'); }}" class="input-icon" />
                             <input type="email" name="forgot_email" class="form-control" placeholder="Email Id" required />
                         </div>
                     </div>

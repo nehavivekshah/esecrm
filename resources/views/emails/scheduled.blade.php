@@ -8,3 +8,4 @@
     <p>{{ $data['content'] }}</p>
 </body>
 </html>
+

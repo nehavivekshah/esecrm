@@ -92,7 +92,7 @@
                 <div class="col-md-6">
                     @if(!empty($invoice->img))
                         <img 
-                            src="{{ asset('/public/assets/images/company/' . ($invoice->img ?? '')) }}" 
+                            src="{{ asset('assets/images/company/' . ($invoice->img ?? '')) }}" 
                             alt="{{ $invoice->name ?? '' }}" 
                             style="max-height:60px; filter: drop-shadow(0px 0px 0px black);"
                         ><br>
@@ -473,3 +473,4 @@
     </div>
 </section>
 @endsection
+
