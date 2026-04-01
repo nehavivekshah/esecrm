@@ -2000,7 +2000,7 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting_disabled {
     border-radius: 14px;
     overflow: hidden;
     box-shadow: 0 1px 4px rgba(60, 64, 67, 0.06);
-    height: 100%;
+    height: auto;
 }
 
 .ml-card-accent {
