@@ -387,10 +387,10 @@
                                 </td>
                                 <td class="text-end">
                                     <div class="d-flex justify-content-end gap-1">
-                                        <a href="{{ route('invoicePreview', $inv->id) }}" class="kb-action-btn" title="View">
+                                        <a href="{{ route('invoicePreview', $inv->id) }}" class="btn kb-action-btn" title="View">
                                             <i class="bx bx-show"></i>
                                         </a>
-                                        <a href="{{ route('invoicePdfPreview', $inv->id) }}" class="kb-action-btn" title="PDF" style="color:#ea4335;">
+                                        <a href="{{ route('invoicePdfPreview', $inv->id) }}" class="btn kb-action-btn" title="PDF" style="color:#ea4335;">
                                             <i class="bx bxs-file-pdf"></i>
                                         </a>
                                     </div>

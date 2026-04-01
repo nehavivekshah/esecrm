@@ -2,17 +2,110 @@
 @section('title', 'Leads Pipeline (Kanban) - eseCRM')
 
 <style>
-/* Kanban Filter Bar */
-.kb-filter-bar{background:#fff;border:1px solid #e8eaed;border-radius:12px;padding:12px 16px;margin:0 0px 12px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-.kb-filter-row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
-.kb-filter-field{display:flex;flex-direction:column;gap:4px;flex:1 1 150px;min-width:120px}
-.kb-filter-label{font-size:.72rem;font-weight:600;color:#5f6368;text-transform:uppercase;letter-spacing:.3px;display:flex;align-items:center;gap:4px}
-.kb-filter-input,.kb-filter-select{height:36px;border:1.5px solid #dadce0;border-radius:8px;padding:0 10px;font-size:.82rem;color:#202124;background:#f8f9fa;outline:none;transition:border-color .2s,box-shadow .2s;width:100%}
-.kb-filter-input:focus,.kb-filter-select:focus{border-color:#006666;box-shadow:0 0 0 3px rgba(0,102,102,.10);background:#fff}
-.kb-filter-actions{flex:0 0 auto;flex-direction:row!important;align-items:flex-end;gap:6px;min-width:auto}
-.kb-filter-active-dot{display:inline-block;width:8px;height:8px;background:#f29900;border-radius:50%;margin-left:4px;vertical-align:middle;animation:kbDotPulse 1.5s ease-in-out infinite}
-@keyframes kbDotPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.7}}
-@media(max-width:576px){.kb-filter-bar{margin:0 8px 10px;padding:10px 12px}.kb-filter-field{flex:1 1 100%}.kb-filter-actions{width:100%}}
+    /* Kanban Filter Bar */
+    .kb-filter-bar {
+        background: #fff;
+        border: 1px solid #e8eaed;
+        border-radius: 12px;
+        padding: 12px 16px;
+        margin: 0 0px 12px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, .06)
+    }
+
+    .kb-filter-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: flex-end
+    }
+
+    .kb-filter-field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        flex: 1 1 150px;
+        min-width: 120px
+    }
+
+    .kb-filter-label {
+        font-size: .72rem;
+        font-weight: 600;
+        color: #5f6368;
+        text-transform: uppercase;
+        letter-spacing: .3px;
+        display: flex;
+        align-items: center;
+        gap: 4px
+    }
+
+    .kb-filter-input,
+    .kb-filter-select {
+        height: 36px;
+        border: 1.5px solid #dadce0;
+        border-radius: 8px;
+        padding: 0 10px;
+        font-size: .82rem;
+        color: #202124;
+        background: #f8f9fa;
+        outline: none;
+        transition: border-color .2s, box-shadow .2s;
+        width: 100%
+    }
+
+    .kb-filter-input:focus,
+    .kb-filter-select:focus {
+        border-color: #006666;
+        box-shadow: 0 0 0 3px rgba(0, 102, 102, .10);
+        background: #fff
+    }
+
+    .kb-filter-actions {
+        flex: 0 0 auto;
+        flex-direction: row !important;
+        align-items: flex-end;
+        gap: 6px;
+        min-width: auto
+    }
+
+    .kb-filter-active-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background: #f29900;
+        border-radius: 50%;
+        margin-left: 4px;
+        vertical-align: middle;
+        animation: kbDotPulse 1.5s ease-in-out infinite
+    }
+
+    @keyframes kbDotPulse {
+
+        0%,
+        100% {
+            transform: scale(1);
+            opacity: 1
+        }
+
+        50% {
+            transform: scale(1.4);
+            opacity: .7
+        }
+    }
+
+    @media(max-width:576px) {
+        .kb-filter-bar {
+            margin: 0 8px 10px;
+            padding: 10px 12px
+        }
+
+        .kb-filter-field {
+            flex: 1 1 100%
+        }
+
+        .kb-filter-actions {
+            width: 100%
+        }
+    }
 </style>
 
 @section('content')
@@ -97,50 +190,45 @@
 
             @php
                 $stages = [
-                    ['key' => 'New',       'status' => 0, 'label' => 'New Leads',     'cls' => 'new',       'color' => '#1a73e8'],
-                    ['key' => 'Contacted', 'status' => 1, 'label' => 'Contacted',     'cls' => 'contacted', 'color' => '#f29900'],
-                    ['key' => 'Qualified', 'status' => 2, 'label' => 'Qualified',     'cls' => 'qualified', 'color' => '#7c3aed'],
-                    ['key' => 'Proposal',  'status' => 3, 'label' => 'Proposal Sent', 'cls' => 'proposal',  'color' => '#006666'],
-                    ['key' => 'Closed',    'status' => 5, 'label' => 'Closed (Won)',  'cls' => 'closed',    'color' => '#34a853'],
-                    ['key' => 'Lost',      'status' => 9, 'label' => 'Lost',          'cls' => 'lost',      'color' => '#ea4335'],
+                    ['key' => 'New', 'status' => 0, 'label' => 'New Leads', 'cls' => 'new', 'color' => '#1a73e8'],
+                    ['key' => 'Contacted', 'status' => 1, 'label' => 'Contacted', 'cls' => 'contacted', 'color' => '#f29900'],
+                    ['key' => 'Qualified', 'status' => 2, 'label' => 'Qualified', 'cls' => 'qualified', 'color' => '#7c3aed'],
+                    ['key' => 'Proposal', 'status' => 3, 'label' => 'Proposal Sent', 'cls' => 'proposal', 'color' => '#006666'],
+                    ['key' => 'Closed', 'status' => 5, 'label' => 'Closed (Won)', 'cls' => 'closed', 'color' => '#34a853'],
+                    ['key' => 'Lost', 'status' => 9, 'label' => 'Lost', 'cls' => 'lost', 'color' => '#ea4335'],
                 ]
             @endphp
 
             @foreach($stages as $stage)
-            <div class="kb-col"
-                 data-stage="{{ $stage['key'] }}"
-                 data-status="{{ $stage['status'] }}"
-                 data-page="1"
-                 ondrop="drop(event)"
-                 ondragover="allowDrop(event)"
-                 ondragleave="dragLeave(event)">
+                <div class="kb-col" data-stage="{{ $stage['key'] }}" data-status="{{ $stage['status'] }}" data-page="1"
+                    ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
 
-                <div class="kb-col-header kb-col-header-{{ $stage['cls'] }}">
-                    <div class="kb-col-title">
-                        <span class="kb-col-dot" style="background:{{ $stage['color'] }};"></span>
-                        {{ $stage['label'] }}
+                    <div class="kb-col-header kb-col-header-{{ $stage['cls'] }}">
+                        <div class="kb-col-title">
+                            <span class="kb-col-dot" style="background:{{ $stage['color'] }};"></span>
+                            {{ $stage['label'] }}
+                        </div>
+                        <span class="kb-count" id="count-{{ $stage['key'] }}">
+                            <span class="kb-spinner-sm"></span>
+                        </span>
                     </div>
-                    <span class="kb-count" id="count-{{ $stage['key'] }}">
-                        <span class="kb-spinner-sm"></span>
-                    </span>
-                </div>
 
-                {{-- skeleton placeholder --}}
-                <div class="kb-items" id="col-{{ $stage['key'] }}">
-                    <div class="kb-skeleton"></div>
-                    <div class="kb-skeleton" style="height:60px;"></div>
-                    <div class="kb-skeleton" style="height:70px;"></div>
-                </div>
+                    {{-- skeleton placeholder --}}
+                    <div class="kb-items" id="col-{{ $stage['key'] }}">
+                        <div class="kb-skeleton"></div>
+                        <div class="kb-skeleton" style="height:60px;"></div>
+                        <div class="kb-skeleton" style="height:70px;"></div>
+                    </div>
 
-                <div class="kb-load-more-wrap" id="more-{{ $stage['key'] }}" style="display:none;">
-                    <button class="kb-load-more-btn"
+                    <div class="kb-load-more-wrap" id="more-{{ $stage['key'] }}" style="display:none;">
+                        <button class="kb-load-more-btn"
                             onclick="loadStage('{{ $stage['key'] }}', {{ $stage['status'] }}, true)">
-                        <i class="bx bx-chevron-down"></i>
-                        <span class="kb-load-more-label" id="more-label-{{ $stage['key'] }}">Load more</span>
-                    </button>
-                </div>
+                            <i class="bx bx-chevron-down"></i>
+                            <span class="kb-load-more-label" id="more-label-{{ $stage['key'] }}">Load more</span>
+                        </button>
+                    </div>
 
-            </div>
+                </div>
             @endforeach
 
         </div>
@@ -161,22 +249,26 @@
                                 <h5 class="ld-name" id="kb_leadName">Lead Details</h5>
                                 <span class="ld-company" id="kb_leadCompany">—</span>
                                 <div class="mt-2 text-white-50" style="font-size:0.75rem;">
-                                     <i class="bx bx-calendar-plus me-1"></i> Added on <span id="kb_leadSince">—</span>
+                                    <i class="bx bx-calendar-plus me-1"></i> Added on <span id="kb_leadSince">—</span>
                                 </div>
                             </div>
                         </div>
                         <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                            <span class="ld-status-chip" id="kb_leadStatus" style="background:#f29900 !important; color:#fff !important;">Fresh</span>
+                            <span class="ld-status-chip" id="kb_leadStatus"
+                                style="background:#f29900 !important; color:#fff !important;">Fresh</span>
                             <a class="ld-quick-btn" id="kb_btnCall" href="#" title="Call">
                                 <i class="bx bx-phone"></i>
                             </a>
-                            <a class="ld-quick-btn" id="kb_btnWa" style="background:rgba(37,211,102,0.2) !important; color:#25D366 !important;" href="#" target="_blank" title="WhatsApp">
+                            <a class="ld-quick-btn" id="kb_btnWa"
+                                style="background:rgba(37,211,102,0.2) !important; color:#25D366 !important;" href="#"
+                                target="_blank" title="WhatsApp">
                                 <i class="bx bxl-whatsapp"></i>
                             </a>
                             <a class="ld-quick-btn" id="kb_btnMail" href="#" title="Email">
                                 <i class="bx bx-envelope"></i>
                             </a>
-                            <button type="button" class="btn text-white ps-2 pe-0" data-bs-dismiss="modal" aria-label="Close" style="box-shadow:none;">
+                            <button type="button" class="btn text-white ps-2 pe-0" data-bs-dismiss="modal"
+                                aria-label="Close" style="box-shadow:none;">
                                 <i class="bx bx-x" style="font-size:1.8rem;"></i>
                             </button>
                         </div>
@@ -266,20 +358,22 @@
                                     <div class="col-12 mt-2 pt-2 border-top">
                                         <div class="ld-info-row">
                                             <span class="ld-info-label"><i class="bx bx-map-pin"></i> Location</span>
-                                            <span class="ld-info-val text-muted" id="kb_location_val" style="font-size:0.75rem;">—</span>
+                                            <span class="ld-info-val text-muted" id="kb_location_val"
+                                                style="font-size:0.75rem;">—</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="ld-action-bar">
-                            <a href="#" id="kb_editBtn" class="ld-btn ld-btn-primary"><i class="bx bx-edit-alt"></i> Edit Lead</a>
+                            <a href="#" id="kb_editBtn" class="ld-btn ld-btn-primary"><i class="bx bx-edit-alt"></i> Edit
+                                Lead</a>
                         </div>
                     </div>
 
                     {{-- Timeline Tab --}}
                     <div id="kb-tab-conv" style="display:none; padding:16px;">
-                         <div class="ld-timeline-head mb-3">
+                        <div class="ld-timeline-head mb-3">
                             <i class="bx bx-history"></i> Conversation History
                         </div>
                         <div id="kb_timeline">
@@ -290,7 +384,7 @@
                     {{-- Proposals Tab --}}
                     <div id="kb-tab-props" style="display:none; padding:16px;">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                             <div class="ld-timeline-head mb-0">
+                            <div class="ld-timeline-head mb-0">
                                 <i class="bx bx-file"></i> Lead Proposals
                             </div>
                             <a href="/manage-proposal" class="ld-btn ld-btn-primary py-1 px-3" style="font-size:0.75rem;">
@@ -315,7 +409,8 @@
                     {{-- Assign Tab --}}
                     <div id="kb-tab-assign" style="display:none; padding:30px 20px;">
                         <div class="text-center mb-4">
-                            <div class="ld-avatar mx-auto mb-3" style="background:#e6f4ea; color:#006666; width:64px; height:64px; border:none;">
+                            <div class="ld-avatar mx-auto mb-3"
+                                style="background:#e6f4ea; color:#006666; width:64px; height:64px; border:none;">
                                 <i class="bx bx-user-plus" style="font-size:2rem;"></i>
                             </div>
                             <h6 class="fw-bold mb-1">Assign Salesperson</h6>
@@ -345,15 +440,15 @@
     <script>
         const KANBAN_URL = "{{ route('leads.kanban_data') }}";
         const CSRF_TOKEN = "{{ csrf_token() }}";
-        const LIMIT      = 15;
+        const LIMIT = 15;
 
         const stageColors = {
-            'New':       { border: '#1a73e8', bg: 'rgba(26,115,232,0.08)' },
-            'Contacted': { border: '#f29900', bg: 'rgba(242,153,0,0.08)'  },
+            'New': { border: '#1a73e8', bg: 'rgba(26,115,232,0.08)' },
+            'Contacted': { border: '#f29900', bg: 'rgba(242,153,0,0.08)' },
             'Qualified': { border: '#7c3aed', bg: 'rgba(124,58,237,0.10)' },
-            'Proposal':  { border: '#006666', bg: 'rgba(0,102,102,0.08)'  },
-            'Closed':    { border: '#34a853', bg: 'rgba(52,168,83,0.08)'  },
-            'Lost':      { border: '#ea4335', bg: 'rgba(234,67,53,0.08)'  },
+            'Proposal': { border: '#006666', bg: 'rgba(0,102,102,0.08)' },
+            'Closed': { border: '#34a853', bg: 'rgba(52,168,83,0.08)' },
+            'Lost': { border: '#ea4335', bg: 'rgba(234,67,53,0.08)' },
         };
 
         // State: pages loaded per stage
@@ -369,11 +464,11 @@
 
         // Build a card's HTML
         function buildCard(lead, stage) {
-            const color   = stageColors[stage];
+            const color = stageColors[stage];
             const initial = (lead.name || lead.company || 'L').charAt(0).toUpperCase();
 
             // Header: name + company — always shown separately
-            const nameHtml    = `<div class="kb-card-name">${escHtml(lead.name || '—')}</div>`;
+            const nameHtml = `<div class="kb-card-name">${escHtml(lead.name || '—')}</div>`;
             const companyHtml = lead.company
                 ? `<div class="kb-card-company"><i class="bx bx-buildings"></i> ${escHtml(lead.company)}</div>` : '';
 
@@ -389,69 +484,69 @@
             const assignedName = kbUserMap[lead.assigned] || lead.assigned || 'Unassigned';
             const assignedHtml = `<div class="kb-card-poc mt-2"><i class="bx bx-user-circle"></i> ${escHtml(assignedName)}</div>`;
 
-            const waBtn    = lead.whatsapp
-                ? `<a href="https://api.whatsapp.com/send/?phone=${encodeURIComponent(lead.whatsapp)}&text=Hi&type=phone_number&app_absent=0" target="_blank" class="kb-action-btn kb-action-wa" title="WhatsApp" onclick="event.stopPropagation();"><i class="bx bxl-whatsapp"></i></a>` : '';
-            const callBtn  = lead.mob
-                ? `<a href="tel:+${encodeURIComponent(lead.mob)}" class="kb-action-btn kb-action-call" title="Call ${escHtml(lead.mob)}" onclick="event.stopPropagation();"><i class="bx bx-phone"></i></a>` : '';
+            const waBtn = lead.whatsapp
+                ? `<a href="https://api.whatsapp.com/send/?phone=${encodeURIComponent(lead.whatsapp)}&text=Hi&type=phone_number&app_absent=0" target="_blank" class="btn kb-action-btn kb-action-wa" title="WhatsApp" onclick="event.stopPropagation();"><i class="bx bxl-whatsapp"></i></a>` : '';
+            const callBtn = lead.mob
+                ? `<a href="tel:+${encodeURIComponent(lead.mob)}" class="btn kb-action-btn kb-action-call" title="Call ${escHtml(lead.mob)}" onclick="event.stopPropagation();"><i class="bx bx-phone"></i></a>` : '';
             const emailBtn = lead.email
-                ? `<a href="mailto:${escHtml(lead.email)}" class="kb-action-btn kb-action-email" title="Email ${escHtml(lead.email)}" onclick="event.stopPropagation();"><i class="bx bx-envelope"></i></a>` : '';
-            const editBtn  = `<a href="/manage-lead?id=${lead.id}&from=kanban" class="kb-action-btn kb-action-edit" title="Edit Lead" onclick="event.stopPropagation();"><i class="bx bx-edit-alt"></i></a>`;
+                ? `<a href="mailto:${escHtml(lead.email)}" class="btn kb-action-btn kb-action-email" title="Email ${escHtml(lead.email)}" onclick="event.stopPropagation();"><i class="bx bx-envelope"></i></a>` : '';
+            const editBtn = `<a href="/manage-lead?id=${lead.id}&from=kanban" class="btn kb-action-btn kb-action-edit" title="Edit Lead" onclick="event.stopPropagation();"><i class="bx bx-edit-alt"></i></a>`;
 
             return `
-                <div class="kb-card" id="lead-${lead.id}" draggable="true"
-                     ondragstart="drag(event)" data-id="${lead.id}"
-                     style="border-left-color:${color.border};">
+                    <div class="kb-card" id="lead-${lead.id}" draggable="true"
+                         ondragstart="drag(event)" data-id="${lead.id}"
+                         style="border-left-color:${color.border};">
 
-                    {{-- Top: avatar + name + company --}}
-                    <div class="kb-card-header">
-                        <div class="kb-card-avatar" style="background:${color.bg}; color:${color.border};">${initial}</div>
-                        <div class="kb-card-name-block">
-                            ${nameHtml}
-                            ${companyHtml}
+                        {{-- Top: avatar + name + company --}}
+                        <div class="kb-card-header">
+                            <div class="kb-card-avatar" style="background:${color.bg}; color:${color.border};">${initial}</div>
+                            <div class="kb-card-name-block">
+                                ${nameHtml}
+                                ${companyHtml}
+                            </div>
                         </div>
-                    </div>
 
-                    {{-- Meta row: source + value --}}
-                    <div class="kb-card-meta-row">
-                        ${sourceHtml}
-                        ${valueHtml}
-                    </div>
+                        {{-- Meta row: source + value --}}
+                        <div class="kb-card-meta-row">
+                            ${sourceHtml}
+                            ${valueHtml}
+                        </div>
 
-                    {{-- Assigned To --}}
-                    ${assignedHtml}
+                        {{-- Assigned To --}}
+                        ${assignedHtml}
 
-                    {{-- Action buttons — always visible --}}
-                    <div class="kb-card-actions kb-card-actions-visible">
-                        ${waBtn}${callBtn}${emailBtn}
-                        <span class="kb-action-spacer"></span>
-                        ${editBtn}
-                    </div>
-                </div>`;
+                        {{-- Action buttons — always visible --}}
+                        <div class="kb-card-actions kb-card-actions-visible">
+                            ${waBtn}${callBtn}${emailBtn}
+                            <span class="kb-action-spacer"></span>
+                            ${editBtn}
+                        </div>
+                    </div>`;
         }
 
 
         function escHtml(s) {
             return String(s)
-                .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-                .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
 
         // ── Get current filter values ──
         function getFilters() {
             return {
-                search:    $('#kbSearch').val().trim(),
-                assigned:  $('#kbAssigned').val(),
+                search: $('#kbSearch').val().trim(),
+                assigned: $('#kbAssigned').val(),
                 date_from: $('#kbDateFrom').val(),
-                date_to:   $('#kbDateTo').val(),
+                date_to: $('#kbDateTo').val(),
             };
         }
 
         // Load (or append) cards for one stage
         function loadStage(stage, statusInt, append) {
-            const page   = append ? (colPages[stage] + 1) : 1;
-            const colEl  = $('#col-' + stage);
+            const page = append ? (colPages[stage] + 1) : 1;
+            const colEl = $('#col-' + stage);
             const moreEl = $('#more-' + stage);
-            const cntEl  = $('#count-' + stage);
+            const cntEl = $('#count-' + stage);
 
             if (!append) {
                 colEl.html('<div class="kb-skeleton"></div><div class="kb-skeleton" style="height:60px;"></div>');
@@ -492,7 +587,7 @@
         // Load SUMMARY counts first (cheap), then load each column
         function initBoard() {
             let totalAll = 0;
-            var filters  = getFilters();
+            var filters = getFilters();
 
             $.get(KANBAN_URL, filters, function (res) {
                 if (res.counts) {
@@ -509,12 +604,12 @@
 
             // Load each column independently (parallel)
             const stages = [
-                { key: 'New',       status: 0 },
+                { key: 'New', status: 0 },
                 { key: 'Contacted', status: 1 },
                 { key: 'Qualified', status: 2 },
-                { key: 'Proposal',  status: 3 },
-                { key: 'Closed',    status: 5 },
-                { key: 'Lost',      status: 9 },
+                { key: 'Proposal', status: 3 },
+                { key: 'Closed', status: 5 },
+                { key: 'Lost', status: 9 },
             ];
             stages.forEach(function (s) {
                 colPages[s.key] = 1;
@@ -549,10 +644,10 @@
         });
 
         /* ── Kanban Card Double-Click → Lead Details Popup ── */
-        var kbUserMap = {!! json_encode($getUsers->pluck('name','id')) !!};
+        var kbUserMap = {!! json_encode($getUsers->pluck('name', 'id')) !!};
 
-        var kbStatusLabels = {0:'New',1:'Contacted',2:'Qualified',3:'Proposal Sent',5:'Closed (Won)',9:'Lost'};
-        var kbStatusColors = {0:'#5f6368',1:'#f29900',2:'#7c3aed',3:'#006666',5:'#34a853',9:'#ea4335'};
+        var kbStatusLabels = { 0: 'New', 1: 'Contacted', 2: 'Qualified', 3: 'Proposal Sent', 5: 'Closed (Won)', 9: 'Lost' };
+        var kbStatusColors = { 0: '#5f6368', 1: '#f29900', 2: '#7c3aed', 3: '#006666', 5: '#34a853', 9: '#ea4335' };
 
         $(document).on('dblclick', '.kb-card', function (e) {
             e.stopPropagation();
@@ -571,57 +666,57 @@
                 $('#kb_card_id').val(id);
                 var l = data.lead;
                 var loc = {};
-                try { loc = JSON.parse(l.location) || {}; } catch(e) {}
+                try { loc = JSON.parse(l.location) || {}; } catch (e) { }
 
                 // Header
                 $('#kb_leadAvatar').text((l.name || 'L').charAt(0).toUpperCase());
                 $('#kb_leadName').text(l.name || '—');
                 $('#kb_leadCompany').text(l.company || '—');
-                
+
                 // Added on date
                 var addDate = l.created_at ? new Date(l.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
                 $('#kb_leadSince').text(addDate);
 
                 var sl = kbStatusLabels[l.status] || 'New';
                 var sc = kbStatusColors[l.status] || '#5f6368';
-                $('#kb_leadStatus').text(sl).css({'background': sc, 'color': '#ffffff', 'border-color': sc});
+                $('#kb_leadStatus').text(sl).css({ 'background': sc, 'color': '#ffffff', 'border-color': sc });
 
-                $('#kb_btnCall').attr('href', l.mob   ? 'tel:+'+l.mob                    : '#');
-                $('#kb_btnWa').attr('href',   l.whatsapp ? 'https://wa.me/'+l.whatsapp  : '#');
-                $('#kb_btnMail').attr('href', l.email ? 'mailto:'+l.email               : '#');
+                $('#kb_btnCall').attr('href', l.mob ? 'tel:+' + l.mob : '#');
+                $('#kb_btnWa').attr('href', l.whatsapp ? 'https://wa.me/' + l.whatsapp : '#');
+                $('#kb_btnMail').attr('href', l.email ? 'mailto:' + l.email : '#');
 
                 // Info cards
-                $('#kb_mob').text(l.mob ? '+'+l.mob : '—');
-                $('#kb_wa').text(l.whatsapp ? '+'+l.whatsapp : '—');
+                $('#kb_mob').text(l.mob ? '+' + l.mob : '—');
+                $('#kb_wa').text(l.whatsapp ? '+' + l.whatsapp : '—');
                 $('#kb_email').text(l.email || '—');
                 $('#kb_company_val').text(l.company || '—');
                 $('#kb_position').text(l.position || '—');
                 $('#kb_industry').text(l.industry || '—');
-                
+
                 $('#kb_purpose').text(l.purpose || '—');
-                $('#kb_value').text(l.values ? '₹'+Number(l.values).toLocaleString('en-IN') : '—');
+                $('#kb_value').text(l.values ? '₹' + Number(l.values).toLocaleString('en-IN') : '—');
                 $('#kb_assigned').text(kbUserMap[l.assigned] || l.assigned || '—');
                 $('#kb_tags').text(l.tags || '—');
-                
+
                 // Location combined
                 $('#kb_location_val').text([loc.address, loc.city, loc.state, loc.zip, loc.country].filter(Boolean).join(', ') || '—');
 
                 // Edit button
-                $('#kb_editBtn').attr('href', '/manage-lead?id='+id+'&from=kanban');
-                
+                $('#kb_editBtn').attr('href', '/manage-lead?id=' + id + '&from=kanban');
+
                 // Pre-select quick assign
                 $('#kb_quick_assign').val(l.assigned || '');
                 $('#kb_assignMsg').html('');
 
                 // Proposals
                 var propHtml = '';
-                (l.proposals || []).forEach(function(p){
+                (l.proposals || []).forEach(function (p) {
                     propHtml += `<tr>
-                        <td>#${p.id}</td>
-                        <td>${p.subject || '—'}</td>
-                        <td>₹${Number(p.total).toLocaleString('en-IN')}</td>
-                        <td><span class="badge bg-info">${p.status || 'Draft'}</span></td>
-                    </tr>`;
+                            <td>#${p.id}</td>
+                            <td>${p.subject || '—'}</td>
+                            <td>₹${Number(p.total).toLocaleString('en-IN')}</td>
+                            <td><span class="badge bg-info">${p.status || 'Draft'}</span></td>
+                        </tr>`;
                 });
                 $('#kb_proposals').html(propHtml || '<tr><td colspan="4" class="text-center text-muted py-3">No proposals found.</td></tr>');
 
@@ -629,29 +724,29 @@
                 var html = '';
                 (data.comments || []).forEach(function (c) {
                     html += '<div class="ld-timeline-item">'
-                          + '<div class="ld-tl-dot"></div>'
-                          + '<div class="ld-tl-body">'
-                          + '<div class="ld-tl-meta">'+(c.next_date || c.created_at)+'</div>'
-                          + '<p class="ld-tl-msg">'+c.msg+'</p>'
-                          + '</div></div>';
+                        + '<div class="ld-tl-dot"></div>'
+                        + '<div class="ld-tl-body">'
+                        + '<div class="ld-tl-meta">' + (c.next_date || c.created_at) + '</div>'
+                        + '<p class="ld-tl-msg">' + c.msg + '</p>'
+                        + '</div></div>';
                 });
                 $('#kb_timeline').html(html || '<p class="text-muted text-center py-3" style="font-size:0.82rem;">No conversations yet.</p>');
             });
         });
 
         // Quick Assign in Kanban Modal
-        $(document).on('click', '#kb_quickAssignBtn', function(){
+        $(document).on('click', '#kb_quickAssignBtn', function () {
             var leadId = $('#kb_card_id').val(); // I'll need to set this ID when modal opens
             var salesId = $('#kb_quick_assign').val();
-            if(!salesId) { $('#kb_assignMsg').html('<span class="text-danger">Select a salesperson</span>'); return; }
+            if (!salesId) { $('#kb_assignMsg').html('<span class="text-danger">Select a salesperson</span>'); return; }
 
             $(this).prop('disabled', true).html('<i class="bx bx-loader-alt bx-spin"></i> Assigning...');
-            
+
             $.post("{{ route('leads.bulkAssign') }}", {
                 _token: CSRF_TOKEN,
                 lead_ids: [leadId],
                 assigned_to: salesId
-            }, function(res){
+            }, function (res) {
                 $('#kb_assignMsg').html('<span class="text-success"><i class="bx bx-check"></i> ' + (res.message || 'Assigned!') + '</span>');
                 initBoard(); // reload columns
             }).always(() => {
@@ -675,15 +770,15 @@
             $(ev.currentTarget).removeClass('kb-drag-over');
         }
         function drag(ev) {
-            ev.dataTransfer.setData("text",   ev.target.id);
+            ev.dataTransfer.setData("text", ev.target.id);
             ev.dataTransfer.setData("leadId", $(ev.target).data('id'));
         }
         function drop(ev) {
             ev.preventDefault();
             $(ev.currentTarget).removeClass('kb-drag-over');
 
-            const elemId  = ev.dataTransfer.getData("text");
-            const leadId  = ev.dataTransfer.getData("leadId");
+            const elemId = ev.dataTransfer.getData("text");
+            const leadId = ev.dataTransfer.getData("leadId");
             const newStage = $(ev.currentTarget).data('stage');
 
             const container = $(ev.currentTarget).find('.kb-items')[0];
@@ -691,7 +786,7 @@
             if (!elem || !container) return;
             container.appendChild(elem);
 
-            const revMap = { 'New':0,'Contacted':1,'Qualified':2,'Proposal':3,'Closed':5,'Lost':9 };
+            const revMap = { 'New': 0, 'Contacted': 1, 'Qualified': 2, 'Proposal': 3, 'Closed': 5, 'Lost': 9 };
             updateLeadStage(leadId, revMap[newStage], newStage, elem);
         }
         function updateLeadStage(leadId, newStatus, newStage, elem) {

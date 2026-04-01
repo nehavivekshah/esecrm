@@ -12,7 +12,7 @@
         {{-- ── Page heading bar ── --}}
         <div class="leads-toolbar mb-3">
             <div class="leads-toolbar-left gap-3">
-                <a href="/proposals" class="kb-action-btn" title="Back to Proposals"
+                <a href="/proposals" class="btn kb-action-btn" title="Back to Proposals"
                    style="width:34px;height:34px;background:#f1f3f4;color:#5f6368;">
                     <i class="bx bx-arrow-back"></i>
                 </a>
@@ -325,7 +325,7 @@
                                         <div class="mp-item-row-header">
                                             <span class="mp-item-num">{{ $k + 1 }}</span>
                                             <span class="mp-item-row-title">Item {{ $k + 1 }}</span>
-                                            <button type="button" class="kb-action-btn kb-action-del remove-item-btn ms-auto"
+                                            <button type="button" class="btn kb-action-btn kb-action-del remove-item-btn ms-auto"
                                                     style="width:28px;height:28px;" title="Remove item">
                                                 <i class="bx bx-trash"></i>
                                             </button>
@@ -400,7 +400,7 @@
                                         <div class="mp-item-row-header">
                                             <span class="mp-item-num">1</span>
                                             <span class="mp-item-row-title">Item 1</span>
-                                            <button type="button" class="kb-action-btn kb-action-del remove-item-btn ms-auto"
+                                            <button type="button" class="btn kb-action-btn kb-action-del remove-item-btn ms-auto"
                                                     style="width:28px;height:28px;" title="Remove item">
                                                 <i class="bx bx-trash"></i>
                                             </button>

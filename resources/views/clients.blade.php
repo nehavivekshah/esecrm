@@ -3,13 +3,14 @@
 
 @section('content')
     @php
-        $roles     = session('roles');
+        $roles = session('roles');
         $roleArray = explode(',', ($roles->permissions ?? ''));
 
-        $totalClients    = $clients->count();
-        $activeClients   = $clients->where('status', '1')->count();
+        $totalClients = $clients->count();
+        $activeClients = $clients->where('status', '1')->count();
         $inactiveClients = $clients->where('status', '0')->count();
-        $newThisMonth    = $clients->filter(fn($c) =>
+        $newThisMonth = $clients->filter(
+            fn($c) =>
             !empty($c->created_at) &&
             \Carbon\Carbon::parse($c->created_at)->isCurrentMonth()
         )->count();
@@ -66,12 +67,14 @@
             <div class="leads-toolbar mb-3">
                 <div class="leads-toolbar-left">
                     <form action="/clients" method="GET" id="clientFilterForm" class="d-flex align-items-center gap-2">
-                        <select name="status" id="clientStatusFilter" class="form-select" onchange="this.form.submit()" style="width: auto; min-width: 130px;">
+                        <select name="status" id="clientStatusFilter" class="form-select" onchange="this.form.submit()"
+                            style="width: auto; min-width: 130px;">
                             <option value="">All Status</option>
                             <option value="1" {{ ($status ?? '') == '1' ? 'selected' : '' }}>Active</option>
                             <option value="0" {{ ($status ?? '') == '0' ? 'selected' : '' }}>Inactive</option>
                         </select>
-                        <select name="industry" id="clientIndustryFilter" class="form-select" onchange="this.form.submit()" style="width: auto; min-width: 140px;">
+                        <select name="industry" id="clientIndustryFilter" class="form-select" onchange="this.form.submit()"
+                            style="width: auto; min-width: 140px;">
                             <option value="">All Industries</option>
                             @if(isset($availableIndustries))
                                 @foreach($availableIndustries as $ind)
@@ -79,10 +82,13 @@
                                 @endforeach
                             @endif
                         </select>
-                        <select name="lifecycle_stage" id="clientStageFilter" class="form-select" onchange="this.form.submit()" style="width: auto; min-width: 140px;">
+                        <select name="lifecycle_stage" id="clientStageFilter" class="form-select"
+                            onchange="this.form.submit()" style="width: auto; min-width: 140px;">
                             <option value="">All Stages</option>
-                            @foreach(['Lead','Marketing Qualified','Sales Qualified','Customer','Evangelist'] as $stage)
-                                <option value="{{ $stage }}" {{ ($lifecycle_stage ?? '') == $stage ? 'selected' : '' }}>{{ $stage }}</option>
+                            @foreach(['Lead', 'Marketing Qualified', 'Sales Qualified', 'Customer', 'Evangelist'] as $stage)
+                                <option value="{{ $stage }}" {{ ($lifecycle_stage ?? '') == $stage ? 'selected' : '' }}>
+                                    {{ $stage }}
+                                </option>
                             @endforeach
                         </select>
                     </form>
@@ -121,7 +127,10 @@
                                     {{-- Name --}}
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
-                                            <div class="lb-avatar-sm" style="background:linear-gradient(135deg,#006666,#009688);color:#fff;">{{ strtoupper(substr($client->name ?? 'C', 0, 1)) }}</div>
+                                            <div class="lb-avatar-sm"
+                                                style="background:linear-gradient(135deg,#006666,#009688);color:#fff;">
+                                                {{ strtoupper(substr($client->name ?? 'C', 0, 1)) }}
+                                            </div>
                                             <div>
                                                 <div class="fw-500">{{ $client->name ?? '' }}</div>
                                                 <div class="text-muted small d-none">{{ $client->company ?? '' }}</div>
@@ -159,32 +168,31 @@
                                         <div class="d-flex align-items-center justify-content-center gap-1">
                                             @if(!empty($client->whatsapp))
                                                 <a href="https://api.whatsapp.com/send/?phone={{ $client->whatsapp }}&text=Hi&type=phone_number&app_absent=0"
-                                                   target="_blank" class="kb-action-btn kb-action-wa" title="WhatsApp">
+                                                    target="_blank" class="btn kb-action-btn kb-action-wa" title="WhatsApp">
                                                     <i class="bx bxl-whatsapp"></i>
                                                 </a>
                                             @endif
                                             @if(!empty($client->email))
-                                                <a href="mailto:{{ $client->email }}"
-                                                   class="kb-action-btn kb-action-email" title="Email">
+                                                <a href="mailto:{{ $client->email }}" class="btn kb-action-btn kb-action-email"
+                                                    title="Email">
                                                     <i class="bx bx-envelope"></i>
                                                 </a>
                                             @endif
                                             @if(!empty($client->mob))
-                                                <a href="tel:{{ $client->mob }}"
-                                                   class="kb-action-btn kb-action-call" title="Call">
+                                                <a href="tel:{{ $client->mob }}" class="btn kb-action-btn kb-action-call"
+                                                    title="Call">
                                                     <i class="bx bx-phone"></i>
                                                 </a>
                                             @endif
                                             @if(in_array('client_edit', $roleArray) || in_array('All', $roleArray))
                                                 <a href="/manage-client?id={{ $client->id ?? '' }}"
-                                                   class="kb-action-btn kb-action-edit" title="Edit">
+                                                    class="btn kb-action-btn kb-action-edit" title="Edit">
                                                     <i class="bx bx-pencil"></i>
                                                 </a>
                                             @endif
                                             @if(in_array('client_delete', $roleArray) || in_array('All', $roleArray))
-                                                <a href="javascript:void(0)"
-                                                   class="kb-action-btn kb-action-del delete"
-                                                   id="{{ $client->id }}" date-page="clientDelete" title="Delete">
+                                                <a href="javascript:void(0)" class="btn kb-action-btn kb-action-del delete"
+                                                    id="{{ $client->id }}" date-page="clientDelete" title="Delete">
                                                     <i class="bx bx-trash"></i>
                                                 </a>
                                             @endif
@@ -200,37 +208,82 @@
         </div>
     </section>
 
-<style>
-/* ── Client Stat Row ── */
-.cl-stat-row {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
-}
-@media (max-width: 768px) { .cl-stat-row { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 480px) { .cl-stat-row { grid-template-columns: 1fr 1fr; } }
+    <style>
+        /* ── Client Stat Row ── */
+        .cl-stat-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+        }
 
-.cl-stat-card {
-    background: #fff; border: 1px solid #e8eaed; border-radius: 16px;
-    padding: 16px; display: flex; align-items: center; gap: 14px;
-    transition: box-shadow 0.15s;
-}
-.cl-stat-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
-.cl-stat-icon {
-    width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
-}
-.cl-stat-num { font-size: 1.35rem; font-weight: 800; color: #202124; line-height: 1; }
-.cl-stat-label { font-size: 0.72rem; color: #80868b; margin-top: 3px; font-weight: 500; }
+        @media (max-width: 768px) {
+            .cl-stat-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
 
-/* Reuse inv-status-pill from invoices page */
-.inv-status-pill {
-    display: inline-flex; align-items: center; gap: 3px;
-    border-radius: 20px; padding: 3px 9px; font-size: 0.71rem; font-weight: 600;
-    white-space: nowrap;
-}
-.inv-status-pill i { font-size: 0.85rem; }
-</style>
+        @media (max-width: 480px) {
+            .cl-stat-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .cl-stat-card {
+            background: #fff;
+            border: 1px solid #e8eaed;
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: box-shadow 0.15s;
+        }
+
+        .cl-stat-card:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .cl-stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .cl-stat-num {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #202124;
+            line-height: 1;
+        }
+
+        .cl-stat-label {
+            font-size: 0.72rem;
+            color: #80868b;
+            margin-top: 3px;
+            font-weight: 500;
+        }
+
+        /* Reuse inv-status-pill from invoices page */
+        .inv-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            border-radius: 20px;
+            padding: 3px 9px;
+            font-size: 0.71rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .inv-status-pill i {
+            font-size: 0.85rem;
+        }
+    </style>
 
     {{-- Hidden import form --}}
     <form id="Clientsubmit" action="/import-client-file" method="post" enctype="multipart/form-data">
@@ -240,7 +293,7 @@
 
     {{-- Offcanvas: Client Details --}}
     <div class="offcanvas offcanvas-end" tabindex="-1" id="clientModal" aria-labelledby="clientModalLabel"
-         style="width:800px; max-width:100vw; border:none; box-shadow:-10px 0 30px rgba(0,0,0,0.15);">
+        style="width:800px; max-width:100vw; border:none; box-shadow:-10px 0 30px rgba(0,0,0,0.15);">
 
         <div class="offcanvas-header lb-offcanvas-banner">
             <div class="d-flex align-items-center gap-3">
@@ -257,7 +310,8 @@
             <div class="d-flex align-items-center gap-2">
                 <div class="lb-header-actions me-3">
                     <a href="#" id="c_btnCall" class="lb-action-btn-circle" title="Call"><i class="bx bx-phone"></i></a>
-                    <a href="#" id="c_btnWa" class="lb-action-btn-circle" title="WhatsApp"><i class="bx bxl-whatsapp"></i></a>
+                    <a href="#" id="c_btnWa" class="lb-action-btn-circle" title="WhatsApp"><i
+                            class="bx bxl-whatsapp"></i></a>
                     <a href="#" id="c_btnMail" class="lb-action-btn-circle" title="Email"><i class="bx bx-envelope"></i></a>
                 </div>
                 <button type="button" class="lb-btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close">
@@ -284,7 +338,7 @@
             </div>
 
             <div class="ld-tab-container">
-                
+
                 {{-- Profile Tab --}}
                 <div id="c-tab-info" class="ld-tab-content active">
                     <div class="ld-info-grid">
@@ -369,7 +423,9 @@
                                 </tr>
                             </thead>
                             <tbody id="c_proposals">
-                                <tr><td colspan="4" class="text-center py-4">Loading proposals...</td></tr>
+                                <tr>
+                                    <td colspan="4" class="text-center py-4">Loading proposals...</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -387,7 +443,9 @@
                                 </tr>
                             </thead>
                             <tbody id="c_projects">
-                                <tr><td colspan="3" class="text-center py-4">Loading projects...</td></tr>
+                                <tr>
+                                    <td colspan="3" class="text-center py-4">Loading projects...</td>
+                                </tr>
                             </tbody>
                         </table>
 
@@ -403,7 +461,9 @@
                                     </tr>
                                 </thead>
                                 <tbody id="c_invoices">
-                                    <tr><td colspan="4" class="text-center py-3 small text-muted">No invoices found.</td></tr>
+                                    <tr>
+                                        <td colspan="4" class="text-center py-3 small text-muted">No invoices found.</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>

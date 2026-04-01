@@ -132,12 +132,12 @@
                             </div>
                             <div class="pj-card-actions" onclick="event.stopPropagation();">
                                 @if($project->deployment_url)
-                                    <a href="{{ $project->deployment_url }}" target="_blank" class="kb-action-btn"
+                                    <a href="{{ $project->deployment_url }}" target="_blank" class="btn kb-action-btn"
                                         title="Visit Site" style="background:rgba(26,115,232,0.08);color:#1a73e8;">
                                         <i class="bx bx-link-external"></i>
                                     </a>
                                 @endif
-                                <a href="/manage-project?id={{ $project->id }}" class="kb-action-btn" title="Edit"
+                                <a href="/manage-project?id={{ $project->id }}" class="btn kb-action-btn" title="Edit"
                                     style="background:rgba(0,102,102,0.08);color:#006666;">
                                     <i class="bx bx-pencil"></i>
                                 </a>
@@ -314,12 +314,12 @@
                                     </td>
                                     <td class="position-sticky end-0 bg-white" onclick="event.stopPropagation();">
                                         <div class="d-flex align-items-center justify-content-center gap-1">
-                                            <a href="/manage-project?id={{ $project->id }}" class="kb-action-btn kb-action-edit"
-                                                title="Edit">
+                                            <a href="/manage-project?id={{ $project->id }}"
+                                                class="btn kb-action-btn kb-action-edit" title="Edit">
                                                 <i class="bx bx-pencil"></i>
                                             </a>
                                             @if(in_array('projects_delete', $roleArray) || in_array('All', $roleArray))
-                                                <a href="javascript:void(0)" class="kb-action-btn kb-action-del delete"
+                                                <a href="javascript:void(0)" class="btn kb-action-btn kb-action-del delete"
                                                     id="{{ $project->id }}" date-page="projectDelete" title="Delete">
                                                     <i class="bx bx-trash"></i>
                                                 </a>

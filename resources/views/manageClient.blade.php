@@ -313,7 +313,7 @@
                                                             <td><input type="text" name="departments[{{$index}}][location]" class="form-control form-control-sm" value="{{$dept->location}}" placeholder="Location"></td>
                                                             <td><input type="text" name="departments[{{$index}}][poc]" class="form-control form-control-sm" value="{{$dept->poc}}" placeholder="POC"></td>
                                                             <td class="text-center align-middle">
-                                                                <button type="button" class="kb-action-btn kb-action-del remove-dept"><i class="bx bx-trash"></i></button>
+                                                                <button type="button" class="btn kb-action-btn kb-action-del remove-dept"><i class="bx bx-trash"></i></button>
                                                             </td>
                                                         </tr>
                                                     @endforeach
@@ -323,7 +323,7 @@
                                                         <td><input type="text" name="departments[0][location]" class="form-control form-control-sm" placeholder="Location"></td>
                                                         <td><input type="text" name="departments[0][poc]" class="form-control form-control-sm" placeholder="POC"></td>
                                                         <td class="text-center align-middle">
-                                                            <button type="button" class="kb-action-btn kb-action-del remove-dept"><i class="bx bx-trash"></i></button>
+                                                            <button type="button" class="btn kb-action-btn kb-action-del remove-dept"><i class="bx bx-trash"></i></button>
                                                         </td>
                                                     </tr>
                                                 @endif
@@ -567,7 +567,7 @@
                                                                 <td>{{ $doc->created_at->format('d M Y') }}</td>
                                                                 <td class="text-center">
                                                                     <a href="{{ asset('storage/'.$doc->attachment_path) }}" target="_blank"
-                                                                       class="kb-action-btn kb-action-call" title="Download">
+                                                                       class="btn kb-action-btn kb-action-call" title="Download">
                                                                         <i class="bx bx-download"></i>
                                                                     </a>
                                                                 </td>
@@ -600,7 +600,7 @@
                     <td class="ps-3"><input type="text" name="departments[${deptIndex}][name]" class="form-control form-control-sm" placeholder="Sales"></td>
                     <td><input type="text" name="departments[${deptIndex}][location]" class="form-control form-control-sm" placeholder="Location"></td>
                     <td><input type="text" name="departments[${deptIndex}][poc]" class="form-control form-control-sm" placeholder="POC"></td>
-                    <td class="text-center align-middle"><button type="button" class="kb-action-btn kb-action-del remove-dept"><i class="bx bx-trash"></i></button></td>`;
+                    <td class="text-center align-middle"><button type="button" class="btn kb-action-btn kb-action-del remove-dept"><i class="bx bx-trash"></i></button></td>`;
                 tbody.appendChild(tr);
                 deptIndex++;
             });

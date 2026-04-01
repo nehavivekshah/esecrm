@@ -1,8 +1,8 @@
 @php
-    $roles     = session('roles');
+    $roles = session('roles');
     $roleArray = explode(',', ($roles->permissions ?? ''));
-    $task      = $taskSingle[0];
-    $labels    = [
+    $task = $taskSingle[0];
+    $labels = [
         '#787878' => 'New Task',
         '#007265' => 'In Working',
         '#ff9800' => 'Pause',
@@ -10,7 +10,7 @@
         '#0dd500' => 'Complete',
     ];
     // Working hours calculation
-    $isRunning  = !empty($taskHistory[0]->id) && $taskHistory[0]->status == '0';
+    $isRunning = !empty($taskHistory[0]->id) && $taskHistory[0]->status == '0';
     $workingMin = $isRunning
         ? (strtotime(date('d-m-Y h:i:s a')) - strtotime($taskHistory[0]->start_time)) / 60
         : 0;
@@ -27,8 +27,7 @@
 {{-- Backdrop overlay --}}
 <div class="et-backdrop" onclick="closeTaskAjax();"></div>
 
-<div class="offcanvas offcanvas-end show" tabindex="-1" id="taskOffcanvas"
-     style="width:820px; max-width:100vw; border-top-left-radius:16px; border-bottom-left-radius:16px;
+<div class="offcanvas offcanvas-end show" tabindex="-1" id="taskOffcanvas" style="width:820px; max-width:100vw; border-top-left-radius:16px; border-bottom-left-radius:16px;
             box-shadow:-12px 0 40px rgba(0,0,0,0.12); z-index:1061; visibility:visible; overflow:hidden;">
 
     {{-- ── HEADER ── --}}
@@ -38,34 +37,34 @@
         </div>
         <div class="flex-grow-1 min-w-0">
             <textarea id="tasktitle" class="et-title-input" rows="1"
-                      placeholder="Task title…">{{ ucfirst($task->title) }}</textarea>
+                placeholder="Task title…">{{ ucfirst($task->title) }}</textarea>
         </div>
         <div class="d-flex align-items-center gap-2 flex-shrink-0">
             {{-- Timer start/stop --}}
             @if($isRunning)
                 <a href="javascript:void(0)" class="lb-btn lb-btn-ghost et-timer-btn et-timer-running taskstart"
-                   data-taskhr="{{ round($workingMin, 2) }}" id="{{ $taskHistory[0]->id }}"
-                   title="Stop Timer">
+                    data-taskhr="{{ round($workingMin, 2) }}" id="{{ $taskHistory[0]->id }}" title="Stop Timer">
                     <i class="bx bx-stop-circle"></i>
-                    <span class="d-none d-sm-inline">Stop &bull; {{ floor($workingMin/60) }}h {{ floor($workingMin%60) }}m</span>
+                    <span class="d-none d-sm-inline">Stop &bull; {{ floor($workingMin / 60) }}h
+                        {{ floor($workingMin % 60) }}m</span>
                 </a>
             @else
-                <a href="javascript:void(0)" class="lb-btn lb-btn-ghost et-timer-btn taskstart"
-                   id="{{ $task->id }}" title="Start Timer">
+                <a href="javascript:void(0)" class="lb-btn lb-btn-ghost et-timer-btn taskstart" id="{{ $task->id }}"
+                    title="Start Timer">
                     <i class="bx bx-play-circle"></i>
                     <span class="d-none d-sm-inline">Start</span>
                 </a>
             @endif
             {{-- Delete --}}
             @if(in_array('tasks_delete', $roleArray) || in_array('All', $roleArray))
-                <a href="javascript:void(0)" class="kb-action-btn kb-action-del taskdeleted"
-                   id="{{ $task->id }}" title="Delete Task">
+                <a href="javascript:void(0)" class="btn kb-action-btn kb-action-del taskdeleted" id="{{ $task->id }}"
+                    title="Delete Task">
                     <i class="bx bx-trash"></i>
                 </a>
             @endif
             {{-- Close --}}
-            <a href="javascript:void(0)" onclick="closeTaskAjax()" class="kb-action-btn" title="Close"
-               style="background:rgba(60,64,67,0.07);color:#5f6368;">
+            <a href="javascript:void(0)" onclick="closeTaskAjax()" class="btn kb-action-btn" title="Close"
+                style="background:rgba(60,64,67,0.07);color:#5f6368;">
                 <i class="bx bx-x"></i>
             </a>
         </div>
@@ -84,12 +83,11 @@
                     </div>
                     <div class="et-label-row">
                         <span class="et-label-dot" id="labelicon"
-                              style="background:{{ $task->label ?? '#787878' }};"></span>
+                            style="background:{{ $task->label ?? '#787878' }};"></span>
                         <select id="colorpalet" class="et-label-select">
                             <option value="">Select…</option>
                             @foreach($labels as $hex => $name)
-                                <option value="{{ $hex }}"
-                                    {{ ($task->label ?? '') == $hex ? 'selected' : '' }}>
+                                <option value="{{ $hex }}" {{ ($task->label ?? '') == $hex ? 'selected' : '' }}>
                                     {{ $name }}
                                 </option>
                             @endforeach
@@ -173,9 +171,9 @@
                         <div class="et-time-list">
                             @foreach($taskHistory as $t)
                                 @php
-                                    $d  = intval((strtotime($t->start_time ?? '') - strtotime($t->end_time ?? '')) / 60);
-                                    $h  = intval($d / 60);
-                                    $m  = $d % 60;
+                                    $d = intval((strtotime($t->start_time ?? '') - strtotime($t->end_time ?? '')) / 60);
+                                    $h = intval($d / 60);
+                                    $m = $d % 60;
                                 @endphp
                                 <div class="et-time-row">
                                     <span class="et-time-date">{{ date_format(date_create($t->created_at), 'd M') }}</span>
@@ -205,14 +203,15 @@
                         @csrf
                         <input type="hidden" name="taskid" id="taskid" value="{{ $task->id }}" />
                         <textarea name="taskdes" rows="6" class="et-textarea" id="example"
-                                  placeholder="Add a more detailed description…"
-                                  required>{{ ucfirst($task->des) }}</textarea>
+                            placeholder="Add a more detailed description…" required>{{ ucfirst($task->des) }}</textarea>
                         @if(in_array('tasks_edit', $roleArray) || in_array('All', $roleArray))
                             <div class="d-flex align-items-center gap-2 mt-2">
-                                <button type="submit" class="lb-btn lb-btn-primary" style="padding:5px 16px;font-size:0.80rem;">
+                                <button type="submit" class="lb-btn lb-btn-primary"
+                                    style="padding:5px 16px;font-size:0.80rem;">
                                     <i class="bx bx-save"></i> Save
                                 </button>
-                                <button type="reset" class="lb-btn lb-btn-ghost" style="padding:5px 12px;font-size:0.80rem;">
+                                <button type="reset" class="lb-btn lb-btn-ghost"
+                                    style="padding:5px 12px;font-size:0.80rem;">
                                     Cancel
                                 </button>
                                 <span id="res" class="small ms-1"></span>
@@ -226,25 +225,35 @@
                     <div class="et-panel-header d-flex justify-content-between align-items-center p-2 border-bottom">
                         <div class="d-flex align-items-center gap-2">
                             <i class="bx bx-paperclip text-muted"></i>
-                            <span class="fw-semibold" style="font-size: 0.9rem;">Attachments (<span id="attachmentCount">{{ count($taskAttachments ?? []) }}</span>)</span>
+                            <span class="fw-semibold" style="font-size: 0.9rem;">Attachments (<span
+                                    id="attachmentCount">{{ count($taskAttachments ?? []) }}</span>)</span>
                         </div>
-                        <button type="button" class="lb-btn lb-btn-ghost btn-sm" onclick="document.getElementById('taskAttachmentInput').click()" style="padding: 4px 10px; font-size: 0.8rem;">
+                        <button type="button" class="lb-btn lb-btn-ghost btn-sm"
+                            onclick="document.getElementById('taskAttachmentInput').click()"
+                            style="padding: 4px 10px; font-size: 0.8rem;">
                             <i class="bx bx-upload"></i> Upload File
                         </button>
-                        <input type="file" id="taskAttachmentInput" style="display:none;" onchange="uploadTaskAttachment(this)" />
+                        <input type="file" id="taskAttachmentInput" style="display:none;"
+                            onchange="uploadTaskAttachment(this)" />
                     </div>
-                    
+
                     <div id="attachmentsWrap" class="p-3">
                         @forelse($taskAttachments ?? [] as $attachment)
-                            <div class="d-flex justify-content-between align-items-center p-2 mb-2 border rounded bg-light" id="attachment-{{ $attachment->id }}">
-                                <a href="{{ asset($attachment->file_path) }}" target="_blank" class="d-flex align-items-center gap-2 text-decoration-none text-truncate" style="max-width: 80%;">
-                                    <i class="bx bxs-file-pdf text-danger" style="font-size:1.6rem;" id="att-icon-{{ $attachment->id }}"></i>
-                                    <span class="text-dark small fw-medium text-truncate">{{ $attachment->original_name }}</span>
+                            <div class="d-flex justify-content-between align-items-center p-2 mb-2 border rounded bg-light"
+                                id="attachment-{{ $attachment->id }}">
+                                <a href="{{ asset($attachment->file_path) }}" target="_blank"
+                                    class="d-flex align-items-center gap-2 text-decoration-none text-truncate"
+                                    style="max-width: 80%;">
+                                    <i class="bx bxs-file-pdf text-danger" style="font-size:1.6rem;"
+                                        id="att-icon-{{ $attachment->id }}"></i>
+                                    <span
+                                        class="text-dark small fw-medium text-truncate">{{ $attachment->original_name }}</span>
                                 </a>
                                 @if(in_array('tasks_edit', $roleArray) || in_array('All', $roleArray))
-                                <button type="button" class="btn btn-sm text-danger border-0 bg-transparent" onclick="deleteAttachment({{ $attachment->id }})">
-                                    <i class="bx bx-trash" style="font-size: 1.1rem;"></i>
-                                </button>
+                                    <button type="button" class="btn btn-sm text-danger border-0 bg-transparent"
+                                        onclick="deleteAttachment({{ $attachment->id }})">
+                                        <i class="bx bx-trash" style="font-size: 1.1rem;"></i>
+                                    </button>
                                 @endif
                             </div>
                         @empty
@@ -273,12 +282,12 @@
                             <div class="et-auth-avatar">
                                 {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                             </div>
-                            <textarea name="taskcomment" rows="2" id="commentInputs"
-                                      class="et-comment-input"
-                                      placeholder="Write a comment… (Ctrl+Enter to post)" required></textarea>
+                            <textarea name="taskcomment" rows="2" id="commentInputs" class="et-comment-input"
+                                placeholder="Write a comment… (Ctrl+Enter to post)" required></textarea>
                         </div>
                         <div class="d-flex gap-2 mt-2 ps-1" style="padding-left:40px;">
-                            <button type="submit" class="lb-btn lb-btn-primary" style="padding:4px 14px;font-size:0.78rem;">
+                            <button type="submit" class="lb-btn lb-btn-primary"
+                                style="padding:4px 14px;font-size:0.78rem;">
                                 <i class="bx bx-send"></i> Post
                             </button>
                             <span id="res1" class="small align-self-center"></span>
@@ -291,13 +300,15 @@
                             @foreach($taskComments as $c)
                                 @php $isMine = $c->uid == Auth::user()->id; @endphp
                                 <div class="et-comment {{ $isMine ? 'et-comment-mine' : 'et-comment-other' }}">
-                                    <div class="et-comment-avatar" style="{{ $isMine ? 'background:rgba(0,102,102,0.12);color:#006666;' : 'background:rgba(26,115,232,0.10);color:#1a73e8;' }}">
+                                    <div class="et-comment-avatar"
+                                        style="{{ $isMine ? 'background:rgba(0,102,102,0.12);color:#006666;' : 'background:rgba(26,115,232,0.10);color:#1a73e8;' }}">
                                         {{ strtoupper(substr($c->name ?? 'U', 0, 1)) }}
                                     </div>
                                     <div class="et-comment-bubble {{ $isMine ? 'et-bubble-mine' : 'et-bubble-other' }}">
                                         <div class="et-comment-name">{{ $c->name ?? 'Unknown' }}</div>
                                         <div class="et-comment-text">{{ $c->comments }}</div>
-                                        <div class="et-comment-time">{{ \Carbon\Carbon::parse($c->created_at)->format('d M Y, H:i') }}</div>
+                                        <div class="et-comment-time">
+                                            {{ \Carbon\Carbon::parse($c->created_at)->format('d M Y, H:i') }}</div>
                                     </div>
                                 </div>
                             @endforeach
@@ -316,78 +327,78 @@
 </div>
 
 <script>
-(function () {
-    /* 1. Auto-resize title textarea */
-    const titleTA = document.getElementById('tasktitle');
-    function resizeTitle() {
-        titleTA.style.height = 'auto';
-        titleTA.style.height = titleTA.scrollHeight + 'px';
-    }
-    if (titleTA) { resizeTitle(); titleTA.addEventListener('input', resizeTitle); }
+    (function () {
+        /* 1. Auto-resize title textarea */
+        const titleTA = document.getElementById('tasktitle');
+        function resizeTitle() {
+            titleTA.style.height = 'auto';
+            titleTA.style.height = titleTA.scrollHeight + 'px';
+        }
+        if (titleTA) { resizeTitle(); titleTA.addEventListener('input', resizeTitle); }
 
-    /* 2. Live label dot update (background, not color) */
-    const colorSel = document.getElementById('colorpalet');
-    const labelDot = document.getElementById('labelicon');
-    if (colorSel && labelDot) {
-        colorSel.addEventListener('change', function () {
-            labelDot.style.background = this.value || '#787878';
-            /* keep script.js happy — it targets #labelicon.style.color */
-            labelDot.style.color = this.value || '#787878';
-        });
-    }
+        /* 2. Live label dot update (background, not color) */
+        const colorSel = document.getElementById('colorpalet');
+        const labelDot = document.getElementById('labelicon');
+        if (colorSel && labelDot) {
+            colorSel.addEventListener('change', function () {
+                labelDot.style.background = this.value || '#787878';
+                /* keep script.js happy — it targets #labelicon.style.color */
+                labelDot.style.color = this.value || '#787878';
+            });
+        }
 
-    /* 3. Ctrl+Enter to submit comment */
-    const commentTA = document.getElementById('commentInputs');
-    if (commentTA) {
-        commentTA.addEventListener('keydown', function (e) {
-            if (e.ctrlKey && e.key === 'Enter') {
-                e.preventDefault();
-                document.getElementById('taskComments').dispatchEvent(new Event('submit', { bubbles: true }));
+        /* 3. Ctrl+Enter to submit comment */
+        const commentTA = document.getElementById('commentInputs');
+        if (commentTA) {
+            commentTA.addEventListener('keydown', function (e) {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    e.preventDefault();
+                    document.getElementById('taskComments').dispatchEvent(new Event('submit', { bubbles: true }));
+                }
+            });
+        }
+
+        /* 4. Live running timer counter in Stop button */
+        const stopBtn = document.querySelector('.et-timer-running');
+        if (stopBtn) {
+            let startMs = Date.now();
+            const baseMin = parseFloat(stopBtn.dataset.taskhr || 0) * 60000;
+            const span = stopBtn.querySelector('span');
+            if (span) {
+                setInterval(function () {
+                    const totalMs = baseMin + (Date.now() - startMs);
+                    const h = Math.floor(totalMs / 3600000);
+                    const m = Math.floor((totalMs % 3600000) / 60000);
+                    const s = Math.floor((totalMs % 60000) / 1000);
+                    span.textContent = 'Stop \u2022 ' + (h ? h + 'h ' : '') + m + 'm ' + s + 's';
+                }, 1000);
             }
-        });
-    }
-
-    /* 4. Live running timer counter in Stop button */
-    const stopBtn = document.querySelector('.et-timer-running');
-    if (stopBtn) {
-        let startMs = Date.now();
-        const baseMin = parseFloat(stopBtn.dataset.taskhr || 0) * 60000;
-        const span    = stopBtn.querySelector('span');
-        if (span) {
-            setInterval(function () {
-                const totalMs  = baseMin + (Date.now() - startMs);
-                const h = Math.floor(totalMs / 3600000);
-                const m = Math.floor((totalMs % 3600000) / 60000);
-                const s = Math.floor((totalMs % 60000) / 1000);
-                span.textContent = 'Stop \u2022 ' + (h ? h + 'h ' : '') + m + 'm ' + s + 's';
-            }, 1000);
-        }
-    }
-
-    /* 5. Attachment Logic */
-    window.uploadTaskAttachment = function(input) {
-        if (!input.files || input.files.length === 0) return;
-        
-        let formData = new FormData();
-        formData.append('file', input.files[0]);
-        formData.append('task_id', '{{ $task->id }}');
-        formData.append('_token', '{{ csrf_token() }}');
-
-        document.getElementById('attachmentLoader').style.display = 'block';
-        if(document.getElementById('noAttachmentsMsg')) {
-            document.getElementById('noAttachmentsMsg').style.display = 'none';
         }
 
-        fetch('{{ route("task.attachment.upload") }}', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('attachmentLoader').style.display = 'none';
-            if (data.status === 'success') {
-                const att = data.attachment;
-                const html = `
+        /* 5. Attachment Logic */
+        window.uploadTaskAttachment = function (input) {
+            if (!input.files || input.files.length === 0) return;
+
+            let formData = new FormData();
+            formData.append('file', input.files[0]);
+            formData.append('task_id', '{{ $task->id }}');
+            formData.append('_token', '{{ csrf_token() }}');
+
+            document.getElementById('attachmentLoader').style.display = 'block';
+            if (document.getElementById('noAttachmentsMsg')) {
+                document.getElementById('noAttachmentsMsg').style.display = 'none';
+            }
+
+            fetch('{{ route("task.attachment.upload") }}', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('attachmentLoader').style.display = 'none';
+                    if (data.status === 'success') {
+                        const att = data.attachment;
+                        const html = `
                     <div class="d-flex justify-content-between align-items-center p-2 mb-2 border rounded bg-light" id="attachment-${att.id}">
                         <a href="/${att.file_path}" target="_blank" class="d-flex align-items-center gap-2 text-decoration-none text-truncate" style="max-width: 80%;">
                             <i class="bx bxs-file text-primary" style="font-size:1.6rem;"></i>
@@ -398,45 +409,45 @@
                         </button>
                     </div>
                 `;
-                document.getElementById('attachmentsWrap').insertAdjacentHTML('beforeend', html);
-                
-                let countSpan = document.getElementById('attachmentCount');
-                countSpan.innerText = parseInt(countSpan.innerText) + 1;
-            } else {
-                alert(data.message || 'Error uploading file');
-            }
-        })
-        .catch(error => {
-            document.getElementById('attachmentLoader').style.display = 'none';
-            alert('Error uploading file');
-            console.error(error);
-        });
-        
-        input.value = '';
-    };
+                        document.getElementById('attachmentsWrap').insertAdjacentHTML('beforeend', html);
 
-    window.deleteAttachment = function(id) {
-        if (!confirm('Delete this attachment?')) return;
-        
-        fetch(`/task-attachment/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                document.getElementById('attachment-' + id).remove();
-                let countSpan = document.getElementById('attachmentCount');
-                let newCount = parseInt(countSpan.innerText) - 1;
-                countSpan.innerText = newCount;
-                if(newCount === 0 && document.getElementById('noAttachmentsMsg')) {
-                     document.getElementById('noAttachmentsMsg').style.display = 'block';
+                        let countSpan = document.getElementById('attachmentCount');
+                        countSpan.innerText = parseInt(countSpan.innerText) + 1;
+                    } else {
+                        alert(data.message || 'Error uploading file');
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('attachmentLoader').style.display = 'none';
+                    alert('Error uploading file');
+                    console.error(error);
+                });
+
+            input.value = '';
+        };
+
+        window.deleteAttachment = function (id) {
+            if (!confirm('Delete this attachment?')) return;
+
+            fetch(`/task-attachment/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
                 }
-            }
-        });
-    };
-})();
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        document.getElementById('attachment-' + id).remove();
+                        let countSpan = document.getElementById('attachmentCount');
+                        let newCount = parseInt(countSpan.innerText) - 1;
+                        countSpan.innerText = newCount;
+                        if (newCount === 0 && document.getElementById('noAttachmentsMsg')) {
+                            document.getElementById('noAttachmentsMsg').style.display = 'block';
+                        }
+                    }
+                });
+        };
+    })();
 </script>

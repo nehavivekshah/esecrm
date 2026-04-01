@@ -181,28 +181,28 @@
                                 <div class="d-flex align-items-center justify-content-center gap-1">
                                     {{-- View PDF --}}
                                     <a href="/invoices/pdf/preview/{{ $invoice->id }}"
-                                       class="kb-action-btn" target="_blank" title="View PDF"
+                                       class="btn kb-action-btn" target="_blank" title="View PDF"
                                        style="background:rgba(26,115,232,0.10);color:#1a73e8;">
                                         <i class="bx bx-file"></i>
                                     </a>
                                     {{-- Edit --}}
                                     @if(in_array('invoice_edit', $roleArray) || in_array('All', $roleArray))
                                         <a href="/manage-invoice?id={{ $invoice->id }}"
-                                           class="kb-action-btn" title="Edit"
+                                           class="btn kb-action-btn" title="Edit"
                                            style="background:rgba(0,102,102,0.10);color:#006666;">
                                             <i class="bx bx-edit"></i>
                                         </a>
                                     @endif
                                     {{-- Send Email --}}
                                     <a href="mailto:{{ $invoice->client_email ?? '' }}?subject=Invoice INV-{{ $invoice->invoice_number }}&body=Please find attached invoice."
-                                       class="kb-action-btn send-invoice-btn" title="Send Email"
+                                       class="btn kb-action-btn send-invoice-btn" title="Send Email"
                                        style="background:rgba(251,188,4,0.10);color:#f9a825;">
                                         <i class="bx bx-envelope"></i>
                                     </a>
                                     {{-- Delete --}}
                                     @if(in_array('invoice_delete', $roleArray) || in_array('All', $roleArray))
                                         <a href="javascript:void(0)"
-                                           class="kb-action-btn delete"
+                                           class="btn kb-action-btn delete"
                                            data-id="{{ $invoice->id }}"
                                            data-page="invoiceDelete"
                                            title="Delete"

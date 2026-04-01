@@ -196,20 +196,20 @@
                                     <td class="text-end position-sticky end-0">
                                         <div class="d-flex align-items-center justify-content-end gap-1">
                                             <a href="/quotation/{{ $proposal->id }}/{{ md5($proposal->client_email) }}"
-                                               class="kb-action-btn" title="View" target="_blank"
+                                               class="btn kb-action-btn" title="View" target="_blank"
                                                style="background:rgba(26,115,232,0.08);color:#1a73e8;">
                                                 <i class="bx bx-show"></i>
                                             </a>
                                             @if(in_array('proposals_edit',$roleArray) || in_array('All',$roleArray))
                                                 <a href="/manage-proposal?id={{ $proposal->id }}"
-                                                   class="kb-action-btn" title="Edit"
+                                                   class="btn kb-action-btn" title="Edit"
                                                    style="background:rgba(0,102,102,0.08);color:#006666;">
                                                     <i class="bx bx-edit"></i>
                                                 </a>
                                             @endif
                                             @if(in_array('proposals_delete',$roleArray) || in_array('All',$roleArray))
                                                 <a href="javascript:void(0)"
-                                                   class="kb-action-btn kb-action-del delete" title="Delete"
+                                                   class="btn kb-action-btn kb-action-del delete" title="Delete"
                                                    id="{{ $proposal->id }}" data-page="proposalDelete">
                                                     <i class="bx bx-trash"></i>
                                                 </a>
