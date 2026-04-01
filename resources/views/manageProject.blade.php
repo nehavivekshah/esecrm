@@ -116,7 +116,7 @@
                                         <input type="text" id="project_id_custom" name="project_id_custom" 
                                                class="form-control"
                                                placeholder="Custom identifier…"
-                                               value="{{ old('project_id_custom', $project->project_id_custom ?? '') }}">
+                                               value="{{ old('project_id_custom', $project->project_id_custom ?? $generatedId ?? '') }}">
                                     </div>
                                 </div>
 
