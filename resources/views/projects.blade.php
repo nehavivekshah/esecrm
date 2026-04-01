@@ -123,7 +123,8 @@
                                 <div class="pj-card-name">{{ $project->name }}</div>
                                 <div class="pj-card-id">
                                     @if($project->project_id_custom)
-                                        <span class="badge bg-light text-dark border-0 fw-bold" style="font-size:0.6rem;">{{ $project->project_id_custom }}</span>
+                                        <span class="badge bg-light text-dark border-0 fw-bold"
+                                            style="font-size:0.6rem;">{{ $project->project_id_custom }}</span>
                                     @else
                                         #PROU-{{ str_pad($project->id, 4, '0', STR_PAD_LEFT) }}
                                     @endif
@@ -155,10 +156,10 @@
 
                         {{-- Sales / Manager --}}
                         @if($project->salesperson_name)
-                        <div class="pj-card-client mt-1" title="Closed by">
-                            <i class="bx bx-badge-check" style="color:#1a73e8;"></i>
-                            <span class="text-muted" style="font-size:0.7rem;">Sales: {{ $project->salesperson_name }}</span>
-                        </div>
+                            <div class="pj-card-client mt-1" title="Closed by">
+                                <i class="bx bx-badge-check" style="color:#1a73e8;"></i>
+                                <span class="text-muted" style="font-size:0.7rem;">Sales: {{ $project->salesperson_name }}</span>
+                            </div>
                         @endif
 
                         {{-- Type badge --}}
@@ -217,13 +218,13 @@
                             <tr>
                                 <th>Project ID</th>
                                 <th>Project Details</th>
-                                <th class="text-center">Status</th>
-                                <th class="m-none">Sales Owner</th>
+                                <th class="m-none">Service Category</th>
                                 <th class="m-none">Project Timeline</th>
                                 <th>Recovery Status</th>
-                                <th class="m-none">Service Category</th>
+                                <th class="m-none">Closed By</th>
+                                <th class="text-center">Status</th>
                                 <th class="m-none">Tags</th>
-                                <th class="text-center position-sticky end-0 bg-default mw60" data-orderable="false"
+                                <th class="text-center position-sticky end-0 mw60" data-orderable="false"
                                     style="z-index:1;">Action</th>
                             </tr>
                         </thead>
@@ -260,21 +261,8 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="text-center">
-                                        @if($project->status == 1)
-                                            <span class="pv-badge pv-badge-success">Active</span>
-                                        @else
-                                            <span class="pv-badge pv-badge-info">Closed</span>
-                                        @endif
-                                    </td>
                                     <td class="m-none">
-                                        <div class="small text-muted">
-                                            @if($project->salesperson_name)
-                                                <i class="bx bx-user-check"></i> {{ $project->salesperson_name }}
-                                            @else
-                                                —
-                                            @endif
-                                        </div>
+                                        <span class="pj-type-pill">{{ $project->type ?? 'General' }}</span>
                                     </td>
                                     <td class="m-none">
                                         <div class="small">
@@ -299,7 +287,20 @@
                                         </div>
                                     </td>
                                     <td class="m-none">
-                                        <span class="pj-type-pill">{{ $project->type ?? 'General' }}</span>
+                                        <div class="small text-muted">
+                                            @if($project->salesperson_name)
+                                                <i class="bx bx-user-check"></i> {{ $project->salesperson_name }}
+                                            @else
+                                                —
+                                            @endif
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        @if($project->status == 1)
+                                            <span class="pv-badge pv-badge-success">Active</span>
+                                        @else
+                                            <span class="pv-badge pv-badge-info">Closed</span>
+                                        @endif
                                     </td>
                                     <td class="m-none">
                                         @if($project->tags)
