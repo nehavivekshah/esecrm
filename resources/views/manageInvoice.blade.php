@@ -3,7 +3,7 @@
 
 @section('content')
     <style>
-        .mp-sidebar-sticky { position: sticky; top: 20px; z-index: 10; }
+        .mp-sidebar-sticky { position: sticky; top: 84px; z-index: 10; }
         .mp-item-row { background: #fff; border: 1px solid #e8eaed; border-radius: 16px; padding: 1.25rem; margin-bottom: 1.25rem; position: relative; transition: all 0.2s; }
         .mp-item-row:hover { border-color: #006666; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .mp-item-row-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid #f1f3f4; padding-bottom: 10px; }
