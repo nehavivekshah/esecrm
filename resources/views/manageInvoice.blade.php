@@ -844,8 +844,11 @@
             `;
             tbody.appendChild(newRow);
             
-            // Initialize selectpicker for the new row
-            $(newRow).find('.selectpicker').selectpicker();
+            // Final Robust Init: Ensure only one selectpicker instance
+            const $newSelects = $(newRow).find('.selectpicker');
+            $newSelects.each(function() {
+                $(this).selectpicker('destroy').selectpicker();
+            });
             
             updateItemIndices(); // Update indices before recalculating
             recalculateTotals();

@@ -737,16 +737,26 @@
                 });
                 const amtEl = clone.querySelector('.item-amount');
                 if (amtEl) amtEl.textContent = formatCurrency(0, currencySelect.value);
-                // Clean up cloned Bootstrap Select UI markup from the clone before appending
-                $(clone).find('.bootstrap-select').each(function() {
-                    const $select = $(this).find('select');
-                    $(this).replaceWith($select);
-                });
-                
+                // Aggressive Fix: Completely reconstruct the tax select field to avoid duplication
+                const $taxField = $(clone).find('.mp-item-tax-field');
+                const optionsHtml = $taxField.find('select').html(); // Preserve the <option> tags
+                $taxField.empty().append('<label class="mp-item-label">Tax</label>')
+                         .append($('<select>', {
+                            class: 'selectpicker form-control form-control-sm item-tax',
+                            multiple: true,
+                            'data-selected-text-format': 'count > 2',
+                            'data-container': 'body',
+                            name: `proposal_items[${idx}][tax_percentage][]`,
+                            title: 'No Tax'
+                         }).append(optionsHtml));
+
                 container.appendChild(clone);
                 
-                // Initialize selectpicker for the new row
-                $(clone).find('.selectpicker').selectpicker();
+                // Final Robust Init: Ensure only one selectpicker instance
+                const $newSelects = $(clone).find('.selectpicker');
+                $newSelects.each(function() {
+                    $(this).selectpicker('destroy').selectpicker();
+                });
                 
                 clone.querySelectorAll('.mp-autoresize').forEach(autoResize);
                 clone.querySelector('.item-name')?.focus();
