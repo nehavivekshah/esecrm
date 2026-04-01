@@ -6561,11 +6561,9 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     font-weight: 600 !important;
 }
 
+/* Correctly style the selected item checkmark if needed, but remove the text-rendering typo */
 .bootstrap-select .dropdown-item.selected:after {
-    content: '\bx-check';
-    font-family: 'boxicons' !important;
-    margin-left: auto;
-    font-size: 1.1rem;
+    display: none !important;
 }
 
 .bootstrap-select .filter-option-inner-inner {
@@ -6580,9 +6578,10 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
 }
 
 .mp-item-tax-field .bootstrap-select.form-control-sm .dropdown-toggle {
-    height: 31px !important;
-    padding: 0.25rem 0.5rem !important;
+    height: 45px !important;
+    padding: 10px 12px !important;
     font-size: 0.875rem !important;
+    border-radius: 5px !important;
 }
 
 .mp-item-tax-field .bootstrap-select.form-control-sm .filter-option {
