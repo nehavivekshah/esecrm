@@ -353,19 +353,6 @@
                     $('.inv-row').hide().filter('[data-status="' + f + '"]').show();
                 }
             });
-
-            // Dynamic client filter dropdown
-            const filterContainer = $('<div class="d-flex gap-2 mb-3"></div>').insertBefore('#lists_wrapper');
-            const clientSelect = $('<select class="lb-select" style="max-width:200px;"><option value="">All Clients</option></select>')
-                .appendTo(filterContainer)
-                .on('change', function () {
-                    const val = $.fn.dataTable.util.escapeRegex($(this).val());
-                    table.column(2).search(val ? '^' + val + '$' : '', true, false).draw();
-                });
-            table.column(2).data().unique().sort().each(function (d) {
-                const clean = $('<div>').html(d).text().trim().split('\n')[0]; // Extract name from complex HTML
-                if (clean) clientSelect.append('<option value="' + clean + '">' + clean + '</option>');
-            });
         });
     </script>
 
