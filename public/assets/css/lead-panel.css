@@ -4,7 +4,8 @@
 ================================================================= */
 
 /* Container & Global Base */
-#leadModal, .offcanvas-end {
+#leadModal,
+.offcanvas-end {
     display: flex;
     flex-direction: column;
     background: #f8f9fa !important;
@@ -22,7 +23,8 @@
 .ld-header {
     position: relative;
     padding: 24px;
-    background: #004d4d; /* Darker teal for premium feel */
+    background: #004d4d;
+    /* Darker teal for premium feel */
     background: linear-gradient(135deg, #004d4d 0%, #006666 100%);
     color: #ffffff;
     border-bottom: none;
@@ -48,7 +50,7 @@
     font-size: 1.5rem;
     font-weight: 700;
     color: #ffffff;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .ld-name {
@@ -96,7 +98,9 @@
     transform: translateY(-2px);
 }
 
-.ld-quick-btn i { font-size: 1.1rem; }
+.ld-quick-btn i {
+    font-size: 1.1rem;
+}
 
 /* ── Segmented Control Tabs ── */
 .ld-tab-nav {
@@ -122,21 +126,44 @@
     transition: all 0.2s ease;
 }
 
-.ld-tab i { font-size: 1rem; color: #80868b; }
+.ld-tab i {
+    font-size: 1rem;
+    color: #80868b;
+}
 
-.ld-tab:hover { background: #f1f3f4; color: #202124; }
+.ld-tab:hover {
+    background: #f1f3f4;
+    color: #202124;
+}
 
 .ld-tab.active {
-    background: #e6f4ea; /* Light green/teal tint */
+    background: #e6f4ea;
+    /* Light green/teal tint */
     color: #006666;
 }
 
-.ld-tab.active i { color: #006666; }
+.ld-tab.active i {
+    color: #006666;
+}
 
 /* ── Content Layout ── */
-.tab-content { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
-.ld-tab-pane { flex: 1; display: none; overflow-y: auto; padding: 20px; }
-.ld-tab-pane.active { display: block; }
+.tab-content {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.ld-tab-pane {
+    flex: 1;
+    display: none;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.ld-tab-pane.active {
+    display: block;
+}
 
 /* ── Info Grid & Cards ── */
 .ld-info-grid {
@@ -151,7 +178,7 @@
     border: 1px solid #e8eaed;
     border-radius: 12px;
     padding: 16px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .ld-info-card-header {
@@ -175,7 +202,9 @@
     border-bottom: 1px solid #f8f9fa;
 }
 
-.ld-info-row:last-child { border-bottom: none; }
+.ld-info-row:last-child {
+    border-bottom: none;
+}
 
 .ld-info-label {
     font-size: 0.78rem;
@@ -185,7 +214,12 @@
     gap: 6px;
 }
 
-.ld-info-label i { font-size: 1rem; color: #80868b; width: 18px; text-align: center; }
+.ld-info-label i {
+    font-size: 1rem;
+    color: #80868b;
+    width: 18px;
+    text-align: center;
+}
 
 .ld-info-val {
     font-size: 0.85rem;
@@ -194,8 +228,14 @@
     text-align: right;
 }
 
-.ld-info-val a { color: #006666; text-decoration: none; }
-.ld-info-val a:hover { text-decoration: underline; }
+.ld-info-val a {
+    color: #006666;
+    text-decoration: none;
+}
+
+.ld-info-val a:hover {
+    text-decoration: underline;
+}
 
 /* ── Vertical Timeline ── */
 .ld-timeline {
@@ -246,11 +286,13 @@
     padding: 12px;
     font-size: 0.82rem;
     color: #3c4043;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 /* ── Form Controls & Edit Mode ── */
-.ld-form-group { margin-bottom: 16px; }
+.ld-form-group {
+    margin-bottom: 16px;
+}
 
 .ld-input {
     width: 100%;
@@ -264,7 +306,7 @@
 .ld-input:focus {
     outline: none;
     border-color: #006666;
-    box-shadow: 0 0 0 2px rgba(0,102,102,0.1);
+    box-shadow: 0 0 0 2px rgba(0, 102, 102, 0.1);
 }
 
 .ld-label {
@@ -277,7 +319,17 @@
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
-    .ld-info-grid { grid-template-columns: 1fr; }
-    .ld-header { padding: 16px; }
-    .ld-avatar { width: 44px; height: 44px; font-size: 1.25rem; }
+    .ld-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ld-header {
+        padding: 16px;
+    }
+
+    .ld-avatar {
+        width: 44px;
+        height: 44px;
+        font-size: 1.25rem;
+    }
 }
