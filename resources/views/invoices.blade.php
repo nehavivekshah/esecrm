@@ -26,74 +26,58 @@
         <div class="dash-container">
 
             {{-- ── Stat Cards ── --}}
-            <div class="inv-stat-row mb-4">
+        <div class="inv-stat-row mb-4">
+            @foreach([
+                ['Total Invoices', $total,        '#006666', 'bx bx-file-blank'],
+                ['Paid',           $paidCount,   '#34a853', 'bx bx-check-circle'],
+                ['Unpaid',         $unpaidCount, '#ea4335', 'bx bx-x-circle'],
+                ['Total Value',    '₹'.number_format($totalValue, 0), '#006666', 'bx bx-rupee'],
+                ['Collected',      '₹'.number_format($paidValue, 0), '#34a853', 'bx bx-trending-up'],
+            ] as [$label, $count, $color, $icon])
                 <div class="inv-stat-card">
-                    <div class="inv-stat-icon" style="background:rgba(0,102,102,0.10);color:#006666;">
-                        <i class="bx bx-file-blank"></i>
+                    <div class="inv-stat-icon" style="background:{{ $color }}15;color:{{ $color }};">
+                        <i class="{{ $icon }}"></i>
                     </div>
                     <div>
-                        <div class="inv-stat-num">{{ $total }}</div>
-                        <div class="inv-stat-label">Total Invoices</div>
+                        <div class="inv-stat-num" style="color:{{ in_array($label, ['Paid','Collected']) ? '#34a853' : (in_array($label, ['Unpaid']) ? '#ea4335' : '#202124') }};">{{ $count }}</div>
+                        <div class="inv-stat-label">{{ $label }}</div>
                     </div>
                 </div>
-                <div class="inv-stat-card">
-                    <div class="inv-stat-icon" style="background:rgba(52,168,83,0.10);color:#34a853;">
-                        <i class="bx bx-check-circle"></i>
-                    </div>
-                    <div>
-                        <div class="inv-stat-num" style="color:#34a853;">{{ $paidCount }}</div>
-                        <div class="inv-stat-label">Paid</div>
-                    </div>
-                </div>
-                <div class="inv-stat-card">
-                    <div class="inv-stat-icon" style="background:rgba(234,67,53,0.10);color:#ea4335;">
-                        <i class="bx bx-x-circle"></i>
-                    </div>
-                    <div>
-                        <div class="inv-stat-num" style="color:#ea4335;">{{ $unpaidCount }}</div>
-                        <div class="inv-stat-label">Unpaid</div>
-                    </div>
-                </div>
-                <div class="inv-stat-card">
-                    <div class="inv-stat-icon" style="background:rgba(0,102,102,0.08);color:#006666;">
-                        <i class="bx bx-rupee"></i>
-                    </div>
-                    <div>
-                        <div class="inv-stat-num" style="color:#006666;">₹{{ number_format($totalValue, 0) }}</div>
-                        <div class="inv-stat-label">Total Value</div>
-                    </div>
-                </div>
-                <div class="inv-stat-card">
-                    <div class="inv-stat-icon" style="background:rgba(52,168,83,0.08);color:#34a853;">
-                        <i class="bx bx-trending-up"></i>
-                    </div>
-                    <div>
-                        <div class="inv-stat-num" style="color:#34a853;">₹{{ number_format($paidValue, 0) }}</div>
-                        <div class="inv-stat-label">Collected</div>
-                    </div>
-                </div>
-            </div>
+            @endforeach
+        </div>
 
-            {{-- ── Toolbar ── --}}
-            <div class="leads-toolbar mb-3">
-                <div class="leads-toolbar-left">
-                    <span class="lb-page-count">
-                        <i class="bx bx-file-blank"></i>
-                        {{ $total }} {{ $total == 1 ? 'Invoice' : 'Invoices' }}
-                    </span>
-                </div>
-                <div class="leads-toolbar-right gap-2">
-                    <button class="lb-icon-btn" onclick="location.reload()" title="Refresh">
-                        <i class="bx bx-refresh"></i>
-                    </button>
-                    @if(in_array('invoice_add', $roleArray) || in_array('All', $roleArray))
-                        <a href="/manage-invoice" class="lb-btn lb-btn-primary">
-                            <i class="bx bx-plus"></i>
-                            <span class="d-none d-sm-inline">New Invoice</span>
-                        </a>
-                    @endif
-                </div>
+        {{-- ── Toolbar ── --}}
+        <div class="leads-toolbar mb-4">
+            <div class="leads-toolbar-left gap-3">
+                <span class="lb-page-count">
+                    <i class="bx bx-file-blank"></i>
+                    {{ $total }} {{ $total == 1 ? 'Invoice' : 'Invoices' }}
+                </span>
+                <span class="ok-pipeline-total">
+                    <i class="bx bx-rupee"></i>
+                    {{ number_format($totalValue, 2) }}
+                    <span class="ok-pipeline-label">Total Value</span>
+                </span>
             </div>
+            <div class="leads-toolbar-right gap-2">
+                {{-- Status filter pills --}}
+                <div class="pr-filter-group" id="statusFilterGroup">
+                    <button class="pr-filter active" data-filter="all">All</button>
+                    <button class="pr-filter" data-filter="paid" style="--pr-color:#34a853;"><i class="bx bx-check-circle"></i> Paid</button>
+                    <button class="pr-filter" data-filter="unpaid" style="--pr-color:#ea4335;"><i class="bx bx-x-circle"></i> Unpaid</button>
+                    <button class="pr-filter" data-filter="partial" style="--pr-color:#f29900;"><i class="bx bx-time-five"></i> Partial</button>
+                </div>
+                <button class="lb-icon-btn" onclick="location.reload()" title="Refresh">
+                    <i class="bx bx-refresh"></i>
+                </button>
+                @if(in_array('invoice_add', $roleArray) || in_array('All', $roleArray))
+                    <a href="/manage-invoice" class="lb-btn lb-btn-primary">
+                        <i class="bx bx-plus"></i>
+                        <span class="d-none d-sm-inline">New Invoice</span>
+                    </a>
+                @endif
+            </div>
+        </div>
 
             {{-- ── Table Card ── --}}
             <div class="dash-card mb-4">
@@ -114,103 +98,99 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($invoices as $k => $invoice)
-                                @php
-                                    $isPaid = $invoice->status == 'paid';
-                                    $isUnpaid = $invoice->status == 'unpaid';
-                                    $isOverdue = !$isPaid && !empty($invoice->due_date) &&
-                                        \Carbon\Carbon::parse($invoice->due_date)->isPast();
-                                @endphp
-                                <tr>
-                                    <td class="m-none text-muted" style="font-size:0.78rem;">{{ $k + 1 }}</td>
-                                    <td>
-                                        <span class="inv-number">INV-{{ $invoice->invoice_number }}</span>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <div class="lb-avatar-sm"
-                                                style="background:linear-gradient(135deg,#006666,#009688);color:#fff;flex-shrink:0;">
-                                                {{ strtoupper(substr($invoice->client_name ?? 'C', 0, 1)) }}
-                                            </div>
-                                            <div>
-                                                <div class="fw-500">{{ $invoice->client_name ?? '—' }}</div>
-                                                <div class="text-muted m-none" style="font-size:0.72rem;">
-                                                    {{ $invoice->client_email ?? '' }}</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="m-none text-muted">{{ substr($invoice->client_company ?? '—', 0, 22) }}</td>
-                                    <td>
-                                        <span class="fw-600" style="color:#202124;">
-                                            ₹{{ number_format($invoice->total_amount ?? 0, 0) }}
+                        @foreach($invoices as $k => $invoice)
+                            @php
+                                $st = $invoice->status ?? 'unpaid';
+                                $isPaid = $st == 'paid';
+                                $isUnpaid = $st == 'unpaid';
+                                $isOverdue = !$isPaid && !empty($invoice->due_date) &&
+                                    \Carbon\Carbon::parse($invoice->due_date)->isPast();
+                                [$stColor, $stIcon] = [
+                                    'paid' => ['#34a853', 'bx bx-check-circle'],
+                                    'unpaid' => ['#ea4335', 'bx bx-x-circle'],
+                                    'partial' => ['#f29900', 'bx bx-time-five']
+                                ][$st] ?? ['#80868b', 'bx bx-file'];
+                            @endphp
+                            <tr class="inv-row" data-status="{{ $st }}">
+                                <td class="m-none text-muted" style="font-size:0.78rem;">{{ $k + 1 }}</td>
+                                <td>
+                                    <span class="inv-number">INV-{{ $invoice->invoice_number }}</span>
+                                </td>
+                                <td>
+                                    <span class="pr-client-cell">
+                                        <span class="pr-client-avatar">
+                                            {{ strtoupper(substr($invoice->client_name ?? 'C', 0, 1)) }}
                                         </span>
-                                    </td>
-                                    <td class="m-none">
-                                        <span class="inv-type-pill">{{ $invoice->invoice ?? '—' }}</span>
-                                    </td>
-                                    <td class="m-none text-muted" style="font-size:0.8rem;">
-                                        {{ !empty($invoice->date) ? date_format(date_create($invoice->date), 'd M, Y') : '—' }}
-                                    </td>
-                                    <td class="m-none" style="font-size:0.8rem;">
-                                        @if(!empty($invoice->due_date))
-                                            <span class="{{ $isOverdue && !$isPaid ? 'text-danger fw-600' : 'text-muted' }}">
-                                                {{ date_format(date_create($invoice->due_date), 'd M, Y') }}
-                                                @if($isOverdue && !$isPaid)
-                                                    <span class="inv-overdue-dot">Overdue</span>
-                                                @endif
-                                            </span>
-                                        @else
-                                            <span class="text-muted">—</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($invoice->status == 'paid')
-                                            <span class="inv-status-pill" style="background:rgba(52,168,83,0.10);color:#34a853;">
-                                                <i class="bx bx-check-circle"></i> Paid
-                                            </span>
-                                        @elseif($invoice->status == 'unpaid')
-                                            <span class="inv-status-pill" style="background:rgba(234,67,53,0.10);color:#ea4335;">
-                                                <i class="bx bx-x-circle"></i> Unpaid
-                                            </span>
-                                        @else
-                                            <span class="inv-status-pill" style="background:rgba(242,153,0,0.10);color:#f29900;">
-                                                <i class="bx bx-time-five"></i> {{ ucfirst($invoice->status) }}
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td class="position-sticky end-0">
-                                        <div class="d-flex align-items-center justify-content-center gap-1">
-                                            {{-- View PDF --}}
-                                            <a href="/invoices/pdf/preview/{{ $invoice->id }}" class="btn kb-action-btn"
-                                                target="_blank" title="View PDF"
-                                                style="background:rgba(26,115,232,0.10);color:#1a73e8;">
-                                                <i class="bx bx-file"></i>
-                                            </a>
-                                            {{-- Edit --}}
-                                            @if(in_array('invoice_edit', $roleArray) || in_array('All', $roleArray))
-                                                <a href="/manage-invoice?id={{ $invoice->id }}" class="btn kb-action-btn"
-                                                    title="Edit" style="background:rgba(0,102,102,0.10);color:#006666;">
-                                                    <i class="bx bx-edit"></i>
-                                                </a>
-                                            @endif
-                                            {{-- Send Email --}}
-                                            <a href="mailto:{{ $invoice->client_email ?? '' }}?subject=Invoice INV-{{ $invoice->invoice_number }}&body=Please find attached invoice."
-                                                class="btn kb-action-btn send-invoice-btn" title="Send Email"
-                                                style="background:rgba(251,188,4,0.10);color:#f9a825;">
-                                                <i class="bx bx-envelope"></i>
-                                            </a>
-                                            {{-- Delete --}}
-                                            @if(in_array('invoice_delete', $roleArray) || in_array('All', $roleArray))
-                                                <a href="javascript:void(0)" class="btn kb-action-btn delete"
-                                                    data-id="{{ $invoice->id }}" data-page="invoiceDelete" title="Delete"
-                                                    style="background:rgba(234,67,53,0.08);color:#ea4335;">
-                                                    <i class="bx bx-trash"></i>
-                                                </a>
-                                            @endif
+                                        <div>
+                                            <div class="fw-600">{{ $invoice->client_name ?? '—' }}</div>
+                                            <div class="text-muted small m-none">{{ $invoice->client_email ?? '' }}</div>
                                         </div>
-                                    </td>
-                                </tr>
-                            @endforeach
+                                    </span>
+                                </td>
+                                <td class="m-none text-muted small">{{ substr($invoice->client_company ?? '—', 0, 22) }}</td>
+                                <td>
+                                    <span class="pr-amount">
+                                        <i class="bx bx-rupee"></i>
+                                        {{ number_format($invoice->total_amount ?? 0, 0) }}
+                                    </span>
+                                </td>
+                                <td class="m-none">
+                                    <span class="inv-type-pill">{{ $invoice->invoice ?? '—' }}</span>
+                                </td>
+                                <td class="m-none text-muted small">
+                                    {{ !empty($invoice->date) ? date_format(date_create($invoice->date), 'd M, Y') : '—' }}
+                                </td>
+                                <td class="m-none small">
+                                    @if(!empty($invoice->due_date))
+                                        <span class="{{ $isOverdue && !$isPaid ? 'text-danger fw-600' : 'text-muted' }}">
+                                            {{ date_format(date_create($invoice->due_date), 'd M, Y') }}
+                                            @if($isOverdue && !$isPaid)
+                                                <span class="inv-overdue-dot">Overdue</span>
+                                            @endif
+                                        </span>
+                                    @else
+                                        <span class="text-muted">—</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <span class="pr-status-pill" style="background:{{ $stColor }}15;color:{{ $stColor }};">
+                                        <i class="{{ $stIcon }}"></i>
+                                        {{ ucfirst($st) }}
+                                    </span>
+                                </td>
+                                <td class="position-sticky end-0">
+                                    <div class="d-flex align-items-center justify-content-center gap-1">
+                                        {{-- View PDF --}}
+                                        <a href="/invoices/pdf/preview/{{ $invoice->id }}" class="btn kb-action-btn"
+                                            target="_blank" title="View PDF"
+                                            style="background:rgba(26,115,232,0.08);color:#1a73e8;">
+                                            <i class="bx bx-file"></i>
+                                        </a>
+                                        {{-- Edit --}}
+                                        @if(in_array('invoice_edit', $roleArray) || in_array('All', $roleArray))
+                                            <a href="/manage-invoice?id={{ $invoice->id }}" class="btn kb-action-btn"
+                                                title="Edit" style="background:rgba(0,102,102,0.08);color:#006666;">
+                                                <i class="bx bx-edit"></i>
+                                            </a>
+                                        @endif
+                                        {{-- Send Email --}}
+                                        <a href="mailto:{{ $invoice->client_email ?? '' }}?subject=Invoice INV-{{ $invoice->invoice_number }}&body=Please find attached invoice."
+                                            class="btn kb-action-btn" title="Send Email"
+                                            style="background:rgba(251,188,4,0.08);color:#f9a825;">
+                                            <i class="bx bx-envelope"></i>
+                                        </a>
+                                        {{-- Delete --}}
+                                        @if(in_array('invoice_delete', $roleArray) || in_array('All', $roleArray))
+                                            <a href="javascript:void(0)" class="btn kb-action-btn delete"
+                                                data-id="{{ $invoice->id }}" data-page="invoiceDelete" title="Delete"
+                                                style="background:rgba(234,67,53,0.08);color:#ea4335;">
+                                                <i class="bx bx-trash"></i>
+                                            </a>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -361,6 +341,19 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const table = $('#lists').DataTable();
+            
+            // Status filter pills logic
+            $('#statusFilterGroup').on('click', '.pr-filter', function () {
+                $('.pr-filter').removeClass('active');
+                $(this).addClass('active');
+                const f = $(this).data('filter');
+                if (f === 'all') {
+                    $('.inv-row').show();
+                } else {
+                    $('.inv-row').hide().filter('[data-status="' + f + '"]').show();
+                }
+            });
+
             // Dynamic client filter dropdown
             const filterContainer = $('<div class="d-flex gap-2 mb-3"></div>').insertBefore('#lists_wrapper');
             const clientSelect = $('<select class="lb-select" style="max-width:200px;"><option value="">All Clients</option></select>')
@@ -370,7 +363,7 @@
                     table.column(2).search(val ? '^' + val + '$' : '', true, false).draw();
                 });
             table.column(2).data().unique().sort().each(function (d) {
-                const clean = $('<div>').html(d).text();
+                const clean = $('<div>').html(d).text().trim().split('\n')[0]; // Extract name from complex HTML
                 if (clean) clientSelect.append('<option value="' + clean + '">' + clean + '</option>');
             });
         });
