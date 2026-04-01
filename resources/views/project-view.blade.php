@@ -340,7 +340,7 @@
                 <div class="pv-empty-state">
                     <i class="bx bx-receipt"></i>
                     <p>No recovery records yet.</p>
-                    <a href="/manage-recovery?id={{ $project->id }}" class="pv-add-btn">Add First Recovery</a>
+                    <a href="/manage-recovery?project_id={{ $project->id }}" class="pv-add-btn">Add First Recovery</a>
                 </div>
                 @endforelse
             </div>
