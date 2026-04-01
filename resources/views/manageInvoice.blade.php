@@ -499,7 +499,7 @@
                         </div>
                     </div> {{-- End col-lg-8 --}}
 
-                    <div class="col-lg-12">
+                    <div class="col-lg-4 offset-lg-8">
                         {{-- ══ RIGHT — Sticky Summary + Actions ══ --}}
                         <div class="mp-sidebar-sticky">
                             {{-- Summary card --}}
