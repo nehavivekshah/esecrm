@@ -95,7 +95,7 @@
 
                 <div class="row g-4">
                     {{-- ── Left Column: Main Form & Items ── --}}
-                    <div class="col-lg-12">
+                    <div class="col-lg-8">
                         {{-- ── Invoice Information ── --}}
                         <div class="ml-card mb-4">
                             <div class="ml-card-header">
@@ -109,7 +109,7 @@
                             </div>
                             <div class="ml-card-body">
                                 <div class="row g-3">
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
                                         <label class="ml-label">Invoice Number <span class="text-danger">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="bx bx-hash"></i></span>
@@ -117,7 +117,7 @@
                                                    value="{{ old('invoice_number', $invoice->invoice_number ?? '') }}" required>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
                                         <label class="ml-label">Type <span class="text-danger">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="bx bx-category"></i></span>
@@ -126,22 +126,6 @@
                                                 <option value="proforma" @if(old('invoice_type', $invoice->invoice ?? '') == 'proforma') selected @endif>Proforma</option>
                                                 <option value="tax" @if(old('invoice_type', $invoice->invoice ?? '') == 'tax') selected @endif>Tax Invoice</option>
                                             </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="ml-label">Invoice Date <span class="text-danger">*</span></label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-                                            <input type="date" name="date" class="form-control"
-                                                   value="{{ old('date', $invoice && $invoice->date ? \Carbon\Carbon::parse($invoice->date)->format('Y-m-d') : now()->format('Y-m-d')) }}" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="ml-label">Due Date</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="bx bx-calendar-check"></i></span>
-                                            <input type="date" name="due_date" class="form-control"
-                                                   value="{{ old('due_date', $invoice && $invoice->due_date ? \Carbon\Carbon::parse($invoice->due_date)->format('Y-m-d') : '') }}">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -155,7 +139,23 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-8">
+                                    <div class="col-md-4">
+                                        <label class="ml-label">Invoice Date <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bx bx-calendar"></i></span>
+                                            <input type="date" name="date" class="form-control"
+                                                   value="{{ old('date', $invoice && $invoice->date ? \Carbon\Carbon::parse($invoice->date)->format('Y-m-d') : now()->format('Y-m-d')) }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="ml-label">Due Date</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bx bx-calendar-check"></i></span>
+                                            <input type="date" name="due_date" class="form-control"
+                                                   value="{{ old('due_date', $invoice && $invoice->due_date ? \Carbon\Carbon::parse($invoice->due_date)->format('Y-m-d') : '') }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
                                         <label class="ml-label">Reference / PO #</label>
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="bx bx-note"></i></span>
@@ -164,10 +164,27 @@
                                                    value="{{ old('reference', $invoice->reference ?? '') }}">
                                         </div>
                                     </div>
-                                    <div class="col-12 mt-2">
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- ── Client & Billing ── --}}
+                        <div class="ml-card mb-4">
+                            <div class="ml-card-header">
+                                <div class="ml-card-icon" style="background:rgba(26,115,232,0.10);color:#1a73e8;">
+                                    <i class="bx bx-user-pin"></i>
+                                </div>
+                                <div>
+                                    <h6 class="ml-card-title">Client & Billing</h6>
+                                    <span class="ml-card-sub">Select client and manage address details</span>
+                                </div>
+                            </div>
+                            <div class="ml-card-body">
+                                <div class="row g-3">
+                                    <div class="col-12">
                                         <label class="ml-label">Select Client <span class="text-danger">*</span></label>
                                         <div class="input-group">
-                                            <span class="input-group-text"><i class="bx bx-user"></i></span>
+                                            <span class="input-group-text"><i class="bx bx-search"></i></span>
                                             <select class="selectpicker form-select" id="client_id" name="client_id"
                                                     data-live-search="true" data-width="calc(100% - 46px)" required>
                                                 <option value="">Search for a client...</option>
@@ -191,23 +208,6 @@
                                             </button>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- ── Billing & Shipping ── --}}
-                        <div class="ml-card mb-4">
-                            <div class="ml-card-header">
-                                <div class="ml-card-icon" style="background:rgba(52,168,83,0.10);color:#34a853;">
-                                    <i class="bx bx-map"></i>
-                                </div>
-                                <div>
-                                    <h6 class="ml-card-title">Billing & Shipping</h6>
-                                    <span class="ml-card-sub">Client address & GST details</span>
-                                </div>
-                            </div>
-                            <div class="ml-card-body">
-                                <div class="row g-3">
                                     <div class="col-md-6">
                                         <label class="ml-label">Billing Address</label>
                                         <textarea class="form-control bg-light mp-autoresize" name="billing_address" id="billing_address" rows="2"
@@ -499,7 +499,7 @@
                         </div>
                     </div> {{-- End col-lg-8 --}}
 
-                    <div class="col-lg-4 offset-lg-8">
+                    <div class="col-lg-4">
                         {{-- ══ RIGHT — Sticky Summary + Actions ══ --}}
                         <div class="mp-sidebar-sticky">
                             {{-- Summary card --}}
