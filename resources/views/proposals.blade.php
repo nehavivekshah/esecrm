@@ -41,7 +41,10 @@
                 ];
             @endphp
             @foreach($statCards as [$label, $count, $color, $icon])
-                <div class="pr-stat-card">
+                @php
+                    $filterVal = ($label == 'Total Proposals' || $label == 'Total Value') ? 'all' : $label;
+                @endphp
+                <div class="pr-stat-card pr-filter-trigger" data-filter="{{ $filterVal }}" style="cursor:pointer;">
                     <div class="pr-stat-icon" style="background:{{ $color }}15;color:{{ $color }};">
                         <i class="{{ $icon }}"></i>
                     </div>
@@ -248,20 +251,31 @@
 </section>
 
 <script>
-$(function () {
+$(document).ready(function () {
+    // Ensure DataTable is initialized and get instance
     const table = $('#lists').DataTable({ retrieve: true });
 
-    /* Status filter pills */
-    $('#statusFilterGroup').on('click', '.pr-filter', function () {
+    function applyFilter(f) {
+        // Sync the pills UI
         $('.pr-filter').removeClass('active');
-        $(this).addClass('active');
-        const f = $(this).data('filter');
-        
+        $(`.pr-filter[data-filter="${f}"]`).addClass('active');
+
         if (f === 'all') {
             table.column(8).search('').draw();
         } else {
+            // Exact match using regex to prevent partial matches (e.g. "Sent" matching "Sent to Client")
             table.column(8).search('^' + f + '$', true, false).draw();
         }
+    }
+
+    /* Status filter pills */
+    $('#statusFilterGroup').on('click', '.pr-filter', function () {
+        applyFilter($(this).data('filter'));
+    });
+
+    /* Stat cards row */
+    $('.pr-stat-row').on('click', '.pr-filter-trigger', function () {
+        applyFilter($(this).data('filter'));
     });
 });
 </script>

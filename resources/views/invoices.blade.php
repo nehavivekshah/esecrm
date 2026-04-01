@@ -34,7 +34,10 @@
                 ['Total Value',    '₹'.number_format($totalValue, 0), '#006666', 'bx bx-rupee'],
                 ['Collected',      '₹'.number_format($paidValue, 0), '#34a853', 'bx bx-trending-up'],
             ] as [$label, $count, $color, $icon])
-                <div class="inv-stat-card">
+                @php
+                    $fVal = ($label == 'Total Invoices' || $label == 'Total Value' || $label == 'Collected') ? 'all' : strtolower($label);
+                @endphp
+                <div class="inv-stat-card pr-filter-trigger" data-filter="{{ $fVal }}" style="cursor:pointer;">
                     <div class="inv-stat-icon" style="background:{{ $color }}15;color:{{ $color }};">
                         <i class="{{ $icon }}"></i>
                     </div>
@@ -339,21 +342,31 @@
     </style>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        $(document).ready(function () {
+            // Ensure DataTable is initialized and get instance
             const table = $('#lists').DataTable({ retrieve: true });
-            
-            // Status filter pills logic
-            $('#statusFilterGroup').on('click', '.pr-filter', function () {
+
+            function applyFilter(f) {
+                // Sync the pills UI
                 $('.pr-filter').removeClass('active');
-                $(this).addClass('active');
-                const f = $(this).data('filter');
-                
+                $(`.pr-filter[data-filter="${f}"]`).addClass('active');
+
                 if (f === 'all') {
                     table.column(8).search('').draw();
                 } else {
-                    // Match exactly using regex
+                    // Exact match using regex to prevent partial matches
                     table.column(8).search('^' + f + '$', true, false).draw();
                 }
+            }
+
+            // Status filter pills logic
+            $('#statusFilterGroup').on('click', '.pr-filter', function () {
+                applyFilter($(this).data('filter'));
+            });
+
+            // Stat cards row logic
+            $('.inv-stat-row').on('click', '.pr-filter-trigger', function () {
+                applyFilter($(this).data('filter'));
             });
         });
     </script>
