@@ -22,6 +22,7 @@
                 @if(!empty($invoice->id))
                     <input type="hidden" name="id" value="{{ $invoice->id }}">
                 @endif
+                <input type="hidden" name="project_id" value="{{ old('project_id', $invoice->project_id ?? $project_id ?? '') }}">
 
                 <div class="board-title mb-4">
                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
@@ -91,8 +92,17 @@
                                                     data-address="{{ $location[0] ?? '' }}" data-city="{{ $location[1] ?? '' }}"
                                                     data-state="{{ $location[2] ?? '' }}"
                                                     data-country="{{ $location[3] ?? '' }}" data-zip="{{ $location[4] ?? '' }}"
-                                                    @if(old('client_id', $invoice->client_id ?? '') == $client->id) selected
-                                                    @endif>
+                                                    @php 
+                                                        $isSelected = false;
+                                                        if(old('client_id', $invoice->client_id ?? '') == $client->id) {
+                                                            $isSelected = true;
+                                                        } elseif(!empty($project_id)) {
+                                                            // If we have a project_id, we check if this client owns it.
+                                                            // The $clients variable has projects joined in the controller.
+                                                            $isSelected = ($client->project_id == $project_id);
+                                                        }
+                                                    @endphp
+                                                    @if($isSelected) selected @endif>
                                                     {{ $client->name . ' - ' . $client->company }}
                                                 </option>
                                             @endforeach

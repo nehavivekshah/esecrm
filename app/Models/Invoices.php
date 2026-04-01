@@ -14,4 +14,8 @@ class Invoices extends Model
     public function client() {
         return $this->belongsTo(Clients::class);
     }
+
+    public function project() {
+        return $this->belongsTo(Projects::class, 'project_id');
+    }
 }

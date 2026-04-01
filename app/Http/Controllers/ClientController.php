@@ -408,7 +408,7 @@ class ClientController extends Controller
 
         $recoveries = Recoveries::where('project_id', $id)->orderBy('id', 'DESC')->get();
         $license = Eselicenses::where('project_id', $id)->orderBy('id', 'DESC')->first();
-        $invoices = Invoices::where('client_id', $project->client_id)->orderBy('id', 'DESC')->get();
+        $invoices = Invoices::where('project_id', $id)->orderBy('id', 'DESC')->get();
 
         // Tasks related to project
         $tasks = \App\Models\CrmTask::where('rel_type', 'Project')->where('rel_id', $id)->orderBy('due_date', 'asc')->get();
@@ -821,7 +821,8 @@ class ClientController extends Controller
 
     public function manageInvoice(Request $request)
     {
-        $id = $request->id ?? null; // or just $request->id
+        $id = $request->id ?? null;
+        $project_id = $request->project_id ?? null;
 
         // If there's an ID, load one invoice
         if ($id) {
@@ -850,6 +851,7 @@ class ClientController extends Controller
             'invoiceItems' => $invoiceItems,
             'clients' => $clients,
             'companies' => $companies,
+            'project_id' => $project_id,
         ]);
     }
 
@@ -884,6 +886,7 @@ class ClientController extends Controller
 
             // If you're editing an existing invoice
             'id' => 'nullable|integer|exists:invoices,id',
+            'project_id' => 'nullable|integer|exists:projects,id',
         ]);
 
         // 2) Check if we are updating or creating a new invoice
@@ -908,6 +911,7 @@ class ClientController extends Controller
         $invoice->currency = $validatedData['currency'] ?? 'USD';
         $invoice->sales_agent = $validatedData['sales_agent'] ?? null;
         $invoice->discount_type = $validatedData['discount_type'] ?? 'none';
+        $invoice->project_id = $validatedData['project_id'] ?? null;
         $invoice->recurring_invoice = !empty($validatedData['recurring_invoice']);
 
         $invoice->bank_details = json_encode($request->bank_details ?? []);

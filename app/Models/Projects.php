@@ -20,4 +20,9 @@ class Projects extends Model
     {
         return $this->belongsTo(Clients::class, 'client_id');
     }
+
+    public function invoices()
+    {
+        return $this->hasMany(Invoices::class, 'project_id');
+    }
 }

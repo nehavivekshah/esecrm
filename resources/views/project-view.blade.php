@@ -349,7 +349,7 @@
             <div class="tab-pane fade" id="invoices" role="tabpanel">
                 <div class="pv-tab-toolbar">
                     <h2 class="pv-tab-title"><i class="bx bx-file"></i> Client Invoices</h2>
-                    <a href="/manage-invoice" class="pv-add-btn"><i class="bx bx-plus"></i> Create Invoice</a>
+                    <a href="/manage-invoice?project_id={{ $project->id }}" class="pv-add-btn"><i class="bx bx-plus"></i> Create Invoice</a>
                 </div>
                 <div class="table-responsive">
                     <table class="leads-table">
