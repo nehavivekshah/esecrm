@@ -32,7 +32,10 @@ class TaskController extends Controller
     {
         $request->validate([
             'msg' => 'required|string|max:5000',
-            'uid' => 'required|exists:users,id'
+            'uid' => 'required|exists:users,id',
+            'project_id' => 'nullable|integer',
+            'parent_id' => 'nullable|integer',
+            'due_date' => 'nullable|date'
         ]);
 
         $tasklist = Task::where('cid', '=', Auth::user()->cid)
@@ -42,6 +45,9 @@ class TaskController extends Controller
 
         $task->cid = Auth::user()->cid;
         $task->uid = $request->uid ?: Auth::id();
+        $task->project_id = $request->project_id;
+        $task->parent_id = $request->parent_id;
+        $task->due_date = $request->due_date;
         $task->title = $request->msg;
         $task->des = $request->msg;
         $task->label = '5';
@@ -50,21 +56,15 @@ class TaskController extends Controller
         $task->status = '6';
 
         foreach ($tasklist as $k => $singletask):
-
             $tasks = Task::find($singletask->id);
-
             $tasks->position = $k + 1;
-
             $tasks->updated_at = Now();
-
             $tasks->update();
-
         endforeach;
 
         $task->save();
 
         return back()->with('success', 'New Task Added');
-
     }
 
     public function taskEdit(Request $request)

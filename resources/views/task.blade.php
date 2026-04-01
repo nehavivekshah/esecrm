@@ -171,6 +171,8 @@
                                     @csrf
                                     <input type="hidden" name="uid" value="{{ $uid }}" />
                                     <input type="hidden" name="cid" value="{{ $column['user']->cid }}" />
+                                    <input type="hidden" name="project_id" value="{{ request('project_id') }}" />
+                                    <input type="hidden" name="parent_id" value="{{ request('parent_id') }}" />
                                     <textarea name="msg" id="tx{{ $uid }}" class="tk-quick-textarea"
                                               placeholder="Task title…" required rows="2"></textarea>
                                     <div class="d-flex gap-2 mt-2">

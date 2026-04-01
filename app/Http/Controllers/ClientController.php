@@ -410,16 +410,12 @@ class ClientController extends Controller
         $license = Eselicenses::where('project_id', $id)->orderBy('id', 'DESC')->first();
         $invoices = Invoices::where('project_id', $id)->orderBy('id', 'DESC')->get();
 
-        // Tasks related to project (parent tasks only, with subtasks eager loaded)
-        $tasks = \App\Models\CrmTask::where(function($q) use ($id) {
-            $q->where('project_id', $id)
-              ->orWhere(function($q2) use ($id) {
-                  $q2->where('rel_type', 'Project')->where('rel_id', $id);
-              });
-        })->whereNull('parent_id')
-        ->with('subtasks')
-        ->orderBy('due_date', 'asc')
-        ->get();
+        // Primary Tasks related to project (parent tasks only, with subtasks eager loaded)
+        $tasks = \App\Models\Task::where('project_id', $id)
+            ->whereNull('parent_id')
+            ->with('subtasks')
+            ->orderBy('id', 'asc')
+            ->get();
 
         // Proposals related to client/lead
         $client = \App\Models\Clients::find($project->client_id);
