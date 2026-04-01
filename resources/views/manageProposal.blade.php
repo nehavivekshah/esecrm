@@ -737,12 +737,14 @@
                 });
                 const amtEl = clone.querySelector('.item-amount');
                 if (amtEl) amtEl.textContent = formatCurrency(0, currencySelect.value);
+                // Clean up cloned Bootstrap Select UI markup from the clone before appending
+                $(clone).find('.bootstrap-select').each(function() {
+                    const $select = $(this).find('select');
+                    $(this).replaceWith($select);
+                });
+                
                 container.appendChild(clone);
                 
-                // Re-initialize selectpicker for the new row (clean up cloned UI first)
-                $(clone).find('.selectpicker').each(function() {
-                    $(this).selectpicker('destroy'); 
-                });
                 // Initialize selectpicker for the new row
                 $(clone).find('.selectpicker').selectpicker();
                 
