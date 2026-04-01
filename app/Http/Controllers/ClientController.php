@@ -337,10 +337,11 @@ class ClientController extends Controller
     public function projects(Request $request)
     {
         $search = $request->get('search');
+        $cid = Auth::user()->cid;
         $query = Projects::leftJoin('clients', 'projects.client_id', '=', 'clients.id')
             ->leftJoin('users as sales', 'projects.closed_by', '=', 'sales.id')
             ->leftJoin(
-                DB::raw('(SELECT project_id, SUM(paid) as total_paid FROM recoveries GROUP BY project_id) as rec_totals'),
+                DB::raw("(SELECT project_id, SUM(paid) as total_paid FROM recoveries WHERE cid = '$cid' GROUP BY project_id) as rec_totals"),
                 'projects.id', '=', 'rec_totals.project_id'
             )
             ->select(
