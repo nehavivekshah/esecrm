@@ -416,7 +416,16 @@
             <div class="tab-pane fade" id="tasks" role="tabpanel">
                 <div class="pv-tab-toolbar">
                     <h2 class="pv-tab-title"><i class="bx bx-task"></i> Project Tasks</h2>
-                    <a href="/task?project_id={{ $project->id }}" class="pv-add-btn"><i class="bx bx-plus"></i> Manage Tasks</a>
+
+                    @if($tasks->count() > 0)
+                        <a href="/task?id={{ $tasks->first()->id }}&project_id={{ $project->id }}" class="pv-add-btn">
+                            <i class="bx bx-edit-alt"></i> Manage Tasks
+                        </a>
+                    @else
+                        <a href="/task?action=add&project_id={{ $project->id }}" class="pv-add-btn">
+                            <i class="bx bx-plus"></i> Manage Tasks
+                        </a>
+                    @endif
                 </div>
                 @forelse($tasks as $t)
                 @php

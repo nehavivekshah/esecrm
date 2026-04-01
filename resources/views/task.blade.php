@@ -258,8 +258,30 @@
             }
         }
 
-        // Focus textarea after addtask() unhides the panel
-        document.DOMContentLoaded = function () {
+        // Handle URL parameters for auto-actions
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // 1. Auto-open task details if id=[taskId] is present (and not already handled by PHP include)
+            const taskId = urlParams.get('id');
+            if (taskId && !document.querySelector('.offcanvas.show')) {
+                openTaskAjax(null, taskId);
+            }
+
+            // 2. Auto-trigger 'Add Task' if action=add is present
+            if (urlParams.get('action') === 'add') {
+                // We need the first available user ID to show the form in their column
+                // In this view, $uid is usually the first user's ID or the logged-in user
+                if (typeof addtask === 'function') {
+                    addtask({{ $uid }});
+                    setTimeout(function() {
+                        const ta = document.getElementById('tx{{ $uid }}');
+                        if (ta) ta.focus();
+                    }, 100);
+                }
+            }
+
+            // existing listeners...
             document.querySelectorAll('.tk-add-btn').forEach(function (btn) {
                 btn.addEventListener('click', function () {
                     const uid = this.dataset.uid;
