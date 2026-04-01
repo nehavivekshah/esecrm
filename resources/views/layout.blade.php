@@ -129,7 +129,8 @@
             $(document).ready(function() {
                 
                 $('#lists').DataTable({
-                "pageLength": 50,
+                    "destroy": true,
+                    "pageLength": 50,
                     "order": [],
                 });
                 

@@ -213,7 +213,7 @@
             <div id="tableView" class="dash-card mb-4"
                 style="background: #fff; border: 1px solid #e8eaed; border-radius: 12px; overflow: hidden;">
                 <div class="table-responsive">
-                    <table class="leads-table projects align-middle" id="projectTable" style="width:100%;">
+                    <table class="leads-table projects align-middle" id="lists" style="width:100%;">
                         <thead>
                             <tr>
                                 <th>Project ID</th>
@@ -704,7 +704,8 @@
         $(function () {
             // Initialize DataTables
             if ($.fn.DataTable) {
-                $('#projectTable').DataTable({
+                $('#lists').DataTable({
+                    "retrieve": true,
                     "order": [],
                     "pageLength": 25,
                     "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],

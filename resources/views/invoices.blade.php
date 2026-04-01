@@ -340,7 +340,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const table = $('#lists').DataTable();
+            const table = $('#lists').DataTable({ retrieve: true });
             
             // Status filter pills logic
             $('#statusFilterGroup').on('click', '.pr-filter', function () {

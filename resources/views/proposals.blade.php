@@ -85,7 +85,7 @@
         {{-- ── Proposals Table Card ── --}}
         <div class="leads-table-card">
             <div class="table-responsive">
-                <table class="leads-table" id="proposalsTable">
+                <table class="leads-table" id="lists">
                     <thead>
                         <tr>
                             <th>#</th>
