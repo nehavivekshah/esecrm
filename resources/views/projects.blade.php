@@ -215,13 +215,13 @@
                     <table class="leads-table projects align-middle" id="projectTable" style="width:100%;">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Project</th>
-                                <th class="m-none">Sales</th>
-                                <th class="m-none">Dates</th>
-                                <th>Payment</th>
-                                <th class="m-none">Type</th>
+                                <th>Project ID</th>
+                                <th>Project Details</th>
                                 <th class="text-center">Status</th>
+                                <th class="m-none">Sales Owner</th>
+                                <th class="m-none">Project Timeline</th>
+                                <th>Recovery Status</th>
+                                <th class="m-none">Service Category</th>
                                 <th class="m-none">Tags</th>
                                 <th class="text-center position-sticky end-0 bg-default mw60" data-orderable="false"
                                     style="z-index:1;">Action</th>
@@ -260,6 +260,13 @@
                                             </div>
                                         </div>
                                     </td>
+                                    <td class="text-center">
+                                        @if($project->status == 1)
+                                            <span class="pv-badge pv-badge-success">Active</span>
+                                        @else
+                                            <span class="pv-badge pv-badge-info">Closed</span>
+                                        @endif
+                                    </td>
                                     <td class="m-none">
                                         <div class="small text-muted">
                                             @if($project->salesperson_name)
@@ -293,13 +300,6 @@
                                     </td>
                                     <td class="m-none">
                                         <span class="pj-type-pill">{{ $project->type ?? 'General' }}</span>
-                                    </td>
-                                    <td class="text-center">
-                                        @if($project->status == 1)
-                                            <span class="pv-badge pv-badge-success">Active</span>
-                                        @else
-                                            <span class="pv-badge pv-badge-info">Closed</span>
-                                        @endif
                                     </td>
                                     <td class="m-none">
                                         @if($project->tags)
