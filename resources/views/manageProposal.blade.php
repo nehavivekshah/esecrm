@@ -360,7 +360,8 @@
                                             </div>
                                             <div class="mp-item-field mp-item-tax-field">
                                                 <label class="mp-item-label">Tax</label>
-                                                <select class="form-select form-select-sm item-tax" multiple
+                                                <select class="selectpicker form-control form-control-sm item-tax" multiple
+                                                        data-selected-text-format="count > 2"
                                                         name="proposal_items[{{ $k }}][tax_percentage][]" title="No Tax">
                                                     @foreach($taxes as $index => $tax)
                                                         @php $calTax = ($tax ?? 0) / 100; @endphp
@@ -434,7 +435,8 @@
                                             </div>
                                             <div class="mp-item-field mp-item-tax-field">
                                                 <label class="mp-item-label">Tax</label>
-                                                <select class="form-select form-select-sm item-tax" multiple
+                                                <select class="selectpicker form-control form-control-sm item-tax" multiple
+                                                        data-selected-text-format="count > 2"
                                                         name="proposal_items[0][tax_percentage][]" title="No Tax">
                                                     @foreach($taxes as $index => $tax)
                                                         @php $calTax = ($tax ?? 0) / 100; @endphp
@@ -734,6 +736,10 @@
                 const amtEl = clone.querySelector('.item-amount');
                 if (amtEl) amtEl.textContent = formatCurrency(0, currencySelect.value);
                 container.appendChild(clone);
+                
+                // Re-initialize selectpicker for the new row
+                $(clone).find('.selectpicker').selectpicker('render');
+                
                 clone.querySelectorAll('.mp-autoresize').forEach(autoResize);
                 clone.querySelector('.item-name')?.focus();
                 calculateTotals();

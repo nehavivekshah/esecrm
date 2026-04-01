@@ -121,7 +121,7 @@
                             <label for="role">Assigned</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class='bx bx-user'></i></span>
-                                <select class="selectpicker form-select" multiple data-live-search="true" name=assign[]">
+                                <select class="selectpicker form-select" multiple data-live-search="true" data-selected-text-format="count > 2" name="assign[]">
                                     @foreach($allusers as $user)
                                     <option value="{{$user->id ?? ''}}" @if(in_array(($user->id ?? ''),$userAssign)) selected @endif>{{$user->name ?? ''}}</option>
                                     @endforeach
@@ -133,7 +133,7 @@
                             <label for="role">Access</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class='bx bx-user'></i></span>
-                                <select class="selectpicker form-select" multiple data-live-search="true" name="features[]">
+                                <select class="selectpicker form-select" multiple data-live-search="true" data-selected-text-format="count > 2" name="features[]">
                                     <option value="tasks" @if(in_array('tasks',$userFeaturs)) selected @endif>Tasks</option>
                                     <option value="leads" @if(in_array('leads',$userFeaturs)) selected @endif>Leads</option>
                                     <option value="customers" @if(in_array('customers',$userFeaturs)) selected @endif>Customers</option>
