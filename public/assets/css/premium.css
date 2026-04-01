@@ -6587,3 +6587,23 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
 .mp-item-tax-field .bootstrap-select.form-control-sm .filter-option {
     line-height: 25px !important;
 }
+
+/* --- Input Group Integration for Bootstrap Select --- */
+.input-group > .bootstrap-select {
+    flex: 1 1 auto !important;
+    width: 1% !important;
+    display: flex !important;
+}
+
+.input-group > .bootstrap-select > .dropdown-toggle {
+    height: 100% !important;
+    min-height: 38px !important;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+}
+
+.input-group > .input-group-text {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-right: 0 !important;
+}
