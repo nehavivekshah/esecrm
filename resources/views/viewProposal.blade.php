@@ -500,7 +500,6 @@
                         <td>
                             <strong>{{ optional($item)->item_name ?? 'Item Name' }}</strong>
                             <div class="item-description">{!! nl2br(e(optional($item)->description ?? '')) !!}</div>
-                            @endif
                         </td>
                         <td class="text-center">{{ optional($item)->hsn ?? '--' }}</td>
                         <td class="text-end">{{ optional($item)->quantity ?? 1 }}</td>
