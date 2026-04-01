@@ -29,12 +29,36 @@
 
     <div class="dash-container">
 
+        {{-- ── Stat cards row ── --}}
+        <div class="pr-stat-row mb-4">
+            @php
+                $statCards = [
+                    ['Total Proposals', $total,    '#006666', 'bx bx-file'],
+                    ['Draft',           $draft,    '#80868b', 'bx bx-pencil'],
+                    ['Sent',            $sent,     '#1a73e8', 'bx bx-send'],
+                    ['Accepted',        $accepted, '#34a853', 'bx bx-check-circle'],
+                    ['Total Value',     '₹'.number_format($totalVal, 0), '#006666', 'bx bx-rupee'],
+                ];
+            @endphp
+            @foreach($statCards as [$label, $count, $color, $icon])
+                <div class="pr-stat-card">
+                    <div class="pr-stat-icon" style="background:{{ $color }}15;color:{{ $color }};">
+                        <i class="{{ $icon }}"></i>
+                    </div>
+                    <div>
+                        <div class="pr-stat-count" style="color:{{ $label == 'Accepted' ? '#34a853' : '#202124' }};">{{ $count }}</div>
+                        <div class="pr-stat-label">{{ $label }}</div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
         {{-- ── Toolbar ── --}}
         <div class="leads-toolbar mb-4">
             <div class="leads-toolbar-left gap-3">
                 <span class="lb-page-count">
                     <i class="bx bx-file"></i>
-                    {{ $total }} Proposals
+                    {{ $total }} {{ $total == 1 ? 'Proposal' : 'Proposals' }}
                 </span>
                 <span class="ok-pipeline-total">
                     <i class="bx bx-rupee"></i>
@@ -53,33 +77,15 @@
                         </button>
                     @endforeach
                 </div>
+                <button class="lb-icon-btn" onclick="location.reload()" title="Refresh">
+                    <i class="bx bx-refresh"></i>
+                </button>
                 @if(in_array('proposals_add', $roleArray) || in_array('All', $roleArray))
                     <a href="/manage-proposal" class="lb-btn lb-btn-primary">
                         <i class="bx bx-plus"></i> New Proposal
                     </a>
                 @endif
             </div>
-        </div>
-
-        {{-- ── Stat cards row ── --}}
-        <div class="pr-stat-row mb-4">
-            @foreach([
-                ['Draft',    $draft,    '#80868b', 'bx bx-pencil'],
-                ['Sent',     $sent,     '#1a73e8', 'bx bx-send'],
-                ['Accepted', $accepted, '#34a853', 'bx bx-check-circle'],
-                ['Declined', $declined, '#ea4335', 'bx bx-x-circle'],
-                ['Expired',  $expired,  '#f29900', 'bx bx-time-five'],
-            ] as [$label, $count, $color, $icon])
-                <div class="pr-stat-card">
-                    <div class="pr-stat-icon" style="background:{{ $color }}15;color:{{ $color }};">
-                        <i class="{{ $icon }}"></i>
-                    </div>
-                    <div>
-                        <div class="pr-stat-count">{{ $count }}</div>
-                        <div class="pr-stat-label">{{ $label }}</div>
-                    </div>
-                </div>
-            @endforeach
         </div>
 
         {{-- ── Proposals Table Card ── --}}
@@ -259,4 +265,65 @@ $(function () {
     });
 });
 </script>
+<style>
+    /* ── Stat Row ── */
+    .pr-stat-row {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 14px;
+    }
+
+    @media (max-width: 900px) {
+        .pr-stat-row {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @media (max-width: 576px) {
+        .pr-stat-row {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    .pr-stat-card {
+        background: #fff;
+        border: 1px solid #e8eaed;
+        border-radius: 16px;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        transition: box-shadow 0.15s;
+    }
+
+    .pr-stat-card:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    }
+
+    .pr-stat-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+    }
+
+    .pr-stat-count {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: #202124;
+        line-height: 1;
+    }
+
+    .pr-stat-label {
+        font-size: 0.72rem;
+        color: #80868b;
+        margin-top: 3px;
+        font-weight: 500;
+    }
+</style>
+
 @endsection
