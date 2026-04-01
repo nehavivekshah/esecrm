@@ -256,22 +256,39 @@
                                     <i class="bx bx-show"></i> Live Preview
                                 </span>
                             </div>
-                            <div class="preview-avatar" id="prevAvatar">?</div>
+                            <div class="preview-avatar" id="prevAvatar">
+                                {{ $project ? strtoupper(substr($project->name, 0, 1)) : '?' }}
+                            </div>
                             
-                            <div class="mb-1" id="prevCustomIdRow" style="display:none;">
-                                <span id="prevCustomId" class="badge bg-light text-primary border fw-bold" style="font-size:0.65rem; padding:2px 6px;"></span>
+                            <div class="mb-1" id="prevCustomIdRow" @if(!($project && $project->project_id_custom) && !isset($generatedId)) style="display:none;" @endif>
+                                <span id="prevCustomId" class="badge bg-light text-primary border fw-bold" style="font-size:0.65rem; padding:2px 6px;">
+                                    {{ $project->project_id_custom ?? $generatedId ?? '' }}
+                                </span>
                             </div>
 
-                            <div class="preview-name" id="prevName">Project Name</div>
-                            <div class="small text-muted mb-2" id="prevClient">— No Client Selected —</div>
+                            <div class="preview-name" id="prevName">{{ $project->name ?? 'Project Name' }}</div>
+                            <div class="small text-muted mb-2" id="prevClient">
+                                {{ $project ? ($project->client_name ?? '— No Client Selected —') : '— No Client Selected —' }}
+                            </div>
                             
-                            <div class="preview-type" id="prevType">Type</div>
-                            <div class="preview-amount" id="prevAmount">₹0</div>
+                            <div class="preview-type" id="prevType">{{ $project->type ?? 'Type' }}</div>
+                            <div class="preview-amount" id="prevAmount">₹{{ number_format($project->amount ?? 0) }}</div>
 
                             <div class="mt-3 d-flex flex-column gap-1 align-items-center">
-                                <div id="prevStatusBadge"></div>
-                                <div class="small text-muted mt-1" id="prevTimelineRow" style="display:none; font-size:0.7rem;">
-                                    <i class="bx bx-calendar-event"></i> <span id="prevDates"></span>
+                                <div id="prevStatusBadge">
+                                    @if($project)
+                                        <span class="pv-badge pv-badge-{{ $project->status == 1 ? 'success' : 'info' }}">
+                                            {{ $project->status == 1 ? 'Active' : 'Closed' }}
+                                        </span>
+                                    @endif
+                                </div>
+                                <div class="small text-muted mt-1" id="prevTimelineRow" @if(!($project && ($project->start_date || $project->deadline))) style="display:none;" @endif style="font-size:0.7rem;">
+                                    <i class="bx bx-calendar-event"></i> 
+                                    <span id="prevDates">
+                                        @if($project && ($project->start_date || $project->deadline))
+                                            {{ $project->start_date ? \Carbon\Carbon::parse($project->start_date)->format('d M') : '—' }} to {{ $project->deadline ? \Carbon\Carbon::parse($project->deadline)->format('d M') : '—' }}
+                                        @endif
+                                    </span>
                                 </div>
                             </div>
 
@@ -345,6 +362,12 @@
 }
 .qlink-item:hover { background: #f1f3f4; color: #006666; }
 .qlink-item i { font-size: 1rem; color: #006666; }
+.pv-badge {
+    font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+    padding: 3px 12px; border-radius: 20px; display: inline-block;
+}
+.pv-badge-success { background: #e6f4ea; color: #1e8e3e; }
+.pv-badge-info { background: #e8f0fe; color: #1967d2; }
 </style>
 
 <script>
