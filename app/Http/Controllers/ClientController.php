@@ -408,7 +408,7 @@ class ClientController extends Controller
 
         $recoveries = Recoveries::where('project_id', $id)->orderBy('id', 'DESC')->get();
         $license = Eselicenses::where('project_id', $id)->orderBy('id', 'DESC')->first();
-        $invoices = Invoices::where('project_id', $id)->orderBy('id', 'DESC')->get();
+        $invoices = Invoices::where('project_id', $id)->orderBy('date', 'DESC')->orderBy('id', 'DESC')->get();
 
         // Primary Tasks related to project (parent tasks only, with subtasks eager loaded)
         $tasks = \App\Models\Task::where('project_id', $id)
@@ -423,7 +423,7 @@ class ClientController extends Controller
         if ($client && !empty($client->commentLeadID)) {
             $leadIds[] = $client->commentLeadID;
         }
-        $proposals = \App\Models\Proposals::whereIn('lead_id', $leadIds)->orderBy('id', 'DESC')->get();
+        $proposals = \App\Models\Proposals::whereIn('lead_id', $leadIds)->orderBy('proposal_date', 'DESC')->orderBy('id', 'DESC')->get();
 
         return view('project-view', compact('project', 'recoveries', 'license', 'invoices', 'tasks', 'proposals'));
     }
@@ -790,7 +790,8 @@ class ClientController extends Controller
             if ($leadOrigin) $leadIds[] = $leadOrigin->id;
 
             $proposals = \App\Models\Proposals::whereIn('lead_id', $leadIds)
-                ->orderBy('created_at', 'desc')
+                ->orderBy('proposal_date', 'desc')
+                ->orderBy('id', 'desc')
                 ->get();
 
             $projects = \App\Models\Projects::where('client_id', $id)
@@ -798,7 +799,8 @@ class ClientController extends Controller
                 ->get();
 
             $invoices = \App\Models\Invoices::where('client_id', $id)
-                ->orderBy('created_at', 'desc')
+                ->orderBy('date', 'desc')
+                ->orderBy('id', 'desc')
                 ->get();
 
             return response()->json([
@@ -817,7 +819,8 @@ class ClientController extends Controller
         $invoices = Invoices::leftJoin('clients', 'invoices.client_id', '=', 'clients.id')
             ->select('clients.name as client_name', 'clients.company as client_company', 'invoices.*')
             ->where('clients.cid', '=', Auth::User()->cid)
-            ->orderBy('id', 'DESC')->get();
+            ->orderBy('invoices.date', 'DESC')
+            ->orderBy('invoices.id', 'DESC')->get();
 
         return view('invoices', ['invoices' => $invoices]);
 

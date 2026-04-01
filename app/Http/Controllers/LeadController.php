@@ -226,7 +226,8 @@ class LeadController extends Controller
             $proposals = Proposals::leftJoin('leads', 'proposals.lead_id', '=', 'leads.id')
                 ->select('leads.name as lead_name', 'proposals.*')
                 ->where('leads.id', '=', $id)
-                ->orderBy('id', 'DESC')->get();
+                ->orderBy('proposals.proposal_date', 'DESC')
+                ->orderBy('proposals.id', 'DESC')->get();
 
             return json_encode(['leads' => $leads, 'leadComments' => $leadComments, 'proposals' => $proposals]);
         }
@@ -524,6 +525,7 @@ class LeadController extends Controller
 
         // Apply filter for current user's company ID
         $query->where('users.cid', '=', Auth::user()->cid)
+            ->orderBy('proposals.proposal_date', 'DESC')
             ->orderBy('proposals.id', 'DESC');
 
         // Get results

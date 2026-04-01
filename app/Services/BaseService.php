@@ -31,7 +31,7 @@ class BaseService
     /**
      * Shared helper to send mail using CustomMailable with SMTP discovery.
      */
-    protected function sendMail($to, $subject, $viewName, $viewData, $userId = null, $companyId = null)
+    public function sendMail($to, $subject, $viewName, $viewData, $userId = null, $companyId = null)
     {
         $settings = $this->getSmtpSettings($userId, $companyId);
 
