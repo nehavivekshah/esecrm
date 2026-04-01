@@ -340,16 +340,6 @@ table.dataTable tbody tr:last-child td {
     color: #fff !important;
 }
 
-.dropdown.bootstrap-select.form-select {
-    padding: 0px !important;
-    border: 0px !important;
-}
-
-button.btn.dropdown-toggle.btn-light {
-    border-top-left-radius: 0px !important;
-    border-bottom-left-radius: 0px !important;
-}
-
 /* Custom Scrollbar for a premium feel */
 ::-webkit-scrollbar {
     width: 8px;

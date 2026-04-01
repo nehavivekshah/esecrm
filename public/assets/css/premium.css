@@ -6482,3 +6482,12 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     border-bottom-left-radius: 0px !important;
 }
 
+.dropdown.bootstrap-select.form-select {
+    padding: 0px !important;
+    border: 0px !important;
+}
+
+button.btn.dropdown-toggle.btn-light {
+    border-top-left-radius: 0px !important;
+    border-bottom-left-radius: 0px !important;
+}
