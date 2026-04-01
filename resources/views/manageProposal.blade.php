@@ -739,8 +739,12 @@
                 if (amtEl) amtEl.textContent = formatCurrency(0, currencySelect.value);
                 container.appendChild(clone);
                 
-                // Re-initialize selectpicker for the new row
-                $(clone).find('.selectpicker').selectpicker('render');
+                // Re-initialize selectpicker for the new row (clean up cloned UI first)
+                $(clone).find('.selectpicker').each(function() {
+                    $(this).selectpicker('destroy'); 
+                });
+                // Initialize selectpicker for the new row
+                $(clone).find('.selectpicker').selectpicker();
                 
                 clone.querySelectorAll('.mp-autoresize').forEach(autoResize);
                 clone.querySelector('.item-name')?.focus();

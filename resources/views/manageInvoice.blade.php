@@ -845,7 +845,8 @@
             tbody.appendChild(newRow);
             
             // Initialize selectpicker for the new row
-            $(newRow).find('.selectpicker').selectpicker('render');
+            // Initialize selectpicker for the new row
+            $(newRow).find('.selectpicker').selectpicker();
             
             updateItemIndices(); // Update indices before recalculating
             recalculateTotals();
