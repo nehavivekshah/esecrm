@@ -1150,10 +1150,11 @@ class ClientController extends Controller
             ->orderBy('name', 'ASC')
             ->get(['id', 'name']);
 
-        // Auto-generate Project ID for NEW projects
+        // Auto-generate Project ID for NEW projects OR if existing one is empty
         $generatedId = null;
-        if (!$id) {
-            $year = date('Y');
+        if (!$id || ($project && empty($project->project_id_custom))) {
+            // Use project's creation year if editing, otherwise current year
+            $year = ($project && $project->created_at) ? date('Y', strtotime($project->created_at)) : date('Y');
             $count = Projects::whereYear('created_at', $year)->count() + 1;
             $generatedId = 'PROJ-' . $year . '-' . str_pad($count, 3, '0', STR_PAD_LEFT);
         }
