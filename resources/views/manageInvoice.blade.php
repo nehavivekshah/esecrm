@@ -837,4 +837,3 @@
         });
     </script>
 @endsection
-@endsection
