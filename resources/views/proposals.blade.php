@@ -174,9 +174,9 @@
                                 </td>
 
                                 {{-- Status pill --}}
-                                <td>
-                                    <span class="pr-status-pill"
-                                          style="background:{{ $stColor }}18;color:{{ $stColor }};">
+                                <td data-search="{{ $st }}" data-order="{{ $st }}">
+                                     <span class="pr-status-pill"
+                                           style="background:{{ $stColor }}18;color:{{ $stColor }};">
                                         <i class="{{ $stIcon }}"></i>
                                         {{ $st }}
                                     </span>
@@ -243,15 +243,18 @@
 
 <script>
 $(function () {
+    const table = $('#lists').DataTable({ retrieve: true });
+
     /* Status filter pills */
     $('#statusFilterGroup').on('click', '.pr-filter', function () {
         $('.pr-filter').removeClass('active');
         $(this).addClass('active');
         const f = $(this).data('filter');
+        
         if (f === 'all') {
-            $('.pr-row').show();
+            table.column(8).search('').draw();
         } else {
-            $('.pr-row').hide().filter('[data-status="' + f + '"]').show();
+            table.column(8).search('^' + f + '$', true, false).draw();
         }
     });
 });

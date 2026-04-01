@@ -152,7 +152,7 @@
                                         <span class="text-muted">—</span>
                                     @endif
                                 </td>
-                                <td>
+                                <td data-search="{{ $st }}" data-order="{{ $st }}">
                                     <span class="pr-status-pill" style="background:{{ $stColor }}15;color:{{ $stColor }};">
                                         <i class="{{ $stIcon }}"></i>
                                         {{ ucfirst($st) }}
@@ -347,10 +347,12 @@
                 $('.pr-filter').removeClass('active');
                 $(this).addClass('active');
                 const f = $(this).data('filter');
+                
                 if (f === 'all') {
-                    $('.inv-row').show();
+                    table.column(8).search('').draw();
                 } else {
-                    $('.inv-row').hide().filter('[data-status="' + f + '"]').show();
+                    // Match exactly using regex
+                    table.column(8).search('^' + f + '$', true, false).draw();
                 }
             });
         });
