@@ -669,52 +669,86 @@
         }
 
         function calculateTotals() {
-            const code      = currencySelect.value;
-            const adj       = parseFloat(adjustmentInput.value) || 0;
-            const discType  = discountTypeSelect.value;
-            const discPct   = parseFloat(discountValueInput.value) || 0;
-            let subTotal = 0, cgst = 0, sgst = 0, igst = 0, vat = 0;
+            try {
+                const code      = currencySelect.value || 'INR';
+                const adj       = parseFloat(adjustmentInput.value) || 0;
+                const discType  = discountTypeSelect.value;
+                const discPct   = parseFloat(discountValueInput.value) || 0;
+                let subTotal = 0, cgst = 0, sgst = 0, igst = 0, vat = 0;
 
-            container.querySelectorAll('.mp-item-row').forEach(row => {
-                const qty  = parseFloat(row.querySelector('.item-qty').value)  || 0;
-                const rate = parseFloat(row.querySelector('.item-rate').value) || 0;
-                const line = qty * rate;
-                subTotal += line;
-                const amtEl = row.querySelector('.item-amount');
-                if (amtEl) amtEl.textContent = formatCurrency(line, code);
-                const taxSel = row.querySelector('.item-tax');
-                if (taxSel) {
-                    Array.from(taxSel.selectedOptions).forEach(opt => {
-                        const [idx, pct] = opt.value.split(':');
-                        const t = line * (parseFloat(pct) || 0);
-                        switch (+idx) { case 0: cgst += t; break; case 1: sgst += t; break; case 2: igst += t; break; case 3: vat += t; break; }
-                    });
+                container.querySelectorAll('.mp-item-row').forEach(row => {
+                    const qtyEl = row.querySelector('.item-qty');
+                    const rateEl = row.querySelector('.item-rate');
+                    if (!qtyEl || !rateEl) return;
+
+                    const qty  = parseFloat(qtyEl.value)  || 0;
+                    const rate = parseFloat(rateEl.value) || 0;
+                    const line = qty * rate;
+                    subTotal += line;
+
+                    const amtEl = row.querySelector('.item-amount');
+                    if (amtEl) amtEl.textContent = formatCurrency(line, code);
+
+                    const taxSel = row.querySelector('.item-tax');
+                    if (taxSel) {
+                        // Use jQuery val() for robust multi-select retrieval
+                        const selectedValues = $(taxSel).val() || [];
+                        selectedValues.forEach(val => {
+                            if (!val.includes(':')) return;
+                            const [idx, pct] = val.split(':');
+                            const t = line * (parseFloat(pct) || 0);
+                            switch (+idx) { 
+                                case 0: cgst += t; break; 
+                                case 1: sgst += t; break; 
+                                case 2: igst += t; break; 
+                                case 3: vat += t; break; 
+                            }
+                        });
+                    }
+                });
+
+                const taxTotal  = cgst + sgst + igst + vat;
+                let   discountAmt = 0;
+                if (discPct > 0) {
+                    const base = discType === 'before-tax' ? subTotal : subTotal + taxTotal;
+                    discountAmt = base * discPct / 100;
                 }
-            });
+                const grand = subTotal + taxTotal - discountAmt + adj;
 
-            const taxTotal  = cgst + sgst + igst + vat;
-            let   discountAmt = 0;
-            if (discPct > 0) {
-                const base = discType === 'before-tax' ? subTotal : subTotal + taxTotal;
-                discountAmt = base * discPct / 100;
+                // Robust UI Updates
+                const setSafeText = (id, text) => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = text;
+                };
+                const setSafeValue = (id, val) => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = val;
+                };
+
+                setSafeText('sub-total', formatCurrency(subTotal, code));
+                setSafeValue('sub-total1', subTotal.toFixed(2));
+                
+                if (discountTypeDisplay && discountTypeSelect.selectedOptions.length > 0) {
+                    discountTypeDisplay.textContent = discountTypeSelect.selectedOptions[0].text;
+                }
+                
+                setSafeText('discount-total', '- ' + formatCurrency(discountAmt, code));
+                setSafeValue('discount-total1', discountAmt.toFixed(2));
+                
+                setSafeText('cgst-total', formatCurrency(cgst, code));
+                setSafeValue('cgst-total1', cgst.toFixed(2));
+                setSafeText('sgst-total', formatCurrency(sgst, code));
+                setSafeValue('sgst-total1', sgst.toFixed(2));
+                setSafeText('igst-total', formatCurrency(igst, code));
+                setSafeValue('igst-total1', igst.toFixed(2));
+                setSafeText('vat-total', formatCurrency(vat, code));
+                setSafeValue('vat-total1', vat.toFixed(2));
+                
+                setSafeText('total', formatCurrency(grand, code));
+                setSafeValue('total1', grand.toFixed(2));
+            } catch (err) {
+                console.error("Calculation Error:", err);
             }
-            const grand = subTotal + taxTotal - discountAmt + adj;
-
-            document.getElementById('sub-total').textContent  = formatCurrency(subTotal, code);
-            document.getElementById('sub-total1').value       = subTotal.toFixed(2);
-            discountTypeDisplay.textContent                   = discountTypeSelect.selectedOptions[0].text;
-            discountTotalDisplay.textContent                  = '- ' + formatCurrency(discountAmt, code);
-            discountTotalDisplay1.value                       = discountAmt.toFixed(2);
-            document.getElementById('cgst-total').textContent = formatCurrency(cgst, code);
-            document.getElementById('cgst-total1').value      = cgst.toFixed(2);
-            document.getElementById('sgst-total').textContent = formatCurrency(sgst, code);
-            document.getElementById('sgst-total1').value      = sgst.toFixed(2);
-            document.getElementById('igst-total').textContent = formatCurrency(igst, code);
-            document.getElementById('igst-total1').value      = igst.toFixed(2);
-            document.getElementById('vat-total').textContent  = formatCurrency(vat, code);
-            document.getElementById('vat-total1').value       = vat.toFixed(2);
-            document.getElementById('total').textContent      = formatCurrency(grand, code);
-            document.getElementById('total1').value           = grand.toFixed(2);
         }
 
         // ── Add Item ──
@@ -779,16 +813,14 @@
         });
 
         // ── Live calculation triggers ──
-        container.addEventListener('input', function (e) {
-            if (e.target.classList.contains('item-qty') || e.target.classList.contains('item-rate')) calculateTotals();
-        });
-        container.addEventListener('change', function (e) {
-            if (e.target.classList.contains('item-tax')) calculateTotals();
-        });
-        currencySelect.addEventListener('change', calculateTotals);
-        adjustmentInput.addEventListener('input', calculateTotals);
-        discountTypeSelect.addEventListener('change', calculateTotals);
-        discountValueInput.addEventListener('input', calculateTotals);
+        // Using jQuery delegation for robust plugin event capturing
+        $(container).on('input', '.item-qty, .item-rate', calculateTotals);
+        $(container).on('change', '.item-tax', calculateTotals);
+        
+        $(currencySelect).on('change', calculateTotals);
+        $(adjustmentInput).on('input', calculateTotals);
+        $(discountTypeSelect).on('change', calculateTotals);
+        $(discountValueInput).on('input', calculateTotals);
 
         calculateTotals();
     });

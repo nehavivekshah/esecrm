@@ -802,28 +802,17 @@
         }
 
         // --- Event Listeners ---
-        const invoiceItemsBody = document.getElementById('invoiceItemsBody');
+        const $invoiceItemsBody = $('#invoiceItemsBody');
 
-        // Delegate listeners for item rows
-        invoiceItemsBody.addEventListener('input', (e) => {
-            if (
-                e.target.classList.contains('item-qty') ||
-                e.target.classList.contains('item-price')
-            ) {
-                recalculateTotals();
-            }
-        });
-        invoiceItemsBody.addEventListener('change', (e) => {
-            if (e.target.classList.contains('item-tax')) {
-                recalculateTotals();
-            }
-        });
+        // Using jQuery delegation for robust plugin event capturing
+        $invoiceItemsBody.on('input', '.item-qty, .item-price', recalculateTotals);
+        $invoiceItemsBody.on('change', '.item-tax', recalculateTotals);
 
         // Listeners for summary/overall fields
-        document.getElementById('discountApplicationType').addEventListener('change', recalculateTotals);
-        document.getElementById('discountValueType').addEventListener('change', recalculateTotals);
-        document.getElementById('discountValue').addEventListener('input', recalculateTotals);
-        document.getElementById('adjustment').addEventListener('input', recalculateTotals);
+        $('#discountApplicationType').on('change', recalculateTotals);
+        $('#discountValueType').on('change', recalculateTotals);
+        $('#discountValue').on('input', recalculateTotals);
+        $('#adjustment').on('input', recalculateTotals);
 
         // --- Add/Remove Item Rows ---
         document.getElementById('addItemButton').addEventListener('click', () => {
