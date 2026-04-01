@@ -52,7 +52,7 @@
             <div class="row g-4 align-items-start">
 
                 {{-- ══ LEFT — Form sections ══ --}}
-                <div class="col-lg-8">
+                <div class="col-lg-12">
 
                     {{-- ── Proposal Information ── --}}
                     <div class="ml-card mb-4">
@@ -464,7 +464,7 @@
                 </div>{{-- /col-lg-8 --}}
 
                 {{-- ══ RIGHT — Sticky Summary + Actions ══ --}}
-                <div class="col-lg-4">
+                <div class="col-lg-12">
                     <div class="mp-sidebar-sticky">
 
                         {{-- Summary card --}}

@@ -41,7 +41,14 @@
         @media (max-width: 575px) { .mp-item-row-body { grid-template-columns: 1fr; } }
     </style>
 
+    <section class="task__section">
+        @include('inc.header', ['title' => !empty($invoice->id) ? 'Edit Invoice' : 'Create Invoice'])
+
         <div class="dash-container">
+            <form id="invoiceForm" action="/manage-invoice" method="POST">
+                @csrf
+                <input type="hidden" name="id" value="{{ $invoice->id ?? '' }}">
+
 
             {{-- ── Page heading bar ── --}}
             <div class="leads-toolbar mb-3">
@@ -88,7 +95,7 @@
 
                 <div class="row g-4">
                     {{-- ── Left Column: Main Form & Items ── --}}
-                    <div class="col-lg-8">
+                    <div class="col-lg-12">
                         {{-- ── Invoice Information ── --}}
                         <div class="ml-card mb-4">
                             <div class="ml-card-header">
@@ -492,6 +499,7 @@
                         </div>
                     </div> {{-- End col-lg-8 --}}
 
+                    <div class="col-lg-12">
                         {{-- ══ RIGHT — Sticky Summary + Actions ══ --}}
                         <div class="mp-sidebar-sticky">
                             {{-- Summary card --}}
@@ -836,4 +844,7 @@
             }, 300);
         });
     </script>
+            </form>
+        </div>
+    </section>
 @endsection
