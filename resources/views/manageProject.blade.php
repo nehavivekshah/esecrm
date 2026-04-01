@@ -191,7 +191,6 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="ml-label" for="amount">Contract Amount <span class="text-danger">*</span></label>
-                                    <br><br><br>
                                     <div class="input-group">
                                         <span class="input-group-text fw-bold">₹</span>
                                         <input type="number" id="amount" name="amount" class="form-control @error('amount') is-invalid @enderror"
