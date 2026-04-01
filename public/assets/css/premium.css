@@ -5785,7 +5785,7 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
 .pv-hero-title {
     font-size: 1.3rem;
     font-weight: 800;
-    color: #fff !important;
+    color: #fff;
     margin: 0 0 4px;
     letter-spacing: -0.02em;
 }
