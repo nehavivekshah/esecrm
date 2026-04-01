@@ -355,6 +355,7 @@
                                                     @endphp
                                                     <select class="selectpicker form-control item-tax" multiple
                                                         data-selected-text-format="count > 2"
+                                                        data-container="body"
                                                         name="invoice_items[{{ $index }}][tax_rate][]">
                                                         @foreach($available_taxes as $tax)
                                                             <option value="{{ $tax['value'] }}" @if(in_array($tax['value'], $selected_taxes)) selected @endif>{{ $tax['label'] }}</option>
@@ -837,7 +838,7 @@
                 <td class="align-top"><input type="number" class="form-control text-end item-sac_code" name="invoice_items[${newIndex}][sac_code]" value="998314" min="0" step="any"></td>
                 <td class="align-top"><input type="number" class="form-control text-end item-qty" name="invoice_items[${newIndex}][quantity]" value="1" min="0" step="any" required></td>
                 <td class="align-top"><input type="number" class="form-control text-end item-price" name="invoice_items[${newIndex}][price]" value="0.00" min="0" step="any" placeholder="Rate" required></td>
-                <td class="align-top"><select class="selectpicker form-control item-tax" multiple data-selected-text-format="count > 2" name="invoice_items[${newIndex}][tax_rate][]" aria-label="Select Taxes">${availableTaxes.map(tax => `<option value="${tax.value}">${tax.label}</option>`).join('')}</select></td>
+                <td class="align-top"><select class="selectpicker form-control item-tax" multiple data-selected-text-format="count > 2" data-container="body" name="invoice_items[${newIndex}][tax_rate][]" aria-label="Select Taxes">${availableTaxes.map(tax => `<option value="${tax.value}">${tax.label}</option>`).join('')}</select></td>
                 <td class="text-end align-middle line-total">0.00</td>
                 <td class="text-center align-middle"><button type="button" class="btn btn-sm btn-danger removeRowButton" title="Remove Item"><i class='bx bx-trash'></i></button></td>
             `;

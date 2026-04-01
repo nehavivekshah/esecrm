@@ -362,6 +362,7 @@
                                                 <label class="mp-item-label">Tax</label>
                                                 <select class="selectpicker form-control form-control-sm item-tax" multiple
                                                         data-selected-text-format="count > 2"
+                                                        data-container="body"
                                                         name="proposal_items[{{ $k }}][tax_percentage][]" title="No Tax">
                                                     @foreach($taxes as $index => $tax)
                                                         @php $calTax = ($tax ?? 0) / 100; @endphp
@@ -437,6 +438,7 @@
                                                 <label class="mp-item-label">Tax</label>
                                                 <select class="selectpicker form-control form-control-sm item-tax" multiple
                                                         data-selected-text-format="count > 2"
+                                                        data-container="body"
                                                         name="proposal_items[0][tax_percentage][]" title="No Tax">
                                                     @foreach($taxes as $index => $tax)
                                                         @php $calTax = ($tax ?? 0) / 100; @endphp
