@@ -284,16 +284,22 @@ class ClientController extends Controller
         $contract = null;
 
         if ($id) {
-            $contract = Contracts::where('id', '=', $id)
-                ->first();
+            $contract = Contracts::where('id', '=', $id)->first();
         }
 
         $clients = Clients::where('status', '=', '1')->get();
 
-        return view('manageContract', [
+        $viewData = [
             'contract' => $contract,
-            'clients' => $clients,
-        ]);
+            'clients'  => $clients,
+        ];
+
+        // If called as AJAX modal request, return pure partial — no layout, no DataTables scripts
+        if ($request->has('ajax')) {
+            return view('manageContractForm', $viewData);
+        }
+
+        return view('manageContract', $viewData);
     }
 
     public function manageContractPost(Request $request)
