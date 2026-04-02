@@ -1,4 +1,30 @@
-{{-- manageContractForm.blade.php - Pure partial for AJAX modal injection --}}
+{{-- Select2 CSS (only if not already loaded) --}}
+@once
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<style>
+    /* Fix Select2 inside Bootstrap modal */
+    .select2-container { width: 100% !important; }
+    .select2-container--default .select2-selection--single {
+        height: 38px;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        padding: 0 8px;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: normal;
+        padding-left: 4px;
+        color: #212529;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 36px;
+    }
+    .select2-dropdown { z-index: 9999 !important; }
+</style>
+@endonce
+
 @php
     $showCustom = old('contract_type', $contract->contract_type ?? '') === 'new';
 @endphp
@@ -23,8 +49,8 @@
             <label for="client_id" class="form-label fw-500" style="font-size:0.875rem;">
                 Select Client <span class="text-danger">*</span>
             </label>
-            <select class="form-select" id="client_id" name="client_id" required>
-                <option value="">Select Client</option>
+            <select class="form-select select2-client" id="client_id" name="client_id" required>
+                <option value="">-- Select Client --</option>
                 @foreach($clients as $client)
                     <option value="{{ $client->id }}" @if($client->id == ($contract->client_id ?? '')) selected @endif>
                         {{ $client->name ?? 'Unnamed Client' }} {{ $client->company ? '('.$client->company.')' : '' }}
@@ -116,6 +142,16 @@
 
 <script>
     (function() {
+        // Initialize Select2 on client dropdown with search
+        if (typeof $.fn.select2 !== 'undefined') {
+            $('#client_id').select2({
+                placeholder: '-- Select Client --',
+                allowClear: true,
+                dropdownParent: $('#manageContractModal'),
+                width: '100%'
+            });
+        }
+
         // Contract Type toggle
         const typeDropdown = document.getElementById('contract_type');
         const customContainer = document.getElementById('custom_contract_type_container');
