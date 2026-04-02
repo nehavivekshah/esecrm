@@ -1774,3 +1774,95 @@
     </script>
 
 @endif
+
+@if(Request::segment(1) == 'projects')
+    <script>
+        $(function () {
+            // Initialize DataTables
+            if ($.fn.DataTable) {
+                $('#lists').DataTable({
+                    "retrieve": true,
+                    "order": [],
+                    "pageLength": 25,
+                    "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                    "language": {
+                        "search": "Search:",
+                        "searchPlaceholder": "Search projects...",
+                        "lengthMenu": "Show _MENU_ entries",
+                        "info": "Showing _START_ to _END_ of _TOTAL_ entries",
+                        "paginate": {
+                            "first": "First",
+                            "last": "Last",
+                            "next": "Next",
+                            "previous": "Previous"
+                        }
+                    },
+                    "dom": "<'row mb-3 px-3 pt-3'<'col-md-6'l><'col-md-6 d-flex justify-content-end'f>>" +
+                        "<'row'<'col-sm-12'tr>>" +
+                        "<'row mt-3 px-3 pb-3'<'col-md-5'i><'col-md-7 d-flex justify-content-end'p>>",
+                    "destroy": true // Allow re-initialization if needed
+                });
+            }
+
+            // Restore view preference
+            const savedView = localStorage.getItem('pjView_v2') || 'table';
+            setView(savedView);
+        });
+
+        function setView(view) {
+            localStorage.setItem('pjView_v2', view);
+            if (view === 'card') {
+                $('#cardView').show(); $('#tableView').hide();
+                $('#cardViewBtn').addClass('active'); $('#tableViewBtn').removeClass('active');
+            } else {
+                $('#cardView').hide(); $('#tableView').show();
+                $('#tableViewBtn').addClass('active'); $('#cardViewBtn').removeClass('active');
+            }
+        }
+
+        $(document).ready(function () {
+            // When the delete button is clicked
+            $('.delete').click(function () {
+                var selector = $(this);
+                var pagename = selector.attr("data-page");
+                var rowid = selector.attr("id");
+
+                // Confirmation dialog using SweetAlert
+                swal({
+                    title: "Are you sure?",
+                    text: "You want to delete this project?",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            // Perform the AJAX request
+                            $.ajax({
+                                type: 'GET',
+                                url: "/ajax-send",
+                                data: {
+                                    pagename: pagename,
+                                    rowid: rowid,
+                                    projectDelete: 'projectDelete'
+                                },
+                                success: function (response) {
+                                    if (response.success) {
+                                        selector.closest('tr').hide();  // Hides the entire row
+                                        swal("Deleted!", "The project has been deleted successfully.", "success");
+                                    } else {
+                                        swal("Error", response.error || "There was an issue deleting the project.", "error");
+                                    }
+                                },
+                                error: function () {
+                                    swal("Error", "An error occurred while processing your request.", "error");
+                                }
+                            });
+                        } else {
+                            swal("This query is safe.");
+                        }
+                    });
+            });
+        });
+    </script>
+@endif

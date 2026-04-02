@@ -320,7 +320,7 @@
                                             </a>
                                             @if(in_array('projects_delete', $roleArray) || in_array('All', $roleArray))
                                                 <a href="javascript:void(0)" class="btn kb-action-btn kb-action-del delete"
-                                                    id="{{ $project->id }}" date-page="projectDelete" title="Delete">
+                                                    id="{{ $project->id }}" data-page="projectDelete" title="Delete">
                                                     <i class="bx bx-trash"></i>
                                                 </a>
                                             @endif
@@ -700,48 +700,4 @@
         }
     </style>
 
-    <script>
-        $(function () {
-            // Initialize DataTables
-            if ($.fn.DataTable) {
-                $('#lists').DataTable({
-                    "retrieve": true,
-                    "order": [],
-                    "pageLength": 25,
-                    "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
-                    "language": {
-                        "search": "Search:",
-                        "searchPlaceholder": "Search projects...",
-                        "lengthMenu": "Show _MENU_ entries",
-                        "info": "Showing _START_ to _END_ of _TOTAL_ entries",
-                        "paginate": {
-                            "first": "First",
-                            "last": "Last",
-                            "next": "Next",
-                            "previous": "Previous"
-                        }
-                    },
-                    "dom": "<'row mb-3 px-3 pt-3'<'col-md-6'l><'col-md-6 d-flex justify-content-end'f>>" +
-                        "<'row'<'col-sm-12'tr>>" +
-                        "<'row mt-3 px-3 pb-3'<'col-md-5'i><'col-md-7 d-flex justify-content-end'p>>",
-                    "destroy": true // Allow re-initialization if needed
-                });
-            }
-
-            // Restore view preference
-            const savedView = localStorage.getItem('pjView_v2') || 'table';
-            setView(savedView);
-        });
-
-        function setView(view) {
-            localStorage.setItem('pjView_v2', view);
-            if (view === 'card') {
-                $('#cardView').show(); $('#tableView').hide();
-                $('#cardViewBtn').addClass('active'); $('#tableViewBtn').removeClass('active');
-            } else {
-                $('#cardView').hide(); $('#tableView').show();
-                $('#tableViewBtn').addClass('active'); $('#cardViewBtn').removeClass('active');
-            }
-        }
-    </script>
 @endsection
