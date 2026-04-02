@@ -18,14 +18,18 @@
         $expiringSoonCount = 0;
 
         foreach($contracts as $c) {
-            $endDate = Carbon::parse($c->end_date ?? null);
-            $diffInDays = Carbon::today()->diffInDays($endDate, false);
+            if (!empty($c->end_date)) {
+                $endDate = Carbon::parse($c->end_date);
+                $diffInDays = Carbon::today()->diffInDays($endDate, false);
 
-            if ($diffInDays < 0) {
-                $expiredCount++;
-            } elseif ($diffInDays <= 15) {
-                $expiringSoonCount++;
-                $activeCount++;
+                if ($diffInDays < 0) {
+                    $expiredCount++;
+                } elseif ($diffInDays <= 15) {
+                    $expiringSoonCount++;
+                    $activeCount++;
+                } else {
+                    $activeCount++;
+                }
             } else {
                 $activeCount++;
             }
@@ -132,10 +136,14 @@
                         <tbody id="contracts">
                             @foreach($contracts as $k => $contract)
                                 @php
-                                    $endDate = Carbon::parse($contract->end_date ?? null);
-                                    $diffInDays = Carbon::today()->diffInDays($endDate, false);
-                                    $isExpired = $diffInDays < 0;
-                                    $isExpiringSoon = ($diffInDays >= 0 && $diffInDays <= 15);
+                                    $isExpired = false;
+                                    $isExpiringSoon = false;
+                                    if (!empty($contract->end_date)) {
+                                        $endDate = Carbon::parse($contract->end_date);
+                                        $diffInDays = Carbon::today()->diffInDays($endDate, false);
+                                        $isExpired = $diffInDays < 0;
+                                        $isExpiringSoon = ($diffInDays >= 0 && $diffInDays <= 15);
+                                    }
                                 @endphp
                                 <tr>
                                     <td class="m-none text-muted" style="font-size:0.78rem;">{{ $k+1 }}</td>
@@ -163,13 +171,17 @@
                                         <span class="rv-amount">₹{{ number_format((float)($contract->value ?? 0), 0) }}</span>
                                     </td>
                                     <td class="m-none">
-                                        <span class="text-muted" style="font-size:0.82rem;">{!! date_format(date_create($contract->start_date ?? null),'d M, Y') !!}</span>
+                                        <span class="text-muted" style="font-size:0.82rem;">{!! !empty($contract->start_date) ? date_format(date_create($contract->start_date),'d M, Y') : '—' !!}</span>
                                     </td>
                                     <td class="m-none">
+                                        @if(!empty($contract->end_date))
                                         <span class="rv-reminder {{ $isExpired ? 'rv-reminder-overdue' : ($isExpiringSoon ? 'rv-reminder-warning' : '') }}">
                                             <i class="bx bx-calendar"></i>
-                                            {!! date_format(date_create($contract->end_date ?? null),'d M, Y') !!}
+                                            {!! date_format(date_create($contract->end_date),'d M, Y') !!}
                                         </span>
+                                        @else
+                                        <span class="text-muted">—</span>
+                                        @endif
                                     </td>
                                     @if(in_array('contracts_edit',$roleArray) || in_array('contracts_delete',$roleArray) || in_array('All',$roleArray))
                                     <td class="position-sticky end-0">
