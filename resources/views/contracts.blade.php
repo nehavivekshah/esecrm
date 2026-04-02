@@ -107,10 +107,10 @@
                         <i class="bx bx-refresh"></i>
                     </button>
                     @if(in_array('contracts_add', $roleArray) || in_array('All', $roleArray))
-                        <a href="/manage-contract" class="lb-btn lb-btn-primary">
+                        <button class="lb-btn lb-btn-primary open-contract-modal" data-url="/manage-contract">
                             <i class="bx bx-plus"></i>
                             <span class="d-none d-sm-inline">New Contract</span>
-                        </a>
+                        </button>
                     @endif
                 </div>
             </div>
@@ -187,9 +187,9 @@
                                     <td class="position-sticky end-0">
                                         <div class="d-flex align-items-center justify-content-center gap-1">
                                             @if(in_array('contracts_edit',$roleArray) || in_array('All',$roleArray))
-                                            <a href="/manage-contract?id={{ $contract->id }}" class="btn kb-action-btn" title="Edit" style="background:rgba(0,102,102,0.10);color:#006666;">
+                                            <button class="btn kb-action-btn open-contract-modal" data-url="/manage-contract?id={{ $contract->id }}" title="Edit" style="background:rgba(0,102,102,0.10);color:#006666; border:none;">
                                                 <i class="bx bx-edit"></i>
-                                            </a>
+                                            </button>
                                             @endif
                                             @if(in_array('contracts_delete',$roleArray) || in_array('All',$roleArray))
                                             <a href="javascript:void(0)" class="btn kb-action-btn kb-action-del delete" id="{{ $contract->id }}" data-page="contractDelete" title="Delete" style="background:rgba(234,67,53,0.10);color:#ea4335;">
@@ -210,9 +210,9 @@
                         <i class="bx bx-file"></i>
                         <span>No contracts found.</span>
                         @if(in_array('contracts_add', $roleArray) || in_array('All', $roleArray))
-                        <a href="/manage-contract" class="lb-btn lb-btn-primary mt-2">
+                        <button class="lb-btn lb-btn-primary mt-2 open-contract-modal" data-url="/manage-contract">
                             <i class="bx bx-plus"></i> Add Contract
-                        </a>
+                        </button>
                         @endif
                     </div>
                 @endif
@@ -246,4 +246,39 @@
         .rv-empty i { font-size: 2.5rem; }
         .rv-empty span { font-size: 0.87rem; }
     </style>
+
+    {{-- Manage Contract Modal --}}
+    <div class="modal fade" id="manageContractModal" tabindex="-1" aria-labelledby="manageContractModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="border-radius:16px; border:none;" id="manageContractModalContent">
+                <!-- Content injected via AJAX -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Unbind any previous listeners to prevent multiple fires
+            $(document).off('click', '.open-contract-modal').on('click', '.open-contract-modal', function (e) {
+                e.preventDefault();
+                let url = $(this).data('url');
+                let modalContent = $('#manageContractModalContent');
+                
+                // Show a brief loading skeleton or text if desired
+                modalContent.html('<div class="p-5 text-center"><i class="bx bx-loader-alt bx-spin" style="font-size:2rem; color:#006666;"></i><p class="mt-2 text-muted fw-500">Loading form...</p></div>');
+                $('#manageContractModal').modal('show');
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function (response) {
+                        modalContent.html(response);
+                    },
+                    error: function (xhr) {
+                        modalContent.html('<div class="p-5 text-center text-danger"><i class="bx bx-error" style="font-size:2rem;"></i><p>Could not load data. Please try again.</p></div>');
+                    }
+                });
+            });
+        });
+    </script>
 @endsection

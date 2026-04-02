@@ -1,7 +1,9 @@
+@if(!request()->ajax())
 @extends('layout')
 @section('title', 'Contract - eseCRM')
 
 @section('content')
+@endif
 
 @php
     $sessionroles = session('roles');
@@ -9,6 +11,7 @@
     $showCustom = old('contract_type', $contract->contract_type ?? '') === 'new';
 @endphp
 
+@if(!request()->ajax())
 <section class="task__section">
     <div class="text">
         <i class="bx bx-menu" id="mbtn"></i>
@@ -27,6 +30,15 @@
                 <h1>Add New Contract</h1>
             @endif
         </div>
+@else
+    <div class="modal-header" style="border-bottom:1px solid #f0f0f0; padding:16px 20px;">
+        <h5 class="modal-title" style="font-size:1.1rem; font-weight:700; color:#202124;">
+            @if(!empty($_GET['id']) || !empty($contract->id)) Edit Contract @else Add New Contract @endif
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body px-4 py-3">
+@endif
 
         <div class="row g-3 px-2">
             <div class="col-md-12 form-card">
@@ -35,10 +47,12 @@
 
                     @if(!empty($_GET['id']))
                         <input type="hidden" name="id" value="{{ $_GET['id'] }}">
+                    @elseif(!empty($contract->id))
+                        <input type="hidden" name="id" value="{{ $contract->id }}">
                     @endif
 
                     <!-- Client -->
-                    <div class="form-group col-lg-3  col-md-4 col-sm-6">
+                    <div class="form-group col-lg-3 col-md-4 col-sm-6">
                         <label for="client_id">Select Client*</label>
                         <select class="selectpicker form-select d-block" id="client_id" name="client_id" data-live-search="true" required>
                             <option value="">Select Client</option>
@@ -64,14 +78,13 @@
                         <label for="contract_type">Contract Type*</label>
                         <select class="form-control" id="contract_type" name="contract_type" required>
                             <option value="">Select Type</option>
-                            <option value="domain" {{ old('contract_type', $contract->contract_type ?? '') === 'domain' ? 'selected' : '' }}>Domain Renawal</option>
-                            <option value="hosting" {{ old('contract_type', $contract->contract_type ?? '') === 'hosting' ? 'selected' : '' }}>Hosting Renawal</option>
-                            <option value="domain-hosting" {{ old('contract_type', $contract->contract_type ?? '') === 'domain-hosting' ? 'selected' : '' }}>Domain + Hosting Renawal</option>
-                            <option value="hosting-email" {{ old('contract_type', $contract->contract_type ?? '') === 'hosting-email' ? 'selected' : '' }}>Hosting + Email Renawal</option>
-                            <option value="hosting-webmail" {{ old('contract_type', $contract->contract_type ?? '') === 'hosting-webmail' ? 'selected' : '' }}>Hosting + webmail Renawal</option>
-                            <option value="domain-hosting" {{ old('contract_type', $contract->contract_type ?? '') === 'domain-hosting' ? 'selected' : '' }}>Domain + Hosting Renawal</option>
-                            <option value="domain-hosting-email" {{ old('contract_type', $contract->contract_type ?? '') === 'domain-hosting-email' ? 'selected' : '' }}>Domain + Hosting + Email Renawal</option>
-                            <option value="seo" {{ old('contract_type', $contract->contract_type ?? '') === 'seo' ? 'selected' : '' }}>Seo</option>
+                            <option value="domain" {{ old('contract_type', $contract->contract_type ?? '') === 'domain' ? 'selected' : '' }}>Domain Renewal</option>
+                            <option value="hosting" {{ old('contract_type', $contract->contract_type ?? '') === 'hosting' ? 'selected' : '' }}>Hosting Renewal</option>
+                            <option value="domain-hosting" {{ old('contract_type', $contract->contract_type ?? '') === 'domain-hosting' ? 'selected' : '' }}>Domain + Hosting Renewal</option>
+                            <option value="hosting-email" {{ old('contract_type', $contract->contract_type ?? '') === 'hosting-email' ? 'selected' : '' }}>Hosting + Email Renewal</option>
+                            <option value="hosting-webmail" {{ old('contract_type', $contract->contract_type ?? '') === 'hosting-webmail' ? 'selected' : '' }}>Hosting + webmail Renewal</option>
+                            <option value="domain-hosting-email" {{ old('contract_type', $contract->contract_type ?? '') === 'domain-hosting-email' ? 'selected' : '' }}>Domain + Hosting + Email Renewal</option>
+                            <option value="seo" {{ old('contract_type', $contract->contract_type ?? '') === 'seo' ? 'selected' : '' }}>SEO</option>
                             <option value="new" {{ old('contract_type', $contract->contract_type ?? '') === 'new' ? 'selected' : '' }}>New...</option>
                         </select>
                         @error('contract_type') <div class="text-danger">{{ $message }}</div> @enderror
@@ -121,27 +134,70 @@
                         <button type="submit" class="btn btn-indigo rounded-pill px-4">
                             {{ isset($contract) && $contract->exists ? 'Update Contract' : 'Save Contract' }}
                         </button>
-                        <a href="/contracts" class="btn btn-light rounded-pill border px-4">Cancel</a>
+                        @if(request()->ajax())
+                            <button type="button" class="btn btn-light rounded-pill border px-4" data-bs-dismiss="modal">Cancel</button>
+                        @else
+                            <a href="/contracts" class="btn btn-light rounded-pill border px-4">Cancel</a>
+                        @endif
                     </div>
                 </form>
             </div>
         </div>
+
+@if(request()->ajax())
+    </div>
+
+    {{-- Script execution when inserted via AJAX --}}
+    <script>
+        setTimeout(() => {
+            // Re-bind bootstrap selectpicker for dropdowns
+            if($.fn.selectpicker){
+                $('.selectpicker').selectpicker('refresh');
+            }
+            
+            const typeDropdown = document.getElementById('contract_type');
+            const customTypeContainer = document.getElementById('custom_contract_type_container');
+            const customTypeInput = document.getElementById('custom_contract_type');
+
+            function toggleCustomField() {
+                if (!typeDropdown || !customTypeContainer || !customTypeInput) return;
+                
+                if (typeDropdown.value === 'new') {
+                    customTypeContainer.style.display = 'block';
+                    customTypeInput.required = true;
+                } else {
+                    customTypeContainer.style.display = 'none';
+                    customTypeInput.required = false;
+                }
+            }
+
+            if(typeDropdown){
+                toggleCustomField(); // Initialize on load
+                typeDropdown.addEventListener('change', toggleCustomField);
+            }
+        }, 100);
+    </script>
+@else
     </div>
 </section>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        $('.select2').select2({
-            width: '100%',
-            placeholder: 'Select',
-            allowClear: true
-        });
+        if($.fn.select2){
+            $('.select2').select2({
+                width: '100%',
+                placeholder: 'Select',
+                allowClear: true
+            });
+        }
 
         const typeDropdown = document.getElementById('contract_type');
         const customTypeContainer = document.getElementById('custom_contract_type_container');
         const customTypeInput = document.getElementById('custom_contract_type');
 
         function toggleCustomField() {
+            if (!typeDropdown || !customTypeContainer || !customTypeInput) return;
+
             if (typeDropdown.value === 'new') {
                 customTypeContainer.style.display = 'block';
                 customTypeInput.required = true;
@@ -151,10 +207,12 @@
             }
         }
 
-        toggleCustomField(); // Initialize on load
-        typeDropdown.addEventListener('change', toggleCustomField);
+        if(typeDropdown){
+            toggleCustomField(); // Initialize on load
+            typeDropdown.addEventListener('change', toggleCustomField);
+        }
     });
 </script>
 
 @endsection
-
+@endif
