@@ -107,7 +107,7 @@
                         <i class="bx bx-refresh"></i>
                     </button>
                     @if(in_array('contracts_add', $roleArray) || in_array('All', $roleArray))
-                        <button class="lb-btn lb-btn-primary open-contract-modal" data-url="/manage-contract">
+                        <button type="button" class="lb-btn lb-btn-primary open-contract-modal" data-url="/manage-contract">
                             <i class="bx bx-plus"></i>
                             <span class="d-none d-sm-inline">New Contract</span>
                         </button>
@@ -187,7 +187,7 @@
                                     <td class="position-sticky end-0">
                                         <div class="d-flex align-items-center justify-content-center gap-1">
                                             @if(in_array('contracts_edit',$roleArray) || in_array('All',$roleArray))
-                                            <button class="btn kb-action-btn open-contract-modal" data-url="/manage-contract?id={{ $contract->id }}" title="Edit" style="background:rgba(0,102,102,0.10);color:#006666; border:none;">
+                                            <button type="button" class="btn kb-action-btn open-contract-modal" data-url="/manage-contract?id={{ $contract->id }}" title="Edit" style="background:rgba(0,102,102,0.10);color:#006666; border:none;">
                                                 <i class="bx bx-edit"></i>
                                             </button>
                                             @endif
@@ -210,7 +210,7 @@
                         <i class="bx bx-file"></i>
                         <span>No contracts found.</span>
                         @if(in_array('contracts_add', $roleArray) || in_array('All', $roleArray))
-                        <button class="lb-btn lb-btn-primary mt-2 open-contract-modal" data-url="/manage-contract">
+                        <button type="button" class="lb-btn lb-btn-primary mt-2 open-contract-modal" data-url="/manage-contract">
                             <i class="bx bx-plus"></i> Add Contract
                         </button>
                         @endif

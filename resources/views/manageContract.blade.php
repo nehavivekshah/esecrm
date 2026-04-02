@@ -110,7 +110,7 @@
                     <div class="form-group col-lg-3 col-md-4 col-sm-6">
                         <label for="start_date">Start Date*</label>
                         <input type="date" class="form-control" id="start_date" name="start_date"
-                               value="{{ old('start_date', isset($contract->start_date) ? \Carbon\Carbon::parse($contract->start_date)->format('Y-m-d') : '') }}" required>
+                               value="{{ old('start_date', !empty($contract->start_date) ? \Carbon\Carbon::parse($contract->start_date)->format('Y-m-d') : '') }}" required>
                         @error('start_date') <div class="text-danger">{{ $message }}</div> @enderror
                     </div>
 
@@ -118,7 +118,7 @@
                     <div class="form-group col-lg-3 col-md-4 col-sm-6">
                         <label for="end_date">End Date</label>
                         <input type="date" class="form-control" id="end_date" name="end_date"
-                               value="{{ old('end_date', isset($contract->end_date) ? \Carbon\Carbon::parse($contract->end_date)->format('Y-m-d') : '') }}">
+                               value="{{ old('end_date', !empty($contract->end_date) ? \Carbon\Carbon::parse($contract->end_date)->format('Y-m-d') : '') }}">
                         @error('end_date') <div class="text-danger">{{ $message }}</div> @enderror
                     </div>
 
@@ -152,7 +152,7 @@
         setTimeout(() => {
             // Re-bind bootstrap selectpicker for dropdowns
             if($.fn.selectpicker){
-                $('.selectpicker').selectpicker('refresh');
+                $('.selectpicker').selectpicker();
             }
             
             const typeDropdown = document.getElementById('contract_type');
