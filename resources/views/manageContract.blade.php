@@ -54,7 +54,7 @@
                     <!-- Client -->
                     <div class="col-md-6">
                         <label for="client_id" class="form-label" style="font-weight:500; font-size:0.875rem; color:#495057;">Select Client <span class="text-danger">*</span></label>
-                        <select class="selectpicker form-select d-block w-100" id="client_id" name="client_id" data-live-search="true" data-container="#manageContractModalContent" required>
+                        <select class="selectpicker form-select d-block w-100" id="client_id" name="client_id" data-live-search="true" required>
                             <option value="">Select Client</option>
                             @foreach($clients as $client)
                                 <option value="{{ $client->id }}" @if($client->id == ($contract->client_id ?? '')) selected @endif>
@@ -152,7 +152,6 @@
         setTimeout(() => {
             // Re-bind bootstrap selectpicker for dropdowns
             if($.fn.selectpicker){
-                $('#client_id').selectpicker('destroy');
                 $('#client_id').selectpicker();
             }
             
@@ -176,7 +175,7 @@
                 toggleCustomField(); // Initialize on load
                 typeDropdown.addEventListener('change', toggleCustomField);
             }
-        }, 100);
+        }, 500);
     </script>
 @else
     </div>
