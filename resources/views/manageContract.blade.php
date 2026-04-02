@@ -1,4 +1,4 @@
-@if(!request()->ajax())
+@if(!request()->has('ajax'))
 @extends('layout')
 @section('title', 'Contract - eseCRM')
 
@@ -11,7 +11,7 @@
     $showCustom = old('contract_type', $contract->contract_type ?? '') === 'new';
 @endphp
 
-@if(!request()->ajax())
+@if(!request()->has('ajax'))
 <section class="task__section">
     <div class="text">
         <i class="bx bx-menu" id="mbtn"></i>
@@ -131,7 +131,7 @@
 
                     <!-- Buttons -->
                     <div class="col-md-12 mt-4 pt-3 border-top text-end">
-                        @if(request()->ajax())
+                        @if(request()->has('ajax'))
                             <button type="button" class="btn btn-light rounded-pill border px-4 me-2" data-bs-dismiss="modal">Cancel</button>
                         @else
                             <a href="/contracts" class="btn btn-light rounded-pill border px-4 me-2">Cancel</a>
@@ -144,7 +144,7 @@
             </div>
         </div>
 
-@if(request()->ajax())
+@if(request()->has('ajax'))
     </div>
 
     {{-- Script execution when inserted via AJAX --}}
