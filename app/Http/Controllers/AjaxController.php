@@ -186,6 +186,19 @@ class AjaxController extends Controller
             } else {
                 return response()->json(['error' => 'Proposal not found.'], 404);
             }
+        }elseif (($request->projectDelete ?? '') == 'projectDelete') {
+            // Find the project by ID
+            $project = Projects::find($id);
+    
+            // Check if the project exists
+            if ($project) {
+                // Delete the project
+                $project->delete();
+                
+                return response()->json(['success' => 'Project deleted successfully.']);
+            } else {
+                return response()->json(['error' => 'Project not found.'], 404);
+            }
         }elseif (($request->recoveryAmountDelete ?? '') == 'recoveryAmountDelete') {
             // Find the user by ID
             $recovery = Recoveries::find($id);
