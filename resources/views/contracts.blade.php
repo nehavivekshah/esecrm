@@ -248,7 +248,7 @@
     </style>
 
     {{-- Manage Contract Modal --}}
-    <div class="modal fade" id="manageContractModal" tabindex="-1" aria-labelledby="manageContractModalLabel" aria-hidden="true">
+    <div class="modal fade" id="manageContractModal" aria-labelledby="manageContractModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content" style="border-radius:16px; border:none;" id="manageContractModalContent">
                 <!-- Content injected via AJAX -->
