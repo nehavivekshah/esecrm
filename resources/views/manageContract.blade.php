@@ -40,9 +40,9 @@
     <div class="modal-body px-4 py-3">
 @endif
 
-        <div class="row g-3 px-2">
-            <div class="col-md-12 form-card">
-                <form action="/manage-contract" method="post" class="row">
+        <div class="row g-0">
+            <div class="col-md-12">
+                <form action="/manage-contract" method="post" class="row g-3">
                     @csrf
 
                     @if(!empty($_GET['id']))
@@ -52,9 +52,9 @@
                     @endif
 
                     <!-- Client -->
-                    <div class="form-group col-lg-3 col-md-4 col-sm-6">
-                        <label for="client_id">Select Client*</label>
-                        <select class="selectpicker form-select d-block" id="client_id" name="client_id" data-live-search="true" required>
+                    <div class="col-md-6">
+                        <label for="client_id" class="form-label" style="font-weight:500; font-size:0.875rem; color:#495057;">Select Client <span class="text-danger">*</span></label>
+                        <select class="selectpicker form-select d-block w-100" id="client_id" name="client_id" data-live-search="true" required>
                             <option value="">Select Client</option>
                             @foreach($clients as $client)
                                 <option value="{{ $client->id }}" @if($client->id == ($contract->client_id ?? '')) selected @endif>
@@ -62,21 +62,21 @@
                                 </option>
                             @endforeach
                         </select>
-                        @error('client_id') <div class="text-danger">{{ $message }}</div> @enderror
+                        @error('client_id') <div class="text-danger" style="font-size:0.8rem;">{{ $message }}</div> @enderror
                     </div>
 
                     <!-- Subject -->
-                    <div class="form-group col-lg-3 col-md-4 col-sm-6">
-                        <label for="subject">Subject*</label>
+                    <div class="col-md-6">
+                        <label for="subject" class="form-label" style="font-weight:500; font-size:0.875rem; color:#495057;">Subject <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="subject" name="subject"
                                value="{{ old('subject', $contract->subject ?? '') }}" required>
-                        @error('subject') <div class="text-danger">{{ $message }}</div> @enderror
+                        @error('subject') <div class="text-danger" style="font-size:0.8rem;">{{ $message }}</div> @enderror
                     </div>
 
                     <!-- Contract Type -->
-                    <div class="form-group col-lg-3 col-md-4 col-sm-6">
-                        <label for="contract_type">Contract Type*</label>
-                        <select class="form-control" id="contract_type" name="contract_type" required>
+                    <div class="col-md-6">
+                        <label for="contract_type" class="form-label" style="font-weight:500; font-size:0.875rem; color:#495057;">Contract Type <span class="text-danger">*</span></label>
+                        <select class="form-select" id="contract_type" name="contract_type" required>
                             <option value="">Select Type</option>
                             <option value="domain" {{ old('contract_type', $contract->contract_type ?? '') === 'domain' ? 'selected' : '' }}>Domain Renewal</option>
                             <option value="hosting" {{ old('contract_type', $contract->contract_type ?? '') === 'hosting' ? 'selected' : '' }}>Hosting Renewal</option>
@@ -87,58 +87,58 @@
                             <option value="seo" {{ old('contract_type', $contract->contract_type ?? '') === 'seo' ? 'selected' : '' }}>SEO</option>
                             <option value="new" {{ old('contract_type', $contract->contract_type ?? '') === 'new' ? 'selected' : '' }}>New...</option>
                         </select>
-                        @error('contract_type') <div class="text-danger">{{ $message }}</div> @enderror
+                        @error('contract_type') <div class="text-danger" style="font-size:0.8rem;">{{ $message }}</div> @enderror
                     </div>
 
                     <!-- Custom Contract Type -->
-                    <div class="form-group col-lg-3 col-md-4 col-sm-6" id="custom_contract_type_container" style="{{ $showCustom ? '' : 'display: none;' }}">
-                        <label for="custom_contract_type">Enter New Contract Type</label>
+                    <div class="col-md-6" id="custom_contract_type_container" style="{{ $showCustom ? '' : 'display: none;' }}">
+                        <label for="custom_contract_type" class="form-label" style="font-weight:500; font-size:0.875rem; color:#495057;">Enter New Contract Type</label>
                         <input type="text" class="form-control" id="custom_contract_type" name="custom_contract_type"
                                value="{{ old('custom_contract_type', '') }}">
-                        @error('custom_contract_type') <div class="text-danger">{{ $message }}</div> @enderror
+                        @error('custom_contract_type') <div class="text-danger" style="font-size:0.8rem;">{{ $message }}</div> @enderror
                     </div>
 
                     <!-- Value -->
-                    <div class="form-group col-lg-3 col-md-4 col-sm-6">
-                        <label for="value">Contract Value</label>
+                    <div class="col-md-6">
+                        <label for="value" class="form-label" style="font-weight:500; font-size:0.875rem; color:#495057;">Contract Value (₹)</label>
                         <input type="number" step="0.01" class="form-control" id="value" name="value"
                                value="{{ old('value', $contract->value ?? '') }}">
-                        @error('value') <div class="text-danger">{{ $message }}</div> @enderror
+                        @error('value') <div class="text-danger" style="font-size:0.8rem;">{{ $message }}</div> @enderror
                     </div>
 
                     <!-- Start Date -->
-                    <div class="form-group col-lg-3 col-md-4 col-sm-6">
-                        <label for="start_date">Start Date*</label>
+                    <div class="col-md-6">
+                        <label for="start_date" class="form-label" style="font-weight:500; font-size:0.875rem; color:#495057;">Start Date <span class="text-danger">*</span></label>
                         <input type="date" class="form-control" id="start_date" name="start_date"
                                value="{{ old('start_date', !empty($contract->start_date) ? \Carbon\Carbon::parse($contract->start_date)->format('Y-m-d') : '') }}" required>
-                        @error('start_date') <div class="text-danger">{{ $message }}</div> @enderror
+                        @error('start_date') <div class="text-danger" style="font-size:0.8rem;">{{ $message }}</div> @enderror
                     </div>
 
                     <!-- End Date -->
-                    <div class="form-group col-lg-3 col-md-4 col-sm-6">
-                        <label for="end_date">End Date</label>
+                    <div class="col-md-6">
+                        <label for="end_date" class="form-label" style="font-weight:500; font-size:0.875rem; color:#495057;">End Date</label>
                         <input type="date" class="form-control" id="end_date" name="end_date"
                                value="{{ old('end_date', !empty($contract->end_date) ? \Carbon\Carbon::parse($contract->end_date)->format('Y-m-d') : '') }}">
-                        @error('end_date') <div class="text-danger">{{ $message }}</div> @enderror
+                        @error('end_date') <div class="text-danger" style="font-size:0.8rem;">{{ $message }}</div> @enderror
                     </div>
 
                     <!-- Description -->
-                    <div class="form-group col-md-12">
-                        <label for="description">Description / Scope</label>
+                    <div class="col-md-12">
+                        <label for="description" class="form-label" style="font-weight:500; font-size:0.875rem; color:#495057;">Description / Scope</label>
                         <textarea class="form-control" id="description" name="description" rows="3">{{ old('description', $contract->des ?? '') }}</textarea>
-                        @error('description') <div class="text-danger">{{ $message }}</div> @enderror
+                        @error('description') <div class="text-danger" style="font-size:0.8rem;">{{ $message }}</div> @enderror
                     </div>
 
                     <!-- Buttons -->
-                    <div class="form-group text-right col-md-12 mt-4 pt-3 border-top">
-                        <button type="submit" class="btn btn-indigo rounded-pill px-4">
+                    <div class="col-md-12 mt-4 pt-3 border-top text-end">
+                        @if(request()->ajax())
+                            <button type="button" class="btn btn-light rounded-pill border px-4 me-2" data-bs-dismiss="modal">Cancel</button>
+                        @else
+                            <a href="/contracts" class="btn btn-light rounded-pill border px-4 me-2">Cancel</a>
+                        @endif
+                        <button type="submit" class="btn btn-primary rounded-pill px-4" style="background:#006666; border:none;">
                             {{ isset($contract) && $contract->exists ? 'Update Contract' : 'Save Contract' }}
                         </button>
-                        @if(request()->ajax())
-                            <button type="button" class="btn btn-light rounded-pill border px-4" data-bs-dismiss="modal">Cancel</button>
-                        @else
-                            <a href="/contracts" class="btn btn-light rounded-pill border px-4">Cancel</a>
-                        @endif
                     </div>
                 </form>
             </div>
