@@ -103,7 +103,6 @@
             <div class="col-12 cf-field">
                 <label>Note / Message</label>
                 <div class="cf-input-box cf-textarea-box">
-                    <span class="cf-icon"><i class="bx bx-notepad"></i></span>
                     <textarea name="note" rows="3" placeholder="Add a reminder note or follow-up message..."></textarea>
                 </div>
             </div>
