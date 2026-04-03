@@ -196,7 +196,7 @@
 
                 <div class="row g-4">
                     {{-- ── Left Column: Main Form & Items ── --}}
-                    <div class="col-lg-8">
+                    <div class="col-lg-12">
                         {{-- ── Invoice Information ── --}}
                         <div class="ml-card mb-4">
                             <div class="ml-card-header">
@@ -616,7 +616,7 @@
                         </div>
                     </div> {{-- End col-lg-8 --}}
 
-                    <div class="col-lg-4">
+                    <div class="col-lg-4 offset-md-8">
                         {{-- ══ RIGHT — Sticky Summary + Actions ══ --}}
                         <div class="mp-sidebar-sticky">
                             {{-- Summary card --}}
