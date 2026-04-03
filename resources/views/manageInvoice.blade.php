@@ -573,7 +573,7 @@
                                     <div class="col-md-6">
                                         <label class="ml-label">Client Note (on PDF)</label>
                                         <div class="cf-input-box cf-textarea-box">
-                                            <span class="cf-icon"><i class="bx bx-message-square-detail"></i></span>
+                                            <span class="cf-icon"><i class="bx bx-message-square-dots"></i></span>
                                             <textarea name="client_note" rows="2" class="mp-autoresize"
                                                       placeholder="Visible on PDF">{{ old('client_note', $invoice->client_note ?? '') }}</textarea>
                                         </div>
@@ -650,7 +650,7 @@
                                     <div class="mb-3">
                                         <label class="ml-label">Adjustment / Setup Fee</label>
                                         <div class="cf-input-box">
-                                            <span class="cf-icon"><i class="bx bx-plus-minus"></i></span>
+                                            <span class="cf-icon"><i class="bx bx-math"></i></span>
                                             <input type="number" class="text-end" name="adjustment"
                                                    id="adjustment" value="{{ $invoice->adjustment ?? 0 }}" step="0.01">
                                         </div>

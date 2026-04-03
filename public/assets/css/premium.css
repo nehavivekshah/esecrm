@@ -4788,6 +4788,7 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    min-width: 110px;
 }
 
 .mp-item-label {
