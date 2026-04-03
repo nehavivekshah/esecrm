@@ -77,8 +77,8 @@
             {{-- ── BODY ── --}}
             <div class="modal-body p-4" style="background:#f4fbfb; max-height: 75vh; overflow-y:auto;">
                 <div class="row g-4">
-                    {{-- LEFT COLUMN (Main Content) --}}
-                    <div class="col-lg-8 pe-lg-4 border-end">
+                    {{-- MAIN CONTENT (Tabs) --}}
+                    <div class="col-lg-8 ps-lg-4 border-start order-2">
                         <style>
                             .cf-nav-tabs { border-bottom: 1px solid #d1d5db; margin-bottom: 20px; flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; }
                             .cf-nav-tabs::-webkit-scrollbar { height: 4px; }
@@ -223,38 +223,40 @@
                         </div>
                     </div>
                     
-                    {{-- RIGHT COLUMN (Sidebar Details) --}}
-                    <div class="col-lg-4">
+                    {{-- SIDEBAR DETAILS (Properties) --}}
+                    <div class="col-lg-4 order-1">
                         <div class="cf-section-title"><i class="bx bx-cog"></i> Properties</div>
                         <div class="bg-white border rounded p-3 mb-4" style="border-color:#d1d5db;">
                             
-                            {{-- Status --}}
-                            <div class="cf-field mb-3">
-                                <label class="d-flex align-items-center gap-1"><i class="bx bx-radio-circle-marked"></i> Status</label>
-                                @php
-                                    $statusMap = ['0'=>['#80868b','Open'], '1'=>['#ea4335','Urgent'], '2'=>['#f29900','Pending'], '3'=>['#1a73e8','In Progress'], '4'=>['#34a853','Done'], '5'=>['#006666','Closed']];
-                                    [$sColor, $sLabel] = $statusMap[$task->status] ?? ['#80868b','Open'];
-                                @endphp
-                                <div class="cf-input-box px-2" style="border-color:{{ $sColor }}; border-width:2px; height:38px;">
-                                    <select id="taskStatusSelect" class="w-100" style="color:{{ $sColor }}; font-weight:700;">
-                                        @foreach($statusMap as $val => [$col, $lbl])
-                                            <option value="{{ $val }}" {{ $task->status == $val ? 'selected' : '' }} style="color:{{ $col }};">{{ $lbl }}</option>
-                                        @endforeach
-                                    </select>
+                            <div class="row g-2 mb-3">
+                                {{-- Status --}}
+                                <div class="col-6 cf-field">
+                                    <label class="d-flex align-items-center gap-1"><i class="bx bx-radio-circle-marked"></i> Status</label>
+                                    @php
+                                        $statusMap = ['0'=>['#80868b','Open'], '1'=>['#ea4335','Urgent'], '2'=>['#f29900','Pending'], '3'=>['#1a73e8','In Progress'], '4'=>['#34a853','Done'], '5'=>['#006666','Closed']];
+                                        [$sColor, $sLabel] = $statusMap[$task->status] ?? ['#80868b','Open'];
+                                    @endphp
+                                    <div class="cf-input-box px-2" style="border-color:{{ $sColor }}; border-width:2px; height:38px;">
+                                        <select id="taskStatusSelect" class="w-100" style="color:{{ $sColor }}; font-weight:700; font-size:0.85rem;">
+                                            @foreach($statusMap as $val => [$col, $lbl])
+                                                <option value="{{ $val }}" {{ $task->status == $val ? 'selected' : '' }} style="color:{{ $col }};">{{ $lbl }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            {{-- Label --}}
-                            <div class="cf-field mb-3">
-                                <label class="d-flex align-items-center gap-1"><i class="bx bxs-label"></i> Label</label>
-                                <div class="cf-input-box px-2" style="height:38px;">
-                                    <span id="labelicon" style="width:14px; height:14px; border-radius:50%; background:{{ $task->label ?? '#787878' }}; display:inline-block; margin-right:8px; flex-shrink:0;"></span>
-                                    <select id="colorpalet" class="w-100">
-                                        <option value="">Select…</option>
-                                        @foreach($labels as $hex => $name)
-                                            <option value="{{ $hex }}" {{ ($task->label ?? '') == $hex ? 'selected' : '' }}>{{ $name }}</option>
-                                        @endforeach
-                                    </select>
+                                
+                                {{-- Label --}}
+                                <div class="col-6 cf-field">
+                                    <label class="d-flex align-items-center gap-1"><i class="bx bxs-label"></i> Label</label>
+                                    <div class="cf-input-box px-2" style="height:38px;">
+                                        <span id="labelicon" style="width:14px; height:14px; border-radius:50%; background:{{ $task->label ?? '#787878' }}; display:inline-block; margin-right:4px; flex-shrink:0;"></span>
+                                        <select id="colorpalet" class="w-100" style="font-size:0.85rem;">
+                                            <option value="">Select…</option>
+                                            @foreach($labels as $hex => $name)
+                                                <option value="{{ $hex }}" {{ ($task->label ?? '') == $hex ? 'selected' : '' }}>{{ $name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
 
