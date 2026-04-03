@@ -53,11 +53,12 @@
                     {{-- Timer start/stop --}}
                     @if($isRunning)
                         <a href="javascript:void(0)" class="btn btn-sm btn-light text-danger et-timer-running taskstart"
-                            data-taskhr="{{ round($workingMin, 2) }}" id="{{ $taskHistory[0]->id }}" title="Stop Timer" style="font-weight:600; border-radius:8px;">
+                            data-taskid="{{ $task->id }}" data-taskhr="{{ round($workingMin, 2) }}" id="{{ $taskHistory[0]->id }}" title="Stop Timer" style="font-weight:600; border-radius:8px;">
                             <i class="bx bx-stop-circle"></i> <span>Stop &bull; {{ floor($workingMin / 60) }}h {{ floor($workingMin % 60) }}m</span>
                         </a>
                     @else
-                        <a href="javascript:void(0)" class="btn btn-sm btn-light text-success taskstart" id="{{ $task->id }}" title="Start Timer" style="font-weight:600; border-radius:8px;">
+                        <a href="javascript:void(0)" class="btn btn-sm btn-light text-success taskstart" 
+                            data-taskid="{{ $task->id }}" id="{{ $task->id }}" title="Start Timer" style="font-weight:600; border-radius:8px;">
                             <i class="bx bx-play-circle"></i> Start Timer
                         </a>
                     @endif
@@ -505,6 +506,11 @@
             const checked = Array.from(document.querySelectorAll('.et-assignee-chk:checked'))
                                   .map(c => parseInt(c.value));
 
+            // Visual feedback - START
+            const originalHTML = this.innerHTML;
+            this.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Saving...';
+            this.disabled = true;
+
             fetch('{{ route("task.meta.update") }}', {
                 method : 'POST',
                 headers: {
@@ -516,13 +522,25 @@
                 if (d.success) {
                     document.getElementById('et-assignee-row').innerHTML = d.avatarHtml;
                     this.textContent = '✓ Saved!';
-                    this.classList.add('btn-success');
+                    this.classList.replace('btn-primary', 'btn-success');
+                    
+                    // Update Board Card Assignees (if it exists)
+                    const boardCard = document.querySelector(`.tk-card[data-taskid="${taskId}"] .tk-assignees-row`);
+                    if (boardCard && d.boardAvatarHtml) {
+                        boardCard.innerHTML = d.boardAvatarHtml;
+                    }
+
                     setTimeout(() => {
-                        this.innerHTML = '<i class="bx bx-save"></i> Save Assignees';
-                        this.classList.remove('btn-success');
+                        this.innerHTML = originalHTML;
+                        this.classList.replace('btn-success', 'btn-primary');
+                        this.disabled = false;
                     }, 2000);
                 }
-            }).catch(err => console.error('Assignee update error:', err));
+            }).catch(err => {
+                console.error('Assignee update error:', err);
+                this.innerHTML = originalHTML;
+                this.disabled = false;
+            });
         });
     }
 

@@ -328,16 +328,30 @@ class TaskController extends Controller
 
         // Return updated assignees HTML for partial reload
         $task->load('assignees');
-        $avatarHtml = '';
+        $avatarHtml      = '';
+        $boardAvatarHtml = '';
+        $count = $task->assignees->count();
+
         foreach ($task->assignees as $u) {
             $initial = strtoupper(substr($u->name, 0, 1));
+            // For Modal detail popup
             $avatarHtml .= '<div class="et-avatar-chip" title="' . e($u->name) . '">' . $initial . '</div>';
         }
 
+        // For Kanban card (take first 4)
+        foreach ($task->assignees->take(4) as $u) {
+            $initial = strtoupper(substr($u->name, 0, 1));
+            $boardAvatarHtml .= '<div class="tk-assignee-chip" title="' . e($u->name) . '">' . $initial . '</div>';
+        }
+        if ($count > 4) {
+            $boardAvatarHtml .= '<div class="tk-assignee-chip tk-assignee-more">+' . ($count - 4) . '</div>';
+        }
+
         return response()->json([
-            'success'     => true,
-            'avatarHtml'  => $avatarHtml,
-            'assigneeIds' => $task->assignees->pluck('id'),
+            'success'         => true,
+            'avatarHtml'      => $avatarHtml,
+            'boardAvatarHtml' => $boardAvatarHtml,
+            'assigneeIds'     => $task->assignees->pluck('id'),
         ]);
     }
 

@@ -192,9 +192,12 @@ $(document).ready(function(){
                 ele.html('<i class="bx bx-loader"></i> <span>Loading..</span>');
             },
             success: function(response){
-                // In a real-time environment, we refresh the modal to show the new timer state
+                // Determine the correct task ID to refresh (prioritize data-taskid)
+                const refreshId = ele.data('taskid') || tskstartId;
+
+                // Refresh the modal to show the new timer state
                 if (typeof refreshTaskDetails === 'function') {
-                    refreshTaskDetails(tskstartId);
+                    refreshTaskDetails(refreshId);
                 } else {
                     // Fallback to text update if refresh fails
                     ele.html('<i class="bx bx-check"></i> <span class="ms-1">Saved</span>');
