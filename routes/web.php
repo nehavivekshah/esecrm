@@ -109,7 +109,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/task-details/{id}', 'getTaskDetailsAjax')->name('task.details.ajax');
         Route::post('/task-attachment/upload', 'uploadAttachment')->name('task.attachment.upload');
         Route::delete('/task-attachment/{id}', 'deleteAttachment')->name('task.attachment.delete');
+        Route::post('/task-meta/update', 'updateTaskMeta')->name('task.meta.update');
     });
+
 
 
 

@@ -3288,8 +3288,195 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
 }
 
 /* ==========================================================================
-   EDIT-TASK OFFCANVAS — et-* Components
+   TASK BOARD — Project Filter + Assignee Chips
    ========================================================================== */
+
+/* Project filter dropdown box */
+.tk-project-filter-wrap {
+    position: relative;
+}
+
+.tk-project-filter-box {
+    display: flex;
+    align-items: center;
+    background: #f1f3f4;
+    border-radius: 20px;
+    padding: 0 12px;
+    gap: 6px;
+    transition: background 0.15s, box-shadow 0.15s;
+}
+
+.tk-project-filter-box:focus-within {
+    background: #fff;
+    box-shadow: 0 0 0 2px #006666;
+}
+
+.tk-filter-icon {
+    color: #80868b;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.tk-project-filter-select {
+    border: none !important;
+    background: transparent;
+    outline: none;
+    font-size: 0.82rem;
+    padding: 6px 0;
+    width: 180px;
+    color: #202124;
+    cursor: pointer;
+}
+
+/* Active filter info bar */
+.tk-active-filter-bar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.80rem;
+    color: #5f6368;
+    background: rgba(26, 115, 232, 0.07);
+    border: 1px solid rgba(26, 115, 232, 0.18);
+    border-radius: 10px;
+    padding: 5px 14px;
+}
+
+.tk-active-filter-bar i {
+    color: #1a73e8;
+    font-size: 1rem;
+}
+
+.tk-clear-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: #ea4335;
+    text-decoration: none;
+    margin-left: 4px;
+    padding: 2px 8px;
+    border-radius: 8px;
+    background: rgba(234, 67, 53, 0.08);
+    transition: background 0.15s;
+}
+
+.tk-clear-filter:hover {
+    background: rgba(234, 67, 53, 0.16);
+    color: #c62828;
+}
+
+/* Assignee row on task card */
+.tk-assignees-row {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+}
+
+.tk-assignee-chip {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: rgba(0, 102, 102, 0.12);
+    color: #006666;
+    font-size: 0.68rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1.5px solid #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    cursor: default;
+}
+
+.tk-assignee-more {
+    background: rgba(60, 64, 67, 0.08);
+    color: #5f6368;
+    font-size: 0.60rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+/* Quick-add: project select */
+.tk-quick-select {
+    width: 100%;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 5px 8px;
+    font-size: 0.78rem;
+    outline: none;
+    background: #fff;
+    color: #202124;
+    cursor: pointer;
+}
+
+.tk-quick-select:focus {
+    border-color: #006666;
+    box-shadow: 0 0 0 2px rgba(0, 102, 102, 0.08);
+}
+
+/* Quick-add: assignee checkboxes */
+.tk-quick-label {
+    font-size: 0.70rem;
+    font-weight: 700;
+    color: #80868b;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.tk-assignee-checkboxes {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    max-height: 120px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #dadce0 transparent;
+}
+
+.tk-assignee-check-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    padding: 3px 6px;
+    border-radius: 7px;
+    transition: background 0.12s;
+    font-size: 0.78rem;
+}
+
+.tk-assignee-check-item:hover {
+    background: rgba(0, 102, 102, 0.06);
+}
+
+.tk-check-avatar {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    background: rgba(0, 102, 102, 0.12);
+    color: #006666;
+    font-size: 0.65rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.tk-check-name {
+    color: #202124;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
 
 /* --- Header --- */
 .et-header {
@@ -3454,6 +3641,84 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     font-size: 0.80rem;
     font-weight: 600;
     color: #202124;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Multi-assignee avatar row in popup sidebar */
+.et-assignee-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 6px;
+}
+
+.et-avatar-chip {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: rgba(0, 102, 102, 0.12);
+    color: #006666;
+    font-size: 0.78rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.10);
+    cursor: default;
+    transition: transform 0.12s;
+}
+
+.et-avatar-chip:hover {
+    transform: scale(1.15);
+}
+
+/* Assignee checkbox list in popup */
+.et-assignee-checkboxes {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    max-height: 150px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #dadce0 transparent;
+}
+
+.et-assignee-check-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    transition: background 0.12s;
+}
+
+.et-assignee-check-row:hover {
+    background: rgba(0, 102, 102, 0.06);
+}
+
+.et-chk-avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: rgba(0, 102, 102, 0.12);
+    color: #006666;
+    font-size: 0.65rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.et-chk-name {
+    color: #202124;
+    flex: 1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

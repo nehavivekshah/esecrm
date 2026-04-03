@@ -10,6 +10,7 @@ use App\Http\Controllers\AuthController;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Task;
+use App\Models\Projects;
 use App\Models\Task_comments;
 use App\Models\Task_working_hours;
 use App\Models\Todo_lists;
@@ -23,57 +24,71 @@ class TaskController extends Controller
         $this->taskService = $taskService;
     }
 
-    public function task()
+    public function task(Request $request)
     {
-        $data = $this->taskService->getKanbanData();
+        $projectId = $request->has('project_id') && $request->project_id !== ''
+            ? (int) $request->project_id
+            : null;
+
+        $data = $this->taskService->getKanbanData($projectId);
         return view('task', $data);
     }
+
     public function taskPost(Request $request)
     {
         $request->validate([
-            'msg' => 'required|string|max:5000',
-            'uid' => 'required|exists:users,id',
-            'project_id' => 'nullable|integer',
-            'parent_id' => 'nullable|integer',
-            'due_date' => 'nullable|date'
+            'msg'          => 'required|string|max:5000',
+            'uid'          => 'required|exists:users,id',
+            'project_id'   => 'nullable|integer',
+            'parent_id'    => 'nullable|integer',
+            'due_date'     => 'nullable|date',
+            'assignee_ids' => 'nullable|array',
+            'assignee_ids.*' => 'exists:users,id',
         ]);
 
         $tasklist = Task::where('cid', '=', Auth::user()->cid)
             ->where('uid', '=', $request->uid)->orderBy('position', 'asc')->get();
 
         $task = new Task();
-
-        $task->cid = Auth::user()->cid;
-        $task->uid = $request->uid ?: Auth::id();
+        $task->cid        = Auth::user()->cid;
+        $task->uid        = $request->uid ?: Auth::id();
         $task->project_id = $request->project_id;
-        $task->parent_id = $request->parent_id;
-        $task->due_date = $request->due_date;
-        $task->title = $request->msg;
-        $task->des = $request->msg;
-        $task->label = '5';
-        $task->whr = '0';
-        $task->position = '0';
-        $task->status = '6';
+        $task->parent_id  = $request->parent_id;
+        $task->due_date   = $request->due_date;
+        $task->title      = $request->msg;
+        $task->des        = $request->msg;
+        $task->label      = '5';
+        $task->whr        = '0';
+        $task->position   = '0';
+        $task->status     = '6';
 
-        foreach ($tasklist as $k => $singletask):
-            $tasks = Task::find($singletask->id);
+        foreach ($tasklist as $k => $singletask) {
+            $tasks           = Task::find($singletask->id);
             $tasks->position = $k + 1;
             $tasks->updated_at = Now();
             $tasks->update();
-        endforeach;
+        }
 
         $task->save();
+
+        // Sync assignees (always include the primary user)
+        $assigneeIds = collect($request->assignee_ids ?? [])->push($request->uid)->unique()->values()->toArray();
+        $task->assignees()->sync($assigneeIds);
 
         return back()->with('success', 'New Task Added');
     }
 
     public function taskEdit(Request $request)
     {
-        $data = $this->taskService->getKanbanData();
+        $projectId = $request->has('project_id') && $request->project_id !== ''
+            ? (int) $request->project_id
+            : null;
 
-        $taskSingle = Task::where('id', '=', $request->id)->get();
+        $data = $this->taskService->getKanbanData($projectId);
+
+        $taskSingle = Task::where('id', '=', $request->id)->with('assignees')->get();
         $userSingle = User::where('cid', '=', Auth::user()->cid)->where('id', '=', $taskSingle[0]->uid)->get();
-        
+
         $taskHistory = Task_working_hours::where('taskid', '=', $request->id)
             ->orderBy('id', 'DESC')->get();
 
@@ -86,10 +101,10 @@ class TaskController extends Controller
             ->orderBy('id', 'DESC')->get();
 
         $data = array_merge($data, [
-            'taskSingle' => $taskSingle, 
-            'userSingle' => $userSingle, 
-            'taskHistory' => $taskHistory, 
-            'taskComments' => $taskComments,
+            'taskSingle'      => $taskSingle,
+            'userSingle'      => $userSingle,
+            'taskHistory'     => $taskHistory,
+            'taskComments'    => $taskComments,
             'taskAttachments' => $taskAttachments
         ]);
 
@@ -98,13 +113,13 @@ class TaskController extends Controller
 
     public function getTaskDetailsAjax($id)
     {
-        $taskSingle = Task::select('tasks.*')->where('id', '=', $id)->get();
+        $taskSingle = Task::select('tasks.*')->where('id', '=', $id)->with('assignees')->get();
         if ($taskSingle->isEmpty()) {
             return response()->json(['error' => 'Task not found'], 404);
         }
 
         $userSingle = User::select('users.name')->where('id', '=', $taskSingle[0]->uid)->get();
-        
+
         $taskHistory = Task_working_hours::select('task_working_hours.*')
             ->where('taskid', '=', $id)
             ->orderBy('id', 'DESC')->get();
@@ -117,51 +132,51 @@ class TaskController extends Controller
         $taskAttachments = \App\Models\TaskAttachment::where('task_id', $id)
             ->orderBy('id', 'DESC')->get();
 
+        // All users in this company for multi-assign select
+        $allUsers = User::where('cid', Auth::user()->cid)->orderBy('name')->get();
+
+        // All projects for project picker in popup
+        $projects = Projects::where('cid', Auth::user()->cid)->orderBy('project_title')->get();
+
         return view('inc.task.popup', [
-            'taskSingle' => $taskSingle,
-            'userSingle' => $userSingle,
-            'taskHistory' => $taskHistory,
-            'taskComments' => $taskComments,
-            'taskAttachments' => $taskAttachments
+            'taskSingle'      => $taskSingle,
+            'userSingle'      => $userSingle,
+            'taskHistory'     => $taskHistory,
+            'taskComments'    => $taskComments,
+            'taskAttachments' => $taskAttachments,
+            'allUsers'        => $allUsers,
+            'projects'        => $projects,
         ])->render();
     }
 
     public function tasksubmit(Request $request)
     {
-
         if (!empty($request->deltaskid)) {
 
             $tasks = Task::find($request->deltaskid);
-
             $tasks->delete();
-
             return response(['success' => 'Deleted']);
 
         } else if (!empty($request->userId)) {
 
             if (!empty($request->updatedPositions)) {
-                // Loop through the updated positions and update them in the database
                 foreach ($request->updatedPositions as $taskData) {
                     $task = Task::find($taskData['taskId']);
                     if ($task) {
-                        $task->uid = $request->userId;
+                        $task->uid      = $request->userId;
                         $task->position = $taskData['position'];
                         $task->update();
                     }
                 }
                 return response(['success' => 'Positions updated successfully']);
             }
-
             return response(['error' => 'No data provided']);
 
         } else if (!empty($request->tskId)) {
 
-            $tasks = Task::find($request->tskId);
-
+            $tasks        = Task::find($request->tskId);
             $tasks->label = $request->label;
-
             $tasks->update();
-
             return response(['success' => 'Updated']);
 
         } else if (!empty($request->tskstartId)) {
@@ -171,58 +186,46 @@ class TaskController extends Controller
                 ->first();
 
             if ($taskHistory) {
-                $Task_working_hours = Task_working_hours::find($request->tskstartId);
-                $Task_working_hours->end_time = Carbon::now()->format('d-m-Y h:i:s a');
-                $Task_working_hours->hours = $request->tskhr;
-                $Task_working_hours->status = '1';
+                $Task_working_hours            = Task_working_hours::find($request->tskstartId);
+                $Task_working_hours->end_time  = Carbon::now()->format('d-m-Y h:i:s a');
+                $Task_working_hours->hours     = $request->tskhr;
+                $Task_working_hours->status    = '1';
                 $Task_working_hours->update();
 
                 $tid = $taskHistory->taskid ?? null;
                 if ($tid) {
                     $tasks = Task::find($tid);
                     if ($tasks) {
-                        $tasks->label = "#ff9800";
+                        $tasks->label  = "#ff9800";
                         $tasks->status = '1';
                         $tasks->update();
                     }
                 }
-
                 return response(['success' => 'Updated']);
             } else {
-                $task = new Task_working_hours();
-                $task->taskid = $request->tskstartId;
+                $task             = new Task_working_hours();
+                $task->taskid     = $request->tskstartId;
                 $task->start_time = Carbon::now()->format('d-m-Y h:i:s a');
-                $task->end_time = Carbon::now()->format('d-m-Y h:i:s a');
-                $task->hours = '0';
-                $task->status = '0';
+                $task->end_time   = Carbon::now()->format('d-m-Y h:i:s a');
+                $task->hours      = '0';
+                $task->status     = '0';
                 $task->save();
 
                 $tasks = Task::find($request->tskstartId);
                 if ($tasks) {
-                    $tasks->label = "#2196f3";
+                    $tasks->label  = "#2196f3";
                     $tasks->status = '0';
                     $tasks->update();
                 }
-
                 return response(['success' => 'Inserted']);
             }
 
         } else if (!empty($request->commenttaskid)) {
 
-            // $tasks = Task_comments::find($request->commenttaskid);
-            // if(!empty($request->tasktitle)){
-            //     $tasks->title = $request->tasktitle;
-            // }else{
-            //     $tasks->des = $request->taskdes;
-            // }
-            // $tasks->update();
-
-            $task_comments = new Task_comments();
-
-            $task_comments->uid = Auth::user()->id;
-            $task_comments->taskid = $request->commenttaskid;
+            $task_comments           = new Task_comments();
+            $task_comments->uid      = Auth::user()->id;
+            $task_comments->taskid   = $request->commenttaskid;
             $task_comments->comments = $request->taskcomment;
-
             $task_comments->save();
 
             $taskComments = Task_comments::leftJoin('users', 'users.id', '=', 'task_comments.uid')
@@ -260,7 +263,6 @@ class TaskController extends Controller
         } else if (!empty($request->taskid)) {
 
             $tskId = $request->taskid ?? '';
-
             $tasks = Task::find($tskId);
             if (!empty($request->tasktitle)) {
                 $tasks->title = $request->tasktitle;
@@ -268,11 +270,59 @@ class TaskController extends Controller
                 $tasks->des = $request->taskdes;
             }
             $tasks->update();
-
             return response(['success' => 'Updated']);
-
         }
     }
+
+    /**
+     * AJAX: Update task assignees and/or project from the detail popup.
+     */
+    public function updateTaskMeta(Request $request)
+    {
+        $request->validate([
+            'task_id'        => 'required|exists:tasks,id',
+            'assignee_ids'   => 'nullable|array',
+            'assignee_ids.*' => 'exists:users,id',
+            'project_id'     => 'nullable|integer|exists:projects,id',
+            'status'         => 'nullable|string',
+        ]);
+
+        $task = Task::findOrFail($request->task_id);
+
+        // Update project
+        if ($request->has('project_id')) {
+            $task->project_id = $request->project_id ?: null;
+            $task->save();
+        }
+
+        // Update status
+        if ($request->has('status')) {
+            $task->status = $request->status;
+            $task->save();
+        }
+
+        // Sync assignees
+        if ($request->has('assignee_ids')) {
+            $ids = collect($request->assignee_ids ?? [])->push($task->uid)->unique()->values()->toArray();
+            $task->assignees()->sync($ids);
+        }
+
+        // Return updated assignees HTML for partial reload
+        $task->load('assignees');
+        $avatarHtml = '';
+        foreach ($task->assignees as $u) {
+            $initial = strtoupper(substr($u->name, 0, 1));
+            $avatarHtml .= '<div class="et-avatar-chip" title="' . e($u->name) . '">' . $initial . '</div>';
+        }
+
+        return response()->json([
+            'success'     => true,
+            'avatarHtml'  => $avatarHtml,
+            'assigneeIds' => $task->assignees->pluck('id'),
+        ]);
+    }
+
+    /* ── Todo-list (personal checklist) methods ── */
 
     public function index()
     {
@@ -283,43 +333,37 @@ class TaskController extends Controller
     public function store(Request $request)
     {
         \Log::info("Attempting to store todo item", ['user_id' => Auth::id(), 'data' => $request->all()]);
-        $task = new Todo_lists;
-        $task->text = $request->text;
-        $task->uid = Auth::id();
+        $task            = new Todo_lists;
+        $task->text      = $request->text;
+        $task->uid       = Auth::id();
         $task->completed = $request->completed ? 1 : 0;
-        $maxPos = Todo_lists::where('uid', Auth::id())->max('position');
-        $task->position = ($maxPos ?? 0) + 1;
+        $maxPos          = Todo_lists::where('uid', Auth::id())->max('position');
+        $task->position  = ($maxPos ?? 0) + 1;
 
         if ($request->has('reminder_at')) {
-            $task->reminder_at = !empty($request->reminder_at) ? Carbon::parse($request->reminder_at) : null;
-            $task->is_notified = 0; // Reset notification status
+            $task->reminder_at  = !empty($request->reminder_at) ? Carbon::parse($request->reminder_at) : null;
+            $task->is_notified  = 0;
         }
 
         $task->save();
         \Log::info("Todo item saved successfully", ['task_id' => $task->id]);
-
         return response()->json($task);
     }
 
     public function update(Request $request, $id)
     {
         $task = Todo_lists::findOrFail($id);
-        if ($request->has('text')) {
-            $task->text = $request->text;
-        }
-        if ($request->has('completed')) {
-            $task->completed = $request->completed ? 1 : 0;
-        }
+        if ($request->has('text'))      { $task->text      = $request->text; }
+        if ($request->has('completed')) { $task->completed = $request->completed ? 1 : 0; }
 
         if ($request->has('reminder_at')) {
             $task->reminder_at = !empty($request->reminder_at) ? Carbon::parse($request->reminder_at) : null;
             if ($task->reminder_at && $task->reminder_at > Carbon::now()) {
-                $task->is_notified = 0; // Reset notification status if new future date
+                $task->is_notified = 0;
             }
         }
 
         $task->save();
-
         return response()->json($task);
     }
 
@@ -330,7 +374,6 @@ class TaskController extends Controller
         foreach ($order as $index => $id) {
             Todo_lists::where('id', $id)->update(['position' => $count - $index]);
         }
-
         return response()->json(['message' => 'Order updated']);
     }
 
@@ -341,8 +384,8 @@ class TaskController extends Controller
             \Log::info("Saving FCM token for user ID {$user->id}: " . substr($request->token, 0, 20) . "...");
             DB::table('users')->where('id', $user->id)->update(['fcm_token' => $request->token]);
             return response()->json([
-                'message' => 'Token saved',
-                'user_id' => $user->id,
+                'message'      => 'Token saved',
+                'user_id'      => $user->id,
                 'token_prefix' => substr($request->token, 0, 10)
             ]);
         }
@@ -354,7 +397,6 @@ class TaskController extends Controller
     {
         $task = Todo_lists::findOrFail($id);
         $task->delete();
-
         return response()->json(['message' => 'Task deleted']);
     }
 
@@ -362,26 +404,23 @@ class TaskController extends Controller
     {
         $request->validate([
             'task_id' => 'required',
-            'file' => 'required|mimes:pdf,doc,docx,jpg,jpeg,png,xls,xlsx,txt|max:10240' // max 10MB
+            'file'    => 'required|mimes:pdf,doc,docx,jpg,jpeg,png,xls,xlsx,txt|max:10240'
         ]);
 
         if ($request->hasFile('file')) {
-            $file = $request->file('file');
+            $file         = $request->file('file');
             $originalName = $file->getClientOriginalName();
-            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $fileName     = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('assets/task_attachments'), $fileName);
 
             $attachment = \App\Models\TaskAttachment::create([
-                'task_id' => $request->task_id,
-                'user_id' => Auth::id(),
+                'task_id'       => $request->task_id,
+                'user_id'       => Auth::id(),
                 'original_name' => $originalName,
-                'file_path' => 'assets/task_attachments/' . $fileName
+                'file_path'     => 'assets/task_attachments/' . $fileName
             ]);
 
-            return response()->json([
-                'status' => 'success',
-                'attachment' => $attachment
-            ]);
+            return response()->json(['status' => 'success', 'attachment' => $attachment]);
         }
 
         return response()->json(['status' => 'error', 'message' => 'File not found'], 400);
@@ -396,7 +435,6 @@ class TaskController extends Controller
         }
 
         $attachment->delete();
-
         return response()->json(['status' => 'success']);
     }
 
@@ -405,5 +443,4 @@ class TaskController extends Controller
         Todo_lists::where('uid', Auth::id())->delete();
         return response()->json(['message' => 'All tasks cleared']);
     }
-
 }

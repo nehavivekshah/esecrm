@@ -38,4 +38,13 @@ class Task extends Model
     {
         return $this->hasMany(Task::class, 'parent_id')->orderBy('id', 'asc');
     }
+
+    /**
+     * All users this task is assigned to (multi-assign via pivot).
+     */
+    public function assignees()
+    {
+        return $this->belongsToMany(User::class, 'task_assignees', 'task_id', 'user_id')
+                    ->withTimestamps();
+    }
 }

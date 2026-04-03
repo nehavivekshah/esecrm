@@ -14,20 +14,29 @@
     $workingMin = $isRunning
         ? (strtotime(date('d-m-Y h:i:s a')) - strtotime($taskHistory[0]->start_time)) / 60
         : 0;
-    // Total duration
+    // Total duration — fixed: end_time - start_time (not reversed)
     $total_min = 0;
     foreach ($taskHistory as $t) {
-        $diff = intval((strtotime($t->start_time ?? '') - strtotime($t->end_time ?? '')) / 60);
-        $total_min += intval($diff / 60) * 60 + $diff % 60;
+        $start = strtotime($t->start_time ?? '');
+        $end   = strtotime($t->end_time ?? '');
+        if ($end > $start) {
+            $total_min += intval(($end - $start) / 60);
+        }
     }
     $th = intval($total_min / 60);
     $tm = $total_min % 60;
+
+    // Current assignee IDs for the multi-select
+    $currentAssigneeIds = $task->assignees->pluck('id')->toArray();
+    $allUsers   = $allUsers   ?? collect();
+    $projects   = $projects   ?? collect();
 @endphp
 
 {{-- Backdrop overlay --}}
 <div class="et-backdrop" onclick="closeTaskAjax();"></div>
 
-<div class="offcanvas offcanvas-end show" tabindex="-1" id="taskOffcanvas" style="width:820px; max-width:100vw; border-top-left-radius:16px; border-bottom-left-radius:16px;
+<div class="offcanvas offcanvas-end show" tabindex="-1" id="taskOffcanvas"
+     style="width:820px; max-width:100vw; border-top-left-radius:16px; border-bottom-left-radius:16px;
             box-shadow:-12px 0 40px rgba(0,0,0,0.12); z-index:1061; visibility:visible; overflow:hidden;">
 
     {{-- ── HEADER ── --}}
@@ -95,7 +104,7 @@
                     </div>
                 </div>
 
-                {{-- Priority / Status quick-view --}}
+                {{-- Status --}}
                 <div class="et-section">
                     <div class="et-section-title">
                         <i class="bx bx-radio-circle-marked"></i> Status
@@ -111,24 +120,29 @@
                         ];
                         [$sColor, $sLabel] = $statusMap[$task->status] ?? ['#80868b', 'Open'];
                     @endphp
-                    <span class="et-status-badge" style="background:{{ $sColor }}18; color:{{ $sColor }};">
-                        {{ $sLabel }}
-                    </span>
+                    <select id="taskStatusSelect" class="et-label-select"
+                            style="border-color:{{ $sColor }}; color:{{ $sColor }}; font-weight:700;">
+                        @foreach($statusMap as $val => [$col, $lbl])
+                            <option value="{{ $val }}" {{ $task->status == $val ? 'selected' : '' }}
+                                    style="color:{{ $col }};">{{ $lbl }}</option>
+                        @endforeach
+                    </select>
                 </div>
 
-                {{-- Project Association --}}
-                @if($task->project)
-                    <div class="et-section">
-                        <div class="et-section-title">
-                            <i class="bx bx-briefcase-alt-2"></i> Project
-                        </div>
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="pv-badge pv-badge-info" style="font-size: 0.75rem;">
-                                {{ $task->project->project_title }}
-                            </span>
-                        </div>
+                {{-- Project Association (editable) --}}
+                <div class="et-section">
+                    <div class="et-section-title">
+                        <i class="bx bx-briefcase-alt-2"></i> Project
                     </div>
-                @endif
+                    <select id="taskProjectSelect" class="et-label-select">
+                        <option value="">— No Project —</option>
+                        @foreach($projects as $proj)
+                            <option value="{{ $proj->id }}" {{ $task->project_id == $proj->id ? 'selected' : '' }}>
+                                {{ $proj->project_title }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
 
                 {{-- Parent Task Association --}}
                 @if($task->parent)
@@ -144,22 +158,51 @@
                     </div>
                 @endif
 
-                {{-- Assigned to --}}
+                {{-- ── ASSIGNEES (multi-user) ── --}}
                 <div class="et-section">
                     <div class="et-section-title">
-                        <i class="bx bx-user"></i> Assigned To
+                        <i class="bx bx-group"></i> Assigned To
                     </div>
-                    <div class="d-flex align-items-center gap-2">
-                        @php $assignee = $userSingle[0] ?? null; @endphp
-                        @if($assignee)
-                            <div class="et-assignee-avatar">
+
+                    {{-- Current assignee avatar row --}}
+                    <div class="et-assignee-row" id="et-assignee-row">
+                        @forelse($task->assignees as $assignee)
+                            <div class="et-avatar-chip" title="{{ $assignee->name }}">
                                 {{ strtoupper(substr($assignee->name, 0, 1)) }}
                             </div>
-                            <span class="et-assignee-name">{{ $assignee->name }}</span>
-                        @else
-                            <span class="text-muted small">Unassigned</span>
-                        @endif
+                        @empty
+                            @php $primary = $userSingle[0] ?? null; @endphp
+                            @if($primary)
+                                <div class="et-avatar-chip" title="{{ $primary->name }}">
+                                    {{ strtoupper(substr($primary->name, 0, 1)) }}
+                                </div>
+                            @else
+                                <span class="text-muted small">Unassigned</span>
+                            @endif
+                        @endforelse
                     </div>
+
+                    {{-- Change assignees --}}
+                    @if(in_array('tasks_edit', $roleArray) || in_array('All', $roleArray))
+                        <div class="et-assignee-checkboxes mt-2" id="et-assignee-list">
+                            @foreach($allUsers as $u)
+                                <label class="et-assignee-check-row">
+                                    <input type="checkbox"
+                                           class="et-assignee-chk"
+                                           name="assignee_ids[]"
+                                           value="{{ $u->id }}"
+                                           {{ in_array($u->id, $currentAssigneeIds) ? 'checked' : '' }} />
+                                    <span class="et-chk-avatar">{{ strtoupper(substr($u->name, 0, 1)) }}</span>
+                                    <span class="et-chk-name">{{ $u->name }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                        <button type="button" class="lb-btn lb-btn-primary mt-2" id="saveAssigneesBtn"
+                                style="padding:4px 12px;font-size:0.76rem;width:100%;"
+                                data-taskid="{{ $task->id }}">
+                            <i class="bx bx-save"></i> Save Assignees
+                        </button>
+                    @endif
                 </div>
 
                 {{-- Duration history --}}
@@ -171,19 +214,21 @@
                         <div class="et-time-list">
                             @foreach($taskHistory as $t)
                                 @php
-                                    $d = intval((strtotime($t->start_time ?? '') - strtotime($t->end_time ?? '')) / 60);
-                                    $h = intval($d / 60);
-                                    $m = $d % 60;
+                                    $s  = strtotime($t->start_time ?? '');
+                                    $e  = strtotime($t->end_time ?? '');
+                                    $dm = $e > $s ? intval(($e - $s) / 60) : 0;
+                                    $dh = intval($dm / 60);
+                                    $dmin = $dm % 60;
                                 @endphp
                                 <div class="et-time-row">
                                     <span class="et-time-date">{{ date_format(date_create($t->created_at), 'd M') }}</span>
-                                    <span class="et-time-val">{{ -$h }}h {{ -$m }}m</span>
+                                    <span class="et-time-val">{{ $dh }}h {{ $dmin }}m</span>
                                 </div>
                             @endforeach
                         </div>
                         <div class="et-time-total">
                             <i class="bx bx-calculator"></i>
-                            Total: <strong>{{ -$th }}h {{ -$tm }}m</strong>
+                            Total: <strong>{{ $th }}h {{ $tm }}m</strong>
                         </div>
                     </div>
                 @endif
@@ -260,7 +305,6 @@
                             <div class="text-muted small text-center p-3" id="noAttachmentsMsg">No files attached yet.</div>
                         @endforelse
                     </div>
-                    <!-- Uploading loader -->
                     <div id="attachmentLoader" class="text-center p-3" style="display:none;">
                         <i class="bx bx-loader-alt bx-spin text-primary fs-4"></i>
                         <div class="small text-muted mt-1">Uploading...</div>
@@ -274,7 +318,6 @@
                         <span>Comments</span>
                     </div>
 
-                    {{-- Comment input --}}
                     <form method="post" id="taskComments">
                         @csrf
                         <input type="hidden" name="commenttaskid" value="{{ $task->id }}" />
@@ -294,7 +337,6 @@
                         </div>
                     </form>
 
-                    {{-- Comment list --}}
                     <div id="reloadMsg" class="et-comment-list mt-3">
                         @if(count($taskComments) > 0)
                             @foreach($taskComments as $c)
@@ -327,78 +369,145 @@
 </div>
 
 <script>
-    (function () {
-        /* 1. Auto-resize title textarea */
-        const titleTA = document.getElementById('tasktitle');
-        function resizeTitle() {
-            titleTA.style.height = 'auto';
-            titleTA.style.height = titleTA.scrollHeight + 'px';
-        }
-        if (titleTA) { resizeTitle(); titleTA.addEventListener('input', resizeTitle); }
+(function () {
+    /* 1. Auto-resize title textarea */
+    const titleTA = document.getElementById('tasktitle');
+    function resizeTitle() {
+        titleTA.style.height = 'auto';
+        titleTA.style.height = titleTA.scrollHeight + 'px';
+    }
+    if (titleTA) { resizeTitle(); titleTA.addEventListener('input', resizeTitle); }
 
-        /* 2. Live label dot update (background, not color) */
-        const colorSel = document.getElementById('colorpalet');
-        const labelDot = document.getElementById('labelicon');
-        if (colorSel && labelDot) {
-            colorSel.addEventListener('change', function () {
-                labelDot.style.background = this.value || '#787878';
-                /* keep script.js happy — it targets #labelicon.style.color */
-                labelDot.style.color = this.value || '#787878';
+    /* 2. Live label dot update */
+    const colorSel = document.getElementById('colorpalet');
+    const labelDot = document.getElementById('labelicon');
+    if (colorSel && labelDot) {
+        colorSel.addEventListener('change', function () {
+            labelDot.style.background = this.value || '#787878';
+            labelDot.style.color      = this.value || '#787878';
+        });
+    }
+
+    /* 3. Ctrl+Enter to submit comment */
+    const commentTA = document.getElementById('commentInputs');
+    if (commentTA) {
+        commentTA.addEventListener('keydown', function (e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('taskComments').dispatchEvent(new Event('submit', { bubbles: true }));
+            }
+        });
+    }
+
+    /* 4. Live running timer counter in Stop button */
+    const stopBtn = document.querySelector('.et-timer-running');
+    if (stopBtn) {
+        let startMs  = Date.now();
+        const baseMin = parseFloat(stopBtn.dataset.taskhr || 0) * 60000;
+        const span    = stopBtn.querySelector('span');
+        if (span) {
+            setInterval(function () {
+                const totalMs = baseMin + (Date.now() - startMs);
+                const h = Math.floor(totalMs / 3600000);
+                const m = Math.floor((totalMs % 3600000) / 60000);
+                const s = Math.floor((totalMs % 60000) / 1000);
+                span.textContent = 'Stop \u2022 ' + (h ? h + 'h ' : '') + m + 'm ' + s + 's';
+            }, 1000);
+        }
+    }
+
+    /* 5. Status change AJAX */
+    const statusSel = document.getElementById('taskStatusSelect');
+    if (statusSel) {
+        statusSel.addEventListener('change', function () {
+            const taskId = document.getElementById('taskid').value;
+            fetch('{{ route("task.meta.update") }}', {
+                method : 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ task_id: taskId, status: this.value })
+            }).then(r => r.json()).then(d => {
+                if (!d.success) console.warn('Status update failed', d);
             });
-        }
+        });
+    }
 
-        /* 3. Ctrl+Enter to submit comment */
-        const commentTA = document.getElementById('commentInputs');
-        if (commentTA) {
-            commentTA.addEventListener('keydown', function (e) {
-                if (e.ctrlKey && e.key === 'Enter') {
-                    e.preventDefault();
-                    document.getElementById('taskComments').dispatchEvent(new Event('submit', { bubbles: true }));
+    /* 6. Project change AJAX */
+    const projSel = document.getElementById('taskProjectSelect');
+    if (projSel) {
+        projSel.addEventListener('change', function () {
+            const taskId = document.getElementById('taskid').value;
+            fetch('{{ route("task.meta.update") }}', {
+                method : 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ task_id: taskId, project_id: this.value || null })
+            }).then(r => r.json()).then(d => {
+                if (d.success) {
+                    // Show small "saved" feedback
+                    const fb = document.createElement('span');
+                    fb.className = 'text-success small';
+                    fb.textContent = ' ✓ Saved';
+                    projSel.parentNode.appendChild(fb);
+                    setTimeout(() => fb.remove(), 2000);
                 }
             });
+        });
+    }
+
+    /* 7. Save Assignees AJAX */
+    const saveAssBtn = document.getElementById('saveAssigneesBtn');
+    if (saveAssBtn) {
+        saveAssBtn.addEventListener('click', function () {
+            const taskId = this.dataset.taskid;
+            const checked = Array.from(document.querySelectorAll('.et-assignee-chk:checked'))
+                                  .map(c => parseInt(c.value));
+
+            fetch('{{ route("task.meta.update") }}', {
+                method : 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ task_id: taskId, assignee_ids: checked })
+            }).then(r => r.json()).then(d => {
+                if (d.success) {
+                    document.getElementById('et-assignee-row').innerHTML = d.avatarHtml;
+                    this.textContent = '✓ Saved!';
+                    this.classList.add('btn-success');
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="bx bx-save"></i> Save Assignees';
+                        this.classList.remove('btn-success');
+                    }, 2000);
+                }
+            }).catch(err => console.error('Assignee update error:', err));
+        });
+    }
+
+    /* 8. Attachment upload/delete */
+    window.uploadTaskAttachment = function (input) {
+        if (!input.files || input.files.length === 0) return;
+        let formData = new FormData();
+        formData.append('file', input.files[0]);
+        formData.append('task_id', '{{ $task->id }}');
+        formData.append('_token', '{{ csrf_token() }}');
+
+        document.getElementById('attachmentLoader').style.display = 'block';
+        if (document.getElementById('noAttachmentsMsg')) {
+            document.getElementById('noAttachmentsMsg').style.display = 'none';
         }
 
-        /* 4. Live running timer counter in Stop button */
-        const stopBtn = document.querySelector('.et-timer-running');
-        if (stopBtn) {
-            let startMs = Date.now();
-            const baseMin = parseFloat(stopBtn.dataset.taskhr || 0) * 60000;
-            const span = stopBtn.querySelector('span');
-            if (span) {
-                setInterval(function () {
-                    const totalMs = baseMin + (Date.now() - startMs);
-                    const h = Math.floor(totalMs / 3600000);
-                    const m = Math.floor((totalMs % 3600000) / 60000);
-                    const s = Math.floor((totalMs % 60000) / 1000);
-                    span.textContent = 'Stop \u2022 ' + (h ? h + 'h ' : '') + m + 'm ' + s + 's';
-                }, 1000);
-            }
-        }
-
-        /* 5. Attachment Logic */
-        window.uploadTaskAttachment = function (input) {
-            if (!input.files || input.files.length === 0) return;
-
-            let formData = new FormData();
-            formData.append('file', input.files[0]);
-            formData.append('task_id', '{{ $task->id }}');
-            formData.append('_token', '{{ csrf_token() }}');
-
-            document.getElementById('attachmentLoader').style.display = 'block';
-            if (document.getElementById('noAttachmentsMsg')) {
-                document.getElementById('noAttachmentsMsg').style.display = 'none';
-            }
-
-            fetch('{{ route("task.attachment.upload") }}', {
-                method: 'POST',
-                body: formData
-            })
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('attachmentLoader').style.display = 'none';
-                    if (data.status === 'success') {
-                        const att = data.attachment;
-                        const html = `
+        fetch('{{ route("task.attachment.upload") }}', { method: 'POST', body: formData })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('attachmentLoader').style.display = 'none';
+                if (data.status === 'success') {
+                    const att  = data.attachment;
+                    const html = `
                     <div class="d-flex justify-content-between align-items-center p-2 mb-2 border rounded bg-light" id="attachment-${att.id}">
                         <a href="/${att.file_path}" target="_blank" class="d-flex align-items-center gap-2 text-decoration-none text-truncate" style="max-width: 80%;">
                             <i class="bx bxs-file text-primary" style="font-size:1.6rem;"></i>
@@ -407,47 +516,41 @@
                         <button type="button" class="btn btn-sm text-danger border-0 bg-transparent" onclick="deleteAttachment(${att.id})">
                             <i class="bx bx-trash" style="font-size: 1.1rem;"></i>
                         </button>
-                    </div>
-                `;
-                        document.getElementById('attachmentsWrap').insertAdjacentHTML('beforeend', html);
-
-                        let countSpan = document.getElementById('attachmentCount');
-                        countSpan.innerText = parseInt(countSpan.innerText) + 1;
-                    } else {
-                        alert(data.message || 'Error uploading file');
-                    }
-                })
-                .catch(error => {
-                    document.getElementById('attachmentLoader').style.display = 'none';
-                    alert('Error uploading file');
-                    console.error(error);
-                });
-
-            input.value = '';
-        };
-
-        window.deleteAttachment = function (id) {
-            if (!confirm('Delete this attachment?')) return;
-
-            fetch(`/task-attachment/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json'
+                    </div>`;
+                    document.getElementById('attachmentsWrap').insertAdjacentHTML('beforeend', html);
+                    let countSpan = document.getElementById('attachmentCount');
+                    countSpan.innerText = parseInt(countSpan.innerText) + 1;
+                } else {
+                    alert(data.message || 'Error uploading file');
                 }
             })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        document.getElementById('attachment-' + id).remove();
-                        let countSpan = document.getElementById('attachmentCount');
-                        let newCount = parseInt(countSpan.innerText) - 1;
-                        countSpan.innerText = newCount;
-                        if (newCount === 0 && document.getElementById('noAttachmentsMsg')) {
-                            document.getElementById('noAttachmentsMsg').style.display = 'block';
-                        }
-                    }
-                });
-        };
-    })();
+            .catch(error => {
+                document.getElementById('attachmentLoader').style.display = 'none';
+                alert('Error uploading file');
+                console.error(error);
+            });
+        input.value = '';
+    };
+
+    window.deleteAttachment = function (id) {
+        if (!confirm('Delete this attachment?')) return;
+        fetch(`/task-attachment/${id}`, {
+            method : 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json()).then(data => {
+            if (data.status === 'success') {
+                document.getElementById('attachment-' + id).remove();
+                let countSpan = document.getElementById('attachmentCount');
+                let newCount  = parseInt(countSpan.innerText) - 1;
+                countSpan.innerText = newCount;
+                if (newCount === 0 && document.getElementById('noAttachmentsMsg')) {
+                    document.getElementById('noAttachmentsMsg').style.display = 'block';
+                }
+            }
+        });
+    };
+})();
 </script>
