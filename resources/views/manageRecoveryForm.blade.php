@@ -328,7 +328,11 @@
     function initSelect2() {
         if (typeof $.fn.select2 === 'undefined') return;
 
-        $('#rf_client').select2({
+        var $client  = $('#rf_client');
+        var $project = $('#rf_project');
+
+        // ── Init Client Select2 ──
+        $client.select2({
             placeholder       : 'Search customer...',
             allowClear        : true,
             minimumInputLength: 0,
@@ -336,7 +340,8 @@
             width             : '100%'
         });
 
-        $('#rf_project').select2({
+        // ── Init Project Select2 ──
+        $project.select2({
             placeholder       : 'Search project...',
             allowClear        : true,
             minimumInputLength: 0,
@@ -344,25 +349,76 @@
             width             : '100%'
         });
 
-        // Project "new" toggle
-        const projEl   = document.getElementById('rf_project');
-        const projWrap = document.getElementById('rf_custom_project_wrap');
-        const projName = document.getElementById('rf_project_name');
+        // ── Cascade: Client → Projects ──
+        $client.on('change', function () {
+            var clientId = $(this).val();
+            var currentProjectId = '{{ $recoveries->project_id ?? "" }}';
+
+            // Reset project dropdown
+            $project.empty().append('<option value="">Loading projects...</option>').trigger('change');
+
+            if (!clientId || clientId === 'new') {
+                $project.empty()
+                    .append('<option value="">Select a project...</option>')
+                    .append('<option value="new">+ New Project</option>')
+                    .trigger('change');
+                toggleCustomProject();
+                return;
+            }
+
+            // Fetch projects for selected client
+            fetch('/get-projects/' + clientId)
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    $project.empty();
+                    $project.append('<option value="">Select a project...</option>');
+                    $project.append('<option value="new">+ New Project</option>');
+
+                    if (data.projects && data.projects.length > 0) {
+                        data.projects.forEach(function (p) {
+                            var selected = (String(p.id) === String(currentProjectId)) ? ' selected' : '';
+                            $project.append(
+                                '<option value="' + p.id + '"' + selected + '>' +
+                                p.name + ' — ₹' + Number(p.amount).toLocaleString('en-IN') +
+                                '</option>'
+                            );
+                        });
+                    }
+                    $project.trigger('change');
+                    toggleCustomProject();
+                })
+                .catch(function () {
+                    $project.empty()
+                        .append('<option value="">Failed to load projects</option>')
+                        .append('<option value="new">+ New Project</option>')
+                        .trigger('change');
+                });
+        });
+
+        // ── Project "new" toggle ──
+        var projEl   = document.getElementById('rf_project');
+        var projWrap = document.getElementById('rf_custom_project_wrap');
+        var projName = document.getElementById('rf_project_name');
 
         function toggleCustomProject() {
             if (!projEl || !projWrap) return;
-            const show = projEl.value === 'new';
+            var show = projEl.value === 'new';
             projWrap.style.display = show ? '' : 'none';
             if (projName) projName.required = show;
         }
 
         if (projEl) {
-            $(projEl).on('change', toggleCustomProject);
+            $project.on('change', toggleCustomProject);
             toggleCustomProject();
+        }
+
+        // ── Trigger cascade on page load if client is pre-selected ──
+        if ($client.val()) {
+            $client.trigger('change');
         }
     }
 
-    // If Select2 JS isn't loaded yet, load it dynamically then init
+    // Ensure Select2 JS is loaded before init
     if (typeof $.fn.select2 !== 'undefined') {
         initSelect2();
     } else {
