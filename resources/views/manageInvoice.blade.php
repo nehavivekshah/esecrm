@@ -3,6 +3,7 @@
 
 @section('content')
     <style>
+        /* ── Existing layout styles ── */
         .mp-sidebar-sticky { position: sticky; top: 84px; z-index: 10; }
         .mp-item-row { background: #fff; border: 1px solid #e8eaed; border-radius: 16px; padding: 1.25rem; margin-bottom: 1.25rem; position: relative; transition: all 0.2s; }
         .mp-item-row:hover { border-color: #006666; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
@@ -24,7 +25,7 @@
         .ml-card-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0; }
         .ml-card-title { font-size: 1rem; font-weight: 700; color: #202124; margin: 0; }
         .ml-card-sub { font-size: 0.72rem; color: #80868b; display: block; margin-top: 1px; font-weight: 400; }
-        .ml-label { display: block; font-size: 0.75rem; font-weight: 700; color: #5f6368; margin-bottom: 6px; }
+        .ml-label { display: block; font-size: 0.75rem; font-weight: 400; color: #5f6368; margin-bottom: 6px; }
         .mp-steps { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 30px; }
         .mp-step { display: flex; align-items: center; gap: 8px; color: #dadce0; }
         .mp-step-active { color: #006666; }
@@ -35,10 +36,61 @@
         .mp-line-done { background: #34a853; }
         .mp-autoresize { resize: none; overflow: hidden; }
         .inv-status-pill { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-        .bank-info-bg { background: #f8f9fa; border: 1px dashed #ced4da; border-radius: 12px; padding: 16px; }
+        .bank-info-bg { background: #f8fdfd; border: 1.5px dashed rgba(0,102,102,.25); border-radius: 12px; padding: 16px; }
         @media (max-width: 1200px) { .mp-item-row-body { grid-template-columns: 1.5fr 1.5fr 0.8fr 1fr 1fr 1fr; } }
         @media (max-width: 991px) { .mp-sidebar-sticky { position: static; } .mp-item-row-body { grid-template-columns: 1fr 1fr; gap: 15px; } }
         @media (max-width: 575px) { .mp-item-row-body { grid-template-columns: 1fr; } }
+
+        /* ── cf- Design System (matching Recovery & Contract forms) ── */
+        .cf-input-box {
+            display: flex; align-items: center;
+            border: 1.5px solid #d1d5db; border-radius: 8px;
+            background: #fff; overflow: hidden; height: 42px;
+            transition: border-color .15s, box-shadow .15s;
+        }
+        .cf-input-box:focus-within { border-color: #006666; box-shadow: 0 0 0 3px rgba(0,102,102,.08); }
+        .cf-icon {
+            display: flex; align-items: center; justify-content: center;
+            width: 38px; min-width: 38px; height: 100%;
+            color: #006666; font-size: 1.05rem;
+            border-right: 1.5px solid #e8eaed; background: #f8fdfd; flex-shrink: 0;
+        }
+        .cf-input-box input,
+        .cf-input-box select {
+            flex: 1; border: none !important; outline: none !important;
+            box-shadow: none !important; background: transparent;
+            font-size: .875rem; color: #202124; padding: 0 10px; height: 100%;
+            appearance: none; -webkit-appearance: none;
+        }
+        .cf-input-box select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%235f6368'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px;
+        }
+        .cf-input-box input::placeholder { color: #9aa0a6; }
+        .cf-input-box.cf-textarea-box { height: auto; align-items: flex-start; }
+        .cf-input-box.cf-textarea-box .cf-icon { height: 42px; align-self: flex-start; }
+        .cf-input-box.cf-textarea-box textarea {
+            flex: 1; border: none !important; outline: none !important;
+            box-shadow: none !important; background: transparent;
+            font-size: .875rem; color: #202124; padding: 10px;
+            resize: none; width: 100%;
+        }
+        /* client search wrapper keeps the + button */
+        .cf-client-wrap { display: flex; align-items: center; border: 1.5px solid #d1d5db; border-radius: 8px; overflow: hidden; background: #fff; transition: border-color .15s, box-shadow .15s; }
+        .cf-client-wrap:focus-within { border-color: #006666; box-shadow: 0 0 0 3px rgba(0,102,102,.08); }
+        .cf-client-wrap .cf-icon { border-right: 1.5px solid #e8eaed; height: 42px; }
+        .cf-client-wrap select { flex: 1; border: none !important; outline: none !important; box-shadow: none !important; background: transparent; font-size: .875rem; color: #202124; padding: 0 10px; height: 42px; }
+        .cf-client-wrap .btn-add-client { height: 42px; padding: 0 14px; background: #006666; color: #fff; border: none; font-size: .9rem; cursor: pointer; display: flex; align-items: center; transition: background .15s; }
+        .cf-client-wrap .btn-add-client:hover { background: #004e4e; }
+        /* bank detail small inputs */
+        .cf-bank-input { border: 1.5px solid #d1d5db !important; border-radius: 7px !important; font-size: .82rem !important; padding: 7px 10px !important; color: #202124; transition: border-color .15s, box-shadow .15s; }
+        .cf-bank-input:focus { border-color: #006666 !important; box-shadow: 0 0 0 3px rgba(0,102,102,.07) !important; outline: none; }
+        /* summary small inputs */
+        .cf-summary-select { border: 1.5px solid #d1d5db !important; border-radius: 7px !important; font-size: .82rem !important; padding: 6px 10px !important; background: #fff; }
+        .cf-summary-select:focus { border-color: #006666 !important; outline: none !important; }
+        /* Add New Client modal inputs */
+        .cf-modal-input { border: 1.5px solid #d1d5db !important; border-radius: 8px !important; font-size: .875rem !important; padding: 9px 12px !important; transition: border-color .15s, box-shadow .15s !important; }
+        .cf-modal-input:focus { border-color: #006666 !important; box-shadow: 0 0 0 3px rgba(0,102,102,.08) !important; outline: none !important; }
     </style>
 
     <section class="task__section">
@@ -111,17 +163,17 @@
                                 <div class="row g-3">
                                     <div class="col-md-4">
                                         <label class="ml-label">Invoice Number <span class="text-danger">*</span></label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="bx bx-hash"></i></span>
-                                            <input type="text" name="invoice_number" id="invoice_number" class="form-control"
-                                                   value="{{ old('invoice_number', $invoice->invoice_number ?? '') }}" required>
+                                        <div class="cf-input-box">
+                                            <span class="cf-icon"><i class="bx bx-hash"></i></span>
+                                            <input type="text" name="invoice_number" id="invoice_number"
+                                                   value="{{ old('invoice_number', $invoice->invoice_number ?? '') }}" required placeholder="e.g. INV-001">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="ml-label">Type <span class="text-danger">*</span></label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="bx bx-category"></i></span>
-                                            <select class="form-select" name="invoice_type" required>
+                                        <div class="cf-input-box">
+                                            <span class="cf-icon"><i class="bx bx-category"></i></span>
+                                            <select name="invoice_type" required>
                                                 <option value="invoice" @if(old('invoice_type', $invoice->invoice ?? '') == 'invoice') selected @endif>Invoice</option>
                                                 <option value="proforma" @if(old('invoice_type', $invoice->invoice ?? '') == 'proforma') selected @endif>Proforma</option>
                                                 <option value="tax" @if(old('invoice_type', $invoice->invoice ?? '') == 'tax') selected @endif>Tax Invoice</option>
@@ -130,9 +182,9 @@
                                     </div>
                                     <div class="col-md-4">
                                         <label class="ml-label">Status</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="bx bx-info-circle"></i></span>
-                                            <select class="form-select" name="status">
+                                        <div class="cf-input-box">
+                                            <span class="cf-icon"><i class="bx bx-info-circle"></i></span>
+                                            <select name="status">
                                                 <option value="unpaid" @if(old('status', $invoice->status ?? 'unpaid') == 'unpaid') selected @endif>Unpaid</option>
                                                 <option value="paid" @if(old('status', $invoice->status ?? '') == 'paid') selected @endif>Paid</option>
                                                 <option value="partial" @if(old('status', $invoice->status ?? '') == 'partial') selected @endif>Partial</option>
@@ -141,25 +193,25 @@
                                     </div>
                                     <div class="col-md-4">
                                         <label class="ml-label">Invoice Date <span class="text-danger">*</span></label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-                                            <input type="date" name="date" class="form-control"
+                                        <div class="cf-input-box">
+                                            <span class="cf-icon"><i class="bx bx-calendar"></i></span>
+                                            <input type="date" name="date"
                                                    value="{{ old('date', $invoice && $invoice->date ? \Carbon\Carbon::parse($invoice->date)->format('Y-m-d') : now()->format('Y-m-d')) }}" required>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="ml-label">Due Date</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="bx bx-calendar-check"></i></span>
-                                            <input type="date" name="due_date" class="form-control"
+                                        <div class="cf-input-box">
+                                            <span class="cf-icon"><i class="bx bx-calendar-check"></i></span>
+                                            <input type="date" name="due_date"
                                                    value="{{ old('due_date', $invoice && $invoice->due_date ? \Carbon\Carbon::parse($invoice->due_date)->format('Y-m-d') : '') }}">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="ml-label">Reference / PO #</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="bx bx-note"></i></span>
-                                            <input type="text" name="reference" class="form-control"
+                                        <div class="cf-input-box">
+                                            <span class="cf-icon"><i class="bx bx-note"></i></span>
+                                            <input type="text" name="reference"
                                                    placeholder="Order or Reference Number"
                                                    value="{{ old('reference', $invoice->reference ?? '') }}">
                                         </div>
@@ -183,10 +235,11 @@
                                 <div class="row g-3">
                                     <div class="col-12">
                                         <label class="ml-label">Select Client <span class="text-danger">*</span></label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="bx bx-search"></i></span>
-                                            <select class="selectpicker form-select" id="client_id" name="client_id"
-                                                    data-live-search="true" data-width="calc(100% - 46px)" required>
+                                        <div class="cf-client-wrap">
+                                            <span class="cf-icon"><i class="bx bx-user-pin"></i></span>
+                                            <select class="selectpicker" id="client_id" name="client_id"
+                                                    data-live-search="true" data-width="100%" required
+                                                    style="border:none!important;outline:none!important;box-shadow:none!important;">
                                                 <option value="">Search for a client...</option>
                                                 @foreach($clients as $client)
                                                     @php $location = json_decode(($client->location ?? '["","","","",""]'), true) @endphp
@@ -202,28 +255,34 @@
                                                     </option>
                                                 @endforeach
                                             </select>
-                                            <button type="button" class="btn btn-indigo" data-bs-toggle="modal"
-                                                    data-bs-target="#addClientModal" title="Add New Client" style="width: 45px;">
+                                            <button type="button" class="btn-add-client" data-bs-toggle="modal"
+                                                    data-bs-target="#addClientModal" title="Add New Client">
                                                 <i class='bx bx-plus'></i>
                                             </button>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="ml-label">Billing Address</label>
-                                        <textarea class="form-control bg-light mp-autoresize" name="billing_address" id="billing_address" rows="2"
-                                                  placeholder="Standard billing address">{{ old('billing_address', $invoice->billing_address ?? '') }}</textarea>
+                                        <div class="cf-input-box cf-textarea-box">
+                                            <span class="cf-icon"><i class="bx bx-map"></i></span>
+                                            <textarea name="billing_address" id="billing_address" rows="2"
+                                                      placeholder="Standard billing address" class="mp-autoresize">{{ old('billing_address', $invoice->billing_address ?? '') }}</textarea>
+                                        </div>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="ml-label">Shipping Address</label>
-                                        <textarea class="form-control bg-light mp-autoresize" name="shipping_address" id="shipping_address" rows="2"
-                                                  placeholder="Standard shipping address">{{ old('shipping_address', $invoice->shipping_address ?? '') }}</textarea>
+                                        <div class="cf-input-box cf-textarea-box">
+                                            <span class="cf-icon"><i class="bx bx-map-pin"></i></span>
+                                            <textarea name="shipping_address" id="shipping_address" rows="2"
+                                                      placeholder="Standard shipping address" class="mp-autoresize">{{ old('shipping_address', $invoice->shipping_address ?? '') }}</textarea>
+                                        </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="ml-label">GST No.</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="bx bx-id-card"></i></span>
-                                            <input type="text" name="client_gst" id="client_gst" class="form-control"
-                                                   value="{{ old('client_gst', $invoice->client_gstno ?? '') }}">
+                                        <div class="cf-input-box">
+                                            <span class="cf-icon"><i class="bx bx-id-card"></i></span>
+                                            <input type="text" name="client_gst" id="client_gst"
+                                                   value="{{ old('client_gst', $invoice->client_gstno ?? '') }}" placeholder="GST Number">
                                         </div>
                                     </div>
                                     <div class="col-md-8 d-flex align-items-center">
@@ -252,9 +311,9 @@
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label class="ml-label">Payment Mode</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="bx bx-wallet"></i></span>
-                                            <select class="form-control" name="payment_mode">
+                                        <div class="cf-input-box">
+                                            <span class="cf-icon"><i class="bx bx-wallet"></i></span>
+                                            <select name="payment_mode">
                                                 <option value="">Select Mode...</option>
                                                 <option value="cash" @if(old('payment_mode', $invoice->payment_mode ?? '') == 'cash') selected @endif>Cash</option>
                                                 <option value="card" @if(old('payment_mode', $invoice->payment_mode ?? '') == 'card') selected @endif>Credit/Debit Card</option>
@@ -265,9 +324,9 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label class="ml-label">Currency</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="bx bx-globe"></i></span>
-                                            <select class="form-control" id="currency" name="currency">
+                                        <div class="cf-input-box">
+                                            <span class="cf-icon"><i class="bx bx-globe"></i></span>
+                                            <select id="currency" name="currency">
                                                 <option value="INR" @if(old('currency', $invoice->currency ?? 'INR') == 'INR') selected @endif>₹ INR</option>
                                                 <option value="USD" @if(old('currency', $invoice->currency ?? '') == 'USD') selected @endif>$ USD</option>
                                                 <option value="EUR" @if(old('currency', $invoice->currency ?? '') == 'EUR') selected @endif>€ EUR</option>
@@ -285,23 +344,23 @@
                                             <div class="row g-3">
                                                 <div class="col-md-4">
                                                     <label class="ml-label" style="font-size:0.68rem;">Bank Name</label>
-                                                    <input type="text" class="form-control form-control-sm" name="bank_details[]" value="{{ $bank[0] ?? '' }}">
+                                                    <input type="text" class="form-control cf-bank-input" name="bank_details[]" value="{{ $bank[0] ?? '' }}" placeholder="e.g. HDFC Bank">
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label class="ml-label" style="font-size:0.68rem;">Account Holder</label>
-                                                    <input type="text" class="form-control form-control-sm" name="bank_details[]" value="{{ $bank[1] ?? '' }}">
+                                                    <input type="text" class="form-control cf-bank-input" name="bank_details[]" value="{{ $bank[1] ?? '' }}" placeholder="Account Holder Name">
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label class="ml-label" style="font-size:0.68rem;">Account Number</label>
-                                                    <input type="text" class="form-control form-control-sm" name="bank_details[]" value="{{ $bank[2] ?? '' }}">
+                                                    <input type="text" class="form-control cf-bank-input" name="bank_details[]" value="{{ $bank[2] ?? '' }}" placeholder="XXXX XXXX XXXX">
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="ml-label" style="font-size:0.68rem;">IFSC / SWIFT</label>
-                                                    <input type="text" class="form-control form-control-sm" name="bank_details[]" value="{{ $bank[3] ?? '' }}">
+                                                    <input type="text" class="form-control cf-bank-input" name="bank_details[]" value="{{ $bank[3] ?? '' }}" placeholder="e.g. HDFC0001234">
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="ml-label" style="font-size:0.68rem;">UPI ID</label>
-                                                    <input type="text" class="form-control form-control-sm" name="bank_details[]" value="{{ $bank[4] ?? '' }}">
+                                                    <input type="text" class="form-control cf-bank-input" name="bank_details[]" value="{{ $bank[4] ?? '' }}" placeholder="name@upi">
                                                 </div>
                                             </div>
                                         </div>
@@ -481,18 +540,27 @@
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label class="ml-label">Admin Note (Internal)</label>
-                                        <textarea class="form-control bg-light mp-autoresize" name="admin_note" rows="2"
-                                                  placeholder="Not visible to client">{{ old('admin_note', $invoice->admin_note ?? '') }}</textarea>
+                                        <div class="cf-input-box cf-textarea-box">
+                                            <span class="cf-icon"><i class="bx bx-lock-alt"></i></span>
+                                            <textarea name="admin_note" rows="2" class="mp-autoresize"
+                                                      placeholder="Not visible to client">{{ old('admin_note', $invoice->admin_note ?? '') }}</textarea>
+                                        </div>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="ml-label">Client Note (on PDF)</label>
-                                        <textarea class="form-control bg-light mp-autoresize" name="client_note" rows="2"
-                                                  placeholder="Visible on PDF">{{ old('client_note', $invoice->client_note ?? '') }}</textarea>
+                                        <div class="cf-input-box cf-textarea-box">
+                                            <span class="cf-icon"><i class="bx bx-message-square-detail"></i></span>
+                                            <textarea name="client_note" rows="2" class="mp-autoresize"
+                                                      placeholder="Visible on PDF">{{ old('client_note', $invoice->client_note ?? '') }}</textarea>
+                                        </div>
                                     </div>
                                     <div class="col-12">
                                         <label class="ml-label">Terms &amp; Conditions</label>
-                                        <textarea class="form-control bg-light mp-autoresize" name="terms" rows="2"
-                                                  placeholder="Terms and conditions">{{ old('terms', $invoice->terms ?? '') }}</textarea>
+                                        <div class="cf-input-box cf-textarea-box">
+                                            <span class="cf-icon"><i class="bx bx-file-blank"></i></span>
+                                            <textarea name="terms" rows="2" class="mp-autoresize"
+                                                      placeholder="Terms and conditions">{{ old('terms', $invoice->terms ?? '') }}</textarea>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -523,18 +591,18 @@
 
                                     <div class="mb-3">
                                         <label class="ml-label">Apply Discount</label>
-                                        <div class="input-group input-group-sm">
-                                            <select name="discount_type" id="discountApplicationType" class="form-select bg-light">
+                                        <div class="d-flex gap-2">
+                                            <select name="discount_type" id="discountApplicationType" class="cf-summary-select form-select" style="flex:2;">
                                                 <option value="none" @if(($invoice->discount_type ?? '') == 'none') selected @endif>None</option>
                                                 <option value="before-tax" @if(($invoice->discount_type ?? '') == 'before-tax') selected @endif>Before Tax</option>
                                                 <option value="after-tax" @if(($invoice->discount_type ?? '') == 'after-tax') selected @endif>After Tax</option>
                                             </select>
-                                            <select name="discount_mode" id="discountValueType" class="form-select bg-light" style="max-width:75px;">
+                                            <select name="discount_mode" id="discountValueType" class="cf-summary-select form-select" style="flex:0 0 70px;">
                                                 <option value="flat" @if(($invoice->discount_mode ?? '') == 'flat') selected @endif>FLAT</option>
                                                 <option value="percentage" @if(($invoice->discount_mode ?? '') == 'percentage') selected @endif>%</option>
                                             </select>
-                                            <input type="number" class="form-control bg-light text-end" name="discount"
-                                                   id="discountValue" value="{{ $invoice->discount ?? 0 }}" step="0.01">
+                                            <input type="number" class="cf-bank-input form-control text-end" name="discount"
+                                                   id="discountValue" value="{{ $invoice->discount ?? 0 }}" step="0.01" style="flex:1;">
                                         </div>
                                     </div>
 
@@ -557,9 +625,9 @@
 
                                     <div class="mb-3">
                                         <label class="ml-label">Adjustment / Setup Fee</label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text"><i class="bx bx-plus-minus"></i></span>
-                                            <input type="number" class="form-control text-end" name="adjustment"
+                                        <div class="cf-input-box">
+                                            <span class="cf-icon"><i class="bx bx-plus-minus"></i></span>
+                                            <input type="number" class="text-end" name="adjustment"
                                                    id="adjustment" value="{{ $invoice->adjustment ?? 0 }}" step="0.01">
                                         </div>
                                     </div>
@@ -610,28 +678,46 @@
                     <div class="modal-body p-4">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label small fw-600">Full Name*</label>
-                                <input type="text" class="form-control" name="name" required placeholder="John Doe">
+                                <label class="ml-label">Full Name <span class="text-danger">*</span></label>
+                                <div class="cf-input-box">
+                                    <span class="cf-icon"><i class="bx bx-user"></i></span>
+                                    <input type="text" name="name" required placeholder="John Doe">
+                                </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-600">Email Address*</label>
-                                <input type="email" class="form-control" name="email" required placeholder="john@example.com">
+                                <label class="ml-label">Email Address <span class="text-danger">*</span></label>
+                                <div class="cf-input-box">
+                                    <span class="cf-icon"><i class="bx bx-envelope"></i></span>
+                                    <input type="email" name="email" required placeholder="john@example.com">
+                                </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-600">Mobile Number*</label>
-                                <input type="text" class="form-control" name="mob" required value="91">
+                                <label class="ml-label">Mobile Number <span class="text-danger">*</span></label>
+                                <div class="cf-input-box">
+                                    <span class="cf-icon"><i class="bx bx-phone"></i></span>
+                                    <input type="text" name="mob" required value="91">
+                                </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-600">Company Name*</label>
-                                <input type="text" class="form-control" name="company" required placeholder="Acme Corp">
+                                <label class="ml-label">Company Name <span class="text-danger">*</span></label>
+                                <div class="cf-input-box">
+                                    <span class="cf-icon"><i class="bx bx-buildings"></i></span>
+                                    <input type="text" name="company" required placeholder="Acme Corp">
+                                </div>
                             </div>
                             <div class="col-12">
-                                <label class="form-label small fw-600">Address / Location</label>
-                                <textarea class="form-control" name="address[]" rows="2" placeholder="Street, City, State, ZIP"></textarea>
+                                <label class="ml-label">Address / Location</label>
+                                <div class="cf-input-box cf-textarea-box">
+                                    <span class="cf-icon"><i class="bx bx-map"></i></span>
+                                    <textarea name="address[]" rows="2" placeholder="Street, City, State, ZIP"></textarea>
+                                </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-600">GST Number</label>
-                                <input type="text" class="form-control" name="gstno" placeholder="Optional">
+                                <label class="ml-label">GST Number</label>
+                                <div class="cf-input-box">
+                                    <span class="cf-icon"><i class="bx bx-id-card"></i></span>
+                                    <input type="text" name="gstno" placeholder="Optional">
+                                </div>
                             </div>
                         </div>
                     </div>
