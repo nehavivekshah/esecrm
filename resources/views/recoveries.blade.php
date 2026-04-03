@@ -88,10 +88,11 @@
                         <i class="bx bx-refresh"></i>
                     </button>
                     @if(in_array('users_add', $roleArray) || in_array('All', $roleArray))
-                        <a href="/manage-recovery" class="lb-btn lb-btn-primary">
+                        <button type="button" class="lb-btn lb-btn-primary open-recovery-modal"
+                            data-url="/manage-recovery?ajax=1">
                             <i class="bx bx-plus"></i>
                             <span class="d-none d-sm-inline">Add Recovery</span>
-                        </a>
+                        </button>
                     @endif
                 </div>
             </div>
@@ -211,9 +212,10 @@
                     <div class="rv-empty">
                         <i class="bx bx-receipt"></i>
                         <span>No recoveries recorded yet.</span>
-                        <a href="/manage-recovery" class="lb-btn lb-btn-primary mt-2">
+                        <button type="button" class="lb-btn lb-btn-primary mt-2 open-recovery-modal"
+                            data-url="/manage-recovery?ajax=1">
                             <i class="bx bx-plus"></i> Add Recovery
-                        </a>
+                        </button>
                     </div>
                 @endif
             </div>
