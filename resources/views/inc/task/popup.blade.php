@@ -383,13 +383,55 @@
     if (statusSel) {
         statusSel.addEventListener('change', function () {
             const taskId = document.getElementById('taskid').value;
-            const statusMap = {'0':'#80868b', '1':'#ea4335', '2':'#f29900', '3':'#1a73e8', '4':'#34a853', '5':'#006666'};
-            const newColor = statusMap[this.value] || '#80868b';
+            const statusMap = {
+                '0': { color: '#80868b', label: 'Open' },
+                '1': { color: '#ea4335', label: 'Urgent' },
+                '2': { color: '#f29900', label: 'Pending' },
+                '3': { color: '#1a73e8', label: 'In Progress' },
+                '4': { color: '#34a853', label: 'Done' },
+                '5': { color: '#006666', label: 'Closed' }
+            };
+            const sc = statusMap[this.value] || statusMap['0'];
 
-            // Update UI instantly
+            // 1. Update Modal UI instantly
             const wrapper = document.getElementById('statusWrapper');
-            if(wrapper) wrapper.style.borderColor = newColor;
-            this.style.color = newColor;
+            if(wrapper) wrapper.style.borderColor = sc.color;
+            this.style.color = sc.color;
+
+            // 2. Update Kanban Board Card instantly
+            const card = document.querySelector(`.tk-card[data-taskid="${taskId}"]`);
+            if (card) {
+                card.style.borderLeftColor = sc.color;
+                
+                // Update Status Pill
+                const pill = card.querySelector('.tk-status-pill');
+                if (pill) {
+                    pill.textContent = sc.label;
+                    pill.style.background = sc.color + '18'; // 9% opacity
+                    pill.style.color = sc.color;
+                }
+
+                // Update Label Dot
+                const labelDot = card.querySelector('.tk-card-label-dot');
+                if (labelDot) {
+                    labelDot.style.background = sc.color;
+                }
+
+                // Update Timer Icon in Task Card
+                const actionDiv = card.querySelector('.tk-card-action');
+                if (actionDiv) {
+                    const icon = actionDiv.querySelector('i');
+                    if (icon) {
+                        if (this.value === '0') {
+                            icon.className = 'bx bx-time';
+                            icon.title = 'Start Timer';
+                        } else {
+                            icon.className = 'bx bx-stopwatch';
+                            icon.title = 'Running';
+                        }
+                    }
+                }
+            }
 
             fetch('{{ route("task.meta.update") }}', {
                 method : 'POST',
