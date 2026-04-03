@@ -94,7 +94,7 @@
             border: none !important; background: transparent !important;
             box-shadow: none !important; outline: none !important;
             font-size: .875rem; color: #202124 !important;
-            height: 42px; width: 100%; text-align: left;
+            height: 42px !important; width: 100%; text-align: left;
             padding: 0 10px; border-radius: 0 !important;
         }
         .cf-client-wrap .bootstrap-select > .dropdown-toggle:focus { outline: none !important; box-shadow: none !important; }
@@ -107,7 +107,7 @@
         }
         .cf-client-wrap .btn-add-client:hover { background: #004e4e; }
         /* bank detail small inputs */
-        .cf-bank-input { border: 1.5px solid #d1d5db !important; border-radius: 7px !important; font-size: .82rem !important; padding: 7px 10px !important; color: #202124; transition: border-color .15s, box-shadow .15s; }
+        .cf-bank-input { border: 1.5px solid #d1d5db !important; border-radius: 7px !important; font-size: .82rem !important; padding: 7px 10px !important; color: #202124; transition: border-color .15s, box-shadow .15s; height: 42px !important; }
         .cf-bank-input:focus { border-color: #006666 !important; box-shadow: 0 0 0 3px rgba(0,102,102,.07) !important; outline: none; }
         /* summary small inputs */
         .cf-summary-select { border: 1.5px solid #d1d5db !important; border-radius: 7px !important; font-size: .82rem !important; padding: 6px 10px !important; background: #fff; }

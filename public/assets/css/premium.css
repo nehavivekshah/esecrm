@@ -6512,7 +6512,7 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     border-radius: 8px !important;
     transition: all 0.2s ease-in-out !important;
     color: #495057 !important;
-    height: 38px !important;
+    height: 42px !important;
     display: flex;
     align-items: center;
 }
@@ -6597,7 +6597,7 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
 
 .input-group>.bootstrap-select>.dropdown-toggle {
     height: 100% !important;
-    min-height: 38px !important;
+    min-height: 42px !important;
     border-top-left-radius: 0 !important;
     border-bottom-left-radius: 0 !important;
 }
