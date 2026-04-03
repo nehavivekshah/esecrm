@@ -37,7 +37,10 @@ class TaskController extends Controller
     public function taskPost(Request $request)
     {
         $request->validate([
-            'msg'          => 'required|string|max:5000',
+            'msg'          => 'nullable|string|max:5000',
+            'title'        => 'nullable|string|max:500',
+            'des'          => 'nullable|string|max:5000',
+            'label'        => 'nullable|string|max:50',
             'uid'          => 'required|exists:users,id',
             'project_id'   => 'nullable|integer',
             'parent_id'    => 'nullable|integer',
@@ -55,12 +58,13 @@ class TaskController extends Controller
         $task->project_id = $request->project_id;
         $task->parent_id  = $request->parent_id;
         $task->due_date   = $request->due_date;
-        $task->title      = $request->msg;
-        $task->des        = $request->msg;
-        $task->label      = '5';
+        $task->title      = $request->title ?: $request->msg;
+        $task->des        = $request->des ?: $request->msg;
+        $task->label      = $request->label ?: '#787878';
         $task->whr        = '0';
         $task->position   = '0';
-        $task->status     = '6';
+        $task->status     = '0'; // Open
+
 
         foreach ($tasklist as $k => $singletask) {
             $tasks           = Task::find($singletask->id);

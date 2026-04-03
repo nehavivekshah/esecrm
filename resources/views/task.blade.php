@@ -59,6 +59,12 @@
                         <span class="tb-legend tb-legend-done">Done</span>
                         <span class="tb-legend tb-legend-closed">Closed</span>
                     </div>
+
+                    @if($canAddTask)
+                        <button type="button" class="lb-btn lb-btn-primary ms-3" onclick="addtask('{{ Auth::id() }}')">
+                            <i class="bx bx-plus"></i> Add Task
+                        </button>
+                    @endif
                 </div>
             </div>
 
@@ -229,60 +235,7 @@
                             @endforelse
                         </div>
 
-                        {{-- Quick Add Form --}}
-                        @if($canAddTask)
-                            <div class="tk-quick-add task-form" id="tf{{ $uid }}" style="display:none;">
-                                <form action="{{ route('task') }}" method="post">
-                                    @csrf
-                                    <input type="hidden" name="uid" value="{{ $uid }}" />
-                                    <input type="hidden" name="cid" value="{{ $column['user']->cid }}" />
-                                    <input type="hidden" name="parent_id" value="{{ request('parent_id') }}" />
-
-                                    {{-- Task title --}}
-                                    <textarea name="msg" id="tx{{ $uid }}" class="tk-quick-textarea"
-                                              placeholder="Task title…" required rows="2"></textarea>
-
-                                    {{-- Project selector --}}
-                                    <div class="mt-2">
-                                        <select name="project_id" class="tk-quick-select">
-                                            <option value="">— No Project —</option>
-                                            @foreach($projects as $proj)
-                                                <option value="{{ $proj->id }}"
-                                                    {{ $activeProjectId == $proj->id ? 'selected' : '' }}>
-                                                    {{ $proj->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-                                    {{-- Multi-user assignee --}}
-                                    <div class="mt-2">
-                                        <div class="tk-quick-label"><i class="bx bx-user-plus"></i> Also assign to:</div>
-                                        <div class="tk-assignee-checkboxes">
-                                            @foreach($users as $u)
-                                                @if($u->id != $uid)
-                                                    <label class="tk-assignee-check-item">
-                                                        <input type="checkbox" name="assignee_ids[]" value="{{ $u->id }}" />
-                                                        <span class="tk-check-avatar">{{ strtoupper(substr($u->name, 0, 1)) }}</span>
-                                                        <span class="tk-check-name">{{ $u->name }}</span>
-                                                    </label>
-                                                @endif
-                                            @endforeach
-                                        </div>
-                                    </div>
-
-                                    <div class="d-flex gap-2 mt-2">
-                                        <button type="submit" class="lb-btn lb-btn-primary" style="padding:4px 12px;font-size:0.78rem;">
-                                            <i class="bx bx-check"></i> Add
-                                        </button>
-                                        <button type="button" class="lb-btn lb-btn-ghost" style="padding:4px 10px;font-size:0.78rem;"
-                                                onclick="this.closest('.task-form').style.display='none';">
-                                            <i class="bx bx-x"></i>
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        @endif
+                        {{-- Quick Add form has been moved to popup --}}
                     </div>
                 @endforeach
             </div>
@@ -296,7 +249,113 @@
 
     <div id="taskAjaxContainer"></div>
 
+    {{-- Create Task Offcanvas --}}
+    @if($canAddTask)
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="createTaskOffcanvas"
+         style="width:820px; max-width:100vw; border-top-left-radius:16px; border-bottom-left-radius:16px; box-shadow:-12px 0 40px rgba(0,0,0,0.12); z-index:1061;">
+        <div class="et-header">
+            <div class="et-header-icon"><i class="bx bx-task"></i></div>
+            <div class="flex-grow-1 min-w-0">
+                <h5 class="mb-0" style="font-weight: 600; color: #202124;">Create New Task</h5>
+            </div>
+            <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                <a href="javascript:void(0)" data-bs-dismiss="offcanvas" class="btn kb-action-btn" title="Close"
+                    style="background:rgba(60,64,67,0.07);color:#5f6368;">
+                    <i class="bx bx-x"></i>
+                </a>
+            </div>
+        </div>
+        <div class="offcanvas-body p-0" style="overflow-y:auto; background-color: #fafafa;">
+            <form action="{{ route('task') }}" method="post" id="createTaskForm">
+                @csrf
+                <input type="hidden" name="parent_id" value="{{ request('parent_id') }}" />
+                <div class="et-body">
+                    {{-- LEFT SIDEBAR --}}
+                    <div class="et-sidebar border-end">
+                        <div class="et-section">
+                            <div class="et-section-title"><i class="bx bxs-user"></i> Primary Assignee</div>
+                            <select name="uid" id="createTaskUid" class="et-label-select w-100" required>
+                                @foreach($users as $u)
+                                    <option value="{{ $u->id }}">{{ $u->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="et-section">
+                            <div class="et-section-title"><i class="bx bx-group"></i> Also Assign To</div>
+                            <div class="et-assignee-checkboxes mt-1" style="max-height: 200px;">
+                                @foreach($users as $u)
+                                    <label class="et-assignee-check-row">
+                                        <input type="checkbox" name="assignee_ids[]" value="{{ $u->id }}" />
+                                        <span class="et-chk-avatar">{{ strtoupper(substr($u->name, 0, 1)) }}</span>
+                                        <span class="et-chk-name">{{ $u->name }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+                        <div class="et-section border-top pt-3">
+                            <div class="et-section-title"><i class="bx bx-briefcase-alt-2"></i> Project</div>
+                            <select name="project_id" class="et-label-select w-100">
+                                <option value="">— No Project —</option>
+                                @foreach($projects as $proj)
+                                    <option value="{{ $proj->id }}" {{ $activeProjectId == $proj->id ? 'selected' : '' }}>
+                                        {{ $proj->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="et-section">
+                            <div class="et-section-title"><i class="bx bxs-label"></i> Label</div>
+                            <div class="et-label-row">
+                                <span class="et-label-dot" id="createLabelIcon" style="background:#787878;"></span>
+                                <select name="label" id="createColorPalet" class="et-label-select">
+                                    <option value="#787878">New Task</option>
+                                    <option value="#007265">In Working</option>
+                                    <option value="#ff9800">Pause</option>
+                                    <option value="#e91e1e">Urgent</option>
+                                    <option value="#0dd500">Complete</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    {{-- MAIN CONTENT --}}
+                    <div class="et-main p-4">
+                        <div class="form-group mb-3">
+                            <label class="form-label text-muted fw-semibold small">Task Title <span class="text-danger">*</span></label>
+                            <input type="text" name="title" class="form-control shadow-sm border-0" placeholder="Enter task title" required autofocus style="padding: 10px 14px; border-radius: 8px;">
+                        </div>
+                        <div class="form-group mb-4">
+                            <label class="form-label text-muted fw-semibold small">Description</label>
+                            <textarea name="des" class="form-control shadow-sm border-0" rows="8" placeholder="Add a more detailed description…" style="padding: 10px 14px; border-radius: 8px; resize: none;"></textarea>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 pt-2 border-top">
+                            <button type="submit" class="lb-btn lb-btn-primary" style="padding:8px 24px;">
+                                <i class="bx bx-plus"></i> Create Task
+                            </button>
+                            <button type="button" class="lb-btn lb-btn-ghost" data-bs-dismiss="offcanvas">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    @endif
+
     <script>
+        // Open Create Task Offcanvas explicitly overriding global addtask definition
+        window.addtask = function(uid) {
+            document.getElementById('createTaskUid').value = uid;
+            var offcanvasEl = document.getElementById('createTaskOffcanvas');
+            var offcanvas = bootstrap.Offcanvas.getInstance(offcanvasEl) || new bootstrap.Offcanvas(offcanvasEl);
+            offcanvas.show();
+        };
+
+        const createColorPalet = document.getElementById('createColorPalet');
+        if (createColorPalet) {
+            createColorPalet.addEventListener('change', function() {
+                document.getElementById('createLabelIcon').style.background = this.value;
+            });
+        }
+
         // Open task modal via AJAX
         function openTaskAjax(event, taskId) {
             if(event) event.preventDefault();
@@ -345,23 +404,9 @@
 
             if (urlParams.get('action') === 'add') {
                 if (typeof addtask === 'function') {
-                    addtask({{ $uid ?? 'null' }});
-                    setTimeout(function() {
-                        const ta = document.getElementById('tx{{ $uid ?? "" }}');
-                        if (ta) ta.focus();
-                    }, 100);
+                    addtask('{{ Auth::id() }}');
                 }
             }
-
-            document.querySelectorAll('.tk-add-btn').forEach(function (btn) {
-                btn.addEventListener('click', function () {
-                    const uid = this.dataset.uid;
-                    setTimeout(function () {
-                        const ta = document.getElementById('tx' + uid);
-                        if (ta) ta.focus();
-                    }, 50);
-                });
-            });
         });
     </script>
 
