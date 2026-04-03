@@ -140,6 +140,28 @@
             display: flex; align-items: center; gap: 5px;
         }
         .cf-btn-save:hover { background: #004e4e; }
+        /* Action bar buttons */
+        .inv-btn-draft {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 8px 18px; border-radius: 9px; font-size: .85rem; font-weight: 600;
+            border: 1.5px solid #d1d5db; background: #fff; color: #5f6368;
+            cursor: pointer; transition: all .15s; text-decoration: none;
+        }
+        .inv-btn-draft:hover { background: #f5f5f5; border-color: #bbb; color: #202124; }
+        .inv-btn-save {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 8px 20px; border-radius: 9px; font-size: .85rem; font-weight: 600;
+            border: none; background: #006666; color: #fff;
+            cursor: pointer; transition: background .15s;
+        }
+        .inv-btn-save:hover { background: #004e4e; }
+        .inv-btn-send {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 8px 20px; border-radius: 9px; font-size: .85rem; font-weight: 700;
+            border: none; background: linear-gradient(135deg,#006666,#00a3a3); color: #fff;
+            cursor: pointer; transition: filter .15s; box-shadow: 0 3px 10px rgba(0,102,102,.25);
+        }
+        .inv-btn-send:hover { filter: brightness(1.08); }
     </style>
 
     <section class="task__section">
@@ -149,6 +171,7 @@
             <form id="invoiceForm" action="/manage-invoice" method="POST">
                 @csrf
                 <input type="hidden" name="id" value="{{ $invoice->id ?? '' }}">
+                <input type="hidden" name="_action" id="invoiceAction" value="save">
 
 
             {{-- ── Page heading bar ── --}}
@@ -170,8 +193,17 @@
                     </div>
                 </div>
                 <div class="leads-toolbar-right gap-2">
-                    <button type="submit" form="invoiceForm" class="lb-btn lb-btn-primary">
+                    {{-- Save Draft --}}
+                    <button type="button" class="inv-btn-draft" id="btnSaveDraft" title="Save as draft — client won't be notified">
+                        <i class="bx bx-file-blank"></i> Save Draft
+                    </button>
+                    {{-- Save Invoice --}}
+                    <button type="button" class="inv-btn-save" id="btnSaveInvoice">
                         <i class="bx bx-save"></i> Save Invoice
+                    </button>
+                    {{-- Save & Send --}}
+                    <button type="button" class="inv-btn-send" id="btnSaveAndSend" title="Save and email invoice to client">
+                        <i class="bx bx-send"></i> Save &amp; Send
                     </button>
                 </div>
             </div>
@@ -194,7 +226,7 @@
                 </div>
             </div>
 
-                <div class="row g-4">
+                <div class="row">
                     {{-- ── Left Column: Main Form & Items ── --}}
                     <div class="col-lg-12">
                         {{-- ── Invoice Information ── --}}
@@ -999,6 +1031,39 @@
                         confirmButtonColor: '#006666'
                     });
                 @endif
+            });
+
+            // ── Action bar buttons ──
+
+            // Save Draft
+            $(document).on('click', '#btnSaveDraft', function () {
+                $('#invoiceAction').val('draft');
+                $('#invoiceForm').trigger('submit');
+            });
+
+            // Save Invoice
+            $(document).on('click', '#btnSaveInvoice', function () {
+                $('#invoiceAction').val('save');
+                $('#invoiceForm').trigger('submit');
+            });
+
+            // Save & Send — confirm before sending email to client
+            $(document).on('click', '#btnSaveAndSend', function () {
+                Swal.fire({
+                    title: 'Save & Send Invoice?',
+                    text: 'The invoice will be saved and emailed to the client immediately.',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="bx bx-send me-1"></i> Yes, Send It',
+                    cancelButtonText: 'Cancel',
+                    confirmButtonColor: '#006666',
+                    cancelButtonColor: '#6c757d'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $('#invoiceAction').val('send');
+                        $('#invoiceForm').trigger('submit');
+                    }
+                });
             });
 
             // Client Auto-fill
