@@ -61,6 +61,7 @@
 }
 .cf-input-box input,
 .cf-input-box select,
+.cf-select2-wrap input,
 .cf-input-box textarea {
     flex: 1;
     border: none !important;
