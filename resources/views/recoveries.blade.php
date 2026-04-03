@@ -234,14 +234,28 @@
     </div>
 
     <script>
-    $(document).on('click', '.open-recovery-modal', function () {
-        const url = $(this).data('url');
-        $('#manageRecoveryModalContent').html(
-            '<div class="d-flex align-items-center justify-content-center" style="height:200px;"><div class="spinner-border text-secondary" style="width:1.5rem;height:1.5rem;"></div></div>'
-        );
-        $('#manageRecoveryModal').modal('show');
-        $.get(url, function (html) {
-            $('#manageRecoveryModalContent').html(html);
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.open-recovery-modal').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                const url = this.dataset.url;
+                const content = document.getElementById('manageRecoveryModalContent');
+                const modalEl = document.getElementById('manageRecoveryModal');
+
+                // Show spinner
+                content.innerHTML = '<div class="d-flex align-items-center justify-content-center" style="height:200px;"><div class="spinner-border text-secondary" style="width:1.5rem;height:1.5rem;"></div></div>';
+
+                // Open modal
+                const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                modal.show();
+
+                // Fetch form
+                fetch(url)
+                    .then(function (r) { return r.text(); })
+                    .then(function (html) { content.innerHTML = html; })
+                    .catch(function () {
+                        content.innerHTML = '<div class="p-4 text-danger">Failed to load. Please try again.</div>';
+                    });
+            });
         });
     });
     </script>

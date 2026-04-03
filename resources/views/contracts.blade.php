@@ -258,25 +258,23 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Unbind any previous listeners to prevent multiple fires
-            $(document).off('click', '.open-contract-modal').on('click', '.open-contract-modal', function (e) {
-                e.preventDefault();
-                let url = $(this).data('url');
-                let modalContent = $('#manageContractModalContent');
-                
-                // Show a brief loading skeleton or text if desired
-                modalContent.html('<div class="p-5 text-center"><i class="bx bx-loader-alt bx-spin" style="font-size:2rem; color:#006666;"></i><p class="mt-2 text-muted fw-500">Loading form...</p></div>');
-                $('#manageContractModal').modal('show');
+            document.querySelectorAll('.open-contract-modal').forEach(function (btn) {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const url     = this.dataset.url;
+                    const content = document.getElementById('manageContractModalContent');
+                    const modalEl = document.getElementById('manageContractModal');
 
-                $.ajax({
-                    url: url,
-                    type: 'GET',
-                    success: function (response) {
-                        modalContent.html(response);
-                    },
-                    error: function (xhr) {
-                        modalContent.html('<div class="p-5 text-center text-danger"><i class="bx bx-error" style="font-size:2rem;"></i><p>Could not load data. Please try again.</p></div>');
-                    }
+                    content.innerHTML = '<div class="p-5 text-center"><i class="bx bx-loader-alt bx-spin" style="font-size:2rem;color:#006666;"></i><p class="mt-2 text-muted">Loading form...</p></div>';
+
+                    bootstrap.Modal.getOrCreateInstance(modalEl).show();
+
+                    fetch(url)
+                        .then(function (r) { return r.text(); })
+                        .then(function (html) { content.innerHTML = html; })
+                        .catch(function () {
+                            content.innerHTML = '<div class="p-5 text-center text-danger"><i class="bx bx-error" style="font-size:2rem;"></i><p>Could not load form. Please try again.</p></div>';
+                        });
                 });
             });
         });
