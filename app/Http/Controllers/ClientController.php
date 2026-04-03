@@ -865,18 +865,12 @@ class ClientController extends Controller
 
         $companies = Companies::where('id', '=', Auth::User()->cid)->first();
 
-        $users = \App\Models\User::where('cid', Auth::user()->cid)
-            ->orderBy('name', 'asc')
-            ->select('id', 'name')
-            ->get();
-
         return view('manageInvoice', [
-            'invoice'      => $invoice,
+            'invoice' => $invoice,
             'invoiceItems' => $invoiceItems,
-            'clients'      => $clients,
-            'companies'    => $companies,
-            'project_id'   => $project_id,
-            'users'        => $users,
+            'clients' => $clients,
+            'companies' => $companies,
+            'project_id' => $project_id,
         ]);
     }
 
