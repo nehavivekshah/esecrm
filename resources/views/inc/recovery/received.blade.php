@@ -121,7 +121,6 @@
                     Send Thank You Note
                 </label>
                 <div class="cf-input-box cf-textarea-box mt-1">
-                    <span class="cf-icon"><i class="bx bx-message-square-detail"></i></span>
                     <textarea name="note" id="output" rows="2"
                         placeholder="Thank you message...">Thank you for payment of ₹{{ $amount - $totalPaid }} to {{ $company->name ?? '' }}.</textarea>
                 </div>
