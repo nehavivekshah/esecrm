@@ -52,12 +52,13 @@ h6 {
 .form-control,
 .form-select {
     border: 1px solid var(--border-color) !important;
-    padding: 0.65rem 1rem !important;
+    padding: 0.5rem 1rem !important;
     font-size: 0.95rem !important;
     color: var(--text-main) !important;
     background-color: var(--surface-color) !important;
     transition: var(--transition-snappy) !important;
     box-shadow: none !important;
+    height: 42px !important;
 }
 
 .form-control:focus,
