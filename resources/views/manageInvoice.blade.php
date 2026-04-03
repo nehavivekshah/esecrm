@@ -261,7 +261,8 @@
                                         <div class="cf-client-wrap">
                                             <span class="cf-icon"><i class="bx bx-user-pin"></i></span>
                                             <select class="selectpicker" id="client_id" name="client_id"
-                                                    data-live-search="true" data-width="auto" required>
+                                                    data-live-search="true" data-width="auto"
+                                                    data-container="body" required>
                                                 <option value="">Search for a client...</option>
                                                 @foreach($clients as $client)
                                                     @php $location = json_decode(($client->location ?? '["","","","",""]'), true) @endphp
@@ -676,7 +677,7 @@
                                         <a href="/invoices" class="lb-btn w-100 justify-content-center"
                                            style="background:transparent;color:#9aa0a6;border:1px solid #e8eaed;">
                                             <i class="bx bx-x"></i> Cancel
-                                        </button>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
