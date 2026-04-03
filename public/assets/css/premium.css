@@ -3138,7 +3138,7 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     align-items: center;
     background: #f1f3f4;
     border-radius: 20px;
-    padding: 0 12px;
+    padding: 2px 13px;
     gap: 6px;
     transition: background 0.15s, box-shadow 0.15s;
 }
@@ -3387,7 +3387,7 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     justify-content: center;
     flex-shrink: 0;
     border: 1.5px solid #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
     cursor: default;
 }
 
@@ -3667,7 +3667,7 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
     justify-content: center;
     flex-shrink: 0;
     border: 2px solid #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.10);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.10);
     cursor: default;
     transition: transform 0.12s;
 }
