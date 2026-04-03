@@ -148,7 +148,7 @@
                                     <div class="d-flex justify-content-between align-items-center p-2 mb-2 border rounded bg-light" id="attachment-{{ $attachment->id }}">
                                         <a href="{{ asset($attachment->file_path) }}" target="_blank" class="d-flex align-items-center gap-2 text-decoration-none text-truncate" style="max-width: 80%;">
                                             <i class="bx bxs-file-pdf text-danger fs-4"></i>
-                                            <span class="text-dark small fw-medium text-truncate">{{ $attachment->original_name }}</span>
+                                            <span class="text-dark small fw-medium text-truncate">{{ $attachment->file_name }}</span>
                                         </a>
                                         @if(in_array('tasks_edit', $roleArray) || in_array('All', $roleArray))
                                             <button type="button" class="btn btn-sm text-danger border-0 bg-transparent" onclick="deleteAttachment({{ $attachment->id }})">
@@ -567,15 +567,19 @@
                     <div class="d-flex justify-content-between align-items-center p-2 mb-2 border rounded bg-light" id="attachment-${att.id}">
                         <a href="/${att.file_path}" target="_blank" class="d-flex align-items-center gap-2 text-decoration-none text-truncate" style="max-width: 80%;">
                             <i class="bx bxs-file text-primary" style="font-size:1.6rem;"></i>
-                            <span class="text-dark small fw-medium text-truncate">${att.original_name}</span>
+                            <span class="text-dark small fw-medium text-truncate">${att.file_name}</span>
                         </a>
                         <button type="button" class="btn btn-sm text-danger border-0 bg-transparent" onclick="deleteAttachment(${att.id})">
                             <i class="bx bx-trash" style="font-size: 1.1rem;"></i>
                         </button>
                     </div>`;
                     document.getElementById('attachmentsWrap').insertAdjacentHTML('beforeend', html);
+                    
+                    // Update counters
                     let countSpan = document.getElementById('attachmentCount');
-                    countSpan.innerText = parseInt(countSpan.innerText) + 1;
+                    let countTab  = document.getElementById('attachmentCountTab');
+                    if (countSpan) countSpan.innerText = parseInt(countSpan.innerText) + 1;
+                    if (countTab)  countTab.innerText  = parseInt(countTab.innerText) + 1;
                 } else {
                     alert(data.message || 'Error uploading file');
                 }

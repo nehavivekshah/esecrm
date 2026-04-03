@@ -11,8 +11,10 @@ class TaskAttachment extends Model
 
     protected $fillable = [
         'task_id',
-        'user_id',
-        'original_name',
-        'file_path'
+        'file_path',
+        'file_name',
+        'file_type',
+        'file_size',
+        'uploaded_by'
     ];
 }

@@ -451,10 +451,12 @@ class TaskController extends Controller
             $file->move($path, $fileName);
 
             $attachment = \App\Models\TaskAttachment::create([
-                'task_id'       => $request->task_id,
-                'user_id'       => Auth::id(),
-                'original_name' => $originalName,
-                'file_path'     => 'assets/task_attachments/' . $fileName
+                'task_id'     => $request->task_id,
+                'file_path'   => 'assets/task_attachments/' . $fileName,
+                'file_name'   => $originalName,
+                'file_type'   => $file->getClientOriginalExtension(),
+                'file_size'   => $file->getSize(),
+                'uploaded_by' => Auth::id(),
             ]);
 
             return response()->json(['status' => 'success', 'attachment' => $attachment]);
