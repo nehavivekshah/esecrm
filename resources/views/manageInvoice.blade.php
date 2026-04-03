@@ -82,6 +82,7 @@
             border: 1.5px solid #d1d5db; border-radius: 8px;
             background: #fff; transition: border-color .15s, box-shadow .15s;
             min-height: 42px; position: relative;
+            overflow: hidden;
         }
         .cf-client-wrap:focus-within { border-color: #006666; box-shadow: 0 0 0 3px rgba(0,102,102,.08); }
         .cf-client-wrap .cf-icon { border-right: 1.5px solid #e8eaed; height: 42px; flex-shrink: 0; }
@@ -910,7 +911,8 @@
                     </div>`;
 
                 $('#invoiceItemsBody').append(html);
-                $('.selectpicker').selectpicker('render');
+                // Initialize selectpicker on the newly added row only
+                $('#invoiceItemsBody .mp-item-row').last().find('.selectpicker').selectpicker();
                 recalculateTotals();
             });
 
@@ -955,7 +957,4 @@
             }, 300);
         });
     </script>
-            </form>
-        </div>
-    </section>
 @endsection
