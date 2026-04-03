@@ -9,11 +9,20 @@
 
             {{-- Toolbar --}}
             <div class="leads-toolbar mb-3">
-                <div class="leads-toolbar-left">
-                    <span class="lb-page-count">
-                        <i class="bx bx-task"></i>
-                        Task Board &mdash; <span id="memberCount">{{ count($users) }}</span> Members
+                <div class="leads-toolbar-left d-flex align-items-center gap-3">
+                    <span class="lb-page-count d-flex align-items-center">
+                        <i class="bx bx-task me-1"></i>
+                        Task Board &mdash; <span id="memberCount" class="mx-1">{{ count($users) }}</span> Members
                     </span>
+                    
+                    {{-- Status Legend --}}
+                    <div class="d-none d-md-flex align-items-center gap-2 border-start ps-3 border-light">
+                        <span class="tb-legend tb-legend-urgent">Urgent</span>
+                        <span class="tb-legend tb-legend-pending">Pending</span>
+                        <span class="tb-legend tb-legend-progress">In Progress</span>
+                        <span class="tb-legend tb-legend-done">Done</span>
+                        <span class="tb-legend tb-legend-closed">Closed</span>
+                    </div>
                 </div>
                 <div class="leads-toolbar-right">
 
@@ -51,17 +60,10 @@
                         </div>
                     </div>
 
-                    {{-- Status Legend --}}
-                    <div class="d-none d-md-flex align-items-center gap-2 ms-2">
-                        <span class="tb-legend tb-legend-urgent">Urgent</span>
-                        <span class="tb-legend tb-legend-pending">Pending</span>
-                        <span class="tb-legend tb-legend-progress">In Progress</span>
-                        <span class="tb-legend tb-legend-done">Done</span>
-                        <span class="tb-legend tb-legend-closed">Closed</span>
-                    </div>
+                    {{-- Status Legend moved to left --}}
 
                     @if($canAddTask)
-                        <button type="button" class="lb-btn lb-btn-primary ms-3" onclick="addtask('{{ Auth::id() }}')">
+                        <button type="button" class="lb-btn lb-btn-primary ms-3" onclick="openAddTaskOffcanvas('{{ Auth::id() }}')">
                             <i class="bx bx-plus"></i> Add Task
                         </button>
                     @endif
@@ -116,7 +118,7 @@
                                 </div>
                             </div>
                             @if($canAddTask)
-                                <button type="button" class="tk-add-btn" onclick="addtask({{ $uid }})"
+                                <button type="button" class="tk-add-btn" onclick="openAddTaskOffcanvas({{ $uid }})"
                                         data-uid="{{ $uid }}" title="Add Task">
                                     <i class="bx bx-plus"></i>
                                 </button>
@@ -341,8 +343,8 @@
     @endif
 
     <script>
-        // Open Create Task Offcanvas explicitly overriding global addtask definition
-        window.addtask = function(uid) {
+        // Open Create Task Offcanvas
+        window.openAddTaskOffcanvas = function(uid) {
             document.getElementById('createTaskUid').value = uid;
             var offcanvasEl = document.getElementById('createTaskOffcanvas');
             var offcanvas = bootstrap.Offcanvas.getInstance(offcanvasEl) || new bootstrap.Offcanvas(offcanvasEl);
@@ -403,8 +405,8 @@
             }
 
             if (urlParams.get('action') === 'add') {
-                if (typeof addtask === 'function') {
-                    addtask('{{ Auth::id() }}');
+                if (typeof openAddTaskOffcanvas === 'function') {
+                    openAddTaskOffcanvas('{{ Auth::id() }}');
                 }
             }
         });
