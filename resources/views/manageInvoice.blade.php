@@ -25,6 +25,7 @@
         .ml-card-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0; }
         .ml-card-title { font-size: 1rem; font-weight: 700; color: #202124; margin: 0; }
         .ml-card-sub { font-size: 0.72rem; color: #80868b; display: block; margin-top: 1px; font-weight: 400; }
+        .ml-card-body { padding: 20px; }
         .ml-label { display: block; font-size: 0.75rem; font-weight: 400; color: #5f6368; margin-bottom: 6px; }
         .mp-steps { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 30px; }
         .mp-step { display: flex; align-items: center; gap: 8px; color: #dadce0; }
