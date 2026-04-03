@@ -77,11 +77,33 @@
             resize: none; width: 100%;
         }
         /* client search wrapper keeps the + button */
-        .cf-client-wrap { display: flex; align-items: center; border: 1.5px solid #d1d5db; border-radius: 8px; overflow: hidden; background: #fff; transition: border-color .15s, box-shadow .15s; }
+        .cf-client-wrap {
+            display: flex; align-items: center;
+            border: 1.5px solid #d1d5db; border-radius: 8px;
+            background: #fff; transition: border-color .15s, box-shadow .15s;
+            min-height: 42px; position: relative;
+        }
         .cf-client-wrap:focus-within { border-color: #006666; box-shadow: 0 0 0 3px rgba(0,102,102,.08); }
-        .cf-client-wrap .cf-icon { border-right: 1.5px solid #e8eaed; height: 42px; }
+        .cf-client-wrap .cf-icon { border-right: 1.5px solid #e8eaed; height: 42px; flex-shrink: 0; }
+        /* Native select fallback */
         .cf-client-wrap select { flex: 1; border: none !important; outline: none !important; box-shadow: none !important; background: transparent; font-size: .875rem; color: #202124; padding: 0 10px; height: 42px; }
-        .cf-client-wrap .btn-add-client { height: 42px; padding: 0 14px; background: #006666; color: #fff; border: none; font-size: .9rem; cursor: pointer; display: flex; align-items: center; transition: background .15s; }
+        /* Bootstrap-Select (selectpicker) overrides */
+        .cf-client-wrap .bootstrap-select { flex: 1; min-width: 0; border: none !important; }
+        .cf-client-wrap .bootstrap-select > .dropdown-toggle {
+            border: none !important; background: transparent !important;
+            box-shadow: none !important; outline: none !important;
+            font-size: .875rem; color: #202124 !important;
+            height: 42px; width: 100%; text-align: left;
+            padding: 0 10px; border-radius: 0 !important;
+        }
+        .cf-client-wrap .bootstrap-select > .dropdown-toggle:focus { outline: none !important; box-shadow: none !important; }
+        .cf-client-wrap .bootstrap-select > .dropdown-toggle::after { margin-left: auto; }
+        .cf-client-wrap .btn-add-client {
+            height: 42px; padding: 0 14px; background: #006666;
+            color: #fff; border: none; font-size: .9rem; cursor: pointer;
+            display: flex; align-items: center; transition: background .15s;
+            border-radius: 0 7px 7px 0; flex-shrink: 0;
+        }
         .cf-client-wrap .btn-add-client:hover { background: #004e4e; }
         /* bank detail small inputs */
         .cf-bank-input { border: 1.5px solid #d1d5db !important; border-radius: 7px !important; font-size: .82rem !important; padding: 7px 10px !important; color: #202124; transition: border-color .15s, box-shadow .15s; }
@@ -239,8 +261,7 @@
                                         <div class="cf-client-wrap">
                                             <span class="cf-icon"><i class="bx bx-user-pin"></i></span>
                                             <select class="selectpicker" id="client_id" name="client_id"
-                                                    data-live-search="true" data-width="100%" required
-                                                    style="border:none!important;outline:none!important;box-shadow:none!important;">
+                                                    data-live-search="true" data-width="auto" required>
                                                 <option value="">Search for a client...</option>
                                                 @foreach($clients as $client)
                                                     @php $location = json_decode(($client->location ?? '["","","","",""]'), true) @endphp
@@ -927,6 +948,8 @@
             // Initial calc
             setTimeout(() => {
                 $('.selectpicker').selectpicker('refresh');
+                // Force the Bootstrap-Select button to fill its flex container
+                $('#client_id').next('.bootstrap-select').css({ 'flex': '1', 'min-width': '0', 'border': 'none' });
                 recalculateTotals();
             }, 300);
         });
