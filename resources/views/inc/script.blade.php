@@ -1390,9 +1390,6 @@
 
 @endif
 
-
-@endif
-
 @if(Request::segment(1) == 'companies')
 
     <script>
