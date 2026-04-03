@@ -761,11 +761,11 @@
 
                                         <div style="border-top:1px solid #f1f3f4;margin:4px 0;"></div>
 
-                                        {{-- Live Preview --}}
-                                        <!-- <button type="button" class="lb-btn w-100 justify-content-center" id="previewInvoiceBtn"
-                                                style="background:rgba(26,115,232,0.08);color:#1a73e8;">
-                                            <i class="bx bx-show"></i> Live Preview
-                                        </button> -->
+                                        {{-- Create Task --}}
+                                        <button type="button" class="lb-btn w-100 justify-content-center" id="btnCreateTask"
+                                                style="background:rgba(66,133,244,0.08);color:#4285f4;">
+                                            <i class="bx bx-task"></i> Create Task
+                                        </button>
 
                                         {{-- Cancel --}}
                                         <a href="/invoices" class="lb-btn w-100 justify-content-center"
