@@ -430,7 +430,11 @@ class TaskController extends Controller
             $file         = $request->file('file');
             $originalName = $file->getClientOriginalName();
             $fileName     = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('assets/task_attachments'), $fileName);
+            $path = public_path('assets/task_attachments');
+            if (!file_exists($path)) {
+                mkdir($path, 0777, true);
+            }
+            $file->move($path, $fileName);
 
             $attachment = \App\Models\TaskAttachment::create([
                 'task_id'       => $request->task_id,

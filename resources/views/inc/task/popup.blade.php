@@ -451,7 +451,7 @@
         $('#taskProjectSelect').select2({
             placeholder: "Search Project...",
             allowClear: true,
-            dropdownParent: $('.offcanvas.show')
+            dropdownParent: $('#taskAjaxModal')
         }).on('change', function() {
             const taskId = document.getElementById('taskid').value;
             fetch('{{ route("task.meta.update") }}', {
