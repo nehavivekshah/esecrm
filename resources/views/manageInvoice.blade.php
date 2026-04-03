@@ -972,5 +972,7 @@
                 recalculateTotals();
             }, 300);
         });
+        } // end invoiceScriptInit
+        invoiceScriptInit();
     </script>
 @endsection
