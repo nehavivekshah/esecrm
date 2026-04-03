@@ -440,7 +440,18 @@
         function openTaskAjax(event, taskId) {
             if(event) event.preventDefault();
 
-            document.getElementById('taskAjaxContainer').innerHTML = '<div class="et-backdrop"></div><div class="offcanvas offcanvas-end show" tabindex="-1"><div class="offcanvas-header"><h5 class="offcanvas-title">Loading...</h5></div></div>';
+            document.getElementById('taskAjaxContainer').innerHTML = `
+                <div class="modal-backdrop fade show" style="z-index: 1050;"></div>
+                <div class="modal fade show d-block" tabindex="-1" style="z-index: 1060;">
+                    <div class="modal-dialog modal-xl modal-dialog-centered">
+                        <div class="modal-content" style="border-radius:16px; border:none; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+                            <div class="p-5 text-center">
+                                <i class="bx bx-loader-alt bx-spin" style="font-size:2rem;color:#006666;"></i>
+                                <p class="mt-2 text-muted">Loading Task Details...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
 
             fetch('/task-details/' + taskId)
                 .then(response => response.text())
