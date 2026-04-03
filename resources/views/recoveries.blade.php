@@ -169,12 +169,12 @@
                                     <td class="position-sticky end-0">
                                         <div class="d-flex align-items-center justify-content-center gap-1">
                                             {{-- Reminder --}}
-                                            <button class="btn kb-action-btn reminder" data-id="{{ $recovery->id ?? '' }}"
+                                            <button class="btn kb-action-btn reminder" data-id="{{ $recovery->id ?? '' }}" data-type="Reminder"
                                                 title="Set Reminder" style="background:rgba(251,188,4,0.10);color:#f9a825;">
                                                 <i class="bx bx-alarm"></i>
                                             </button>
                                             {{-- Mark Received --}}
-                                            <button class="btn kb-action-btn received" data-id="{{ $recovery->id ?? '' }}"
+                                            <button class="btn kb-action-btn received" data-id="{{ $recovery->id ?? '' }}" data-type="Received"
                                                 title="Mark Received" style="background:rgba(52,168,83,0.10);color:#34a853;">
                                                 <i class="bx bx-rupee"></i>
                                             </button>
@@ -284,9 +284,9 @@
         // ── Reminder & Received ──
         document.querySelectorAll('.reminder, .received').forEach(function (btn) {
             btn.addEventListener('click', function () {
-                const id    = this.dataset.id;
-                const title = this.getAttribute('title');
-                const url   = '/recovery/' + id + '/' + title;
+                const id   = this.dataset.id;
+                const type = this.dataset.type;   // 'Reminder' or 'Received'
+                const url  = '/recovery/' + id + '/' + type;
                 loadModal(
                     document.getElementById('recoveryModal'),
                     document.getElementById('recoveryModalContent'),
