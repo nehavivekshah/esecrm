@@ -194,7 +194,7 @@ $(document).ready(function(){
     	});
     });
     
-	$(".taskstart").click(function(e){
+	$(document).on("click", ".taskstart", function(e){
 	    let ele = $(this);
 	    var tskstartId = ele.attr('id');
 	    var tskhr = ele.attr('data-taskhr');
@@ -217,7 +217,7 @@ $(document).ready(function(){
         });
 	});
     
-    $(".taskdeleted").click(function(e){
+    $(document).on("click", ".taskdeleted", function(e){
 	    const ele = $(this);
 	    const deltaskid = ele.attr("id");
 	    //alert(deltaskid);
