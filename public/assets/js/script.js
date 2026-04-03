@@ -104,7 +104,7 @@ $(document).ready(function(){
         });
     });
     
-    $('#edttaskdetails').on('submit', function (e) {
+    $(document).on('submit', '#edttaskdetails', function (e) {
         
         e.preventDefault();
         var formData = new FormData(this);
@@ -136,7 +136,7 @@ $(document).ready(function(){
         
     });
     
-    $('#taskComments').on('submit', function (e) {
+    $(document).on('submit', '#taskComments', function (e) {
         
         e.preventDefault();
         var formData = new FormData(this);
@@ -209,10 +209,8 @@ $(document).ready(function(){
                 ele.html('<i class="bx bx-loader"></i> <span>Loading..</span>');
             },
             success: function(response){
-                //alert("Success");
-                //ele.html('<i class="bx bx-pause"></i> <span>Stop</span>');
-                location.reload();
-                //console.log(response);
+                ele.html('<i class="bx bx-check"></i> <span class="ms-1">Saved</span>');
+                // Removed location.reload() for real-time behavior
             }
         });
 	});
@@ -231,9 +229,10 @@ $(document).ready(function(){
                 ele.html('<i class="bx bx-loader"></i> <span>Loading..</span>');
             },
             success: function(response){
-                //alert("Success");
-                //ele.html('<i class="bx bx-pause"></i> <span>Stop</span>');
-                window.location.href="/task";
+                // Remove task card without page refresh
+                $(".tk-card[data-taskid='" + deltaskid + "']").remove();
+                if(typeof closeTaskAjax === "function") { closeTaskAjax(); }
+                // window.location.href="/task";
             },
             complete: function(response){
                 //alert("Complete");
