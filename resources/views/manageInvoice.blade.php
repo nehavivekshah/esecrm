@@ -112,9 +112,34 @@
         /* summary small inputs */
         .cf-summary-select { border: 1.5px solid #d1d5db !important; border-radius: 7px !important; font-size: .82rem !important; padding: 6px 10px !important; background: #fff; }
         .cf-summary-select:focus { border-color: #006666 !important; outline: none !important; }
-        /* Add New Client modal inputs */
-        .cf-modal-input { border: 1.5px solid #d1d5db !important; border-radius: 8px !important; font-size: .875rem !important; padding: 9px 12px !important; transition: border-color .15s, box-shadow .15s !important; }
-        .cf-modal-input:focus { border-color: #006666 !important; box-shadow: 0 0 0 3px rgba(0,102,102,.08) !important; outline: none !important; }
+        /* Contract-style modal header & footer */
+        .cf-modal-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 20px;
+            background: linear-gradient(135deg, #005757, #007e7e);
+            border-radius: 16px 16px 0 0;
+        }
+        .cf-modal-header-title { font-size: .975rem; font-weight: 700; color: #fff; margin: 0; }
+        .cf-modal-header-sub   { font-size: .73rem; color: rgba(255,255,255,.72); margin: 0; }
+        .cf-modal-header .btn-close { filter: invert(1); opacity: .8; }
+        .cf-modal-footer {
+            padding: 12px 20px; border-top: 1px solid #e8eaed;
+            display: flex; justify-content: flex-end; gap: 8px;
+            background: #fff; border-radius: 0 0 16px 16px;
+        }
+        .cf-btn-cancel {
+            font-size: .85rem; padding: 8px 20px; border-radius: 8px;
+            border: 1.5px solid #d1d5db; background: #fff; color: #5f6368;
+            cursor: pointer; transition: background .15s;
+        }
+        .cf-btn-cancel:hover { background: #f5f5f5; }
+        .cf-btn-save {
+            font-size: .85rem; font-weight: 600; padding: 8px 22px; border-radius: 8px;
+            border: none; background: #006666; color: #fff;
+            cursor: pointer; transition: background .15s;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .cf-btn-save:hover { background: #004e4e; }
     </style>
 
     <section class="task__section">
@@ -694,11 +719,20 @@
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <form action="/manage-invoice-client" method="POST" id="addClientForm">
                 @csrf
-                <div class="modal-content border-0 shadow-lg rounded-4">
-                    <div class="modal-header border-bottom-0 pt-4 px-4">
-                        <h5 class="fw-700 text-dark">Add New Client</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <div class="modal-content border-0 shadow-lg" style="border-radius:16px;overflow:hidden;">
+
+                    {{-- Teal gradient header (matches contract/recovery style) --}}
+                    <div class="cf-modal-header">
+                        <div>
+                            <p class="cf-modal-header-title">
+                                <i class="bx bx-user-plus me-1"></i> Add New Client
+                            </p>
+                            <p class="cf-modal-header-sub">Fill in the details to add a new client to the system</p>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" style="filter:invert(1);opacity:.8;"></button>
                     </div>
+
+                    {{-- Body --}}
                     <div class="modal-body p-4">
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -745,12 +779,15 @@
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer border-top-0 pb-4 px-4">
-                        <button type="button" class="btn btn-light rounded-pill px-4 fw-600" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-indigo rounded-pill px-4 fw-600">
-                            <i class="bx bx-save me-1"></i> Save Client
+
+                    {{-- Footer --}}
+                    <div class="cf-modal-footer">
+                        <button type="button" class="cf-btn-cancel" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="cf-btn-save">
+                            <i class="bx bx-save"></i> Save Client
                         </button>
                     </div>
+
                 </div>
             </form>
         </div>
@@ -947,6 +984,21 @@
                 } else {
                     Swal.fire('Warning', 'At least one item is required.', 'warning');
                 }
+            });
+
+            // Live Preview button
+            $(document).on('click', '#previewInvoiceBtn', function () {
+                @if(!empty($invoice->id))
+                    window.open('/invoices/preview/{{ $invoice->id }}', '_blank');
+                @else
+                    Swal.fire({
+                        title: 'Save First',
+                        text: 'Please save the invoice before previewing it.',
+                        icon: 'info',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#006666'
+                    });
+                @endif
             });
 
             // Client Auto-fill
