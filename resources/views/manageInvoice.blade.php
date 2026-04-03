@@ -725,13 +725,31 @@
                             <div class="ml-card">
                                 <div class="ml-card-body">
                                     <div class="d-flex flex-column gap-2">
-                                        <button type="submit" form="invoiceForm" class="lb-btn lb-btn-primary w-100 justify-content-center">
+
+                                        {{-- Save Draft --}}
+                                        <button type="button" class="inv-btn-draft w-100 justify-content-center" id="btnSaveDraftSidebar" title="Save as draft — client won't be notified">
+                                            <i class="bx bx-file-blank"></i> Save Draft
+                                        </button>
+
+                                        {{-- Save Invoice --}}
+                                        <button type="button" class="inv-btn-save w-100 justify-content-center" id="btnSaveInvoiceSidebar">
                                             <i class="bx bx-save"></i> Save Invoice
                                         </button>
+
+                                        {{-- Save & Send --}}
+                                        <button type="button" class="inv-btn-send w-100 justify-content-center" id="btnSaveAndSendSidebar" title="Save and email invoice to client">
+                                            <i class="bx bx-send"></i> Save &amp; Send
+                                        </button>
+
+                                        <div style="border-top:1px solid #f1f3f4;margin:4px 0;"></div>
+
+                                        {{-- Live Preview --}}
                                         <button type="button" class="lb-btn w-100 justify-content-center" id="previewInvoiceBtn"
                                                 style="background:rgba(26,115,232,0.08);color:#1a73e8;">
                                             <i class="bx bx-show"></i> Live Preview
                                         </button>
+
+                                        {{-- Cancel --}}
                                         <a href="/invoices" class="lb-btn w-100 justify-content-center"
                                            style="background:transparent;color:#9aa0a6;border:1px solid #e8eaed;">
                                             <i class="bx bx-x"></i> Cancel
@@ -1036,19 +1054,19 @@
             // ── Action bar buttons ──
 
             // Save Draft
-            $(document).on('click', '#btnSaveDraft', function () {
+            $(document).on('click', '#btnSaveDraft, #btnSaveDraftSidebar', function () {
                 $('#invoiceAction').val('draft');
                 $('#invoiceForm').trigger('submit');
             });
 
             // Save Invoice
-            $(document).on('click', '#btnSaveInvoice', function () {
+            $(document).on('click', '#btnSaveInvoice, #btnSaveInvoiceSidebar', function () {
                 $('#invoiceAction').val('save');
                 $('#invoiceForm').trigger('submit');
             });
 
             // Save & Send — confirm before sending email to client
-            $(document).on('click', '#btnSaveAndSend', function () {
+            $(document).on('click', '#btnSaveAndSend, #btnSaveAndSendSidebar', function () {
                 Swal.fire({
                     title: 'Save & Send Invoice?',
                     text: 'The invoice will be saved and emailed to the client immediately.',
