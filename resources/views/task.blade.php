@@ -2,6 +2,11 @@
 @section('title', 'CRM Follow-Up Tasks - eseCRM')
 
 @section('content')
+    {{-- Select2 --}}
+    @once
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    @endonce
     <section class="task__section">
         @include('inc.header', ['title' => 'CRM Follow-Up Tasks'])
 
@@ -29,8 +34,7 @@
                     {{-- Project Filter --}}
                     <div class="tk-project-filter-wrap">
                         <form method="GET" action="/task" id="projectFilterForm">
-                            <div class="tk-project-filter-box">
-                                <i class="bx bx-briefcase-alt-2 tk-filter-icon"></i>
+                            <div class="tk-project-filter-box" style="border:none; padding:0; background:transparent;">
                                 <select name="project_id" id="projectFilterSelect" class="tk-project-filter-select"
                                         onchange="document.getElementById('projectFilterForm').submit()">
                                     <option value="">All Projects</option>
@@ -267,6 +271,28 @@
         .cf-input-box select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%235f6368'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
         .cf-input-box.cf-textarea-box { height: auto; align-items: flex-start; }
         .cf-input-box.cf-textarea-box textarea { height: auto; padding: 10px; resize: none; width: 100%; }
+        
+        /* Select2 wrapper */
+        .cf-select2-wrap { position: relative; border: 1.5px solid #d1d5db; border-radius: 8px; overflow: hidden; background: #fff; display: flex; align-items: center; height: 42px; transition: border-color .15s, box-shadow .15s; }
+        .cf-select2-wrap:focus-within { border-color: #006666; box-shadow: 0 0 0 3px rgba(0,102,102,.08); }
+        .cf-select2-wrap .cf-icon-abs { display: flex; align-items: center; justify-content: center; width: 38px; height: 100%; flex-shrink: 0; color: #006666; font-size: 1.05rem; border-right: 1.5px solid #e8eaed; background: #f8fdfd; pointer-events: none; z-index: 2; }
+        .cf-select2-wrap .select2-container { flex: 1; min-width: 0; }
+        .cf-select2-wrap .select2-container--default .select2-selection--single { height: 42px; border: none !important; border-radius: 0; padding-left: 10px; display: flex; align-items: center; background: transparent; box-shadow: none !important; }
+        .cf-select2-wrap .select2-container--default.select2-container--focus .select2-selection--single, .cf-select2-wrap .select2-container--default.select2-container--open .select2-selection--single { border: none !important; box-shadow: none !important; }
+        .cf-select2-wrap .select2-selection--single .select2-selection__rendered { line-height: normal; font-size: .875rem; color: #202124; padding: 0; }
+        .cf-select2-wrap .select2-selection--single .select2-selection__placeholder { color: #9aa0a6; }
+        .cf-select2-wrap .select2-selection--single .select2-selection__arrow { height: 40px; right: 6px; }
+        .select2-dropdown { border: 1.5px solid #d1d5db; border-radius: 8px; box-shadow: 0 6px 24px rgba(0,0,0,.1); z-index: 99999 !important; overflow: hidden; }
+        .select2-search--dropdown .select2-search__field { border: 1px solid #e0e0e0; border-radius: 6px; font-size: .85rem; padding: 6px 10px; }
+        .select2-results__option { font-size: .85rem; padding: 8px 12px; }
+        .select2-results__option--highlighted { background: #006666 !important; color: #fff !important; }
+        .cf-select2-wrap select { border: 0 !important; outline: none !important; box-shadow: none !important; }
+        
+        /* Filter override for Select2 */
+        .tk-project-filter-box .select2-container--default .select2-selection--single { height: 38px; border: 1.5px solid #d1d5db !important; border-radius: 20px !important; display: flex; align-items: center; padding-left: 12px; }
+        .tk-project-filter-box .select2-container--default.select2-container--open .select2-selection--single,
+        .tk-project-filter-box .select2-container--default.select2-container--focus .select2-selection--single { border-color: #006666 !important; box-shadow: 0 0 0 3px rgba(0,102,102,.08) !important; }
+        
         .cf-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: linear-gradient(135deg, #005757, #007e7e); border-radius: 16px 16px 0 0; }
         .cf-modal-header-title { font-size: .975rem; font-weight: 700; color: #fff; margin: 0; }
         .cf-modal-header-sub { font-size: .73rem; color: rgba(255,255,255,.72); margin: 0; }
@@ -316,9 +342,9 @@
                             
                             <div class="col-md-6 cf-field">
                                 <label>Project</label>
-                                <div class="cf-input-box">
-                                    <span class="cf-icon"><i class="bx bx-briefcase-alt-2"></i></span>
-                                    <select name="project_id">
+                                <div class="cf-select2-wrap">
+                                    <span class="cf-icon-abs"><i class="bx bx-briefcase-alt-2"></i></span>
+                                    <select name="project_id" id="createProjectSelect">
                                         <option value="">— No Project —</option>
                                         @foreach($projects as $proj)
                                             <option value="{{ $proj->id }}" {{ $activeProjectId == $proj->id ? 'selected' : '' }}>{{ $proj->name }}</option>
@@ -460,6 +486,22 @@
                 if (typeof openAddTaskOffcanvas === 'function') {
                     openAddTaskOffcanvas('{{ Auth::id() }}');
                 }
+            }
+
+            // Initialize Select2 dropdowns if available
+            if (typeof $.fn.select2 !== 'undefined') {
+                $('#projectFilterSelect').select2({
+                    placeholder: "Search Project...",
+                    minimumResultsForSearch: 1,
+                    width: '180px'
+                });
+
+                $('#createProjectSelect').select2({
+                    placeholder: "Search or select a project...",
+                    allowClear: true,
+                    dropdownParent: $('#createTaskModal'),
+                    width: '100%'
+                });
             }
         });
     </script>

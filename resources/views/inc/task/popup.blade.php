@@ -134,14 +134,16 @@
                     <div class="et-section-title">
                         <i class="bx bx-briefcase-alt-2"></i> Project
                     </div>
-                    <select id="taskProjectSelect" class="et-label-select">
-                        <option value="">— No Project —</option>
-                        @foreach($projects as $proj)
-                            <option value="{{ $proj->id }}" {{ $task->project_id == $proj->id ? 'selected' : '' }}>
-                                {{ $proj->name }}
-                            </option>
-                        @endforeach
-                    </select>
+                    <div class="cf-select2-wrap" style="height: 38px; border-color: #d1d5db; border-radius: 6px;">
+                        <select id="taskProjectSelect" class="et-label-select w-100" style="height: 100%; border: none;">
+                            <option value="">— No Project —</option>
+                            @foreach($projects as $proj)
+                                <option value="{{ $proj->id }}" {{ $task->project_id == $proj->id ? 'selected' : '' }}>
+                                    {{ $proj->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
 
                 {{-- Parent Task Association --}}
@@ -434,10 +436,13 @@
         });
     }
 
-    /* 6. Project change AJAX */
-    const projSel = document.getElementById('taskProjectSelect');
-    if (projSel) {
-        projSel.addEventListener('change', function () {
+    /* 6. Project change AJAX (with Select2 support) */
+    if (typeof $.fn.select2 !== 'undefined') {
+        $('#taskProjectSelect').select2({
+            placeholder: "Search Project...",
+            allowClear: true,
+            dropdownParent: $('.offcanvas.show')
+        }).on('change', function() {
             const taskId = document.getElementById('taskid').value;
             fetch('{{ route("task.meta.update") }}', {
                 method : 'POST',
@@ -448,6 +453,26 @@
                 body: JSON.stringify({ task_id: taskId, project_id: this.value || null })
             }).then(r => r.json()).then(d => {
                 if (d.success) {
+                    console.log('Project updated successfully');
+                } else {
+                    console.warn('Project update failed', d);
+                }
+            });
+        });
+    } else {
+        const projSel = document.getElementById('taskProjectSelect');
+        if (projSel) {
+            projSel.addEventListener('change', function () {
+                const taskId = document.getElementById('taskid').value;
+                fetch('{{ route("task.meta.update") }}', {
+                    method : 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ task_id: taskId, project_id: this.value || null })
+                }).then(r => r.json()).then(d => {
+                    if (d.success) {
                     // Show small "saved" feedback
                     const fb = document.createElement('span');
                     fb.className = 'text-success small';
