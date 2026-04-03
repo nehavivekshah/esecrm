@@ -251,104 +251,156 @@
 
     <div id="taskAjaxContainer"></div>
 
-    {{-- Create Task Offcanvas --}}
+    {{-- Create Task Modal (Contract Style UX) --}}
     @if($canAddTask)
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="createTaskOffcanvas"
-         style="width:820px; max-width:100vw; border-top-left-radius:16px; border-bottom-left-radius:16px; box-shadow:-12px 0 40px rgba(0,0,0,0.12); z-index:1061;">
-        <div class="et-header">
-            <div class="et-header-icon"><i class="bx bx-task"></i></div>
-            <div class="flex-grow-1 min-w-0">
-                <h5 class="mb-0" style="font-weight: 600; color: #202124;">Create New Task</h5>
-            </div>
-            <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                <a href="javascript:void(0)" data-bs-dismiss="offcanvas" class="btn kb-action-btn" title="Close"
-                    style="background:rgba(60,64,67,0.07);color:#5f6368;">
-                    <i class="bx bx-x"></i>
-                </a>
-            </div>
-        </div>
-        <div class="offcanvas-body p-0" style="overflow-y:auto; background-color: #fafafa;">
-            <form action="{{ route('task') }}" method="post" id="createTaskForm">
-                @csrf
-                <input type="hidden" name="parent_id" value="{{ request('parent_id') }}" />
-                <div class="et-body">
-                    {{-- LEFT SIDEBAR --}}
-                    <div class="et-sidebar border-end">
-                        <div class="et-section">
-                            <div class="et-section-title"><i class="bx bxs-user"></i> Primary Assignee</div>
-                            <select name="uid" id="createTaskUid" class="et-label-select w-100" required>
-                                @foreach($users as $u)
-                                    <option value="{{ $u->id }}">{{ $u->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="et-section">
-                            <div class="et-section-title"><i class="bx bx-group"></i> Also Assign To</div>
-                            <div class="et-assignee-checkboxes mt-1" style="max-height: 200px;">
-                                @foreach($users as $u)
-                                    <label class="et-assignee-check-row">
-                                        <input type="checkbox" name="assignee_ids[]" value="{{ $u->id }}" />
-                                        <span class="et-chk-avatar">{{ strtoupper(substr($u->name, 0, 1)) }}</span>
-                                        <span class="et-chk-name">{{ $u->name }}</span>
-                                    </label>
-                                @endforeach
-                            </div>
-                        </div>
-                        <div class="et-section border-top pt-3">
-                            <div class="et-section-title"><i class="bx bx-briefcase-alt-2"></i> Project</div>
-                            <select name="project_id" class="et-label-select w-100">
-                                <option value="">— No Project —</option>
-                                @foreach($projects as $proj)
-                                    <option value="{{ $proj->id }}" {{ $activeProjectId == $proj->id ? 'selected' : '' }}>
-                                        {{ $proj->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="et-section">
-                            <div class="et-section-title"><i class="bx bxs-label"></i> Label</div>
-                            <div class="et-label-row">
-                                <span class="et-label-dot" id="createLabelIcon" style="background:#787878;"></span>
-                                <select name="label" id="createColorPalet" class="et-label-select">
-                                    <option value="#787878">New Task</option>
-                                    <option value="#007265">In Working</option>
-                                    <option value="#ff9800">Pause</option>
-                                    <option value="#e91e1e">Urgent</option>
-                                    <option value="#0dd500">Complete</option>
-                                </select>
-                            </div>
-                        </div>
+    <style>
+        .cf-wrap * { box-sizing: border-box; font-family: inherit; }
+        .cf-section-title { font-size: .72rem; font-weight: 700; color: #006666; text-transform: uppercase; letter-spacing: .07em; margin: 18px 0 12px; padding-bottom: 4px; border-bottom: 1.5px solid rgba(0,102,102,.12); }
+        .cf-section-title:first-child { margin-top: 0; }
+        .cf-field { display: flex; flex-direction: column; }
+        .cf-field label { font-size: .78rem; color: #5f6368; font-weight: 400; margin-bottom: 5px; text-transform: none; }
+        .cf-field label .req { color: #ea4335; }
+        .cf-input-box { display: flex; align-items: center; border: 1.5px solid #d1d5db; border-radius: 8px; background: #fff; overflow: hidden; transition: border-color .15s, box-shadow .15s; height: 42px; }
+        .cf-input-box:focus-within { border-color: #006666; box-shadow: 0 0 0 3px rgba(0,102,102,.08); }
+        .cf-input-box .cf-icon { display: flex; align-items: center; justify-content: center; width: 38px; height: 100%; flex-shrink: 0; color: #006666; font-size: 1.05rem; border-right: 1.5px solid #e8eaed; background: #f8fdfd; }
+        .cf-input-box input, .cf-input-box select, .cf-input-box textarea { flex: 1; border: none !important; outline: none !important; box-shadow: none !important; background: transparent; font-size: .875rem; color: #202124; padding: 0 10px; height: 100%; appearance: none; -webkit-appearance: none; }
+        .cf-input-box select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%235f6368'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
+        .cf-input-box.cf-textarea-box { height: auto; align-items: flex-start; }
+        .cf-input-box.cf-textarea-box textarea { height: auto; padding: 10px; resize: none; width: 100%; }
+        .cf-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: linear-gradient(135deg, #005757, #007e7e); border-radius: 16px 16px 0 0; }
+        .cf-modal-header-title { font-size: .975rem; font-weight: 700; color: #fff; margin: 0; }
+        .cf-modal-header-sub { font-size: .73rem; color: rgba(255,255,255,.72); margin: 0; }
+        .cf-modal-header .btn-close { filter: invert(1); opacity:.8; }
+        .cf-modal-footer { padding: 12px 20px; border-top: 1px solid #e8eaed; display: flex; justify-content: flex-end; gap: 8px; background: #fff; border-radius: 0 0 16px 16px; }
+        .cf-btn-cancel { font-size: .85rem; padding: 8px 20px; border-radius: 8px; border: 1.5px solid #d1d5db; background: #fff; color: #5f6368; cursor: pointer; transition: background .15s; }
+        .cf-btn-cancel:hover { background: #f5f5f5; }
+        .cf-btn-save { font-size: .85rem; font-weight: 600; padding: 8px 22px; border-radius: 8px; border: none; background: #006666; color: #fff; cursor: pointer; transition: background .15s; display: flex; align-items: center; gap: 5px; }
+        .cf-btn-save:hover { background: #004e4e; }
+        .cf-assignee-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; max-height: 180px; overflow-y: auto; }
+        .cf-assignee-label { display: flex; align-items: center; gap: 6px; padding: 6px 10px; border: 1.5px solid #e8eaed; border-radius: 6px; cursor: pointer; font-size: 0.8rem; background: #fff; transition: all 0.2s; }
+        .cf-assignee-label:hover { border-color: #006666; background: #f8fdfd; }
+        .cf-assignee-label input[type="checkbox"] { accent-color: #006666; width: 14px; height: 14px; }
+    </style>
+
+    <div class="modal fade" id="createTaskModal" tabindex="-1" aria-labelledby="createTaskModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="border-radius:16px; border:none;">
+                
+                {{-- HEADER --}}
+                <div class="cf-modal-header">
+                    <div>
+                        <p class="cf-modal-header-title">
+                            <i class="bx bx-task me-1"></i> New Task
+                        </p>
+                        <p class="cf-modal-header-sub">Fill in details to create a new task</p>
                     </div>
-                    {{-- MAIN CONTENT --}}
-                    <div class="et-main p-4">
-                        <div class="form-group mb-3">
-                            <label class="form-label text-muted fw-semibold small">Task Title <span class="text-danger">*</span></label>
-                            <input type="text" name="title" class="form-control shadow-sm border-0" placeholder="Enter task title" required autofocus style="padding: 10px 14px; border-radius: 8px;">
-                        </div>
-                        <div class="form-group mb-4">
-                            <label class="form-label text-muted fw-semibold small">Description</label>
-                            <textarea name="des" class="form-control shadow-sm border-0" rows="8" placeholder="Add a more detailed description…" style="padding: 10px 14px; border-radius: 8px; resize: none;"></textarea>
-                        </div>
-                        <div class="d-flex align-items-center gap-2 pt-2 border-top">
-                            <button type="submit" class="lb-btn lb-btn-primary" style="padding:8px 24px;">
-                                <i class="bx bx-plus"></i> Create Task
-                            </button>
-                            <button type="button" class="lb-btn lb-btn-ghost" data-bs-dismiss="offcanvas">Cancel</button>
-                        </div>
-                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-            </form>
+
+                {{-- BODY --}}
+                <div class="modal-body px-4 py-3 cf-wrap" style="max-height:68vh; overflow-y:auto; background:#f4fbfb;">
+                    <form action="{{ route('task') }}" method="post" id="createTaskForm">
+                        @csrf
+                        <input type="hidden" name="parent_id" value="{{ request('parent_id') }}" />
+
+                        {{-- Section: Task Information --}}
+                        <div class="cf-section-title">Task Information</div>
+                        <div class="row g-3">
+                            <div class="col-12 cf-field">
+                                <label>Task Title <span class="req">*</span></label>
+                                <div class="cf-input-box">
+                                    <span class="cf-icon"><i class="bx bx-text"></i></span>
+                                    <input type="text" name="title" placeholder="Enter task title" required>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 cf-field">
+                                <label>Project</label>
+                                <div class="cf-input-box">
+                                    <span class="cf-icon"><i class="bx bx-briefcase-alt-2"></i></span>
+                                    <select name="project_id">
+                                        <option value="">— No Project —</option>
+                                        @foreach($projects as $proj)
+                                            <option value="{{ $proj->id }}" {{ $activeProjectId == $proj->id ? 'selected' : '' }}>{{ $proj->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 cf-field">
+                                <label>Label Color</label>
+                                <div class="cf-input-box" style="padding-left: 14px;">
+                                    <span class="et-label-dot shadow-sm" id="createLabelIcon" style="background:#787878; width: 14px; height: 14px; border-radius: 50%; margin-right: 8px;"></span>
+                                    <select name="label" id="createColorPalet" style="background-image:none; padding-right:10px;">
+                                        <option value="#787878">New Task</option>
+                                        <option value="#007265">In Working</option>
+                                        <option value="#ff9800">Pause</option>
+                                        <option value="#e91e1e">Urgent</option>
+                                        <option value="#0dd500">Complete</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-12 cf-field">
+                                <label>Description</label>
+                                <div class="cf-input-box cf-textarea-box">
+                                    <span class="cf-icon" style="padding-top: 12px; height: 110px; align-items: flex-start;"><i class="bx bx-detail"></i></span>
+                                    <textarea name="des" rows="4" placeholder="Add a more detailed description..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Section: Assignees --}}
+                        <div class="cf-section-title mt-4">Assignees</div>
+                        <div class="row g-3">
+                            <div class="col-md-4 cf-field">
+                                <label>Primary Assignee <span class="req">*</span></label>
+                                <div class="cf-input-box">
+                                    <span class="cf-icon"><i class="bx bxs-user"></i></span>
+                                    <select name="uid" id="createTaskUid" required>
+                                        @foreach($users as $u)
+                                            <option value="{{ $u->id }}">{{ $u->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-8 cf-field">
+                                <label>Also Assign To</label>
+                                <div class="cf-assignee-grid">
+                                    @foreach($users as $u)
+                                        <label class="cf-assignee-label">
+                                            <input type="checkbox" name="assignee_ids[]" value="{{ $u->id }}" />
+                                            <span>{{ $u->name }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+                {{-- FOOTER --}}
+                <div class="cf-modal-footer">
+                    <button type="button" class="cf-btn-cancel" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" form="createTaskForm" class="cf-btn-save">
+                        <i class="bx bx-check"></i> Create Task
+                    </button>
+                </div>
+
+            </div>
         </div>
     </div>
     @endif
 
     <script>
-        // Open Create Task Offcanvas
+        // Open Create Task Modal
         window.openAddTaskOffcanvas = function(uid) {
             document.getElementById('createTaskUid').value = uid;
-            var offcanvasEl = document.getElementById('createTaskOffcanvas');
-            var offcanvas = bootstrap.Offcanvas.getInstance(offcanvasEl) || new bootstrap.Offcanvas(offcanvasEl);
-            offcanvas.show();
+            var modalEl = document.getElementById('createTaskModal');
+            var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+            modal.show();
         };
 
         const createColorPalet = document.getElementById('createColorPalet');
