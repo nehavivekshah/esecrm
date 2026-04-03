@@ -79,9 +79,38 @@
                 <div class="row g-4">
                     {{-- LEFT COLUMN (Main Content) --}}
                     <div class="col-lg-8 pe-lg-4 border-end">
+                        <style>
+                            .cf-nav-tabs { border-bottom: 1px solid #d1d5db; margin-bottom: 20px; flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; }
+                            .cf-nav-tabs::-webkit-scrollbar { height: 4px; }
+                            .cf-nav-tabs::-webkit-scrollbar-thumb { background: #c1c5cb; border-radius: 4px; }
+                            .cf-nav-tabs .nav-item { margin-bottom: -1px; }
+                            .cf-nav-tabs .nav-link { color: #6c757d; font-weight: 600; border: none; border-bottom: 3px solid transparent; background: transparent !important; padding: 10px 16px; transition: 0.2s; white-space: nowrap; }
+                            .cf-nav-tabs .nav-link.active { color: #006666; border-bottom: 3px solid #006666; }
+                            .cf-nav-tabs .nav-link:hover:not(.active) { border-bottom: 3px solid #d1d5db; color: #495057; }
+                        </style>
+
+                        <ul class="nav nav-tabs cf-nav-tabs" id="taskTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="desc-tab" data-bs-toggle="tab" data-bs-target="#desc" type="button" role="tab">
+                                    <i class="bx bx-align-left"></i> Description
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="attach-tab" data-bs-toggle="tab" data-bs-target="#attach" type="button" role="tab">
+                                    <i class="bx bx-paperclip"></i> Attachments (<span id="attachmentCountTab">{{ count($taskAttachments ?? []) }}</span>)
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="comment-tab" data-bs-toggle="tab" data-bs-target="#comment" type="button" role="tab">
+                                    <i class="bx bx-comment-dots"></i> Comments
+                                </button>
+                            </li>
+                        </ul>
                         
-                        {{-- Description --}}
-                        <div class="cf-section-title"><i class="bx bx-align-left"></i> Description</div>
+                        <div class="tab-content" id="taskTabsContent">
+                            {{-- Tab 1: Description --}}
+                            <div class="tab-pane fade show active" id="desc" role="tabpanel">
+                                
                         <div class="cf-field">
                             <form id="edttaskdetails" method="post">
                                 @csrf
@@ -99,8 +128,13 @@
                             </form>
                         </div>
                         
-                        {{-- Attachments --}}
-                        <div class="cf-section-title mt-4"><i class="bx bx-paperclip"></i> Attachments (<span id="attachmentCount">{{ count($taskAttachments ?? []) }}</span>)</div>
+                        
+                            </div>
+                            
+                            {{-- Tab 2: Attachments --}}
+                            <div class="tab-pane fade" id="attach" role="tabpanel">
+                                <div class="pt-1">
+                                    
                         <div class="bg-white border rounded p-3" style="border-color:#d1d5db;">
                             <div class="d-flex justify-content-end mb-2">
                                 <button type="button" class="btn btn-sm" onclick="document.getElementById('taskAttachmentInput').click()" style="background:rgba(0,102,102,0.1); color:#006666; font-weight:600;">
@@ -131,8 +165,13 @@
                             </div>
                         </div>
                         
-                        {{-- Comments --}}
-                        <div class="cf-section-title mt-4"><i class="bx bx-comment-dots"></i> Comments</div>
+                        
+                                </div>
+                            </div>
+                            
+                            {{-- Tab 3: Comments --}}
+                            <div class="tab-pane fade" id="comment" role="tabpanel">
+                                
                         <div class="mb-4">
                             <form method="post" id="taskComments">
                                 @csrf
@@ -181,6 +220,11 @@
                             </div>
                         </div>
 
+                    </div>
+                    
+                    
+                            </div>
+                        </div>
                     </div>
                     
                     {{-- RIGHT COLUMN (Sidebar Details) --}}
