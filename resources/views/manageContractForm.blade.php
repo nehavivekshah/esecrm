@@ -92,50 +92,59 @@
     height: auto;
     align-items: flex-start;
 }
-.cf-input-box.cf-textarea-box .cf-icon {
-    height: 42px;
-    align-self: flex-start;
-}
 .cf-input-box.cf-textarea-box textarea {
     height: auto;
     padding: 10px;
     resize: none;
+    width: 100%;
 }
 
-/* Select2 full width override */
-.cf-select2-wrap { position: relative; }
-.cf-select2-wrap .cf-icon-abs {
-    position: absolute;
-    left: 0;
-    top: 0;
+/* Select2 wrapper — matches cf-input-box style */
+.cf-select2-wrap {
+    position: relative;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+    display: flex;
+    align-items: center;
     height: 42px;
-    width: 38px;
+    transition: border-color .15s, box-shadow .15s;
+}
+.cf-select2-wrap:focus-within {
+    border-color: #006666;
+    box-shadow: 0 0 0 3px rgba(0,102,102,.08);
+}
+.cf-select2-wrap .cf-icon-abs {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 38px;
+    height: 100%;
+    flex-shrink: 0;
     color: #006666;
     font-size: 1.05rem;
     border-right: 1.5px solid #e8eaed;
     background: #f8fdfd;
-    border-radius: 7px 0 0 7px;
     pointer-events: none;
-    z-index: 1;
+    z-index: 2;
 }
-.cf-select2-wrap .select2-container { width: 100% !important; }
+/* Select2 container fills remaining space */
+.cf-select2-wrap .select2-container { flex: 1; min-width: 0; }
 .cf-select2-wrap .select2-container--default .select2-selection--single {
     height: 42px;
-    border: 1.5px solid #d1d5db;
-    border-radius: 8px;
-    padding-left: 42px;
+    border: none !important;
+    border-radius: 0;
+    padding-left: 10px;
     display: flex;
     align-items: center;
-    background: #fff;
-    transition: border-color .15s, box-shadow .15s;
+    background: transparent;
+    box-shadow: none !important;
 }
 .cf-select2-wrap .select2-container--default.select2-container--focus .select2-selection--single,
-.cf-select2-wrap .select2-container--default.select2-container--open  .select2-selection--single {
-    border-color: #006666;
-    box-shadow: 0 0 0 3px rgba(0,102,102,.08);
+.cf-select2-wrap .select2-container--default.select2-container--open .select2-selection--single {
+    border: none !important;
+    box-shadow: none !important;
 }
 .cf-select2-wrap .select2-selection--single .select2-selection__rendered {
     line-height: normal;
