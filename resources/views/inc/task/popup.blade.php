@@ -447,32 +447,13 @@
     }
 
     /* 6. Project change AJAX (with Select2 support) */
-    if (typeof $.fn.select2 !== 'undefined') {
-        $('#taskProjectSelect').select2({
-            placeholder: "Search Project...",
-            allowClear: true,
-            dropdownParent: $('#taskAjaxModal')
-        }).on('change', function() {
-            const taskId = document.getElementById('taskid').value;
-            fetch('{{ route("task.meta.update") }}', {
-                method : 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ task_id: taskId, project_id: this.value || null })
-            }).then(r => r.json()).then(d => {
-                if (d.success) {
-                    console.log('Project updated successfully');
-                } else {
-                    console.warn('Project update failed', d);
-                }
-            });
-        });
-    } else {
-        const projSel = document.getElementById('taskProjectSelect');
-        if (projSel) {
-            projSel.addEventListener('change', function () {
+    setTimeout(function() {
+        if (typeof $.fn.select2 !== 'undefined' && $('#taskProjectSelect').length > 0) {
+            $('#taskProjectSelect').select2({
+                placeholder: "Search Project...",
+                allowClear: true,
+                dropdownParent: $('#taskAjaxContainer')
+            }).on('change', function() {
                 const taskId = document.getElementById('taskid').value;
                 fetch('{{ route("task.meta.update") }}', {
                     method : 'POST',
@@ -483,17 +464,38 @@
                     body: JSON.stringify({ task_id: taskId, project_id: this.value || null })
                 }).then(r => r.json()).then(d => {
                     if (d.success) {
-                        // Show small "saved" feedback
-                        const fb = document.createElement('span');
-                        fb.className = 'text-success small';
-                        fb.textContent = ' ✓ Saved';
-                        projSel.parentNode.appendChild(fb);
-                        setTimeout(() => fb.remove(), 2000);
+                        console.log('Project updated successfully');
+                    } else {
+                        console.warn('Project update failed', d);
                     }
                 });
             });
+        } else {
+            const projSel = document.getElementById('taskProjectSelect');
+            if (projSel) {
+                projSel.addEventListener('change', function () {
+                    const taskId = document.getElementById('taskid').value;
+                    fetch('{{ route("task.meta.update") }}', {
+                        method : 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ task_id: taskId, project_id: this.value || null })
+                    }).then(r => r.json()).then(d => {
+                        if (d.success) {
+                            // Show small "saved" feedback
+                            const fb = document.createElement('span');
+                            fb.className = 'text-success small';
+                            fb.textContent = ' ✓ Saved';
+                            projSel.parentNode.appendChild(fb);
+                            setTimeout(() => fb.remove(), 2000);
+                        }
+                    });
+                });
+            }
         }
-    }
+    }, 50);
 
     /* 7. Save Assignees AJAX */
     const saveAssBtn = document.getElementById('saveAssigneesBtn');
