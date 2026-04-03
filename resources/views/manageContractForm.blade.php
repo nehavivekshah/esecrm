@@ -338,7 +338,6 @@
         <div class="cf-section-title">Notes / Scope</div>
         <div class="cf-field">
             <div class="cf-input-box cf-textarea-box">
-                <span class="cf-icon"><i class="bx bx-notepad"></i></span>
                 <textarea name="description" rows="3"
                           placeholder="Add any notes, scope of work, or terms (optional)...">{{ old('description', $contract->des ?? '') }}</textarea>
             </div>
