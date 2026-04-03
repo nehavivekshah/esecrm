@@ -757,7 +757,7 @@
     </div>
 
     <script>
-        // Defer execution until jQuery is available (jQuery loads after @yield in layout.blade.php)
+        // Defer execution until jQuery is available (jQuery loads after @@yield in layout.blade.php)
         function invoiceScriptInit() {
             if (typeof $ === 'undefined') {
                 return setTimeout(invoiceScriptInit, 50);
