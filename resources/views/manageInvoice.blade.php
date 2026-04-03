@@ -292,9 +292,27 @@
                                         <label class="ml-label">Reference / PO #</label>
                                         <div class="cf-input-box">
                                             <span class="cf-icon"><i class="bx bx-note"></i></span>
-                                            <input type="text" name="reference"
+                                            <input type="text" name="reference" id="invoiceReference"
                                                    placeholder="Order or Reference Number"
                                                    value="{{ old('reference', $invoice->reference ?? '') }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="ml-label">Linked Project</label>
+                                        <div class="cf-input-box">
+                                            <span class="cf-icon"><i class="bx bx-folder-open"></i></span>
+                                            <select name="project_id" id="projectDropdown" style="color:#5f6368;">
+                                                <option value="">— Select Client First —</option>
+                                                @if(!empty($invoice->project_id))
+                                                    <option value="{{ $invoice->project_id }}" selected>Loading…</option>
+                                                @endif
+                                            </select>
+                                        </div>
+                                        <div id="projectValueBadge" class="mt-1" style="display:none;">
+                                            <span style="font-size:0.72rem;color:#006666;font-weight:600;">
+                                                <i class="bx bx-rupee"></i>
+                                                <span id="projectValueText">0</span> — Contract Value
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -1084,14 +1102,57 @@
                 });
             });
 
-            // Client Auto-fill
+            // Client Auto-fill + Project Loader
             $('#client_id').on('change', function() {
                 const opt = $(this).find(':selected');
-                if (opt.val()) {
+                const clientId = opt.val();
+                if (clientId) {
                     const addr = opt.data('address') || '';
                     $('#billing_address').val(addr);
                     $('#shipping_address').val(addr);
                     $('#client_gst').val(opt.data('gstno') || '');
+
+                    // Load projects for this client
+                    $('#projectDropdown').html('<option value="">Loading projects…</option>').prop('disabled', true);
+                    $.getJSON('/get-projects/' + clientId, function(data) {
+                        let opts = '<option value="">— No Project (General Invoice) —</option>';
+                        if (data.projects && data.projects.length > 0) {
+                            data.projects.forEach(function(p) {
+                                opts += `<option value="${p.id}" data-amount="${p.amount}">${p.name}</option>`;
+                            });
+                        } else {
+                            opts += '<option disabled>No projects found for this client</option>';
+                        }
+                        $('#projectDropdown').html(opts).prop('disabled', false);
+                        $('#projectValueBadge').hide();
+                    }).fail(function() {
+                        $('#projectDropdown').html('<option value="">— Select Project —</option>').prop('disabled', false);
+                    });
+                } else {
+                    $('#projectDropdown').html('<option value="">— Select Client First —</option>');
+                    $('#projectValueBadge').hide();
+                }
+            });
+
+            // Project auto-fill on selection
+            $(document).on('change', '#projectDropdown', function() {
+                const opt = $(this).find(':selected');
+                const amount = opt.data('amount');
+                const name = opt.text();
+                if (opt.val()) {
+                    // Pre-fill Reference with project name
+                    if (!$('#invoiceReference').val()) {
+                        $('#invoiceReference').val(name);
+                    }
+                    // Show contract value badge
+                    if (amount) {
+                        $('#projectValueText').text(parseFloat(amount).toLocaleString('en-IN'));
+                        $('#projectValueBadge').show();
+                    } else {
+                        $('#projectValueBadge').hide();
+                    }
+                } else {
+                    $('#projectValueBadge').hide();
                 }
             });
 
@@ -1105,6 +1166,30 @@
                 // Force the Bootstrap-Select button to fill its flex container
                 $('#client_id').next('.bootstrap-select').css({ 'flex': '1', 'min-width': '0', 'border': 'none' });
                 recalculateTotals();
+
+                // Edit mode: if client already selected, pre-load projects
+                const existingClientId = $('#client_id').val();
+                const existingProjectId = '{{ $invoice->project_id ?? "" }}';
+                if (existingClientId) {
+                    $.getJSON('/get-projects/' + existingClientId, function(data) {
+                        let opts = '<option value="">— No Project (General Invoice) —</option>';
+                        if (data.projects && data.projects.length > 0) {
+                            data.projects.forEach(function(p) {
+                                const sel = (String(p.id) === String(existingProjectId)) ? ' selected' : '';
+                                opts += `<option value="${p.id}" data-amount="${p.amount}"${sel}>${p.name}</option>`;
+                            });
+                        }
+                        $('#projectDropdown').html(opts).prop('disabled', false);
+
+                        // Show badge if project pre-selected
+                        const preselected = $('#projectDropdown').find(':selected');
+                        const preAmount = preselected.data('amount');
+                        if (preselected.val() && preAmount) {
+                            $('#projectValueText').text(parseFloat(preAmount).toLocaleString('en-IN'));
+                            $('#projectValueBadge').show();
+                        }
+                    });
+                }
             }, 300);
         });
         } // end invoiceScriptInit
