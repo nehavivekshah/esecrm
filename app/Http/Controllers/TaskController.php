@@ -440,26 +440,33 @@ class TaskController extends Controller
             'file'    => 'required|mimes:pdf,doc,docx,jpg,jpeg,png,xls,xlsx,txt|max:10240'
         ]);
 
-        if ($request->hasFile('file')) {
-            $file         = $request->file('file');
-            $originalName = $file->getClientOriginalName();
-            $fileName     = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            $path = public_path('assets/task_attachments');
-            if (!file_exists($path)) {
-                mkdir($path, 0777, true);
+        try {
+            if ($request->hasFile('file')) {
+                $file         = $request->file('file');
+                $originalName = $file->getClientOriginalName();
+                $fileName     = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $path = public_path('assets/task_attachments');
+                
+                if (!file_exists($path)) {
+                    mkdir($path, 0777, true);
+                }
+                
+                $file->move($path, $fileName);
+
+                $attachment = \App\Models\TaskAttachment::create([
+                    'task_id'     => $request->task_id,
+                    'file_path'   => 'assets/task_attachments/' . $fileName,
+                    'file_name'   => $originalName,
+                    'file_type'   => $file->getClientOriginalExtension(),
+                    'file_size'   => $file->getSize(),
+                    'uploaded_by' => Auth::id(),
+                ]);
+
+                return response()->json(['status' => 'success', 'attachment' => $attachment]);
             }
-            $file->move($path, $fileName);
-
-            $attachment = \App\Models\TaskAttachment::create([
-                'task_id'     => $request->task_id,
-                'file_path'   => 'assets/task_attachments/' . $fileName,
-                'file_name'   => $originalName,
-                'file_type'   => $file->getClientOriginalExtension(),
-                'file_size'   => $file->getSize(),
-                'uploaded_by' => Auth::id(),
-            ]);
-
-            return response()->json(['status' => 'success', 'attachment' => $attachment]);
+        } catch (\Exception $e) {
+            \Log::error('Upload Error: ' . $e->getMessage());
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
 
         return response()->json(['status' => 'error', 'message' => 'File not found'], 400);
