@@ -61,7 +61,7 @@
 }
 .cf-input-box input,
 .cf-input-box select,
-.cf-select2-wrap input,
+.cf-select2-wrap select,
 .cf-input-box textarea {
     flex: 1;
     border: none !important;
@@ -339,7 +339,7 @@
         <div class="cf-section-title">Notes / Scope</div>
         <div class="cf-field">
             <div class="cf-input-box cf-textarea-box">
-                <textarea name="description" rows="3"
+                <textarea name="description" rows="5"
                           placeholder="Add any notes, scope of work, or terms (optional)...">{{ old('description', $contract->des ?? '') }}</textarea>
             </div>
             @error('description')<small class="text-danger">{{ $message }}</small>@enderror
