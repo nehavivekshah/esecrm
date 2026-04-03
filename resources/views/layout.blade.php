@@ -199,6 +199,7 @@
             </script>
 
         @include('inc.todo-modal')
+        @stack('scripts')
     </body>
 
 </html>

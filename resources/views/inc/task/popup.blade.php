@@ -483,15 +483,16 @@
                     body: JSON.stringify({ task_id: taskId, project_id: this.value || null })
                 }).then(r => r.json()).then(d => {
                     if (d.success) {
-                    // Show small "saved" feedback
-                    const fb = document.createElement('span');
-                    fb.className = 'text-success small';
-                    fb.textContent = ' ✓ Saved';
-                    projSel.parentNode.appendChild(fb);
-                    setTimeout(() => fb.remove(), 2000);
-                }
+                        // Show small "saved" feedback
+                        const fb = document.createElement('span');
+                        fb.className = 'text-success small';
+                        fb.textContent = ' ✓ Saved';
+                        projSel.parentNode.appendChild(fb);
+                        setTimeout(() => fb.remove(), 2000);
+                    }
+                });
             });
-        });
+        }
     }
 
     /* 7. Save Assignees AJAX */

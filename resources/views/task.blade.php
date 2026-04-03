@@ -2,11 +2,7 @@
 @section('title', 'CRM Follow-Up Tasks - eseCRM')
 
 @section('content')
-    {{-- Select2 --}}
-    @once
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    @endonce
+
     <section class="task__section">
         @include('inc.header', ['title' => 'CRM Follow-Up Tasks'])
 
@@ -458,8 +454,11 @@
                     </div>`;
             }
 
-            fetch('/task-details/' + taskId)
-                .then(response => response.text())
+            fetch('{{ url("/task-details") }}/' + taskId)
+                .then(response => {
+                    if (!response.ok) throw new Error('Status: ' + response.status);
+                    return response.text();
+                })
                 .then(html => {
                     if (window.jQuery) {
                         $(container).html(html);
@@ -476,7 +475,7 @@
                 .catch(error => {
                     console.error('Error fetching task details:', error);
                     if (!isRefresh) container.innerHTML = '';
-                    alert('Could not load task details.');
+                    alert('Could not load task details (Task ID: ' + taskId + ').');
                 });
         }
 
@@ -531,3 +530,11 @@
     </script>
 
 @endsection
+
+@push('scripts')
+    {{-- Select2 JS --}}
+    @once
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    @endonce
+@endpush
