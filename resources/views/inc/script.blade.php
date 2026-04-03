@@ -1390,53 +1390,6 @@
 
 @endif
 
-@if(Request::segment(1) == 'recoveries')
-
-    <script>
-
-        $(document).ready(function () {
-
-            $(document).on('click', '.reminder, .received', function () {
-                const recoveryId = $(this).data('id'); // Get the ID
-                const recoveryTitle = $(this).attr('title'); // Get the ID
-                var title;
-                if (recoveryTitle == 'Received') {
-                    title = "Receive Payment From";
-
-                    $.ajax({
-                        url: `/recovery/${recoveryId}/${recoveryTitle}`, // Adjust your route
-                        type: 'GET',
-                        success: function (data) {
-                            // Populate modal content with fetched data
-                            $('#recoveryModal .modal-body').html(data);
-                        },
-                        error: function () {
-                            console.error('Failed to fetch data for recovery ID:', recoveryId);
-                        }
-                    });
-                } else {
-                    title = 'Send Recovery Reminder to';
-
-                    $.ajax({
-                        url: `/recovery/${recoveryId}/${recoveryTitle}`, // Adjust your route
-                        type: 'GET',
-                        success: function (data) {
-                            // Populate modal content with fetched data
-                            $('#recoveryModal .modal-body').html(data);
-                        },
-                        error: function () {
-                            console.error('Failed to fetch data for recovery ID:', recoveryId);
-                        }
-                    });
-                }
-                $('#recoveryModalLabel').html(title);
-
-                $('#recoveryModal').modal('show'); // Show the modal
-            });
-
-        });
-
-    </script>
 
 @endif
 

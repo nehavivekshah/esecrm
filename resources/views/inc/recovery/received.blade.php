@@ -3,228 +3,205 @@
     $roles = session('roles');
     $roleArray = explode(',', ($roles->permissions ?? ''));
     $amount = $project->amount ?? 0;
-    $remaining = $amount; // Initialize remaining amount with the total project amount
+    $remaining = $amount;
 @endphp
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12 my-2">
-            <div class="flex py-2 px-2 space-between mb-3 bg-main rounded item-center">
-                <div class="companyName">
-                    <h6 class="font-weight-bold mb-0">{{ $client->company }}</h6>
-                </div>
-                <div class="totalRemaining">
-                    Total Remaining Bal.: <span class="font-weight-bold">Rs. {{$amount - $totalPaid}} /-</span>
-                </div>
-            </div>
-            <form id="updatePayment" action="/recovery" class="row" method="post">
-                @csrf
-                <div class="form-group col-md-6">
-                    <label for="payment" class="small">Payment Received*</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bx bx-rupee"></i></span>
-                        <input type="number" name="received" id="received" class="form-control" placeholder="0.00" required />
-                        <input type="hidden" name="client_id" value="{{ $client->id ?? '' }}" />
-                        <input type="hidden" name="project_id" value="{{ $project->id ?? '' }}" />
-                    </div>
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="payment" class="small">Payment Received Date*</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-                        <input type="date" name="receivedDate" class="form-control" value="{{ now()->format('Y-m-d') }}" readonly />
-                    </div>
-                </div>
-                <div class="form-group col-md-12 my-3">
-                    <label for="payment" class="small" style="display:flex;gap:5px;"> <input type="checkbox" name="send" value="1" checked /> Send Thank You Note</label>
-                    <textarea type="text" name="note" class="form-control" placeholder="Write thank you note here..." id="output">Thank you for payment of Rs. {{$amount - $totalPaid}} to {{$company->name ?? ''}}.</textarea>
-                </div>
-                <div class="form-group col-md-12 text-right">
-                    <button type="submit" class="btn btn-success bg-success border text-white"><i class="bx bx-check"></i> Save</button>
-                    <button type="reset" class="btn btn-white border"><i class="bx bx-gear"></i> Reset</button>
-                </div>
-            </form>
-        </div>
-        <div class="col-md-12">
-            <h6 class="font-weight-bold">Payment History</h6>
-        </div>
-        <div class="col-md-12 py-3 table-responsive">
-            <table class="table table-striped table-bordered m-table" style="width:100%">
-                <thead>
-                    <tr>
-                        <th width="50px">Sr.No.</th>
-                        <th>Date</th>
-                        <th>Remaining</th>
-                        <th>Paid</th>
-                        <th>Status</th>
-                        <th class="text-center">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($recoveries as $k => $recovery)
-                        @php
-                            $status = ($recovery->status == '1') ? "Paid" : "Partly Paid";
-                            $paid = $recovery->paid ?? 0; // Amount paid in this recovery
-                            $remaining -= $paid; // Update remaining amount
-                        @endphp
+<style>
+.cf-wrap * { box-sizing: border-box; font-family: inherit; }
+.cf-section-title {
+    font-size:.72rem; font-weight:700; color:#006666; text-transform:uppercase;
+    letter-spacing:.07em; margin:16px 0 10px; padding-bottom:4px;
+    border-bottom:1.5px solid rgba(0,102,102,.12);
+}
+.cf-section-title:first-child { margin-top:0; }
+.cf-field { display:flex; flex-direction:column; }
+.cf-field label { font-size:.78rem; color:#5f6368; font-weight:400; margin-bottom:5px; }
+.cf-field label .req { color:#ea4335; }
+.cf-input-box {
+    display:flex; align-items:center; border:1.5px solid #d1d5db;
+    border-radius:8px; background:#fff; overflow:hidden; height:42px;
+    transition:border-color .15s, box-shadow .15s;
+}
+.cf-input-box:focus-within { border-color:#006666; box-shadow:0 0 0 3px rgba(0,102,102,.08); }
+.cf-icon {
+    display:flex; align-items:center; justify-content:center; width:38px; height:100%;
+    flex-shrink:0; color:#006666; font-size:1.05rem;
+    border-right:1.5px solid #e8eaed; background:#f8fdfd;
+}
+.cf-input-box input, .cf-input-box textarea {
+    flex:1; border:none !important; outline:none !important; box-shadow:none !important;
+    background:transparent; font-size:.875rem; color:#202124; padding:0 10px; height:100%;
+}
+.cf-input-box input[readonly] { background:#fafafa; color:#80868b; }
+.cf-input-box.cf-textarea-box { height:auto; align-items:flex-start; }
+.cf-input-box.cf-textarea-box .cf-icon { height:42px; align-self:flex-start; }
+.cf-input-box.cf-textarea-box textarea { height:auto; padding:10px; resize:none; width:100%; }
 
-                        <tr>
-                            <td>{{ $k + 1 }}</td>
-                            <td>{{ date('d M, Y', strtotime($recovery->created_at ?? now())) }}</td>
-                            <td>Rs. {{ number_format($remaining, 2) }}</td>
-                            <td>
-                                Rs.<input type="text" class="editableInputs" value="{{ number_format($paid, 2) }}" data-id="{{$recovery->id ?? ''}}" style="padding: 4px 7px;width: 100px;" title="Double click to edit" readonly />
-                                <span class="status" style="margin-left: 10px; font-weight: bold;"></span>
-                            </td>
-                            <td class="text-success font-weight-bold">{{ $status }}</td>
-                            <td class="text-center"><a href="javascript:void(0)" class="btn btn-danger btn-sm recoveryAmountDelete" data-id="{{$recovery->id ?? ''}}" data-page="recoveryAmountDelete" title="Delete"><i class="bx bx-trash"></i></a></td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+/* History table */
+.rv-history-table { width:100%; border-collapse:collapse; font-size:.82rem; }
+.rv-history-table th { background:#f8f9fa; color:#5f6368; font-weight:600; font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; padding:8px 12px; border-bottom:2px solid #e8eaed; }
+.rv-history-table td { padding:9px 12px; border-bottom:1px solid #f0f0f0; color:#202124; }
+.rv-history-table tr:last-child td { border-bottom:none; }
+.rv-history-table tr:hover td { background:#fafefe; }
+.rv-editable { border:1px solid #e0e0e0; border-radius:6px; padding:3px 8px; width:110px; font-size:.82rem; color:#202124; background:#fff; cursor:pointer; }
+.rv-editable:focus { border-color:#006666; outline:none; box-shadow:0 0 0 2px rgba(0,102,102,.1); }
+.rv-status-dot { font-size:.7rem; font-weight:600; margin-left:6px; }
+
+/* Summary bar */
+.rv-summary-bar {
+    display:flex; align-items:center; justify-content:space-between;
+    background:linear-gradient(135deg,rgba(0,102,102,.06),rgba(0,102,102,.04));
+    border:1px solid rgba(0,102,102,.12); border-radius:10px;
+    padding:10px 14px; margin-bottom:14px;
+}
+.rv-summary-bar .rv-summary-company { font-size:.875rem; font-weight:700; color:#202124; }
+.rv-summary-bar .rv-summary-bal { font-size:.8rem; color:#5f6368; }
+.rv-summary-bar .rv-summary-bal span { font-weight:700; color:#ea4335; }
+
+/* Footer */
+.cf-modal-footer {
+    padding:12px 20px; border-top:1px solid #e8eaed;
+    display:flex; justify-content:flex-end; gap:8px;
+    background:#fff; border-radius:0 0 16px 16px;
+}
+.cf-btn-cancel { font-size:.85rem; padding:8px 20px; border-radius:8px; border:1.5px solid #d1d5db; background:#fff; color:#5f6368; cursor:pointer; }
+.cf-btn-cancel:hover { background:#f5f5f5; }
+.cf-btn-save { font-size:.85rem; font-weight:600; padding:8px 22px; border-radius:8px; border:none; background:#006666; color:#fff; cursor:pointer; display:flex; align-items:center; gap:5px; }
+.cf-btn-save:hover { background:#004e4e; }
+</style>
+
+{{-- ── Header ── --}}
+<div class="cf-modal-header">
+    <div>
+        <p class="cf-modal-header-title"><i class="bx bx-rupee me-1"></i> Receive Payment</p>
+        <p class="cf-modal-header-sub">Record a payment received from client</p>
+    </div>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+{{-- ── Body ── --}}
+<div class="modal-body px-4 py-3 cf-wrap" style="max-height:68vh; overflow-y:auto; background:#f4fbfb;">
+
+    {{-- Summary bar --}}
+    <div class="rv-summary-bar">
+        <div class="rv-summary-company">
+            <i class="bx bx-buildings me-1" style="color:#006666;"></i>
+            {{ $client->company ?? $client->name ?? '—' }}
+        </div>
+        <div class="rv-summary-bal">
+            Remaining Balance: <span>₹{{ number_format($amount - $totalPaid, 0) }}</span>
         </div>
     </div>
+
+    {{-- Payment Form --}}
+    <div class="cf-section-title">Payment Details</div>
+    <form id="updatePayment" action="/recovery" method="post">
+        @csrf
+        <input type="hidden" name="client_id"  value="{{ $client->id ?? '' }}">
+        <input type="hidden" name="project_id" value="{{ $project->id ?? '' }}">
+
+        <div class="row g-3 mb-2">
+            <div class="col-md-6 cf-field">
+                <label>Amount Received (₹) <span class="req">*</span></label>
+                <div class="cf-input-box" style="border-color:#34a853;">
+                    <span class="cf-icon" style="color:#34a853; background:rgba(52,168,83,.05); font-weight:700; font-size:.9rem;">₹</span>
+                    <input type="number" name="received" id="received" placeholder="0.00" required>
+                </div>
+            </div>
+            <div class="col-md-6 cf-field">
+                <label>Payment Date <span class="req">*</span></label>
+                <div class="cf-input-box">
+                    <span class="cf-icon"><i class="bx bx-calendar"></i></span>
+                    <input type="date" name="receivedDate" value="{{ now()->format('Y-m-d') }}" readonly>
+                </div>
+            </div>
+            <div class="col-12 cf-field">
+                <label style="display:flex; align-items:center; gap:7px; cursor:pointer;">
+                    <input type="checkbox" name="send" value="1" checked style="width:15px;height:15px;accent-color:#006666;">
+                    Send Thank You Note
+                </label>
+                <div class="cf-input-box cf-textarea-box mt-1">
+                    <span class="cf-icon"><i class="bx bx-message-square-detail"></i></span>
+                    <textarea name="note" id="output" rows="2"
+                        placeholder="Thank you message...">Thank you for payment of ₹{{ $amount - $totalPaid }} to {{ $company->name ?? '' }}.</textarea>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    {{-- Payment History --}}
+    @if($recoveries->count() > 0)
+    <div class="cf-section-title">Payment History</div>
+    <div style="border:1px solid #e8eaed; border-radius:10px; overflow:hidden; background:#fff;">
+        <table class="rv-history-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Date</th>
+                    <th>Remaining</th>
+                    <th>Paid (₹)</th>
+                    <th>Status</th>
+                    <th class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($recoveries as $k => $recovery)
+                    @php
+                        $status = ($recovery->status == '1') ? 'Paid' : 'Partly Paid';
+                        $paid = $recovery->paid ?? 0;
+                        $remaining -= $paid;
+                    @endphp
+                    <tr>
+                        <td class="text-muted">{{ $k + 1 }}</td>
+                        <td>{{ date('d M Y', strtotime($recovery->created_at ?? now())) }}</td>
+                        <td style="color:#ea4335; font-weight:600;">₹{{ number_format($remaining, 0) }}</td>
+                        <td>
+                            <input type="text" class="rv-editable editableInputs"
+                                value="{{ number_format($paid, 2) }}"
+                                data-id="{{ $recovery->id ?? '' }}"
+                                title="Double click to edit" readonly>
+                            <span class="rv-status-dot status"></span>
+                        </td>
+                        <td>
+                            <span style="font-size:.72rem; font-weight:600; padding:2px 8px; border-radius:20px;
+                                background:rgba(52,168,83,.08); color:#34a853;">
+                                {{ $status }}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <a href="javascript:void(0)" class="btn kb-action-btn recoveryAmountDelete"
+                                data-id="{{ $recovery->id ?? '' }}" data-page="recoveryAmountDelete"
+                                title="Delete" style="background:rgba(234,67,53,.1);color:#ea4335;">
+                                <i class="bx bx-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    @endif
+
 </div>
+
+{{-- ── Footer ── --}}
+<div class="cf-modal-footer">
+    <button type="button" class="cf-btn-cancel" data-bs-dismiss="modal">Cancel</button>
+    <button type="submit" form="updatePayment" class="cf-btn-save">
+        <i class="bx bx-check"></i> Save Payment
+    </button>
+</div>
+
 <script>
-    // Get the input field and output element
+(function () {
     const receivedInput = document.getElementById('received');
-    const output = document.getElementById('output');
+    const output        = document.getElementById('output');
+    const companyName   = '{{ $company->name ?? '' }}';
 
-    // Add keyup event listener
-    receivedInput.addEventListener('keyup', () => {
-        // Get the current value of the input
-        const value = receivedInput.value;
-
-        // Display the value in the output element
-        output.textContent = `Thank you for payment of Rs. ${value} to {{$company->name ?? ''}}.`;
-    });
-</script>
-
-<script>
-
-    $(document).ready(function () {
-        // Function to sanitize input: Allow only numbers
-        function sanitizeInput(value) {
-            return value.replace(/[^0-9.]/g, ''); // Remove all non-numeric characters except the decimal point
-        }
-    
-        // Function to validate if input is a valid number
-        function isValidNumber(value) {
-            return !isNaN(value) && Number(value) >= 0;
-        }
-    
-        // AJAX function to send updated data
-        function updateRecoveryAmount(inputElement, amount) {
-            const recordId = $(inputElement).data('id'); // Assuming each input has a data-id attribute
-            $.ajax({
-                url: '/update-recovery-amount', // Replace with your actual endpoint
-                method: 'GET', // Use GET method
-                data: {
-                    id: recordId,
-                    amount: amount
-                },
-                success: function (response) {
-                    //console.log('Amount updated:', response);
-                    const $statusSpan = $(inputElement).next('.status');
-                    $statusSpan.text('Updated').css('color', 'green');
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error updating amount:', error);
-                    const $statusSpan = $(inputElement).next('.status');
-                    $statusSpan.text('Error updating amount').css('color', 'red');
-                }
-            });
-        }
-    
-        // Select all elements with the class "editableInputs"
-        $('.editableInputs').each(function () {
-            const $input = $(this); // Cache the current input element
-    
-            // Enable editing on double-click
-            $input.on('dblclick', function () {
-                $input.prop('readonly', false).focus(); // Remove readonly and focus the input
-    
-                const $statusSpan = $input.next('.status'); // Get the adjacent status span
-                $statusSpan.text('Editing').css('color', 'blue'); // Update status span
-            });
-    
-            // Handle keyup event for real-time sanitization and validation
-            $input.on('input', function () {
-                let value = $input.val();
-                value = sanitizeInput(value); // Remove non-numeric characters
-                $input.val(value); // Update the input field with the sanitized value
-    
-                const $statusSpan = $input.next('.status'); // Get the adjacent status span
-    
-                // Validate the sanitized value
-                if (!isValidNumber(value)) {
-                    $statusSpan.text('Invalid').css('color', 'red');
-                } else {
-                    $statusSpan.text('Valid').css('color', 'green');
-                }
-            });
-    
-            // Save the value on Enter key press
-            $input.on('keyup', function (event) {
-                const value = $input.val().trim();
-                if (event.key === 'Enter' && isValidNumber(value)) {
-                    $input.prop('readonly', true); // Reapply readonly
-                    updateRecoveryAmount($input, value); // Call AJAX to update the amount
-                }
-            });
-    
-            // Disable editing on blur (focus loss)
-            $input.on('blur', function () {
-                const value = $input.val().trim();
-                const $statusSpan = $input.next('.status'); // Get the adjacent status span
-    
-                if (isValidNumber(value)) {
-                    updateRecoveryAmount($input, value); // Call AJAX to update the amount
-                    $statusSpan.text('Editing').css('color', 'gray');
-                } else {
-                    $statusSpan.text('Invalid ').css('color', 'red');
-                    $input.val(''); // Reset invalid input
-                }
-    
-                $input.prop('readonly', true); // Reapply readonly
-            });
+    if (receivedInput && output) {
+        receivedInput.addEventListener('keyup', function () {
+            output.textContent = 'Thank you for payment of ₹' + this.value + ' to ' + companyName + '.';
         });
-        
-        //Delete Recovery Details
-        $(".recoveryAmountDelete").click(function (e) {
-            e.preventDefault(); // Prevent the default action
-        
-            const ele = $(this);
-            const rowid = ele.data('id');
-            const recoveryAmountDelete = ele.data('page');
-        
-            // SweetAlert confirmation
-            swal({
-                title: "Are you sure?",
-                text: "Once deleted, you will not be able to recover this!",
-                icon: "warning",
-                buttons: ["Cancel", "Yes, delete it!"],
-                dangerMode: true,
-            }).then((willDelete) => {
-                if (willDelete) {
-                    // Proceed with AJAX request if confirmed
-                    $.ajax({
-                        type: 'get',
-                        url: "/delete-recovery-amount",
-                        data: { recoveryAmountDelete: recoveryAmountDelete, rowid: rowid },
-                        success: function (response) {
-                            $(ele).parent().parent().remove(); // Remove the parent element
-                            swal("Deleted!", "The recovery detail has been deleted.", "success");
-                        },
-                        error: function (xhr, status, error) {
-                            swal("Error!", "An error occurred while deleting the recovery detail. Please try again.", "error");
-                            console.error("Error:", error);
-                        }
-                    });
-                }
-            });
-        });
-
-    });
-
+    }
+})();
 </script>

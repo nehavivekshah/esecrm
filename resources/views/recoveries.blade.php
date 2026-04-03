@@ -221,11 +221,21 @@
         </div>
     </section>
 
-    {{-- Manage Recovery Modal --}}
-    <div class="modal fade" id="manageRecoveryModal" aria-labelledby="manageRecoveryModalLabel" aria-hidden="true">
+    {{-- ── Shared Action Modal (Reminder / Received) ── --}}
+    <div class="modal fade" id="recoveryModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="border-radius:16px; border:none;" id="recoveryModalContent">
+                <div class="d-flex align-items-center justify-content-center" style="height:160px;">
+                    <div class="spinner-border text-secondary" style="width:1.5rem;height:1.5rem;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- ── Edit Recovery Modal ── --}}
+    <div class="modal fade" id="manageRecoveryModal" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-scrollable">
             <div class="modal-content" style="border-radius:16px; border:none;" id="manageRecoveryModalContent">
-                {{-- Content injected via AJAX --}}
                 <div class="d-flex align-items-center justify-content-center" style="height:200px;">
                     <div class="spinner-border text-secondary" style="width:1.5rem;height:1.5rem;"></div>
                 </div>
@@ -233,30 +243,58 @@
         </div>
     </div>
 
+    {{-- Shared cf-modal-header style (used by reminder/received/edit partials) --}}
+    <style>
+    .cf-modal-header {
+        display:flex; align-items:center; justify-content:space-between;
+        padding:16px 20px;
+        background:linear-gradient(135deg,#005757,#007e7e);
+        border-radius:16px 16px 0 0;
+    }
+    .cf-modal-header-title { font-size:.975rem; font-weight:700; color:#fff; margin:0; }
+    .cf-modal-header-sub   { font-size:.73rem; color:rgba(255,255,255,.72); margin:0; }
+    .cf-modal-header .btn-close { filter:invert(1); opacity:.8; }
+    </style>
+
     <script>
     document.addEventListener('DOMContentLoaded', function () {
+
+        function loadModal(modalEl, contentEl, url) {
+            contentEl.innerHTML = '<div class="d-flex align-items-center justify-content-center" style="height:160px;"><div class="spinner-border text-secondary" style="width:1.5rem;height:1.5rem;"></div></div>';
+            bootstrap.Modal.getOrCreateInstance(modalEl).show();
+            fetch(url)
+                .then(function (r) { return r.text(); })
+                .then(function (html) { contentEl.innerHTML = html; })
+                .catch(function () {
+                    contentEl.innerHTML = '<div class="p-4 text-center text-danger"><i class="bx bx-error" style="font-size:1.5rem;"></i><p class="mt-2">Failed to load. Please try again.</p></div>';
+                });
+        }
+
+        // ── Edit ──
         document.querySelectorAll('.open-recovery-modal').forEach(function (btn) {
             btn.addEventListener('click', function () {
-                const url = this.dataset.url;
-                const content = document.getElementById('manageRecoveryModalContent');
-                const modalEl = document.getElementById('manageRecoveryModal');
-
-                // Show spinner
-                content.innerHTML = '<div class="d-flex align-items-center justify-content-center" style="height:200px;"><div class="spinner-border text-secondary" style="width:1.5rem;height:1.5rem;"></div></div>';
-
-                // Open modal
-                const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-                modal.show();
-
-                // Fetch form
-                fetch(url)
-                    .then(function (r) { return r.text(); })
-                    .then(function (html) { content.innerHTML = html; })
-                    .catch(function () {
-                        content.innerHTML = '<div class="p-4 text-danger">Failed to load. Please try again.</div>';
-                    });
+                loadModal(
+                    document.getElementById('manageRecoveryModal'),
+                    document.getElementById('manageRecoveryModalContent'),
+                    this.dataset.url
+                );
             });
         });
+
+        // ── Reminder & Received ──
+        document.querySelectorAll('.reminder, .received').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                const id    = this.dataset.id;
+                const title = this.getAttribute('title');
+                const url   = '/recovery/' + id + '/' + title;
+                loadModal(
+                    document.getElementById('recoveryModal'),
+                    document.getElementById('recoveryModalContent'),
+                    url
+                );
+            });
+        });
+
     });
     </script>
 
