@@ -161,11 +161,17 @@ class ClientController extends Controller
             $projects = Projects::where('client_id', $recoveries->client_id)->get();
         }
 
-        return view('manageRecovery', [
+        $viewData = [
             'recoveries' => $recoveries,
             'clients'    => $clients,
-            'projects'   => $projects
-        ]);
+            'projects'   => $projects,
+        ];
+
+        if ($request->has('ajax')) {
+            return view('manageRecoveryForm', $viewData);
+        }
+
+        return view('manageRecovery', $viewData);
     }
 
     public function updateRecoveryAmount(Request $request)

@@ -194,10 +194,11 @@
                                                 </a>
                                             @endif
                                             {{-- Edit --}}
-                                            <a href="/manage-recovery?id={{ $recovery->id ?? '' }}" class="btn kb-action-btn"
+                                            <button type="button" class="btn kb-action-btn open-recovery-modal"
+                                                data-url="/manage-recovery?id={{ $recovery->id ?? '' }}&ajax=1"
                                                 title="Edit" style="background:rgba(0,102,102,0.10);color:#006666;">
                                                 <i class="bx bx-edit"></i>
-                                            </a>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -220,21 +221,30 @@
         </div>
     </section>
 
-    {{-- Recovery Modal --}}
-    <div class="modal fade" id="recoveryModal" tabindex="-1" aria-labelledby="recoveryModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content" style="border-radius:16px; border:none;">
-                <div class="modal-header" style="border-bottom:1px solid #f0f0f0; padding:16px 20px;">
-                    <h5 class="modal-title" id="recoveryModalLabel"
-                        style="font-size:0.95rem; font-weight:700; color:#202124;">
-                        Recovery Details
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    {{-- Manage Recovery Modal --}}
+    <div class="modal fade" id="manageRecoveryModal" aria-labelledby="manageRecoveryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content" style="border-radius:16px; border:none;" id="manageRecoveryModalContent">
+                {{-- Content injected via AJAX --}}
+                <div class="d-flex align-items-center justify-content-center" style="height:200px;">
+                    <div class="spinner-border text-secondary" style="width:1.5rem;height:1.5rem;"></div>
                 </div>
-                <div class="modal-body p-0 px-2" id="loadContent"></div>
             </div>
         </div>
     </div>
+
+    <script>
+    $(document).on('click', '.open-recovery-modal', function () {
+        const url = $(this).data('url');
+        $('#manageRecoveryModalContent').html(
+            '<div class="d-flex align-items-center justify-content-center" style="height:200px;"><div class="spinner-border text-secondary" style="width:1.5rem;height:1.5rem;"></div></div>'
+        );
+        $('#manageRecoveryModal').modal('show');
+        $.get(url, function (html) {
+            $('#manageRecoveryModalContent').html(html);
+        });
+    });
+    </script>
 
     <style>
         /* ── Stat Row ── */
