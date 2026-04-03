@@ -864,21 +864,22 @@
         }
 
         $(document).ready(function() {
-            // Add Item Logic
-            $('#addItemButton, #addItemButtonSecondary').on('click', function() {
+        $(document).on('click', '#addItemButton, #addItemButtonSecondary', function() {
                 const index = $('.mp-item-row').length;
                 let taxOptions = '';
-                availableTaxes.forEach((val, i) => {
-                    const rate = (val || 0) / 100;
-                    taxOptions += `<option value="${i}:${rate}">${taxNames[i] || 'Tax'} ${val}%</option>`;
-                });
+                if (Array.isArray(availableTaxes)) {
+                    availableTaxes.forEach((val, i) => {
+                        const rate = (val || 0) / 100;
+                        taxOptions += `<option value="${i}:${rate}">${taxNames[i] || 'Tax'} ${val}%</option>`;
+                    });
+                }
 
                 const html = `
-                    <div class="mp-item-row shadow-sm animate__animated animate__fadeInUp">
+                    <div class="mp-item-row shadow-sm animate__animated animate__fadeInUp" data-item-row="${index}">
                         <div class="mp-item-row-header">
                             <span class="mp-item-num">${index + 1}</span>
                             <span class="mp-item-row-title">Item ${index + 1}</span>
-                            <button type="button" class="btn btn-link text-danger p-0 ms-auto removeRowButton"><i class="bx bx-trash fs-5"></i></button>
+                            <button type="button" class="btn kb-action-btn kb-action-del removeRowButton ms-auto" style="width:28px;height:28px;" title="Remove item"><i class="bx bx-trash"></i></button>
                         </div>
                         <div class="mp-item-row-body">
                             <div class="mp-item-field" style="grid-column: span 2;">
@@ -888,6 +889,10 @@
                             <div class="mp-item-field" style="grid-column: span 2;">
                                 <label class="mp-item-label">Description</label>
                                 <textarea class="form-control form-control-sm item-longdesc mp-autoresize" name="invoice_items[${index}][long_description]" rows="1"></textarea>
+                            </div>
+                            <div class="mp-item-field">
+                                <label class="mp-item-label">SAC/HSN</label>
+                                <input type="text" class="form-control form-control-sm item-sac" name="invoice_items[${index}][sac_code]">
                             </div>
                             <div class="mp-item-field">
                                 <label class="mp-item-label">Qty</label>
@@ -911,8 +916,13 @@
                     </div>`;
 
                 $('#invoiceItemsBody').append(html);
-                // Initialize selectpicker on the newly added row only
-                $('#invoiceItemsBody .mp-item-row').last().find('.selectpicker').selectpicker();
+
+                // Safely initialize selectpicker on the new row
+                const $newRow = $('#invoiceItemsBody .mp-item-row').last();
+                if (typeof $.fn.selectpicker !== 'undefined') {
+                    $newRow.find('.selectpicker').selectpicker();
+                }
+
                 recalculateTotals();
             });
 
