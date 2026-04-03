@@ -110,7 +110,7 @@ $(document).ready(function(){
         var formData = new FormData(this);
         
         $.ajax({
-            url: 'tasksubmit',
+            url: '/tasksubmit',
             type: 'POST',
             data: formData,
             beforeSend: function(){
@@ -151,12 +151,16 @@ $(document).ready(function(){
                 $('#res1').css('color','#ff7b00');
             },
             success: function (response) {
-                // handle success response
-                //console.log(response.data);
-                $('#res1').html(response.success);
-                $('#commentInputs').val('');
-                $('#reloadMsg').html(response.message);
-                $('#res1').css('color','#008000');
+                if (response.success === 'Submitted') {
+                    $('#res1').html('✓ Posted');
+                    $('#commentInputs').val('');
+                    $('#reloadMsg').html(response.message);
+                    $('#res1').css('color','#008000');
+                    setTimeout(() => $('#res1').html(''), 2000);
+                } else {
+                    $('#res1').html(response.success || 'Error');
+                    $('#res1').css('color','#f44336');
+                }
             },
             error: function (response) {
                 // handle error response
@@ -209,8 +213,13 @@ $(document).ready(function(){
                 ele.html('<i class="bx bx-loader"></i> <span>Loading..</span>');
             },
             success: function(response){
-                ele.html('<i class="bx bx-check"></i> <span class="ms-1">Saved</span>');
-                // Removed location.reload() for real-time behavior
+                // In a real-time environment, we refresh the modal to show the new timer state
+                if (typeof refreshTaskDetails === 'function') {
+                    refreshTaskDetails(tskstartId);
+                } else {
+                    // Fallback to text update if refresh fails
+                    ele.html('<i class="bx bx-check"></i> <span class="ms-1">Saved</span>');
+                }
             }
         });
 	});

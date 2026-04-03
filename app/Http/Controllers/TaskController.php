@@ -237,30 +237,33 @@ class TaskController extends Controller
                 ->where('task_comments.taskid', '=', $request->commenttaskid)
                 ->orderBy('task_comments.id', 'DESC')->get();
 
-            $messages = '';
-            foreach ($taskComments as $taskComment) {
-                if ($taskComment->uid == Auth::user()->id) {
-                    $messages .= '<div class="row">
-                    <div class="col-md-12">
-                        <div class="primary-user">
-                            <label class="small text-second">' . ($taskComment->name ?? '') . '</label><br>
-                            <p>' . ($taskComment->comments ?? '') . '</p>
-                            <span class="small text-light">' . ($taskComment->created_at ?? '') . '</span>
+            $messages = '<div class="d-flex flex-column gap-3">';
+            foreach ($taskComments as $c) {
+                $isMine = $c->uid == Auth::user()->id;
+                $initial = strtoupper(substr($c->name ?? 'U', 0, 1));
+                $bgStyle = $isMine ? 'background:rgba(0,102,102,0.12);color:#006666;' : 'background:rgba(26,115,232,0.10);color:#1a73e8;';
+                $boxBg = $isMine ? 'background:#006666; color:#fff;' : 'background:#fff; border:1px solid #e8eaed;';
+                $nameCol = $isMine ? 'color:rgba(255,255,255,0.9);' : 'color:#202124;';
+                $dateCol = $isMine ? 'color:rgba(255,255,255,0.7);' : 'color:#9aa0a6;';
+                $align = $isMine ? 'right' : 'left';
+                $rev = $isMine ? 'flex-row-reverse' : '';
+                $formattedDate = \Carbon\Carbon::parse($c->created_at)->format('d M Y, H:i');
+
+                $messages .= '
+                    <div class="d-flex gap-3 ' . $rev . '">
+                        <div style="width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:0.75rem; font-weight:700; ' . $bgStyle . '">
+                            ' . $initial . '
                         </div>
-                    </div>
-                </div>';
-                } else {
-                    $messages .= '<div class="row">
-                    <div class="col-md-12">
-                        <div class="sec-user">
-                            <label class="small text-default">' . ($taskComment->name ?? '') . '</label><br>
-                            <p>' . ($taskComment->comments ?? '') . '</p>
-                            <span class="small text-dark">' . ($taskComment->created_at ?? '') . '</span>
+                        <div class="p-2 px-3 rounded shadow-sm" style="' . $boxBg . ' max-width:85%;">
+                            <div class="small fw-bold mb-1" style="' . $nameCol . '">' . e($c->name ?? 'Unknown') . '</div>
+                            <div class="small" style="line-height:1.4;">' . e($c->comments ?? '') . '</div>
+                            <div style="font-size:0.65rem; margin-top:6px; ' . $dateCol . ' text-align:' . $align . ';">
+                                ' . $formattedDate . '
+                            </div>
                         </div>
-                    </div>
-                </div>';
-                }
+                    </div>';
             }
+            $messages .= '</div>';
 
             return response(['success' => 'Submitted', 'message' => $messages]);
 

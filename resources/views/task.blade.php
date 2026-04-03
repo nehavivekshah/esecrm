@@ -437,28 +437,32 @@
         }
 
         // Open task modal via AJAX
-        function openTaskAjax(event, taskId) {
+        function openTaskAjax(event, taskId, isRefresh = false) {
             if(event) event.preventDefault();
 
-            document.getElementById('taskAjaxContainer').innerHTML = `
-                <div class="modal-backdrop fade show" style="z-index: 1050;"></div>
-                <div class="modal fade show d-block" tabindex="-1" style="z-index: 1060;">
-                    <div class="modal-dialog modal-xl modal-dialog-centered">
-                        <div class="modal-content" style="border-radius:16px; border:none; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
-                            <div class="p-5 text-center">
-                                <i class="bx bx-loader-alt bx-spin" style="font-size:2rem;color:#006666;"></i>
-                                <p class="mt-2 text-muted">Loading Task Details...</p>
+            const container = document.getElementById('taskAjaxContainer');
+            
+            // Only show loader if we aren't already refreshing an open modal
+            if (!isRefresh) {
+                container.innerHTML = `
+                    <div class="modal-backdrop fade show" style="z-index: 1050;"></div>
+                    <div class="modal fade show d-block" tabindex="-1" style="z-index: 1060;">
+                        <div class="modal-dialog modal-xl modal-dialog-centered">
+                            <div class="modal-content" style="border-radius:16px; border:none; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+                                <div class="p-5 text-center">
+                                    <i class="bx bx-loader-alt bx-spin" style="font-size:2rem;color:#006666;"></i>
+                                    <p class="mt-2 text-muted">Loading Task Details...</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>`;
+                    </div>`;
+            }
 
             fetch('/task-details/' + taskId)
                 .then(response => response.text())
                 .then(html => {
-                    const container = document.getElementById('taskAjaxContainer');
                     if (window.jQuery) {
-                        $('#taskAjaxContainer').html(html);
+                        $(container).html(html);
                     } else {
                         container.innerHTML = html;
                         Array.from(container.querySelectorAll('script')).forEach(oldScript => {
@@ -471,9 +475,18 @@
                 })
                 .catch(error => {
                     console.error('Error fetching task details:', error);
-                    document.getElementById('taskAjaxContainer').innerHTML = '';
+                    if (!isRefresh) container.innerHTML = '';
                     alert('Could not load task details.');
                 });
+        }
+
+        // Helper to refresh current open task without flicker
+        function refreshTaskDetails(taskId) {
+            if (!taskId) {
+                const idEl = document.getElementById('taskid');
+                if (idEl) taskId = idEl.value;
+            }
+            if (taskId) openTaskAjax(null, taskId, true);
         }
 
         // Close task modal
