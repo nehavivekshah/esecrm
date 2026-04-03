@@ -73,6 +73,11 @@
 .select2-search--dropdown .select2-search__field { border: 1px solid #e0e0e0; border-radius: 6px; font-size: .85rem; padding: 6px 10px; }
 .select2-results__option { font-size: .85rem; padding: 8px 12px; }
 .select2-results__option--highlighted { background: #006666 !important; }
+/* Native selects inside Select2 wrapper — no border */
+.cf-select2-wrap select,
+#rf_client,
+#rf_project { border: 0 !important; outline: none !important; box-shadow: none !important; }
+
 /* Modal header */
 .cf-modal-header {
     display: flex; align-items: center; justify-content: space-between;
@@ -320,39 +325,52 @@
 
 <script>
 (function () {
-    // Select2 — Client
-    if (typeof $.fn.select2 !== 'undefined') {
+    function initSelect2() {
+        if (typeof $.fn.select2 === 'undefined') return;
+
         $('#rf_client').select2({
-            placeholder: 'Select a customer...',
-            allowClear: true,
-            dropdownParent: $('#manageRecoveryModal'),
-            width: '100%'
+            placeholder       : 'Search customer...',
+            allowClear        : true,
+            minimumInputLength: 0,
+            dropdownParent    : $('#manageRecoveryModal'),
+            width             : '100%'
         });
-        // Select2 — Project
+
         $('#rf_project').select2({
-            placeholder: 'Select a project...',
-            allowClear: true,
-            dropdownParent: $('#manageRecoveryModal'),
-            width: '100%'
+            placeholder       : 'Search project...',
+            allowClear        : true,
+            minimumInputLength: 0,
+            dropdownParent    : $('#manageRecoveryModal'),
+            width             : '100%'
         });
+
+        // Project "new" toggle
+        const projEl   = document.getElementById('rf_project');
+        const projWrap = document.getElementById('rf_custom_project_wrap');
+        const projName = document.getElementById('rf_project_name');
+
+        function toggleCustomProject() {
+            if (!projEl || !projWrap) return;
+            const show = projEl.value === 'new';
+            projWrap.style.display = show ? '' : 'none';
+            if (projName) projName.required = show;
+        }
+
+        if (projEl) {
+            $(projEl).on('change', toggleCustomProject);
+            toggleCustomProject();
+        }
     }
 
-    // Project "new" toggle
-    const projEl   = document.getElementById('rf_project');
-    const projWrap = document.getElementById('rf_custom_project_wrap');
-    const projName = document.getElementById('rf_project_name');
-
-    function toggleCustomProject() {
-        if (!projEl || !projWrap) return;
-        const show = projEl.value === 'new';
-        projWrap.style.display = show ? '' : 'none';
-        if (projName) projName.required = show;
-    }
-
-    if (projEl) {
-        // Select2 fires 'change', not 'input'
-        $(projEl).on('change', toggleCustomProject);
-        toggleCustomProject();
+    // If Select2 JS isn't loaded yet, load it dynamically then init
+    if (typeof $.fn.select2 !== 'undefined') {
+        initSelect2();
+    } else {
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js';
+        s.onload = initSelect2;
+        document.head.appendChild(s);
     }
 })();
 </script>
+

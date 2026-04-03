@@ -256,8 +256,22 @@
         </div>
     </div>
 
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+
+            function execScripts(container) {
+                container.querySelectorAll('script').forEach(function (oldScript) {
+                    var newScript = document.createElement('script');
+                    Array.from(oldScript.attributes).forEach(function (attr) {
+                        newScript.setAttribute(attr.name, attr.value);
+                    });
+                    newScript.textContent = oldScript.textContent;
+                    document.body.appendChild(newScript);
+                    oldScript.remove();
+                });
+            }
+
             document.querySelectorAll('.open-contract-modal').forEach(function (btn) {
                 btn.addEventListener('click', function (e) {
                     e.preventDefault();
@@ -271,7 +285,10 @@
 
                     fetch(url)
                         .then(function (r) { return r.text(); })
-                        .then(function (html) { content.innerHTML = html; })
+                        .then(function (html) {
+                            content.innerHTML = html;
+                            execScripts(content);  // ← run <script> blocks from the partial
+                        })
                         .catch(function () {
                             content.innerHTML = '<div class="p-5 text-center text-danger"><i class="bx bx-error" style="font-size:2rem;"></i><p>Could not load form. Please try again.</p></div>';
                         });

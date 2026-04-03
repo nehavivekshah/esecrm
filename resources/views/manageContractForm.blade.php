@@ -169,6 +169,9 @@
 }
 .select2-results__option { font-size: .85rem; padding: 8px 12px; }
 .select2-results__option--highlighted { background: #006666 !important; }
+/* Native select inside Select2 wrapper — no border */
+.cf-select2-wrap select,
+#cf_client { border: 0 !important; outline: none !important; box-shadow: none !important; }
 
 /* Modal header */
 .cf-modal-header {

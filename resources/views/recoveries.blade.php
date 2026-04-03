@@ -259,12 +259,28 @@
     <script>
     document.addEventListener('DOMContentLoaded', function () {
 
+        // Execute scripts found inside a container (innerHTML doesn't run them natively)
+        function execScripts(container) {
+            container.querySelectorAll('script').forEach(function (oldScript) {
+                var newScript = document.createElement('script');
+                Array.from(oldScript.attributes).forEach(function (attr) {
+                    newScript.setAttribute(attr.name, attr.value);
+                });
+                newScript.textContent = oldScript.textContent;
+                document.body.appendChild(newScript);
+                oldScript.remove();
+            });
+        }
+
         function loadModal(modalEl, contentEl, url) {
             contentEl.innerHTML = '<div class="d-flex align-items-center justify-content-center" style="height:160px;"><div class="spinner-border text-secondary" style="width:1.5rem;height:1.5rem;"></div></div>';
             bootstrap.Modal.getOrCreateInstance(modalEl).show();
             fetch(url)
                 .then(function (r) { return r.text(); })
-                .then(function (html) { contentEl.innerHTML = html; })
+                .then(function (html) {
+                    contentEl.innerHTML = html;
+                    execScripts(contentEl);  // ← run <script> blocks from the partial
+                })
                 .catch(function () {
                     contentEl.innerHTML = '<div class="p-4 text-center text-danger"><i class="bx bx-error" style="font-size:1.5rem;"></i><p class="mt-2">Failed to load. Please try again.</p></div>';
                 });
