@@ -302,9 +302,21 @@ class TaskController extends Controller
             $task->save();
         }
 
-        // Update status
+        // Update status and sync color (label)
         if ($request->has('status')) {
             $task->status = $request->status;
+            
+            // Auto-link status color to label
+            $statusColors = [
+                '0' => '#80868b', // Open
+                '1' => '#ea4335', // Urgent
+                '2' => '#f29900', // Pending
+                '3' => '#1a73e8', // In Progress
+                '4' => '#34a853', // Done
+                '5' => '#006666', // Closed
+            ];
+            $task->label = $statusColors[$request->status] ?? '#80868b';
+            
             $task->save();
         }
 

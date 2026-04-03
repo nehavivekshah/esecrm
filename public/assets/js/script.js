@@ -175,28 +175,7 @@ $(document).ready(function(){
         
     });
     
-    $(function(){
-    	$("#colorpalet").change(function(){
-    	    var label = $(this).val();
-    	    var tskId = $("#taskid").val();
-    	    
-    	    $.ajax({
-                type: 'get',
-                url: "/tasksubmit",
-                data: {tskId:tskId,label:label},
-                
-                beforeSend: function(){
-                    //alert('....Please wait');
-                },
-                success: function(response){
-                    $("#labelicon").attr("style", "color:"+label+"");
-                },
-                complete: function(response){
-                    $("#labelicon").attr("style", "color:"+label+"");
-                }
-            });
-    	});
-    });
+
     
 	$(document).on("click", ".taskstart", function(e){
 	    let ele = $(this);
