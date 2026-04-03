@@ -27,7 +27,7 @@
                                     <option value="">All Projects</option>
                                     @foreach($projects as $proj)
                                         <option value="{{ $proj->id }}" {{ $activeProjectId == $proj->id ? 'selected' : '' }}>
-                                            {{ $proj->project_title }}
+                                            {{ $proj->name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -68,7 +68,7 @@
                 @if($activeProject)
                     <div class="tk-active-filter-bar mb-3">
                         <i class="bx bx-filter-alt"></i>
-                        Filtered by project: <strong>{{ $activeProject->project_title }}</strong>
+                        Filtered by project: <strong>{{ $activeProject->name }}</strong>
                         <a href="/task" class="tk-clear-filter" title="Clear filter">
                             <i class="bx bx-x"></i> Clear
                         </a>
@@ -174,7 +174,7 @@
                                         <div class="tk-card-relation mt-2 d-flex flex-wrap gap-1">
                                             @if($task->project)
                                                 <span class="pv-badge pv-badge-info" style="font-size: 0.65rem; padding: 1px 6px;">
-                                                    <i class="bx bx-briefcase-alt-2"></i> {{ $task->project->project_title }}
+                                                    <i class="bx bx-briefcase-alt-2"></i> {{ $task->project->name }}
                                                 </span>
                                             @endif
                                             @if($task->parent)
@@ -249,7 +249,7 @@
                                             @foreach($projects as $proj)
                                                 <option value="{{ $proj->id }}"
                                                     {{ $activeProjectId == $proj->id ? 'selected' : '' }}>
-                                                    {{ $proj->project_title }}
+                                                    {{ $proj->name }}
                                                 </option>
                                             @endforeach
                                         </select>

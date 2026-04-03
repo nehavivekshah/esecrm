@@ -35,7 +35,7 @@ class TaskService
 
         // All projects for this company (for filter dropdown)
         $projects = Projects::where('cid', Auth::user()->cid)
-            ->orderBy('project_title', 'asc')
+            ->orderBy('name', 'asc')
             ->get();
 
         $kanbanData = [];

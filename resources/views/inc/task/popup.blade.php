@@ -138,7 +138,7 @@
                         <option value="">— No Project —</option>
                         @foreach($projects as $proj)
                             <option value="{{ $proj->id }}" {{ $task->project_id == $proj->id ? 'selected' : '' }}>
-                                {{ $proj->project_title }}
+                                {{ $proj->name }}
                             </option>
                         @endforeach
                     </select>

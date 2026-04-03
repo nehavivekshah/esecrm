@@ -136,7 +136,7 @@ class TaskController extends Controller
         $allUsers = User::where('cid', Auth::user()->cid)->orderBy('name')->get();
 
         // All projects for project picker in popup
-        $projects = Projects::where('cid', Auth::user()->cid)->orderBy('project_title')->get();
+        $projects = Projects::where('cid', Auth::user()->cid)->orderBy('name')->get();
 
         return view('inc.task.popup', [
             'taskSingle'      => $taskSingle,
