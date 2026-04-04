@@ -202,7 +202,7 @@
     <!-- ═══════════════════════════════════════════════════════════
          LEAD DETAILS MODAL  —  Contract-style UI
     ════════════════════════════════════════════════════════════ -->
-    <div class="modal fade" id="leadModal" tabindex="-1" aria-labelledby="leadModalLabel" aria-hidden="true">
+    <div class="modal fade" id="leadModal" tabindex="-1" aria-labelledby="leadModalLabel">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" style="max-width:860px;">
             <div class="modal-content" style="border-radius:16px; border:none;">
 
@@ -760,9 +760,10 @@
                     $('#v_website').html(l.website ? '<a href="'+l.website+'" target="_blank">'+l.website+'</a>' : '—');
                     $('#v_address_full').text([location.address, location.city, location.state, location.zip, location.country].filter(Boolean).join(', ') || '—');
                     $('#v_purpose').text(l.purpose || '—');
-                    $('#v_value').text(l.values ? '₹' + Number(l.values).toLocaleString('en-IN') : '—');
+                    var rawVal = parseFloat(l.values);
+                    $('#v_value').text(!isNaN(rawVal) && rawVal > 0 ? '₹' + rawVal.toLocaleString('en-IN') : '—');
                     $('#v_poc').text(l.poc || '—');
-                    $('#v_assigned').text(userMap[l.assigned] || l.assigned || '—');
+                    $('#v_assigned').text(userMap[l.assigned] || (l.assigned ? '#' + l.assigned : '—'));
                     $('#v_tags').text(l.tags || '—');
 
                     // ── Edit Form pre-fill ──
@@ -885,13 +886,18 @@
             });
         });
 
-        // Reset to Profile tab every time the modal opens
-        document.getElementById('leadModal').addEventListener('show.bs.modal', function () {
-            ldShowTab('tab-profile', document.querySelector('#leadModalTabs .nav-link'));
-            var viewMode = document.getElementById('ld-view-mode');
-            var editMode = document.getElementById('ld-edit-mode');
-            if (viewMode) viewMode.style.display = 'block';
-            if (editMode) editMode.style.display = 'none';
+        // Reset to Profile tab every time the modal opens (inside ready so element exists)
+        $(document).ready(function () {
+            var modalEl = document.getElementById('leadModal');
+            if (modalEl) {
+                modalEl.addEventListener('show.bs.modal', function () {
+                    ldShowTab('tab-profile', document.querySelector('#leadModalTabs .nav-link'));
+                    var viewMode = document.getElementById('ld-view-mode');
+                    var editMode = document.getElementById('ld-edit-mode');
+                    if (viewMode) viewMode.style.display = 'block';
+                    if (editMode) editMode.style.display = 'none';
+                });
+            }
         });
     </script>
 
