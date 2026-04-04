@@ -237,7 +237,7 @@
 
     {{-- Lead Details Popup Modal --}}
     <div class="modal fade" id="kbLeadModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable" style="max-width:540px;">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable" style="max-width:900px;">
             <div class="modal-content" style="border-radius:16px; overflow:hidden; border:none;">
 
                 {{-- Header Banner --}}
@@ -335,31 +335,40 @@
                             <div class="ld-info-card" style="grid-column:1/-1;">
                                 <div class="ld-info-card-header"><i class="bx bx-brain"></i> CRM Intelligence</div>
                                 <div class="row g-0">
-                                    <div class="col-6 pe-2 border-end">
+                                    <div class="col-md-6 pe-md-3" style="border-right:1.5px solid #f1f3f4;">
                                         <div class="ld-info-row">
                                             <span class="ld-info-label"><i class="bx bx-target-lock"></i> Purpose</span>
                                             <span class="ld-info-val" id="kb_purpose">—</span>
                                         </div>
                                         <div class="ld-info-row">
-                                            <span class="ld-info-label"><i class="bx bx-rupee"></i> Value</span>
+                                            <span class="ld-info-label"><i class="bx bx-rupee"></i> Lead Value</span>
                                             <span class="ld-info-val fw-bold text-success" id="kb_value">—</span>
                                         </div>
+                                        <div class="ld-info-row">
+                                            <span class="ld-info-label"><i class="bx bx-user-check"></i> POC</span>
+                                            <span class="ld-info-val" id="kb_poc">—</span>
+                                        </div>
+                                        <div class="ld-info-row">
+                                            <span class="ld-info-label"><i class="bx bx-star"></i> Lead Score</span>
+                                            <span class="ld-info-val" id="kb_score">—</span>
+                                        </div>
                                     </div>
-                                    <div class="col-6 ps-2">
+                                    <div class="col-md-6 ps-md-3">
                                         <div class="ld-info-row">
                                             <span class="ld-info-label"><i class="bx bx-user-pin"></i> Assigned To</span>
                                             <span class="ld-info-val text-primary fw-bold" id="kb_assigned">—</span>
                                         </div>
                                         <div class="ld-info-row">
+                                            <span class="ld-info-label"><i class="bx bx-error"></i> Potential Duplicate</span>
+                                            <span class="ld-info-val" id="kb_duplicate">—</span>
+                                        </div>
+                                        <div class="ld-info-row">
                                             <span class="ld-info-label"><i class="bx bx-purchase-tag-alt"></i> Tags</span>
                                             <span class="ld-info-val" id="kb_tags">—</span>
                                         </div>
-                                    </div>
-                                    <div class="col-12 mt-2 pt-2 border-top">
                                         <div class="ld-info-row">
                                             <span class="ld-info-label"><i class="bx bx-map-pin"></i> Location</span>
-                                            <span class="ld-info-val text-muted" id="kb_location_val"
-                                                style="font-size:0.75rem;">—</span>
+                                            <span class="ld-info-val text-muted" id="kb_location_val" style="font-size:0.75rem;">—</span>
                                         </div>
                                     </div>
                                 </div>
@@ -695,8 +704,20 @@
 
                 $('#kb_purpose').text(l.purpose || '—');
                 $('#kb_value').text(l.values ? '₹' + Number(l.values).toLocaleString('en-IN') : '—');
+                $('#kb_poc').text(l.poc || '—');
                 $('#kb_assigned').text(kbUserMap[l.assigned] || l.assigned || '—');
                 $('#kb_tags').text(l.tags || '—');
+
+                // Score and Duplicate mapping
+                let scoreHtml = '—';
+                if (l.score !== null && l.score !== undefined && l.score !== '') {
+                    let scoreColor = l.score >= 70 ? 'success' : (l.score >= 40 ? 'warning' : 'danger');
+                    scoreHtml = '<span class="badge bg-' + scoreColor + ' text-white"><i class="bx bxs-star me-1"></i>' + l.score + '</span>';
+                }
+                $('#kb_score').html(scoreHtml);
+
+                let isDup = (l.is_duplicate == 1 || String(l.is_duplicate) === 'true' || String(l.is_duplicate) === '1');
+                $('#kb_duplicate').html(isDup ? '<span class="badge bg-danger text-white"><i class="bx bx-error me-1"></i>Yes</span>' : '<span class="badge bg-success text-white"><i class="bx bx-check me-1"></i>No</span>');
 
                 // Location combined
                 $('#kb_location_val').text([loc.address, loc.city, loc.state, loc.zip, loc.country].filter(Boolean).join(', ') || '—');
