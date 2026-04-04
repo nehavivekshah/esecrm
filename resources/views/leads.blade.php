@@ -200,39 +200,37 @@
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════
-         LEAD DETAILS OFFCANVAS  —  Enhanced Panel
+         LEAD DETAILS OFFCANVAS — Contract-Style Panel
     ════════════════════════════════════════════════════════════ -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="leadModal" aria-labelledby="leadModalLabel"
          style="width:860px;max-width:100vw;">
 
-        <!-- ── Header Banner ── -->
-        <!-- ── Header Banner ── -->
+        <!-- ── Header (matching cf-modal-header) ── -->
         <div class="ld-header">
             <div class="ld-header-content">
                 <div class="d-flex align-items-center gap-3 flex-1 min-w-0">
                     <div class="ld-avatar" id="leadAvatarBadge">L</div>
                     <div class="min-w-0">
-                        <h5 class="ld-name" id="ld_display_name">Lead Details</h5>
-                        <span class="ld-company" id="ld_display_company">—</span>
-                        <div class="mt-2 text-white-50" style="font-size:0.75rem;">
-                             <i class="bx bx-calendar-plus me-1"></i> Added on <span id="ld_display_since">—</span>
-                        </div>
+                        <p class="ld-name mb-0" id="ld_display_name">Lead Details</p>
+                        <p class="ld-company mb-0" id="ld_display_company">—</p>
+                        <p class="ld-company mb-0" style="margin-top:2px;">
+                            <i class="bx bx-calendar-plus me-1" style="font-size:0.7rem;"></i> Added on <span id="ld_display_since">—</span>
+                        </p>
                     </div>
                 </div>
                 <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                    <span class="ld-status-chip" id="ld_status_chip" style="background:#f29900 !important; color:#fff !important;">Fresh</span>
+                    <span class="ld-status-chip" id="ld_status_chip">Fresh</span>
                     <a class="ld-quick-btn" id="ld_btn_call" href="#" title="Call">
                         <i class="bx bx-phone"></i>
                     </a>
-                    <a class="ld-quick-btn" id="ld_btn_wa" style="background:rgba(37,211, green, 0.2) !important; color:#25D366 !important; border-color:rgba(37,211,102,0.3) !important;" href="#" target="_blank" title="WhatsApp">
+                    <a class="ld-quick-btn" id="ld_btn_wa" href="#" target="_blank" title="WhatsApp"
+                       style="background:rgba(37,211,102,0.2);color:#25D366 !important;border-color:rgba(37,211,102,0.3);">
                         <i class="bx bxl-whatsapp"></i>
                     </a>
                     <a class="ld-quick-btn" id="ld_btn_mail" href="#" title="Email">
                         <i class="bx bx-envelope"></i>
                     </a>
-                    <button type="button" class="btn text-white ps-2 pe-0" data-bs-dismiss="offcanvas" aria-label="Close" style="box-shadow:none;">
-                        <i class="bx bx-x" style="font-size:1.8rem;"></i>
-                    </button>
+                    <button type="button" class="btn-close btn-close-white ms-1" data-bs-dismiss="offcanvas" aria-label="Close" style="opacity:.8;"></button>
                 </div>
             </div>
         </div>
@@ -315,14 +313,14 @@
                                 <div class="ld-info-card" style="grid-column: 1 / -1;">
                                     <div class="ld-info-card-header"><i class="bx bx-brain"></i> CRM Intelligence</div>
                                     <div class="row g-0">
-                                        <div class="col-md-6 pe-md-3 border-end">
+                                        <div class="col-md-6 pe-md-3" style="border-right:1.5px solid #f1f3f4;">
                                             <div class="ld-info-row">
                                                 <span class="ld-info-label"><i class="bx bx-target-lock"></i> Purpose</span>
                                                 <span class="ld-info-val" id="v_purpose">—</span>
                                             </div>
                                             <div class="ld-info-row">
                                                 <span class="ld-info-label"><i class="bx bx-rupee"></i> Lead Value</span>
-                                                <span class="ld-info-val fw-bold text-success" id="v_value">—</span>
+                                                <span class="ld-info-val" id="v_value" style="color:#34a853;font-weight:700;">—</span>
                                             </div>
                                             <div class="ld-info-row">
                                                 <span class="ld-info-label"><i class="bx bx-user-check"></i> POC</span>
@@ -332,7 +330,7 @@
                                         <div class="col-md-6 ps-md-3">
                                             <div class="ld-info-row">
                                                 <span class="ld-info-label"><i class="bx bx-user-pin"></i> Assigned To</span>
-                                                <span class="ld-info-val text-primary fw-bold" id="v_assigned">—</span>
+                                                <span class="ld-info-val" id="v_assigned" style="color:#006666;font-weight:700;">—</span>
                                             </div>
                                             <div class="ld-info-row">
                                                 <span class="ld-info-label"><i class="bx bx-purchase-tag-alt"></i> Tags</span>
@@ -340,7 +338,7 @@
                                             </div>
                                             <div class="ld-info-row">
                                                 <span class="ld-info-label"><i class="bx bx-map-pin"></i> Location</span>
-                                                <span class="ld-info-val text-muted" id="v_address_full" style="font-size:0.75rem;">—</span>
+                                                <span class="ld-info-val" id="v_address_full" style="font-size:0.78rem;color:#5f6368;">—</span>
                                             </div>
                                         </div>
                                     </div>
@@ -368,46 +366,47 @@
                         <div id="ld-edit-mode" style="display:none;">
                             <div class="ld-edit-banner">
                                 <i class="bx bx-edit-alt"></i> Editing Lead
-                                <button type="button" class="ms-auto ld-btn ld-btn-ghost btn-sm" id="ld_edit_cancel">
+                                <button type="button" class="ms-auto ld-btn ld-btn-ghost" id="ld_edit_cancel" style="padding:5px 12px;font-size:.78rem;">
                                     <i class="bx bx-x"></i> Cancel
                                 </button>
                             </div>
                             <form id="editLeadForm">
                                 @csrf
                                 <input type="hidden" id="m_id" name="id">
-                                <div class="row g-3 p-3">
+                                <div class="row g-3 p-3" style="background:#f4fbfb;">
+
                                     <div class="ld-section-label col-12">Contact Information</div>
                                     <div class="col-md-4">
-                                        <label class="ld-label">Full Name *</label>
-                                        <div class="input-group input-group-sm">
+                                        <label class="ld-label">Full Name <span style="color:#ea4335;">*</span></label>
+                                        <div class="input-group">
                                             <span class="input-group-text"><i class="bx bx-user"></i></span>
                                             <input type="text" class="form-control" id="m_name" name="name" placeholder="Full Name" required>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="ld-label">Email</label>
-                                        <div class="input-group input-group-sm">
+                                        <div class="input-group">
                                             <span class="input-group-text"><i class="bx bx-envelope"></i></span>
                                             <input type="email" class="form-control" id="m_email" name="email" placeholder="Email">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="ld-label">Mobile *</label>
-                                        <div class="input-group input-group-sm">
+                                        <label class="ld-label">Mobile <span style="color:#ea4335;">*</span></label>
+                                        <div class="input-group">
                                             <span class="input-group-text"><i class="bx bx-phone"></i></span>
                                             <input type="text" class="form-control" id="m_mob" name="mob" placeholder="91XXXXXXXXXX" required>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="ld-label">WhatsApp</label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text" style="color:#25d366"><i class="bx bxl-whatsapp"></i></span>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bx bxl-whatsapp"></i></span>
                                             <input type="text" class="form-control" id="m_whatsapp" name="whatsapp" placeholder="91XXXXXXXXXX">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="ld-label">Language</label>
-                                        <div class="input-group input-group-sm">
+                                        <div class="input-group">
                                             <span class="input-group-text"><i class="bx bx-world"></i></span>
                                             <input type="text" class="form-control" id="m_language" name="language" placeholder="EN / HI">
                                         </div>
@@ -416,35 +415,35 @@
                                     <div class="ld-section-label col-12">Business Details</div>
                                     <div class="col-md-4">
                                         <label class="ld-label">Company</label>
-                                        <div class="input-group input-group-sm">
+                                        <div class="input-group">
                                             <span class="input-group-text"><i class="bx bx-briefcase"></i></span>
                                             <input type="text" class="form-control" id="m_company" name="company" placeholder="Company">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="ld-label">Position</label>
-                                        <div class="input-group input-group-sm">
+                                        <div class="input-group">
                                             <span class="input-group-text"><i class="bx bx-user-pin"></i></span>
                                             <input type="text" class="form-control" id="m_position" name="position" placeholder="e.g. Manager">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="ld-label">Industry</label>
-                                        <div class="input-group input-group-sm">
+                                        <div class="input-group">
                                             <span class="input-group-text"><i class="bx bx-building"></i></span>
                                             <input type="text" class="form-control" id="m_industry" name="industry" placeholder="e.g. IT">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="ld-label">GST No.</label>
-                                        <div class="input-group input-group-sm">
+                                        <div class="input-group">
                                             <span class="input-group-text"><i class="bx bx-id-card"></i></span>
                                             <input type="text" class="form-control" id="m_gstno" name="gstno" placeholder="GSTIN">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="ld-label">Website</label>
-                                        <div class="input-group input-group-sm">
+                                        <div class="input-group">
                                             <span class="input-group-text"><i class="bx bx-link"></i></span>
                                             <input type="url" class="form-control" id="m_website" name="website" placeholder="https://">
                                         </div>
@@ -453,35 +452,35 @@
                                     <div class="ld-section-label col-12">Address</div>
                                     <div class="col-md-4">
                                         <label class="ld-label">Street</label>
-                                        <div class="input-group input-group-sm">
+                                        <div class="input-group">
                                             <span class="input-group-text"><i class="bx bx-home"></i></span>
                                             <input type="text" class="form-control" id="m_address" name="address[address]" placeholder="Street">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="ld-label">City</label>
-                                        <div class="input-group input-group-sm">
+                                        <div class="input-group">
                                             <span class="input-group-text"><i class="bx bx-map-alt"></i></span>
                                             <input type="text" class="form-control" id="m_city" name="address[city]" placeholder="City">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="ld-label">State</label>
-                                        <div class="input-group input-group-sm">
+                                        <div class="input-group">
                                             <span class="input-group-text"><i class="bx bx-map-pin"></i></span>
                                             <input type="text" class="form-control" id="m_state" name="address[state]" placeholder="State">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="ld-label">Country</label>
-                                        <div class="input-group input-group-sm">
+                                        <div class="input-group">
                                             <span class="input-group-text"><i class="bx bx-globe"></i></span>
                                             <input type="text" class="form-control" id="m_country" name="address[country]" placeholder="Country">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="ld-label">ZIP</label>
-                                        <div class="input-group input-group-sm">
+                                        <div class="input-group">
                                             <span class="input-group-text"><i class="bx bx-pin"></i></span>
                                             <input type="text" class="form-control" id="m_zip" name="address[zip]" placeholder="ZIP Code">
                                         </div>
@@ -490,28 +489,28 @@
                                     <div class="ld-section-label col-12">CRM Intelligence</div>
                                     <div class="col-md-4">
                                         <label class="ld-label">Purpose</label>
-                                        <div class="input-group input-group-sm">
+                                        <div class="input-group">
                                             <span class="input-group-text"><i class="bx bx-target-lock"></i></span>
                                             <input type="text" class="form-control" id="m_purpose" name="purpose" placeholder="e.g. Sales">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="ld-label">Lead Value (₹)</label>
-                                        <div class="input-group input-group-sm">
+                                        <div class="input-group">
                                             <span class="input-group-text"><i class="bx bx-rupee"></i></span>
                                             <input type="number" class="form-control" id="m_value" name="values" placeholder="0">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="ld-label">POC</label>
-                                        <div class="input-group input-group-sm">
+                                        <div class="input-group">
                                             <span class="input-group-text"><i class="bx bx-user-check"></i></span>
                                             <input type="text" class="form-control" id="m_poc" name="poc" placeholder="Point of Contact">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="ld-label">Assign Salesperson</label>
-                                        <div class="input-group input-group-sm">
+                                        <div class="input-group">
                                             <span class="input-group-text"><i class="bx bx-share-alt"></i></span>
                                             <select class="form-select" id="m_assigned" name="assigned">
                                                 <option value="">— Select —</option>
@@ -523,14 +522,14 @@
                                     </div>
                                     <div class="col-md-4">
                                         <label class="ld-label">Tags</label>
-                                        <div class="input-group input-group-sm">
+                                        <div class="input-group">
                                             <span class="input-group-text"><i class="bx bx-purchase-tag-alt"></i></span>
                                             <input type="text" class="form-control" id="m_tags" name="tags" placeholder="K2, Hot, VIP">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="ld-label">Status</label>
-                                        <div class="input-group input-group-sm">
+                                        <div class="input-group">
                                             <span class="input-group-text"><i class="bx bx-list-check"></i></span>
                                             <select name="status" id="m_status" class="form-select">
                                                 <option value="0">🔵 New / Fresh</option>
@@ -543,14 +542,14 @@
                                         </div>
                                     </div>
 
-                                    <!-- Edit Footer -->
+                                    <!-- Edit Footer (matching cf-modal-footer) -->
                                     <div class="col-12">
                                         <div class="ld-edit-footer">
                                             <button type="reset" class="ld-btn ld-btn-ghost">
                                                 <i class="bx bx-reset"></i> Reset
                                             </button>
                                             <button type="submit" class="ld-btn ld-btn-primary">
-                                                <i class="bx bx-check-circle"></i> Save Changes
+                                                <i class="bx bx-check"></i> Save Changes
                                             </button>
                                         </div>
                                     </div>
@@ -577,14 +576,13 @@
                                 @csrf
                                 <input type="hidden" name="lead_id" id="c_lead_id">
                                 <div class="ld-note-field">
-                                    <label class="ld-label">Message *</label>
-                                    <textarea name="msg" id="c_msg" class="form-control" rows="5"
+                                    <label class="ld-label">Message <span style="color:#ea4335;">*</span></label>
+                                    <textarea name="msg" id="c_msg" rows="5"
                                         placeholder="Write a note about this conversation…" required></textarea>
                                 </div>
                                 <div class="ld-note-field">
-                                    <label class="ld-label"><i class="bx bx-alarm"></i> Next Reminder <small class="text-muted">(optional)</small></label>
-                                    <input type="datetime-local" name="next_date" id="c_next_date"
-                                        class="form-control form-control-sm">
+                                    <label class="ld-label"><i class="bx bx-alarm"></i> Next Reminder <small style="color:#9aa0a6;">(optional)</small></label>
+                                    <input type="datetime-local" name="next_date" id="c_next_date">
                                 </div>
                                 <button type="submit" class="ld-btn ld-btn-primary w-100">
                                     <i class="bx bx-save"></i> Save Note
@@ -596,22 +594,22 @@
 
                 <!-- ══ PROPOSALS TAB ══ -->
                 <div class="ld-tab-pane" id="tab-porposal" style="display:none;">
-                    <div class="p-3">
+                    <div style="padding:20px;">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="fw-bold" style="color:#202124;font-size:0.95rem;"><i class="bx bx-file me-1" style="color:#006666;"></i> Proposals</span>
-                            <a href="/manage-proposal" class="ld-btn ld-btn-primary" style="font-size:0.78rem;padding:5px 14px;">
+                            <div class="ld-section-label" style="margin:0;border:none;padding:0;">Proposals</div>
+                            <a href="/manage-proposal" class="ld-btn ld-btn-primary" style="font-size:0.78rem;padding:6px 14px;">
                                 <i class="bx bx-plus"></i> New Proposal
                             </a>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-hover mb-0" style="font-size:0.82rem;">
-                                <thead style="background:#006666 !important;">
+                            <table class="table table-hover mb-0" style="font-size:0.82rem;border-radius:10px;overflow:hidden;">
+                                <thead style="background:linear-gradient(135deg,#005757,#007e7e);">
                                     <tr>
-                                        <th style="color:#ffffff !important;font-weight:600;">#ID</th>
-                                        <th style="color:#ffffff !important;font-weight:600;">Subject</th>
-                                        <th style="color:#ffffff !important;font-weight:600;">Total</th>
-                                        <th style="color:#ffffff !important;font-weight:600;">Date</th>
-                                        <th style="color:#ffffff !important;font-weight:600;">Status</th>
+                                        <th style="color:#fff !important;font-weight:600;border:none;padding:10px 12px;">#ID</th>
+                                        <th style="color:#fff !important;font-weight:600;border:none;padding:10px 12px;">Subject</th>
+                                        <th style="color:#fff !important;font-weight:600;border:none;padding:10px 12px;">Total</th>
+                                        <th style="color:#fff !important;font-weight:600;border:none;padding:10px 12px;">Date</th>
+                                        <th style="color:#fff !important;font-weight:600;border:none;padding:10px 12px;">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody id="Proposals"></tbody>
@@ -622,11 +620,11 @@
 
                 <!-- ══ ASSIGN TAB ══ -->
                 <div class="ld-tab-pane" id="tab-assign" style="display:none;">
-                    <div class="p-4">
+                    <div style="padding:28px 20px;">
                         <div class="ld-assign-card">
                             <div class="ld-assign-icon"><i class="bx bx-user-plus"></i></div>
-                            <h6 class="mb-1" style="font-weight:700;color:#202124;">Assign Salesperson</h6>
-                            <p class="text-muted mb-3" style="font-size:0.82rem;">Re-assign this lead to a different salesperson instantly.</p>
+                            <h6 class="mb-1" style="font-weight:700;color:#202124;font-size:0.95rem;">Assign Salesperson</h6>
+                            <p style="font-size:0.78rem;color:#5f6368;margin-bottom:18px;">Re-assign this lead to a different salesperson instantly.</p>
                             <div class="input-group mb-3">
                                 <span class="input-group-text"><i class="bx bx-user"></i></span>
                                 <select class="form-select" id="quick_assign_user">
