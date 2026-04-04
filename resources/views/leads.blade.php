@@ -327,11 +327,19 @@
                                                 <span class="ld-info-label"><i class="bx bx-user-check"></i> POC</span>
                                                 <span class="ld-info-val" id="v_poc">—</span>
                                             </div>
+                                            <div class="ld-info-row">
+                                                <span class="ld-info-label"><i class="bx bx-star"></i> Lead Score</span>
+                                                <span class="ld-info-val" id="v_score">—</span>
+                                            </div>
                                         </div>
                                         <div class="col-md-6 ps-md-3">
                                             <div class="ld-info-row">
                                                 <span class="ld-info-label"><i class="bx bx-user-pin"></i> Assigned To</span>
                                                 <span class="ld-info-val" id="v_assigned" style="color:#006666;font-weight:700;">—</span>
+                                            </div>
+                                            <div class="ld-info-row">
+                                                <span class="ld-info-label"><i class="bx bx-error"></i> Potential Duplicate</span>
+                                                <span class="ld-info-val" id="v_duplicate">—</span>
                                             </div>
                                             <div class="ld-info-row">
                                                 <span class="ld-info-label"><i class="bx bx-purchase-tag-alt"></i> Tags</span>
@@ -862,6 +870,10 @@
                     $('#v_poc').text(l.poc || '—');
                     $('#v_assigned').text(userMap[l.assigned] || l.assigned || '—');
                     $('#v_tags').text(l.tags || '—');
+
+                    // Score and Duplicate mapping
+                    $('#v_score').html(l.score ? '<span class="badge bg-primary text-white"><i class="bx bxs-star me-1"></i>' + l.score + '</span>' : '—');
+                    $('#v_duplicate').html(l.is_duplicate ? '<span class="badge bg-danger text-white"><i class="bx bx-error me-1"></i>Yes</span>' : '<span class="badge bg-success text-white"><i class="bx bx-check me-1"></i>No</span>');
 
                     // ── Edit Form pre-fill ──
                     $('#m_name').val(l.name);
