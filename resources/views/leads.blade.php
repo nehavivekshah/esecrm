@@ -200,10 +200,11 @@
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════
-         LEAD DETAILS OFFCANVAS — Contract-Style Panel
+         LEAD DETAILS MODAL — Contract-Style Popup
     ════════════════════════════════════════════════════════════ -->
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="leadModal" aria-labelledby="leadModalLabel"
-         style="width:860px;max-width:100vw;">
+    <div class="modal fade" id="leadModal" tabindex="-1" aria-labelledby="leadModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable" style="max-width:900px;">
+    <div class="modal-content" style="border-radius:16px; border:none; overflow:hidden;">
 
         <!-- ── Header (matching cf-modal-header) ── -->
         <div class="ld-header">
@@ -230,7 +231,7 @@
                     <a class="ld-quick-btn" id="ld_btn_mail" href="#" title="Email">
                         <i class="bx bx-envelope"></i>
                     </a>
-                    <button type="button" class="btn-close btn-close-white ms-1" data-bs-dismiss="offcanvas" aria-label="Close" style="opacity:.8;"></button>
+                    <button type="button" class="btn-close btn-close-white ms-1" data-bs-dismiss="modal" aria-label="Close" style="opacity:.8;"></button>
                 </div>
             </div>
         </div>
@@ -252,7 +253,7 @@
         </div>
 
         <!-- ── Tab Content ── -->
-        <div class="offcanvas-body ld-body">
+        <div class="modal-body ld-body">
             <div class="tab-content h-100">
 
                 <!-- ══ PROFILE TAB ══ -->
@@ -643,8 +644,10 @@
                 </div>
 
             </div>{{-- /tab-content --}}
-        </div>{{-- /offcanvas-body --}}
-    </div>{{-- /offcanvas --}}
+        </div>{{-- /modal-body --}}
+    </div>{{-- /modal-content --}}
+    </div>{{-- /modal-dialog --}}
+    </div>{{-- /modal --}}
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -899,7 +902,7 @@
                     });
                     $('#commentHistory').html(html || '<p class="text-muted text-center p-4" style="font-size:0.82rem">No conversations yet.</p>');
 
-                    var modal = new bootstrap.Offcanvas(document.getElementById('leadModal'));
+                    var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('leadModal'));
                     modal.show();
                 });
             });
@@ -946,7 +949,7 @@
                 e.preventDefault();
                 $.post("{{ route('leads.update') }}", $(this).serialize(), function (res) {
                     alert(res.message || 'Profile Updated');
-                    $('#leadModal').offcanvas('hide');
+                    bootstrap.Modal.getOrCreateInstance(document.getElementById('leadModal')).hide();
                     table.ajax.reload(null, false);
                 }).fail(function (xhr) {
                     alert('Error: ' + (xhr.responseJSON?.message || xhr.statusText));
@@ -957,7 +960,7 @@
                 e.preventDefault();
                 $.post("{{ route('leads.storeComment') }}", $(this).serialize(), function () {
                     alert('Comment Saved');
-                    $('#leadModal').offcanvas('hide');
+                    bootstrap.Modal.getOrCreateInstance(document.getElementById('leadModal')).hide();
                     table.ajax.reload(null, false);
                 });
             });
@@ -971,7 +974,7 @@
                         id: id
                     }, function (res) {
                         alert('Lead deleted successfully');
-                        $('#leadModal').offcanvas('hide');
+                        bootstrap.Modal.getOrCreateInstance(document.getElementById('leadModal')).hide();
                         $('#leadslists').DataTable().ajax.reload(null, false);
                     }).fail(function (xhr) {
                         alert('Error: ' + xhr.statusText);
@@ -996,8 +999,8 @@
             if (btnEl) btnEl.classList.add('active');
         }
 
-        // Reset to Profile tab every time the offcanvas opens
-        document.getElementById('leadModal').addEventListener('show.bs.offcanvas', function () {
+        // Reset to Profile tab every time the modal opens
+        document.getElementById('leadModal').addEventListener('show.bs.modal', function () {
             var firstBtn = this.querySelector('.ld-tab-nav .ld-tab');
             ldShowTab('tab-profile', firstBtn);
             // Also reset edit mode back to view mode
