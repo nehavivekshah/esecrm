@@ -825,6 +825,7 @@
                 const currentTime = new Date().getTime();
                 const timeDifference = reminderTime - currentTime;
 
+                console.log(reminderTime - currentTime);
 
                 // Get the row by class
                 const leadRowClass = `.lead-row-${reminderTime}`; // Class selector in jQuery
@@ -900,7 +901,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const searchForm = document.getElementById('searchForm');
-            if (!searchForm) return console.warn("searchForm: not present on this page.");
+            if (!searchForm) return console.error("searchForm missing.");
 
             const searchInput = document.getElementById('searchInput');
             const searchLead = document.getElementById('searchLead');
