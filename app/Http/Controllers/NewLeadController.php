@@ -397,7 +397,7 @@ class NewLeadController extends Controller
         $request->validate([
             'lead_id' => 'required',
             'msg' => 'required',
-            'next_date' => 'required'
+            'next_date' => 'nullable|date'
         ]);
 
         DB::table('lead_comments')->insert([

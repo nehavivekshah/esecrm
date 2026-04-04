@@ -254,36 +254,6 @@ class LeadController extends Controller
     }
 
 
-    /**
-     * Bulk-assign multiple leads to a salesperson.
-     */
-    public function bulkAssignLeads(Request $request)
-    {
-        $request->validate([
-            'lead_ids'    => 'required|array|min:1',
-            'lead_ids.*'  => 'integer',
-            'assigned_to' => 'required|integer',
-        ]);
-
-        // Verify the target user belongs to the same company
-        $user = User::where('id', $request->assigned_to)
-            ->where('cid', Auth::user()->cid)
-            ->first();
-
-        if (!$user) {
-            return response()->json(['success' => false, 'message' => 'Invalid salesperson.'], 422);
-        }
-
-        $updated = Leads::whereIn('id', $request->lead_ids)
-            ->where('cid', Auth::user()->cid)
-            ->update(['assigned' => $user->id]);
-
-        return response()->json([
-            'success' => true,
-            'message' => $updated . ' lead(s) assigned to ' . $user->name . '.',
-        ]);
-    }
-
 
     public function manageLeadPost(Request $request)
     {

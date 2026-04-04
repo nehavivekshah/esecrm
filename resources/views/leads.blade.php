@@ -200,164 +200,119 @@
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════
-         LEAD DETAILS OFFCANVAS  —  Enhanced Panel
+         LEAD DETAILS MODAL  —  Contract-style UI
     ════════════════════════════════════════════════════════════ -->
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="leadModal" aria-labelledby="leadModalLabel"
-         style="width:860px;max-width:100vw;">
+    <div class="modal fade" id="leadModal" tabindex="-1" aria-labelledby="leadModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable" style="max-width:860px;">
+            <div class="modal-content" style="border-radius:16px; border:none;">
 
-        <!-- ── Header Banner ── -->
-        <!-- ── Header Banner ── -->
-        <div class="ld-header">
-            <div class="ld-header-content">
-                <div class="d-flex align-items-center gap-3 flex-1 min-w-0">
-                    <div class="ld-avatar" id="leadAvatarBadge">L</div>
-                    <div class="min-w-0">
-                        <h5 class="ld-name" id="ld_display_name">Lead Details</h5>
-                        <span class="ld-company" id="ld_display_company">—</span>
-                        <div class="mt-2 text-white-50" style="font-size:0.75rem;">
-                             <i class="bx bx-calendar-plus me-1"></i> Added on <span id="ld_display_since">—</span>
+                <!-- ── Modal Header (matches contract style) ── -->
+                <div class="modal-header" style="border-bottom:1px solid #f0f0f0; padding:16px 20px; gap:12px; align-items:center;">
+                    <div class="d-flex align-items-center gap-3 flex-1 min-w-0">
+                        <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#004d4d,#006666);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;flex-shrink:0;" id="leadAvatarBadge">L</div>
+                        <div class="min-w-0">
+                            <h5 class="modal-title mb-0" id="ld_display_name" style="font-size:1.05rem; font-weight:700; color:#202124;">Lead Details</h5>
+                            <div class="d-flex align-items-center gap-2 mt-1">
+                                <span id="ld_display_company" style="font-size:0.8rem;color:#5f6368;"></span>
+                                <span id="ld_status_chip" class="badge" style="font-size:0.7rem;font-weight:600;background:#f9ab00;color:#fff;">Fresh</span>
+                            </div>
                         </div>
                     </div>
+                    <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                        <a id="ld_btn_call" href="#" class="btn btn-sm btn-light border rounded-pill" title="Call" style="font-size:0.8rem;color:#006666;"><i class="bx bx-phone"></i></a>
+                        <a id="ld_btn_wa" href="#" target="_blank" class="btn btn-sm btn-light border rounded-pill" title="WhatsApp" style="font-size:0.8rem;color:#25d366;"><i class="bx bxl-whatsapp"></i></a>
+                        <a id="ld_btn_mail" href="#" class="btn btn-sm btn-light border rounded-pill" title="Email" style="font-size:0.8rem;color:#1a73e8;"><i class="bx bx-envelope"></i></a>
+                        <button type="button" class="btn-close ms-1" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
                 </div>
-                <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                    <span class="ld-status-chip" id="ld_status_chip" style="background:#f29900 !important; color:#fff !important;">Fresh</span>
-                    <a class="ld-quick-btn" id="ld_btn_call" href="#" title="Call">
-                        <i class="bx bx-phone"></i>
-                    </a>
-                    <a class="ld-quick-btn" id="ld_btn_wa" style="background:rgba(37,211, green, 0.2) !important; color:#25D366 !important; border-color:rgba(37,211,102,0.3) !important;" href="#" target="_blank" title="WhatsApp">
-                        <i class="bx bxl-whatsapp"></i>
-                    </a>
-                    <a class="ld-quick-btn" id="ld_btn_mail" href="#" title="Email">
-                        <i class="bx bx-envelope"></i>
-                    </a>
-                    <button type="button" class="btn text-white ps-2 pe-0" data-bs-dismiss="offcanvas" aria-label="Close" style="box-shadow:none;">
-                        <i class="bx bx-x" style="font-size:1.8rem;"></i>
-                    </button>
+
+                <!-- ── Nav Pills (matches contract tab style) ── -->
+                <div style="border-bottom:1px solid #f0f0f0; padding:0 20px; background:#fff;">
+                    <ul class="nav nav-pills gap-1 py-2" id="leadModalTabs">
+                        <li class="nav-item">
+                            <button class="nav-link active py-1 px-3" style="font-size:0.82rem;font-weight:600;" onclick="ldShowTab('tab-profile', this)">
+                                <i class="bx bx-user-circle me-1"></i>Profile
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link py-1 px-3" style="font-size:0.82rem;font-weight:600;" onclick="ldShowTab('tab-comments', this)">
+                                <i class="bx bx-message-detail me-1"></i>Timeline
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link py-1 px-3" style="font-size:0.82rem;font-weight:600;" onclick="ldShowTab('tab-porposal', this)">
+                                <i class="bx bx-file me-1"></i>Proposals
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link py-1 px-3" style="font-size:0.82rem;font-weight:600;" onclick="ldShowTab('tab-assign', this)">
+                                <i class="bx bx-user-plus me-1"></i>Assign
+                            </button>
+                        </li>
+                    </ul>
                 </div>
-            </div>
-        </div>
 
-        <!-- ── Segmented Control Tabs ── -->
-        <div class="ld-tab-nav">
-            <button class="ld-tab active" onclick="ldShowTab('tab-profile', this)">
-                <i class="bx bx-user-circle"></i> Profile
-            </button>
-            <button class="ld-tab" onclick="ldShowTab('tab-comments', this)">
-                <i class="bx bx-message-detail"></i> Timeline
-            </button>
-            <button class="ld-tab" onclick="ldShowTab('tab-porposal', this)">
-                <i class="bx bx-file"></i> Proposals
-            </button>
-            <button class="ld-tab" onclick="ldShowTab('tab-assign', this)">
-                <i class="bx bx-user-plus"></i> Assign
-            </button>
-        </div>
+                <!-- ── Modal Body ── -->
+                <div class="modal-body px-4 py-3">
 
-        <!-- ── Tab Content ── -->
-        <div class="offcanvas-body ld-body">
-            <div class="tab-content h-100">
-
-                <!-- ══ PROFILE TAB ══ -->
-                <div class="ld-tab-pane" id="tab-profile" style="display:block;">
-                    <div class="ld-scroll">
+                    <!-- ══ PROFILE TAB ══ -->
+                    <div class="ld-tab-pane" id="tab-profile">
 
                         <!-- View Mode -->
                         <div id="ld-view-mode">
-                            <!-- Info Cards Grid -->
-                            <div class="ld-info-grid">
-                                <!-- Contact Card -->
-                                <div class="ld-info-card">
-                                    <div class="ld-info-card-header"><i class="bx bx-phone-call"></i> Contact Details</div>
-                                    <div class="ld-info-row">
-                                        <span class="ld-info-label"><i class="bx bx-mobile-alt"></i> Mobile</span>
-                                        <span class="ld-info-val" id="v_mob">—</span>
-                                    </div>
-                                    <div class="ld-info-row">
-                                        <span class="ld-info-label"><i class="bx bxl-whatsapp"></i> WhatsApp</span>
-                                        <span class="ld-info-val" id="v_whatsapp">—</span>
-                                    </div>
-                                    <div class="ld-info-row">
-                                        <span class="ld-info-label"><i class="bx bx-envelope"></i> Email</span>
-                                        <span class="ld-info-val" id="v_email">—</span>
-                                    </div>
-                                    <div class="ld-info-row">
-                                        <span class="ld-info-label"><i class="bx bx-world"></i> Language</span>
-                                        <span class="ld-info-val" id="v_language">—</span>
+                            <div class="row g-3 mb-3">
+                                <!-- Contact -->
+                                <div class="col-md-6">
+                                    <div class="p-3 border rounded-3 h-100" style="background:#fafafa;">
+                                        <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#006666;border-bottom:1px solid #f0f0f0;padding-bottom:6px;margin-bottom:10px;"><i class="bx bx-phone-call me-1"></i>Contact</div>
+                                        <div class="d-flex justify-content-between py-1 border-bottom"><span class="text-muted" style="font-size:0.8rem;"><i class="bx bx-mobile-alt me-1"></i>Mobile</span><span id="v_mob" class="fw-600" style="font-size:0.82rem;">—</span></div>
+                                        <div class="d-flex justify-content-between py-1 border-bottom"><span class="text-muted" style="font-size:0.8rem;"><i class="bx bxl-whatsapp me-1"></i>WhatsApp</span><span id="v_whatsapp" style="font-size:0.82rem;">—</span></div>
+                                        <div class="d-flex justify-content-between py-1 border-bottom"><span class="text-muted" style="font-size:0.8rem;"><i class="bx bx-envelope me-1"></i>Email</span><span id="v_email" style="font-size:0.82rem;">—</span></div>
+                                        <div class="d-flex justify-content-between py-1"><span class="text-muted" style="font-size:0.8rem;"><i class="bx bx-world me-1"></i>Language</span><span id="v_language" style="font-size:0.82rem;">—</span></div>
                                     </div>
                                 </div>
-
-                                <!-- Business Card -->
-                                <div class="ld-info-card">
-                                    <div class="ld-info-card-header"><i class="bx bx-buildings"></i> Business Info</div>
-                                    <div class="ld-info-row">
-                                        <span class="ld-info-label"><i class="bx bx-briefcase"></i> Company</span>
-                                        <span class="ld-info-val" id="v_company">—</span>
-                                    </div>
-                                    <div class="ld-info-row">
-                                        <span class="ld-info-label"><i class="bx bx-user-pin"></i> Position</span>
-                                        <span class="ld-info-val" id="v_position">—</span>
-                                    </div>
-                                    <div class="ld-info-row">
-                                        <span class="ld-info-label"><i class="bx bx-trending-up"></i> Industry</span>
-                                        <span class="ld-info-val" id="v_industry">—</span>
-                                    </div>
-                                    <div class="ld-info-row">
-                                        <span class="ld-info-label"><i class="bx bx-id-card"></i> GST No.</span>
-                                        <span class="ld-info-val" id="v_gstno">—</span>
-                                    </div>
-                                    <div class="ld-info-row">
-                                        <span class="ld-info-label"><i class="bx bx-globe"></i> Website</span>
-                                        <span class="ld-info-val" id="v_website">—</span>
+                                <!-- Business -->
+                                <div class="col-md-6">
+                                    <div class="p-3 border rounded-3 h-100" style="background:#fafafa;">
+                                        <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#006666;border-bottom:1px solid #f0f0f0;padding-bottom:6px;margin-bottom:10px;"><i class="bx bx-buildings me-1"></i>Business</div>
+                                        <div class="d-flex justify-content-between py-1 border-bottom"><span class="text-muted" style="font-size:0.8rem;"><i class="bx bx-briefcase me-1"></i>Company</span><span id="v_company" style="font-size:0.82rem;">—</span></div>
+                                        <div class="d-flex justify-content-between py-1 border-bottom"><span class="text-muted" style="font-size:0.8rem;"><i class="bx bx-user-pin me-1"></i>Position</span><span id="v_position" style="font-size:0.82rem;">—</span></div>
+                                        <div class="d-flex justify-content-between py-1 border-bottom"><span class="text-muted" style="font-size:0.8rem;"><i class="bx bx-trending-up me-1"></i>Industry</span><span id="v_industry" style="font-size:0.82rem;">—</span></div>
+                                        <div class="d-flex justify-content-between py-1 border-bottom"><span class="text-muted" style="font-size:0.8rem;"><i class="bx bx-id-card me-1"></i>GST No.</span><span id="v_gstno" style="font-size:0.82rem;">—</span></div>
+                                        <div class="d-flex justify-content-between py-1"><span class="text-muted" style="font-size:0.8rem;"><i class="bx bx-globe me-1"></i>Website</span><span id="v_website" style="font-size:0.82rem;">—</span></div>
                                     </div>
                                 </div>
-
-                                <!-- Intelligence Card (Full Width) -->
-                                <div class="ld-info-card" style="grid-column: 1 / -1;">
-                                    <div class="ld-info-card-header"><i class="bx bx-brain"></i> CRM Intelligence</div>
-                                    <div class="row g-0">
-                                        <div class="col-md-6 pe-md-3 border-end">
-                                            <div class="ld-info-row">
-                                                <span class="ld-info-label"><i class="bx bx-target-lock"></i> Purpose</span>
-                                                <span class="ld-info-val" id="v_purpose">—</span>
+                                <!-- CRM Intelligence -->
+                                <div class="col-12">
+                                    <div class="p-3 border rounded-3" style="background:#fafafa;">
+                                        <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#006666;border-bottom:1px solid #f0f0f0;padding-bottom:6px;margin-bottom:10px;"><i class="bx bx-brain me-1"></i>CRM Intelligence</div>
+                                        <div class="row g-0">
+                                            <div class="col-md-6 pe-md-3" style="border-right:1px solid #f0f0f0;">
+                                                <div class="d-flex justify-content-between py-1 border-bottom"><span class="text-muted" style="font-size:0.8rem;"><i class="bx bx-target-lock me-1"></i>Purpose</span><span id="v_purpose" style="font-size:0.82rem;">—</span></div>
+                                                <div class="d-flex justify-content-between py-1 border-bottom"><span class="text-muted" style="font-size:0.8rem;"><i class="bx bx-rupee me-1"></i>Lead Value</span><span id="v_value" class="fw-bold text-success" style="font-size:0.82rem;">—</span></div>
+                                                <div class="d-flex justify-content-between py-1"><span class="text-muted" style="font-size:0.8rem;"><i class="bx bx-user-check me-1"></i>POC</span><span id="v_poc" style="font-size:0.82rem;">—</span></div>
                                             </div>
-                                            <div class="ld-info-row">
-                                                <span class="ld-info-label"><i class="bx bx-rupee"></i> Lead Value</span>
-                                                <span class="ld-info-val fw-bold text-success" id="v_value">—</span>
-                                            </div>
-                                            <div class="ld-info-row">
-                                                <span class="ld-info-label"><i class="bx bx-user-check"></i> POC</span>
-                                                <span class="ld-info-val" id="v_poc">—</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 ps-md-3">
-                                            <div class="ld-info-row">
-                                                <span class="ld-info-label"><i class="bx bx-user-pin"></i> Assigned To</span>
-                                                <span class="ld-info-val text-primary fw-bold" id="v_assigned">—</span>
-                                            </div>
-                                            <div class="ld-info-row">
-                                                <span class="ld-info-label"><i class="bx bx-purchase-tag-alt"></i> Tags</span>
-                                                <span class="ld-info-val" id="v_tags">—</span>
-                                            </div>
-                                            <div class="ld-info-row">
-                                                <span class="ld-info-label"><i class="bx bx-map-pin"></i> Location</span>
-                                                <span class="ld-info-val text-muted" id="v_address_full" style="font-size:0.75rem;">—</span>
+                                            <div class="col-md-6 ps-md-3 mt-3 mt-md-0">
+                                                <div class="d-flex justify-content-between py-1 border-bottom"><span class="text-muted" style="font-size:0.8rem;"><i class="bx bx-user-pin me-1"></i>Assigned To</span><span id="v_assigned" class="fw-bold text-primary" style="font-size:0.82rem;">—</span></div>
+                                                <div class="d-flex justify-content-between py-1 border-bottom"><span class="text-muted" style="font-size:0.8rem;"><i class="bx bx-purchase-tag-alt me-1"></i>Tags</span><span id="v_tags" style="font-size:0.82rem;">—</span></div>
+                                                <div class="d-flex justify-content-between py-1"><span class="text-muted" style="font-size:0.8rem;"><i class="bx bx-map-pin me-1"></i>Location</span><span id="v_address_full" class="text-muted" style="font-size:0.78rem;text-align:right;max-width:55%;">—</span></div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Action Bar -->
+                            <!-- View Footer Buttons -->
                             @if(in_array('leads_edit', $roleArray) || in_array('leads_delete', $roleArray) || in_array('All', $roleArray))
-                            <div class="ld-action-bar">
+                            <div class="pt-3 border-top text-end d-flex gap-2 justify-content-end">
                                 @if(in_array('leads_delete', $roleArray) || in_array('All', $roleArray))
-                                    <button type="button" class="ld-btn ld-btn-danger leadDelete" id="leadDelete">
-                                        <i class="bx bx-trash"></i> Delete
+                                    <button type="button" class="btn btn-light border rounded-pill px-4 text-danger leadDelete" id="leadDelete" style="font-size:0.875rem;">
+                                        <i class="bx bx-trash me-1"></i>Delete
                                     </button>
                                 @endif
                                 @if(in_array('leads_edit', $roleArray) || in_array('All', $roleArray))
-                                    <button type="button" class="ld-btn ld-btn-primary" id="ld_edit_toggle">
-                                        <i class="bx bx-edit"></i> Edit Lead
+                                    <button type="button" class="btn rounded-pill px-4" id="ld_edit_toggle" style="background:#006666;border:none;color:#fff;font-size:0.875rem;">
+                                        <i class="bx bx-edit me-1"></i>Edit Lead
                                     </button>
                                 @endif
                             </div>
@@ -366,269 +321,207 @@
 
                         <!-- Edit Mode (hidden by default) -->
                         <div id="ld-edit-mode" style="display:none;">
-                            <div class="ld-edit-banner">
-                                <i class="bx bx-edit-alt"></i> Editing Lead
-                                <button type="button" class="ms-auto ld-btn ld-btn-ghost btn-sm" id="ld_edit_cancel">
+                            <div class="d-flex align-items-center mb-3 pb-2 border-bottom gap-2">
+                                <i class="bx bx-edit-alt text-primary"></i>
+                                <span style="font-weight:700;font-size:0.95rem;color:#202124;">Editing Lead</span>
+                                <button type="button" class="btn btn-light border rounded-pill btn-sm ms-auto" id="ld_edit_cancel" style="font-size:0.8rem;">
                                     <i class="bx bx-x"></i> Cancel
                                 </button>
                             </div>
                             <form id="editLeadForm">
                                 @csrf
                                 <input type="hidden" id="m_id" name="id">
-                                <div class="row g-3 p-3">
-                                    <div class="ld-section-label col-12">Contact Information</div>
+                                <div class="row g-3">
+                                    <!-- Section: Contact -->
+                                    <div class="col-12"><p class="m-0" style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:#006666;letter-spacing:.5px;">Contact Information</p></div>
                                     <div class="col-md-4">
-                                        <label class="ld-label">Full Name *</label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text"><i class="bx bx-user"></i></span>
-                                            <input type="text" class="form-control" id="m_name" name="name" placeholder="Full Name" required>
-                                        </div>
+                                        <label class="form-label" style="font-weight:500;font-size:0.875rem;color:#495057;">Full Name <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="m_name" name="name" placeholder="Full Name" required>
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="ld-label">Email</label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text"><i class="bx bx-envelope"></i></span>
-                                            <input type="email" class="form-control" id="m_email" name="email" placeholder="Email">
-                                        </div>
+                                        <label class="form-label" style="font-weight:500;font-size:0.875rem;color:#495057;">Email</label>
+                                        <input type="email" class="form-control" id="m_email" name="email" placeholder="Email">
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="ld-label">Mobile *</label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text"><i class="bx bx-phone"></i></span>
-                                            <input type="text" class="form-control" id="m_mob" name="mob" placeholder="91XXXXXXXXXX" required>
-                                        </div>
+                                        <label class="form-label" style="font-weight:500;font-size:0.875rem;color:#495057;">Mobile <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="m_mob" name="mob" placeholder="91XXXXXXXXXX" required>
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="ld-label">WhatsApp</label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text" style="color:#25d366"><i class="bx bxl-whatsapp"></i></span>
-                                            <input type="text" class="form-control" id="m_whatsapp" name="whatsapp" placeholder="91XXXXXXXXXX">
-                                        </div>
+                                        <label class="form-label" style="font-weight:500;font-size:0.875rem;color:#495057;">WhatsApp</label>
+                                        <input type="text" class="form-control" id="m_whatsapp" name="whatsapp" placeholder="91XXXXXXXXXX">
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="ld-label">Language</label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text"><i class="bx bx-world"></i></span>
-                                            <input type="text" class="form-control" id="m_language" name="language" placeholder="EN / HI">
-                                        </div>
+                                        <label class="form-label" style="font-weight:500;font-size:0.875rem;color:#495057;">Language</label>
+                                        <input type="text" class="form-control" id="m_language" name="language" placeholder="EN / HI">
                                     </div>
 
-                                    <div class="ld-section-label col-12">Business Details</div>
+                                    <!-- Section: Business -->
+                                    <div class="col-12 mt-1"><p class="m-0" style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:#006666;letter-spacing:.5px;">Business Details</p></div>
                                     <div class="col-md-4">
-                                        <label class="ld-label">Company</label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text"><i class="bx bx-briefcase"></i></span>
-                                            <input type="text" class="form-control" id="m_company" name="company" placeholder="Company">
-                                        </div>
+                                        <label class="form-label" style="font-weight:500;font-size:0.875rem;color:#495057;">Company</label>
+                                        <input type="text" class="form-control" id="m_company" name="company" placeholder="Company">
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="ld-label">Position</label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text"><i class="bx bx-user-pin"></i></span>
-                                            <input type="text" class="form-control" id="m_position" name="position" placeholder="e.g. Manager">
-                                        </div>
+                                        <label class="form-label" style="font-weight:500;font-size:0.875rem;color:#495057;">Position</label>
+                                        <input type="text" class="form-control" id="m_position" name="position" placeholder="e.g. Manager">
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="ld-label">Industry</label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text"><i class="bx bx-building"></i></span>
-                                            <input type="text" class="form-control" id="m_industry" name="industry" placeholder="e.g. IT">
-                                        </div>
+                                        <label class="form-label" style="font-weight:500;font-size:0.875rem;color:#495057;">Industry</label>
+                                        <input type="text" class="form-control" id="m_industry" name="industry" placeholder="e.g. IT">
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="ld-label">GST No.</label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text"><i class="bx bx-id-card"></i></span>
-                                            <input type="text" class="form-control" id="m_gstno" name="gstno" placeholder="GSTIN">
-                                        </div>
+                                        <label class="form-label" style="font-weight:500;font-size:0.875rem;color:#495057;">GST No.</label>
+                                        <input type="text" class="form-control" id="m_gstno" name="gstno" placeholder="GSTIN">
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="ld-label">Website</label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text"><i class="bx bx-link"></i></span>
-                                            <input type="url" class="form-control" id="m_website" name="website" placeholder="https://">
-                                        </div>
+                                        <label class="form-label" style="font-weight:500;font-size:0.875rem;color:#495057;">Website</label>
+                                        <input type="url" class="form-control" id="m_website" name="website" placeholder="https://">
                                     </div>
 
-                                    <div class="ld-section-label col-12">Address</div>
+                                    <!-- Section: Address -->
+                                    <div class="col-12 mt-1"><p class="m-0" style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:#006666;letter-spacing:.5px;">Address</p></div>
                                     <div class="col-md-4">
-                                        <label class="ld-label">Street</label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text"><i class="bx bx-home"></i></span>
-                                            <input type="text" class="form-control" id="m_address" name="address[address]" placeholder="Street">
-                                        </div>
+                                        <label class="form-label" style="font-weight:500;font-size:0.875rem;color:#495057;">Street</label>
+                                        <input type="text" class="form-control" id="m_address" name="address[address]" placeholder="Street">
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="ld-label">City</label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text"><i class="bx bx-map-alt"></i></span>
-                                            <input type="text" class="form-control" id="m_city" name="address[city]" placeholder="City">
-                                        </div>
+                                        <label class="form-label" style="font-weight:500;font-size:0.875rem;color:#495057;">City</label>
+                                        <input type="text" class="form-control" id="m_city" name="address[city]" placeholder="City">
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="ld-label">State</label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text"><i class="bx bx-map-pin"></i></span>
-                                            <input type="text" class="form-control" id="m_state" name="address[state]" placeholder="State">
-                                        </div>
+                                        <label class="form-label" style="font-weight:500;font-size:0.875rem;color:#495057;">State</label>
+                                        <input type="text" class="form-control" id="m_state" name="address[state]" placeholder="State">
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="ld-label">Country</label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text"><i class="bx bx-globe"></i></span>
-                                            <input type="text" class="form-control" id="m_country" name="address[country]" placeholder="Country">
-                                        </div>
+                                        <label class="form-label" style="font-weight:500;font-size:0.875rem;color:#495057;">Country</label>
+                                        <input type="text" class="form-control" id="m_country" name="address[country]" placeholder="Country">
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="ld-label">ZIP</label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text"><i class="bx bx-pin"></i></span>
-                                            <input type="text" class="form-control" id="m_zip" name="address[zip]" placeholder="ZIP Code">
-                                        </div>
+                                        <label class="form-label" style="font-weight:500;font-size:0.875rem;color:#495057;">ZIP</label>
+                                        <input type="text" class="form-control" id="m_zip" name="address[zip]" placeholder="ZIP Code">
                                     </div>
 
-                                    <div class="ld-section-label col-12">CRM Intelligence</div>
+                                    <!-- Section: CRM -->
+                                    <div class="col-12 mt-1"><p class="m-0" style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:#006666;letter-spacing:.5px;">CRM Intelligence</p></div>
                                     <div class="col-md-4">
-                                        <label class="ld-label">Purpose</label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text"><i class="bx bx-target-lock"></i></span>
-                                            <input type="text" class="form-control" id="m_purpose" name="purpose" placeholder="e.g. Sales">
-                                        </div>
+                                        <label class="form-label" style="font-weight:500;font-size:0.875rem;color:#495057;">Purpose</label>
+                                        <input type="text" class="form-control" id="m_purpose" name="purpose" placeholder="e.g. Sales">
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="ld-label">Lead Value (₹)</label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text"><i class="bx bx-rupee"></i></span>
-                                            <input type="number" class="form-control" id="m_value" name="values" placeholder="0">
-                                        </div>
+                                        <label class="form-label" style="font-weight:500;font-size:0.875rem;color:#495057;">Lead Value (₹)</label>
+                                        <input type="number" class="form-control" id="m_value" name="values" placeholder="0">
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="ld-label">POC</label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text"><i class="bx bx-user-check"></i></span>
-                                            <input type="text" class="form-control" id="m_poc" name="poc" placeholder="Point of Contact">
-                                        </div>
+                                        <label class="form-label" style="font-weight:500;font-size:0.875rem;color:#495057;">POC</label>
+                                        <input type="text" class="form-control" id="m_poc" name="poc" placeholder="Point of Contact">
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="ld-label">Assign Salesperson</label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text"><i class="bx bx-share-alt"></i></span>
-                                            <select class="form-select" id="m_assigned" name="assigned">
-                                                <option value="">— Select —</option>
-                                                @foreach($getUsers as $u)
-                                                    <option value="{{ $u->id }}">{{ $u->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+                                        <label class="form-label" style="font-weight:500;font-size:0.875rem;color:#495057;">Assign Salesperson</label>
+                                        <select class="form-select" id="m_assigned" name="assigned">
+                                            <option value="">— Select —</option>
+                                            @foreach($getUsers as $u)
+                                                <option value="{{ $u->id }}">{{ $u->name }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="ld-label">Tags</label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text"><i class="bx bx-purchase-tag-alt"></i></span>
-                                            <input type="text" class="form-control" id="m_tags" name="tags" placeholder="K2, Hot, VIP">
-                                        </div>
+                                        <label class="form-label" style="font-weight:500;font-size:0.875rem;color:#495057;">Tags</label>
+                                        <input type="text" class="form-control" id="m_tags" name="tags" placeholder="K2, Hot, VIP">
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="ld-label">Status</label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text"><i class="bx bx-list-check"></i></span>
-                                            <select name="status" id="m_status" class="form-select">
-                                                <option value="0">🔵 New / Fresh</option>
-                                                <option value="1">🟠 Contacted / Follow Up</option>
-                                                <option value="2">🟣 Qualified</option>
-                                                <option value="3">🟢 Proposal Sent</option>
-                                                <option value="5">✅ Closed (Won)</option>
-                                                <option value="9">❌ Lost</option>
-                                            </select>
-                                        </div>
+                                        <label class="form-label" style="font-weight:500;font-size:0.875rem;color:#495057;">Status</label>
+                                        <select name="status" id="m_status" class="form-select">
+                                            <option value="0">🔵 New / Fresh</option>
+                                            <option value="1">🟠 Contacted / Follow Up</option>
+                                            <option value="2">🟣 Qualified</option>
+                                            <option value="3">🟢 Proposal Sent</option>
+                                            <option value="5">✅ Closed (Won)</option>
+                                            <option value="9">❌ Lost</option>
+                                        </select>
                                     </div>
 
-                                    <!-- Edit Footer -->
-                                    <div class="col-12">
-                                        <div class="ld-edit-footer">
-                                            <button type="reset" class="ld-btn ld-btn-ghost">
-                                                <i class="bx bx-reset"></i> Reset
-                                            </button>
-                                            <button type="submit" class="ld-btn ld-btn-primary">
-                                                <i class="bx bx-check-circle"></i> Save Changes
-                                            </button>
-                                        </div>
+                                    <!-- Edit Buttons -->
+                                    <div class="col-12 mt-4 pt-3 border-top text-end d-flex gap-2 justify-content-end">
+                                        <button type="reset" class="btn btn-light border rounded-pill px-4" style="font-size:0.875rem;">
+                                            <i class="bx bx-reset me-1"></i>Reset
+                                        </button>
+                                        <button type="submit" class="btn rounded-pill px-4" style="background:#006666;border:none;color:#fff;font-size:0.875rem;">
+                                            <i class="bx bx-check-circle me-1"></i>Save Changes
+                                        </button>
                                     </div>
                                 </div>
                             </form>
                         </div>
                     </div>
-                </div>
 
-                <!-- ══ CONVERSATIONS TAB ══ -->
-                <div class="ld-tab-pane" id="tab-comments" style="display:none;">
-                    <div class="ld-convo-wrap">
-                        <!-- Timeline -->
-                        <div class="ld-timeline-col">
-                            <div class="ld-timeline-head">
-                                <i class="bx bx-history"></i> History
+                    <!-- ══ TIMELINE TAB ══ -->
+                    <div class="ld-tab-pane" id="tab-comments" style="display:none;">
+                        <div class="row g-3">
+                            <!-- History -->
+                            <div class="col-md-7">
+                                <div class="p-3 border rounded-3 h-100" style="background:#fafafa;">
+                                    <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#006666;border-bottom:1px solid #f0f0f0;padding-bottom:6px;margin-bottom:12px;"><i class="bx bx-history me-1"></i>Conversation History</div>
+                                    <div id="commentHistory" class="ld-timeline" style="max-height:380px;overflow-y:auto;"></div>
+                                </div>
                             </div>
-                            <div id="commentHistory" class="ld-timeline"></div>
-                        </div>
-                        <!-- Add Note Form -->
-                        <div class="ld-note-col">
-                            <div class="ld-note-head"><i class="bx bx-plus-circle"></i> Add Note</div>
-                            <form id="addCommentForm" class="ld-note-form">
-                                @csrf
-                                <input type="hidden" name="lead_id" id="c_lead_id">
-                                <div class="ld-note-field">
-                                    <label class="ld-label">Message *</label>
-                                    <textarea name="msg" id="c_msg" class="form-control" rows="5"
-                                        placeholder="Write a note about this conversation…" required></textarea>
+                            <!-- Add Note -->
+                            <div class="col-md-5">
+                                <div class="p-3 border rounded-3 h-100" style="background:#fafafa;">
+                                    <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#006666;border-bottom:1px solid #f0f0f0;padding-bottom:6px;margin-bottom:12px;"><i class="bx bx-plus-circle me-1"></i>Add Note</div>
+                                    <form id="addCommentForm">
+                                        @csrf
+                                        <input type="hidden" name="lead_id" id="c_lead_id">
+                                        <div class="mb-3">
+                                            <label class="form-label" style="font-weight:500;font-size:0.875rem;color:#495057;">Message <span class="text-danger">*</span></label>
+                                            <textarea name="msg" id="c_msg" class="form-control" rows="5" placeholder="Write a note about this conversation…" required></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" style="font-weight:500;font-size:0.875rem;color:#495057;">Next Reminder <small class="text-muted">(optional)</small></label>
+                                            <input type="datetime-local" name="next_date" id="c_next_date" class="form-control">
+                                        </div>
+                                        <button type="submit" class="btn w-100 rounded-pill" style="background:#006666;border:none;color:#fff;font-size:0.875rem;">
+                                            <i class="bx bx-save me-1"></i>Save Note
+                                        </button>
+                                    </form>
                                 </div>
-                                <div class="ld-note-field">
-                                    <label class="ld-label"><i class="bx bx-alarm"></i> Next Reminder</label>
-                                    <input type="datetime-local" name="next_date" id="c_next_date"
-                                        class="form-control form-control-sm" required>
-                                </div>
-                                <button type="submit" class="ld-btn ld-btn-primary w-100">
-                                    <i class="bx bx-save"></i> Save Note
-                                </button>
-                            </form>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- ══ PROPOSALS TAB ══ -->
-                <div class="ld-tab-pane" id="tab-porposal" style="display:none;">
-                    <div class="p-3">
+                    <!-- ══ PROPOSALS TAB ══ -->
+                    <div class="ld-tab-pane" id="tab-porposal" style="display:none;">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="fw-bold" style="color:#202124;font-size:0.95rem;"><i class="bx bx-file me-1" style="color:#006666;"></i> Proposals</span>
-                            <a href="/manage-proposal" class="ld-btn ld-btn-primary" style="font-size:0.78rem;padding:5px 14px;">
-                                <i class="bx bx-plus"></i> New Proposal
+                            <span class="fw-bold" style="color:#202124;font-size:0.95rem;"><i class="bx bx-file me-1" style="color:#006666;"></i>Proposals</span>
+                            <a href="/manage-proposal" class="btn rounded-pill px-3" style="background:#006666;border:none;color:#fff;font-size:0.82rem;">
+                                <i class="bx bx-plus me-1"></i>New Proposal
                             </a>
                         </div>
                         <div class="table-responsive">
                             <table class="table table-hover mb-0" style="font-size:0.82rem;">
                                 <thead style="background:#006666 !important;">
                                     <tr>
-                                        <th style="color:#ffffff !important;font-weight:600;">#ID</th>
-                                        <th style="color:#ffffff !important;font-weight:600;">Subject</th>
-                                        <th style="color:#ffffff !important;font-weight:600;">Total</th>
-                                        <th style="color:#ffffff !important;font-weight:600;">Date</th>
-                                        <th style="color:#ffffff !important;font-weight:600;">Status</th>
+                                        <th style="color:#fff;font-weight:600;">#ID</th>
+                                        <th style="color:#fff;font-weight:600;">Subject</th>
+                                        <th style="color:#fff;font-weight:600;">Total</th>
+                                        <th style="color:#fff;font-weight:600;">Date</th>
+                                        <th style="color:#fff;font-weight:600;">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody id="Proposals"></tbody>
                             </table>
                         </div>
                     </div>
-                </div>
 
-                <!-- ══ ASSIGN TAB ══ -->
-                <div class="ld-tab-pane" id="tab-assign" style="display:none;">
-                    <div class="p-4">
-                        <div class="ld-assign-card">
-                            <div class="ld-assign-icon"><i class="bx bx-user-plus"></i></div>
-                            <h6 class="mb-1" style="font-weight:700;color:#202124;">Assign Salesperson</h6>
-                            <p class="text-muted mb-3" style="font-size:0.82rem;">Re-assign this lead to a different salesperson instantly.</p>
-                            <div class="input-group mb-3">
-                                <span class="input-group-text"><i class="bx bx-user"></i></span>
+                    <!-- ══ ASSIGN TAB ══ -->
+                    <div class="ld-tab-pane" id="tab-assign" style="display:none;">
+                        <div class="p-3 border rounded-3" style="background:#fafafa;max-width:420px;margin:0 auto;">
+                            <div class="text-center mb-3">
+                                <div style="width:48px;height:48px;border-radius:12px;background:rgba(0,102,102,0.1);display:inline-flex;align-items:center;justify-content:center;font-size:1.4rem;color:#006666;margin-bottom:8px;"><i class="bx bx-user-plus"></i></div>
+                                <h6 class="mb-1" style="font-weight:700;color:#202124;">Assign Salesperson</h6>
+                                <p class="text-muted mb-0" style="font-size:0.82rem;">Re-assign this lead to a different salesperson instantly.</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" style="font-weight:500;font-size:0.875rem;color:#495057;">Select Salesperson</label>
                                 <select class="form-select" id="quick_assign_user">
                                     <option value="">— Select Salesperson —</option>
                                     @foreach($getUsers as $u)
@@ -636,17 +529,17 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <button type="button" class="ld-btn ld-btn-primary w-100" id="quickAssignBtn">
-                                <i class="bx bx-check-circle"></i> Assign Now
+                            <button type="button" class="btn w-100 rounded-pill" id="quickAssignBtn" style="background:#006666;border:none;color:#fff;font-size:0.875rem;">
+                                <i class="bx bx-check-circle me-1"></i>Assign Now
                             </button>
                             <div id="quickAssignMsg" class="mt-2 text-center" style="font-size:0.82rem;"></div>
                         </div>
                     </div>
-                </div>
 
-            </div>{{-- /tab-content --}}
-        </div>{{-- /offcanvas-body --}}
-    </div>{{-- /offcanvas --}}
+                </div>{{-- /modal-body --}}
+            </div>{{-- /modal-content --}}
+        </div>{{-- /modal-dialog --}}
+
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -655,6 +548,15 @@
     <script>
         // User ID → Name map (from server)
         var userMap = {!! json_encode($getUsers->pluck('name', 'id')) !!};
+
+        // Global tab switcher for the lead modal nav pills
+        function ldShowTab(tabId, btn) {
+            document.querySelectorAll('.ld-tab-pane').forEach(function (p) { p.style.display = 'none'; });
+            document.querySelectorAll('#leadModalTabs .nav-link').forEach(function (b) { b.classList.remove('active'); });
+            var pane = document.getElementById(tabId);
+            if (pane) pane.style.display = 'block';
+            if (btn) btn.classList.add('active');
+        }
 
         $(document).ready(function () {
             // 1. Init DataTable
@@ -901,7 +803,7 @@
                     });
                     $('#commentHistory').html(html || '<p class="text-muted text-center p-4" style="font-size:0.82rem">No conversations yet.</p>');
 
-                    var modal = new bootstrap.Offcanvas(document.getElementById('leadModal'));
+                    var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('leadModal'));
                     modal.show();
                 });
             });
@@ -946,10 +848,12 @@
             // 6. Submit Forms
             $('#editLeadForm').on('submit', function (e) {
                 e.preventDefault();
-                $.get("{{ route('leads.update') }}", $(this).serialize(), function () {
-                    alert('Profile Updated');
-                    $('#leadModal').offcanvas('hide');
+                $.post("{{ route('leads.update') }}", $(this).serialize(), function (res) {
+                    alert(res.message || 'Profile Updated');
+                    bootstrap.Modal.getInstance(document.getElementById('leadModal')).hide();
                     table.ajax.reload(null, false);
+                }).fail(function (xhr) {
+                    alert('Error: ' + (xhr.responseJSON?.message || xhr.statusText));
                 });
             });
 
@@ -957,7 +861,7 @@
                 e.preventDefault();
                 $.post("{{ route('leads.storeComment') }}", $(this).serialize(), function () {
                     alert('Comment Saved');
-                    $('#leadModal').offcanvas('hide');
+                    bootstrap.Modal.getInstance(document.getElementById('leadModal')).hide();
                     table.ajax.reload(null, false);
                 });
             });
@@ -971,7 +875,7 @@
                         id: id
                     }, function (res) {
                         alert('Lead deleted successfully');
-                        $('#leadModal').offcanvas('hide');
+                        bootstrap.Modal.getInstance(document.getElementById('leadModal')).hide();
                         $('#leadslists').DataTable().ajax.reload(null, false);
                     }).fail(function (xhr) {
                         alert('Error: ' + xhr.statusText);

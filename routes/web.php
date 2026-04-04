@@ -130,7 +130,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/bulk-assign-leads', [NewLeadController::class, 'bulkAssign'])->name('leads.bulkAssign');
 
     Route::get('/get-lead-details/{id}', [NewLeadController::class, 'getLeadDetails']);
-    Route::get('/leads/update-profile', [NewLeadController::class, 'updateLead'])->name('leads.update');
+    Route::post('/leads/update-profile', [NewLeadController::class, 'updateLead'])->name('leads.update');
     Route::post('/leads/store-comment', [NewLeadController::class, 'storeComment'])->name('leads.storeComment');
     Route::post('/delete-lead', [NewLeadController::class, 'deleteLead'])->name('leads.delete');
 
