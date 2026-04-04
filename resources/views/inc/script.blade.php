@@ -1026,9 +1026,8 @@
 
                 // Reset to Info tab
                 cTab($('.ld-tab').first()[0], 'c-tab-info');
-                
-                // Show modal immediately with loading state
-                $('#clientModal').offcanvas('show');
+                            // Show modal immediately with loading state
+                $('#clientModal').modal('show');
 
                 $.ajax({
                     url: '/view-single-client', 
@@ -1060,15 +1059,22 @@
                         $('#c_company_val').text(l.company || '—');
                         $('#c_gst').text(l.gstno || '—');
                         $('#c_position').text(l.position || '—');
-                        $('#c_industry').text(l.industry || '—');
+                        
+                        // CRM Intelligence
+                        $('#c_purpose').text(l.purpose || '—');
+                        $('#c_value').text(l.values ? '₹' + Number(l.values).toLocaleString('en-IN') : '—');
+                        $('#c_poc').text(l.poc || '—');
+                        $('#c_stage').text(l.lifecycle_stage || '—');
+                        $('#c_industry_val').text(l.industry || '—');
+                        $('#c_tags').text(l.tags || '—');
                         
                         // Combined Address
                         let addressParts = [
                             loc.address, loc.city, loc.state, loc.zip, loc.country
                         ].filter(Boolean).join(', ');
-                        $('#c_location_val').text(addressParts || '—');
+                        $('#c_location_full').text(addressParts || '—');
 
-                        $('#c_editBtn').attr('href', '/manage-client?id='+id);
+                        $('#c_editBtn').attr('href', '/manage-client?id='+id);, '/manage-client?id='+id);
 
                         // Timeline (Interactions)
                         var timelineHtml = '';

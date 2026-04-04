@@ -291,36 +291,35 @@
         <input type="file" name="impClientFile" id="impClientFile" accept=".csv, .xls" style="display:none;" />
     </form>
 
-    {{-- Offcanvas: Client Details --}}
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="clientModal" aria-labelledby="clientModalLabel"
-        style="width:800px; max-width:100vw; border:none; box-shadow:-10px 0 30px rgba(0,0,0,0.15);">
+    {{-- Modal: Client Details --}}
+    <div class="modal fade" id="clientModal" tabindex="-1" aria-labelledby="clientModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable" style="max-width:900px;">
+            <div class="modal-content" style="border-radius:16px; border:none; overflow:hidden;">
 
-        <div class="offcanvas-header lb-offcanvas-banner">
-            <div class="d-flex align-items-center gap-3">
-                <div class="lb-offcanvas-avatar" id="clientAvatarBadge">C</div>
-                <div class="text-white">
-                    <h5 class="offcanvas-title mb-0" id="clientModalLabel">Customer Details</h5>
-                    <div class="d-flex align-items-center gap-2 small opacity-75 mt-1">
-                        <span id="clientAvatarSub">Loading...</span>
-                        <span class="lb-dot"></span>
-                        <span id="clientSince">Added on —</span>
+                {{-- Header (matching cf-modal-header / ld-header) --}}
+                <div class="ld-header">
+                    <div class="ld-header-content d-flex justify-content-between align-items-center w-100">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="ld-avatar" id="clientAvatarBadge">C</div>
+                            <div class="text-white">
+                                <h5 class="ld-name mb-0" id="clientModalLabel">Customer Details</h5>
+                                <div class="d-flex align-items-center gap-2 small opacity-75 mt-1">
+                                    <span class="ld-company" id="clientAvatarSub" style="font-size:0.85rem;color:#e8f0fe;">Loading...</span>
+                                    <span class="lb-dot" style="background:#fff;"></span>
+                                    <span id="clientSince" style="font-size:0.8rem;">Added on —</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <a href="#" id="c_btnCall" class="ld-quick-btn" title="Call"><i class="bx bx-phone"></i></a>
+                            <a href="#" id="c_btnWa" class="ld-quick-btn" style="background:rgba(37,211,102,0.2) !important; color:#25D366 !important;" title="WhatsApp"><i class="bx bxl-whatsapp"></i></a>
+                            <a href="#" id="c_btnMail" class="ld-quick-btn" title="Email"><i class="bx bx-envelope"></i></a>
+                            <button type="button" class="btn-close btn-close-white ms-1" data-bs-dismiss="modal" aria-label="Close" style="opacity:.8;"></button>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="d-flex align-items-center gap-2">
-                <div class="lb-header-actions me-3">
-                    <a href="#" id="c_btnCall" class="lb-action-btn-circle" title="Call"><i class="bx bx-phone"></i></a>
-                    <a href="#" id="c_btnWa" class="lb-action-btn-circle" title="WhatsApp"><i
-                            class="bx bxl-whatsapp"></i></a>
-                    <a href="#" id="c_btnMail" class="lb-action-btn-circle" title="Email"><i class="bx bx-envelope"></i></a>
-                </div>
-                <button type="button" class="lb-btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close">
-                    <i class="bx bx-x"></i>
-                </button>
-            </div>
-        </div>
 
-        <div class="offcanvas-body p-0">
+                <div class="modal-body p-0 ld-body">
             {{-- Tabs Navigation --}}
             <div class="ld-tab-nav">
                 <button class="ld-tab active" onclick="cTab(this, 'c-tab-info')">
@@ -379,17 +378,47 @@
                                 <span class="value" id="c_position">—</span>
                             </div>
                             <div class="ld-info-row">
-                                <span class="label">Industry</span>
-                                <span class="value" id="c_industry">—</span>
+                                <span class="label">Website</span>
+                                <span class="value"><a href="#" id="c_website" target="_blank">—</a></span>
                             </div>
                         </div>
 
-                        {{-- Location Card --}}
-                        <div class="ld-info-card full-width">
-                            <h6><i class="bx bx-map"></i> Location & Address</h6>
-                            <div class="ld-info-row">
-                                <span class="label">Full Address</span>
-                                <span class="value" id="c_location_val">—</span>
+                        {{-- CRM Intelligence (matching leads) --}}
+                        <div class="ld-info-card" style="grid-column: 1 / -1;">
+                            <h6><i class="bx bx-brain"></i> CRM Intelligence</h6>
+                            <div class="row g-0">
+                                <div class="col-md-6 pe-md-3" style="border-right:1.5px solid #f1f3f4;">
+                                    <div class="ld-info-row">
+                                        <span class="ld-info-label"><i class="bx bx-target-lock"></i> Purpose</span>
+                                        <span class="ld-info-val" id="c_purpose">—</span>
+                                    </div>
+                                    <div class="ld-info-row">
+                                        <span class="ld-info-label"><i class="bx bx-rupee"></i> Lead Value</span>
+                                        <span class="ld-info-val text-success fw-bold" id="c_value">—</span>
+                                    </div>
+                                    <div class="ld-info-row">
+                                        <span class="ld-info-label"><i class="bx bx-user-check"></i> POC</span>
+                                        <span class="ld-info-val" id="c_poc">—</span>
+                                    </div>
+                                    <div class="ld-info-row">
+                                        <span class="ld-info-label"><i class="bx bx-layer"></i> Lifecycle Stage</span>
+                                        <span class="ld-info-val" id="c_stage">—</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 ps-md-3">
+                                    <div class="ld-info-row">
+                                        <span class="ld-info-label"><i class="bx bx-building"></i> Industry</span>
+                                        <span class="ld-info-val" id="c_industry_val">—</span>
+                                    </div>
+                                    <div class="ld-info-row">
+                                        <span class="ld-info-label"><i class="bx bx-purchase-tag-alt"></i> Tags</span>
+                                        <span class="ld-info-val" id="c_tags">—</span>
+                                    </div>
+                                    <div class="ld-info-row">
+                                        <span class="ld-info-label"><i class="bx bx-map"></i> Location</span>
+                                        <span class="ld-info-val text-muted small" id="c_location_full">—</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -471,7 +500,9 @@
                 </div>
 
             </div>
+            </div>
         </div>
     </div>
+</div>
 
 @endsection

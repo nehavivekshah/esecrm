@@ -25,7 +25,13 @@ class Clients extends Model
         'whatsapp',
         'position',
         'values',
-        'language'
+        'language',
+        'purpose',
+        'tags',
+        'commentLeadID',
+        'source',
+        'alterMob',
+        'gstno'
     ];
 
     public function departments()
