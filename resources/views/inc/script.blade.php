@@ -1026,8 +1026,10 @@
 
                 // Reset to Info tab
                 cTab($('.ld-tab').first()[0], 'c-tab-info');
-                            // Show modal immediately with loading state
-                $('#clientModal').modal('show');
+                
+                // Show modal immediately with loading state
+                var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('clientModal'));
+                modal.show();
 
                 $.ajax({
                     url: '/view-single-client', 
