@@ -872,8 +872,15 @@
                     $('#v_tags').text(l.tags || '—');
 
                     // Score and Duplicate mapping
-                    $('#v_score').html(l.score ? '<span class="badge bg-primary text-white"><i class="bx bxs-star me-1"></i>' + l.score + '</span>' : '—');
-                    $('#v_duplicate').html(l.is_duplicate ? '<span class="badge bg-danger text-white"><i class="bx bx-error me-1"></i>Yes</span>' : '<span class="badge bg-success text-white"><i class="bx bx-check me-1"></i>No</span>');
+                    let scoreHtml = '—';
+                    if (l.score !== null && l.score !== undefined && l.score !== '') {
+                        let scoreColor = l.score >= 70 ? 'success' : (l.score >= 40 ? 'warning' : 'danger');
+                        scoreHtml = '<span class="badge bg-' + scoreColor + ' text-white"><i class="bx bxs-star me-1"></i>' + l.score + '</span>';
+                    }
+                    $('#v_score').html(scoreHtml);
+
+                    let isDup = (l.is_duplicate == 1 || String(l.is_duplicate) === 'true' || String(l.is_duplicate) === '1');
+                    $('#v_duplicate').html(isDup ? '<span class="badge bg-danger text-white"><i class="bx bx-error me-1"></i>Yes</span>' : '<span class="badge bg-success text-white"><i class="bx bx-check me-1"></i>No</span>');
 
                     // ── Edit Form pre-fill ──
                     $('#m_name').val(l.name);
