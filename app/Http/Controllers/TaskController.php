@@ -444,8 +444,10 @@ class TaskController extends Controller
             if ($request->hasFile('file')) {
                 $file         = $request->file('file');
                 $originalName = $file->getClientOriginalName();
-                $fileName     = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $path = public_path('assets/task_attachments');
+                $fileSize     = $file->getSize();
+                $extension    = $file->getClientOriginalExtension();
+                $fileName     = time() . '_' . uniqid() . '.' . $extension;
+                $path         = public_path('assets/task_attachments');
                 
                 if (!file_exists($path)) {
                     mkdir($path, 0777, true);
@@ -457,8 +459,8 @@ class TaskController extends Controller
                     'task_id'     => $request->task_id,
                     'file_path'   => 'assets/task_attachments/' . $fileName,
                     'file_name'   => $originalName,
-                    'file_type'   => $file->getClientOriginalExtension(),
-                    'file_size'   => $file->getSize(),
+                    'file_type'   => $extension,
+                    'file_size'   => $fileSize,
                     'uploaded_by' => Auth::id(),
                 ]);
 
