@@ -256,7 +256,7 @@
                 <div class="modal-body px-4 py-3">
 
                     <!-- ══ PROFILE TAB ══ -->
-                    <div class="ld-tab-pane" id="tab-profile">
+                    <div class="ld-tab-pane" id="tab-profile" style="display:block;">
 
                         <!-- View Mode -->
                         <div id="ld-view-mode">
@@ -538,7 +538,8 @@
 
                 </div>{{-- /modal-body --}}
             </div>{{-- /modal-content --}}
-        </div>{{-- /modal-dialog --}}
+                 </div>{{-- /modal-dialog --}}
+    </div>{{-- /modal --}}
 
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -883,31 +884,13 @@
                 }
             });
         });
-        /* ── Tab Switcher for Lead Details Panel ────────────────── */
-        function ldShowTab(tabId, btnEl) {
-            // Hide all panes
-            document.querySelectorAll('#leadModal .ld-tab-pane').forEach(function (p) {
-                p.style.display = 'none';
-            });
-            // Show target pane
-            var pane = document.getElementById(tabId);
-            if (pane) pane.style.display = 'block';
 
-            // Update active tab button
-            document.querySelectorAll('#leadModal .ld-tab').forEach(function (b) {
-                b.classList.remove('active');
-            });
-            if (btnEl) btnEl.classList.add('active');
-        }
-
-        // Reset to Profile tab every time the offcanvas opens
-        document.getElementById('leadModal').addEventListener('show.bs.offcanvas', function () {
-            var firstBtn = this.querySelector('.ld-tab-nav .ld-tab');
-            ldShowTab('tab-profile', firstBtn);
-            // Also reset edit mode back to view mode
+        // Reset to Profile tab every time the modal opens
+        document.getElementById('leadModal').addEventListener('show.bs.modal', function () {
+            ldShowTab('tab-profile', document.querySelector('#leadModalTabs .nav-link'));
             var viewMode = document.getElementById('ld-view-mode');
             var editMode = document.getElementById('ld-edit-mode');
-            if (viewMode) viewMode.style.display = '';
+            if (viewMode) viewMode.style.display = 'block';
             if (editMode) editMode.style.display = 'none';
         });
     </script>
