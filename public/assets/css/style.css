@@ -2250,7 +2250,7 @@ table.dataTable thead>tr>td.sorting_desc_disabled {
     div#leadslists_wrapper .row:nth-child(1) .col-sm-12 label select.form-select.form-select-sm {
         width: 20% !important;
         position: absolute;
-        left: 16px;
+        left: 22px;
     }
 
     div#lists_wrapper .row:nth-child(1) .col-sm-12 label input.form-control.form-control-sm,
@@ -2603,7 +2603,7 @@ a.edit-comment {
     padding-bottom: .30rem;
     padding-left: .5rem;
     font-size: .875rem;
-    border-radius: var(--bs-border-radius-sm);
+    border-radius: 10px;
 }
 
 div.dataTables_processing {
