@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let screenWidth = window.innerWidth;
 
     // Apply the saved state (open or closed) from cookies
-    if (sidebarState === "open" && screenWidth > 768) {
+    if (sidebarState === "open" && screenWidth >= 992) {
         sidebar.classList.add("open");
         if (closeBtn) closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
     } else {

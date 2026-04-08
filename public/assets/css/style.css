@@ -2059,53 +2059,10 @@ table.dataTable thead>tr>td.sorting_desc_disabled {
         position: absolute;
     }
 
-    .sidebar {
-        min-height: 100vh;
-        width: 0px;
-        padding: 0px;
-        z-index: 99;
-        background-color: var(--color-default);
-        border-right: 1px solid #cbd5e1;
-        transition: all .5s ease;
-        position: fixed;
-        top: 0;
-        left: 0;
-        overflow: hidden;
-    }
-
-    .sidebar .logo_details {
-        padding: 16px;
-    }
-
-    .sidebar.open .logo_details #btn {
-        text-align: right;
-        padding-right: 7px !important;
-        margin-top: -1px !important;
-    }
-
+    /* Cleaned up sidebar/header overrides to allow modern layout logic */
     .task__section {
-        position: relative;
-        background-color: var(--color-body);
-        min-height: 100vh;
-        top: 0;
-        left: 0px;
-        width: calc(100% - 0px);
-        transition: all .5s ease;
-        z-index: 2;
-    }
-
-    .scrum-board {
-        width: 100%;
-        padding: 0px;
-        border-right: 1px solid #ddd;
-        border-bottom: 1px solid #ddd;
-        border-radius: 12px;
-        background: #cdcdcd57;
-        box-sizing: border-box;
-    }
-
-    #mbtn {
-        display: inline-block;
+        margin-left: 0 !important;
+        width: 100% !important;
     }
 
     .logoutbtn {
