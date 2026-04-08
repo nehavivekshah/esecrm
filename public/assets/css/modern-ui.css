@@ -553,56 +553,71 @@ table.dataTable tbody tr:last-child td {
     }
 
     /* --- Task Page Specific Toolbar Adjustments --- */
+    .leads-toolbar-left {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 15px !important;
+        width: 100% !important;
+    }
+
+    .lb-page-count {
+        width: 100% !important;
+        justify-content: center !important;
+        background: rgba(0, 102, 102, 0.05) !important;
+        border: 1px solid rgba(0, 102, 102, 0.1) !important;
+        padding: 8px 15px !important;
+        font-size: 0.85rem !important;
+    }
+
     .leads-toolbar-left .d-md-flex {
-        display: flex !important; /* Force visible if md class was hiding it */
+        display: flex !important; /* Force visible */
+        justify-content: center !important;
         overflow-x: auto;
-        padding-bottom: 5px;
-        width: 100%;
-        gap: 8px !important;
+        padding: 5px 0 !important;
+        width: 100% !important;
+        gap: 10px !important;
+        border: none !important; /* Remove the vertical divider on mobile */
+        margin: 0 !important;
         -webkit-overflow-scrolling: touch;
     }
 
     .tb-legend {
         flex-shrink: 0;
         white-space: nowrap;
-        font-size: 11px !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
         padding: 6px 14px !important;
-        background: #f1f5f9;
-        border-radius: 20px;
-        color: #475569;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
-    .tb-legend-urgent { border-color: rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.05); color: #ef4444; }
-    .tb-legend-pending { border-color: rgba(245, 158, 11, 0.2); background: rgba(245, 158, 11, 0.05); color: #f59e0b; }
-    .tb-legend-progress { border-color: rgba(59, 130, 246, 0.2); background: rgba(59, 130, 246, 0.05); color: #3b82f6; }
-    .tb-legend-done { border-color: rgba(16, 185, 129, 0.2); background: rgba(16, 185, 129, 0.05); color: #10b981; }
-    .tb-legend-closed { border-color: rgba(100, 116, 139, 0.2); background: rgba(100, 116, 139, 0.05); color: #64748b; }
+    /* Action Grid - Project filter and Search tasks to be stacked */
+    .leads-toolbar-right {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        width: 100% !important;
+        padding: 0 !important;
+    }
 
     .tk-project-filter-wrap,
-    .tb-search-wrap {
-        width: 100% !important;
-        grid-column: span 4 !important; /* Using the grid established in leads-toolbar-right */
-    }
-
-    .tb-search-box {
-        width: 100% !important;
-    }
-
-    .tb-search-input {
-        width: 100% !important;
-    }
-
+    .tb-search-wrap,
+    .tb-search-box,
+    .tb-search-input,
     .tk-project-filter-select {
         width: 100% !important;
+        max-width: 100% !important;
     }
 
-    /* Align Add Task button on its own row */
+    /* Add Task Button - Full Width */
     .leads-toolbar-right button.lb-btn-primary {
-        grid-column: span 4 !important;
+        display: flex !important;
         width: 100% !important;
+        justify-content: center !important;
+        padding: 12px !important;
+        font-weight: 600 !important;
         margin-top: 5px !important;
+        border-radius: 12px !important;
     }
 
     /* --- Global Mobile Overrides --- */
