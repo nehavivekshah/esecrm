@@ -2250,13 +2250,13 @@ table.dataTable thead>tr>td.sorting_desc_disabled {
     div#leadslists_wrapper .row:nth-child(1) .col-sm-12 label select.form-select.form-select-sm {
         width: 20% !important;
         position: absolute;
-        left: 12px;
+        left: 16px;
     }
 
     div#lists_wrapper .row:nth-child(1) .col-sm-12 label input.form-control.form-control-sm,
     div#leadslists_wrapper .row:nth-child(1) .col-sm-12 label input.form-control.form-control-sm {
         position: absolute;
-        right: 11px;
+        right: 22px;
         width: 60% !important;
     }
 
