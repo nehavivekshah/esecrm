@@ -59,12 +59,12 @@
 .form-control {
     background-color: #ddd;
     border: 1px solid #ddd;
-    border-radius: 25px;
+    /* border-radius: 25px; */
 }
 
-button.btn {
+/* button.btn {
     border-radius: 25px;
-}
+} */
 
 /* .input-icon {
     width: 30px;
