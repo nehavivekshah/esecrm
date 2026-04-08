@@ -267,20 +267,27 @@ h2 {
     min-height: 100vh;
     width: 250px;
     padding: 5px 15px;
-    z-index: 1050; /* Higher than header */
+    z-index: 1050;
     background-color: var(--color-default);
-    transition: transform .4s cubic-bezier(0.4, 0, 0.2, 1), left .4s ease;
+    
+    /* PERFORMANCE: GPU Accelerated Transitions */
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+    transform: translateX(-100%); /* Start Hidden */
+    
     position: fixed;
     border-right: 1px solid rgba(255, 255, 255, 0.1);
     top: 0;
-    left: -250px;
+    left: 0;
     height: 100vh;
     overflow-y: auto;
-    box-shadow: 4px 0 15px rgba(0,0,0,0.15);
+    
+    /* PRESENTATION: Premium Layered Shadow */
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1), 30px 0 60px rgba(0, 0, 0, 0.05);
 }
 
 .sidebar.open {
-    left: 0;
+    transform: translateX(0); /* Slide In */
 }
 
 .sidebar .logo_details {
@@ -607,7 +614,7 @@ h2 {
     top: 0;
     left: 0;
     width: 100%;
-    transition: margin-left .4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: margin-left 0.45s cubic-bezier(0.16, 1, 0.3, 1);
     z-index: 2;
     overflow-x: hidden;
 }
@@ -636,19 +643,20 @@ h2 {
     }
 }
 
-/* Sidebar Backdrop for Mobile */
+/* Sidebar Backdrop for Mobile - Premium Glassmorphism */
 .sidebar-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(2px);
+    background: rgba(0, 20, 20, 0.4); /* Darker tint for depth */
+    backdrop-filter: blur(8px) saturate(150%);
+    -webkit-backdrop-filter: blur(8px) saturate(150%);
     z-index: 1040;
     display: none;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.4s ease;
 }
 
 .sidebar-overlay.active {
