@@ -45,31 +45,53 @@ document.addEventListener("DOMContentLoaded", function() {
     
     const toggleTriggers = document.querySelectorAll(".sidebar-toggle-trigger");
 
-    toggleTriggers.forEach(trigger => {
-        trigger.addEventListener("click", function() {
-            sidebar.classList.toggle("open");
-            menuBtnChange();
-            saveSidebarState();
+    // Create overlay if it doesn't exist
+    let overlay = document.querySelector(".sidebar-overlay");
+    if (!overlay) {
+        overlay = document.createElement("div");
+        overlay.className = "sidebar-overlay";
+        document.body.appendChild(overlay);
+    }
+
+    // Toggle menu
+    function toggleSidebar() {
+        const isOpen = sidebar.classList.toggle("open");
+        setCookie("sidebarOpen", isOpen ? "1" : "0", 30);
+        
+        // Handle overlay on mobile
+        if (window.innerWidth < 992) {
+            if (isOpen) {
+                overlay.classList.add("active");
+                document.body.style.overflow = "hidden"; // Prevent scroll when menu open
+            } else {
+                overlay.classList.remove("active");
+                document.body.style.overflow = "";
+            }
+        }
+    }
+
+    if (closeBtn) closeBtn.onclick = toggleSidebar;
+    if (closemBtn) closemBtn.onclick = toggleSidebar;
+    
+    // Close sidebar on overlay click (mobile)
+    overlay.onclick = function() {
+        sidebar.classList.remove("open");
+        overlay.classList.remove("active");
+        document.body.style.overflow = "";
+        setCookie("sidebarOpen", "0", 30);
+    };
+
+    // Auto-close sidebar on link click for mobile
+    const navLinks = sidebar.querySelectorAll(".nav-list a");
+    navLinks.forEach(link => {
+        link.addEventListener("click", () => {
+            if (window.innerWidth < 992) {
+                sidebar.classList.remove("open");
+                overlay.classList.remove("active");
+                document.body.style.overflow = "";
+            }
         });
     });
-
-    if (closeBtn) {
-        closeBtn.addEventListener("click", function(e) {
-            e.stopPropagation(); // Prevent trigger bleed
-            sidebar.classList.toggle("open");
-            menuBtnChange();
-            saveSidebarState();
-        });
-    }
-
-    if (closemBtn) {
-        closemBtn.addEventListener("click", function(e) {
-            e.stopPropagation();
-            sidebar.classList.toggle("open");
-            menuBtnChange();
-            saveSidebarState();
-        });
-    }
 
     function menuBtnChange() {
         if (!closeBtn) return;

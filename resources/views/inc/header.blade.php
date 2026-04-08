@@ -21,9 +21,9 @@
         <div class="dropdown">
             <button class="header-action-btn header-action-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bx bx-plus"></i>
-                <span class="d-none d-md-inline">Quick Add</span>
+                <span class="d-none d-lg-inline">Quick Add</span>
             </button>
-            <ul class="dropdown-menu header-dropdown mt-2">
+            <ul class="dropdown-menu header-dropdown dropdown-menu-end mt-2">
                 <li class="dropdown-section-label">Create New</li>
                 <li>
                     <a class="dropdown-item header-dropdown-item" href="/manage-lead">
@@ -57,9 +57,9 @@
         </div>
 
         {{-- My Tasks Button --}}
-        <button type="button" class="header-action-btn" data-bs-toggle="modal" data-bs-target="#todoListModal" title="My Tasks">
+        <button type="button" class="header-action-btn d-none d-sm-flex" data-bs-toggle="modal" data-bs-target="#todoListModal" title="My Tasks">
             <i class="bx bx-check-double"></i>
-            <span class="d-none d-md-inline">Tasks</span>
+            <span class="d-none d-lg-inline">Tasks</span>
         </button>
 
         {{-- Notifications --}}
@@ -67,9 +67,7 @@
             <button class="header-icon-btn position-relative" type="button" data-bs-toggle="dropdown" aria-label="Notifications">
                 <i class="bx bx-bell"></i>
                 @php 
-                    // Fresh leads (status 0 = Fresh/New, stored as integer)
                     $newLeadsCount = \App\Models\Leads::where('status', 0)->count(); 
-                    // Overdue follow-ups: status=1 (Follow Up) with a past next_date in lead_comments
                     $overdueCount = \App\Models\Leads::where('leads.status', 1)
                         ->join('lead_comments', 'leads.id', '=', 'lead_comments.lead_id')
                         ->where('lead_comments.next_date', '<', now())
@@ -88,8 +86,8 @@
                         <a class="dropdown-item header-dropdown-item" href="/newleads?status=0">
                             <span class="hdi-icon" style="background:rgba(26,115,232,0.08); color:#1a73e8;"><i class="bx bx-user-plus"></i></span>
                             <div>
-                                <div class="hdi-title">Fresh Leads Waiting</div>
-                                <small class="hdi-sub">{{ $newLeadsCount }} potential client{{ $newLeadsCount > 1 ? 's' : '' }} to contact</small>
+                                <div class="hdi-title">Fresh Leads</div>
+                                <small class="hdi-sub">{{ $newLeadsCount }} fresh leads waiting</small>
                             </div>
                         </a>
                     </li>
@@ -100,7 +98,7 @@
                             <span class="hdi-icon" style="background:rgba(234,67,53,0.08); color:#ea4335;"><i class="bx bx-time-five"></i></span>
                             <div>
                                 <div class="hdi-title">Overdue Follow-ups</div>
-                                <small class="hdi-sub" style="color:#ea4335;">{{ $overdueCount }} lead{{ $overdueCount > 1 ? 's' : '' }} past reminder date</small>
+                                <small class="hdi-sub" style="color:#ea4335;">{{ $overdueCount }} tasks past reminder</small>
                             </div>
                         </a>
                     </li>
@@ -109,22 +107,15 @@
                     <li>
                         <div class="header-dropdown-empty">
                             <i class="bx bx-bell-off"></i>
-                            <span>All clear — no new alerts</span>
+                            <span>No new alerts</span>
                         </div>
                     </li>
                 @endif
             </ul>
         </div>
 
-        {{-- Divider --}}
-        <div class="header-divider d-none d-md-block"></div>
-        {{-- Global Search Button (Ctrl+K) --}}
-        <button class="header-search-trigger d-none d-md-flex" id="globalSearchBtn" title="Global Search (Ctrl+K)" onclick="openGlobalSearch()">
-            <i class="bx bx-search"></i>
-            <span>Search…</span>
-            <kbd>⌃K</kbd>
-        </button>
-        <button class="header-icon-btn d-md-none" title="Search" onclick="openGlobalSearch()">
+        {{-- Global Search Button --}}
+        <button class="header-icon-btn d-flex" title="Search" onclick="openGlobalSearch()">
             <i class="bx bx-search"></i>
         </button>
 
@@ -132,12 +123,8 @@
         <div class="dropdown">
             <a href="#" class="header-user-btn no-caret dropdown-toggle" data-bs-toggle="dropdown" aria-label="Account menu">
                 <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=006666&color=ffff00&size=64"
-                     class="header-avatar" width="36" height="36" alt="{{ Auth::user()->name }}">
-                <div class="header-user-info d-none d-lg-block">
-                    <div class="header-user-name">{{ Auth::user()->name }}</div>
-                    <div class="header-user-role">{{ Auth::user()->role == '0' ? 'Admin' : 'Staff' }}</div>
-                </div>
-                <i class="bx bx-chevron-down header-user-chevron d-none d-lg-block"></i>
+                     class="header-avatar" width="34" height="34" alt="{{ Auth::user()->name }}">
+                <i class="bx bx-chevron-down d-none d-lg-block" style="font-size: 0.9rem; color: #5f6368;"></i>
             </a>
             <ul class="dropdown-menu header-dropdown dropdown-menu-end mt-2" style="min-width: 200px;">
                 <li class="header-user-meta px-3 py-2">
@@ -150,7 +137,6 @@
                         <i class="bx bx-user"></i> My Profile
                     </a>
                 </li>
-                <li><hr class="dropdown-divider my-1 mx-2"></li>
                 <li>
                     <a class="dropdown-item header-dropdown-item-sm text-danger" href="/signout">
                         <i class="bx bx-log-out"></i> Sign Out
