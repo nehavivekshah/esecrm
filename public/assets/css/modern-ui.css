@@ -359,3 +359,147 @@ table.dataTable tbody tr:last-child td {
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 102, 102, 0.4);
 }
+
+/* ================== LEADS TOOLBAR OPTIMIZATION ================== */
+.leads-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    background: #ffffff;
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-soft);
+}
+
+.leads-toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.leads-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Base Styles for Toolbar Elements */
+.lb-select {
+    border: 1px solid var(--border-color) !important;
+    border-radius: 20px !important;
+    padding: 0 14px !important;
+    height: 36px !important;
+    font-size: 0.85rem !important;
+    color: var(--text-main);
+    background: #f8fafc;
+    transition: var(--transition-snappy);
+}
+
+.lb-select:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 3px var(--primary-glow) !important;
+    background: #fff;
+}
+
+.lb-btn {
+    border-radius: 20px !important;
+    padding: 7px 16px !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: var(--transition-snappy);
+    white-space: nowrap;
+}
+
+.lb-btn-primary { background: var(--primary-color) !important; color: #fff !important; border: none; }
+.lb-btn-primary:hover { background: var(--primary-hover) !important; transform: translateY(-1px); }
+
+.lb-btn-secondary { background: #e6f4f1 !important; color: var(--primary-color) !important; border: 1px solid rgba(0, 102, 102, 0.1) !important; }
+.lb-btn-secondary:hover { background: #d3ece7 !important; }
+
+.lb-btn-ghost { background: #f1f5f9 !important; color: #475569 !important; border: 1px solid #e2e8f0 !important; }
+.lb-btn-ghost:hover { background: #e2e8f0 !important; color: #1e293b !important; }
+
+.lb-icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+    cursor: pointer;
+    transition: var(--transition-snappy);
+}
+
+.lb-icon-btn:hover { background: #e2e8f0; color: var(--primary-color); }
+
+/* --- Mobile Specific Optimization (Max 768px) --- */
+@media (max-width: 768px) {
+    .leads-toolbar {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 12px !important;
+        padding: 10px !important;
+    }
+
+    /* Horizontal Scrolling Filters (Pills Pattern) */
+    .leads-toolbar-left {
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        padding: 4px 0 !important;
+        margin: 0 -10px !important;
+        padding: 4px 10px !important;
+        -webkit-overflow-scrolling: touch !important;
+        gap: 8px !important;
+    }
+
+    /* Hide scrollbar but keep functionality */
+    .leads-toolbar-left::-webkit-scrollbar { display: none; }
+    .leads-toolbar-left { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .lb-select {
+        min-width: 140px;
+        flex-shrink: 0;
+    }
+
+    #ajaxTags {
+        min-width: 160px;
+    }
+
+    /* Action Buttons - Structured Grid */
+    .leads-toolbar-right {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 6px !important;
+    }
+
+    /* Special handling for the last child (Add Lead) */
+    .leads-toolbar-right a:last-child {
+        grid-column: span 4 !important;
+        margin-top: 4px !important;
+        padding: 10px !important;
+    }
+
+    /* Hide text on mobile for secondary actions to save space */
+    .leads-toolbar-right a .d-none.d-sm-inline {
+        display: none !important;
+    }
+
+    .lb-btn {
+        padding: 8px !important;
+        justify-content: center !important;
+        border-radius: 12px !important;
+    }
+
+    .lb-btn i {
+        font-size: 1.1rem;
+    }
+}
