@@ -616,7 +616,8 @@ h2 {
     width: 100%;
     transition: margin-left 0.45s cubic-bezier(0.16, 1, 0.3, 1);
     z-index: 2;
-    overflow-x: hidden;
+    /* Removed overflow-x: hidden to prevent dropdown clipping */
+    overflow: visible; 
 }
 
 .task__section .text {
