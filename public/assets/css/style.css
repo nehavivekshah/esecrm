@@ -2641,8 +2641,4 @@ div.dataTables_processing>div:last-child>div {
     .sidebar {
         width: 80px;
     }
-
-    .sidebar .nav-list {
-        width: 80px;
-    }
 }
