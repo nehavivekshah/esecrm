@@ -269,25 +269,27 @@ h2 {
     padding: 5px 15px;
     z-index: 1050;
     background-color: var(--color-default);
-    
+
     /* PERFORMANCE: GPU Accelerated Transitions */
     transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: transform;
-    transform: translateX(-100%); /* Start Hidden */
-    
+    transform: translateX(-100%);
+    /* Start Hidden */
+
     position: fixed;
     border-right: 1px solid rgba(255, 255, 255, 0.1);
     top: 0;
     left: 0;
     height: 100vh;
     overflow-y: auto;
-    
+
     /* PRESENTATION: Premium Layered Shadow */
     box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1), 30px 0 60px rgba(0, 0, 0, 0.05);
 }
 
 .sidebar.open {
-    transform: translateX(0); /* Slide In */
+    transform: translateX(0);
+    /* Slide In */
 }
 
 .sidebar .logo_details {
@@ -617,7 +619,7 @@ h2 {
     transition: margin-left 0.45s cubic-bezier(0.16, 1, 0.3, 1);
     z-index: 2;
     /* Removed overflow-x: hidden to prevent dropdown clipping */
-    overflow: visible; 
+    overflow: visible;
 }
 
 .task__section .text {
@@ -632,13 +634,13 @@ h2 {
 }
 
 @media (min-width: 992px) {
-    .sidebar.open ~ .task__section {
+    .sidebar.open~.task__section {
         margin-left: 250px;
         width: calc(100% - 250px);
     }
-    
+
     /* Ensure header takes full width of its shrunken parent */
-    .sidebar.open ~ .task__section header.dashboard-header {
+    .sidebar.open~.task__section header.dashboard-header {
         width: 100%;
         margin-left: 0;
     }
@@ -651,7 +653,8 @@ h2 {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 20, 20, 0.4); /* Darker tint for depth */
+    background: rgba(0, 20, 20, 0.4);
+    /* Darker tint for depth */
     backdrop-filter: blur(8px) saturate(150%);
     -webkit-backdrop-filter: blur(8px) saturate(150%);
     z-index: 1040;
@@ -2349,8 +2352,8 @@ div#leadslists_filter input {
 
 .header-left {
     display: flex;
-    justify-content: space-around;
-    gap: 20px;
+    justify-content: start;
+    gap: 0px;
 }
 
 .table>thead>tr {

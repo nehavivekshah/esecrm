@@ -52,7 +52,8 @@ body {
     z-index: 1000;
     padding: 0 30px;
     margin-bottom: 25px;
-    overflow: visible !important; /* Crucial for dropdown visibility */
+    overflow: visible !important;
+    /* Crucial for dropdown visibility */
 }
 
 /* ==========================================================================
@@ -420,7 +421,7 @@ body {
 .header-left {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 0px;
 }
 
 .header-menu-btn {
