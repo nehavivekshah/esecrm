@@ -47,7 +47,7 @@
                     <i class="bx bx-task"></i>
                     <span class="link_name">Project Tasks</span>
                 </a>
-                <span class="tooltip">Project Tasks</span>
+
             </li>
         @endif
 
@@ -55,7 +55,7 @@
             <li>
                 <a href="/companies" @if(Request::segment(1) == 'companies') class="active" @endif><i
                         class="bx bx-building"></i> <span class="link_name">Companies</span></a>
-                <span class="tooltip">Companies</span>
+
             </li>
         @endif
 
@@ -94,7 +94,7 @@
                     <i class="bx bx-user"></i>
                     <span class="link_name">Customers</span>
                 </a>
-                <span class="tooltip">Customers</span>
+
             </li>
         @endif
 
@@ -104,7 +104,7 @@
                     <i class="bx bx-briefcase"></i>
                     <span class="link_name">Projects</span>
                 </a>
-                <span class="tooltip">Projects</span>
+
             </li>
         @endif
 
@@ -127,7 +127,7 @@
                                 <i class="bx bx-doughnut-chart"></i>
                                 <span class="link_name">Opportunities</span>
                             </a>
-                            <span class="tooltip">Opportunities</span>
+
                         </li>
                     @endif
 
@@ -137,7 +137,7 @@
                                 <i class="bx bx-briefcase"></i>
                                 <span class="link_name">Proposals</span>
                             </a>
-                            <span class="tooltip">Proposals</span>
+
                         </li>
                     @endif
 
@@ -147,7 +147,7 @@
                                 <i class="bx bx-file"></i>
                                 <span class="link_name">Invoices</span>
                             </a>
-                            <span class="tooltip">Invoices</span>
+
                         </li>
                     @endif
 
@@ -157,7 +157,7 @@
                                 <i class="bx bx-box"></i>
                                 <span class="link_name">Contracts</span>
                             </a>
-                            <span class="tooltip">Contracts</span>
+
                         </li>
                     @endif
 
@@ -167,7 +167,7 @@
                                 <i class="bx bx-money"></i>
                                 <span class="link_name">Recovery</span>
                             </a>
-                            <span class="tooltip">Recovery</span>
+
                         </li>
                     @endif
                 </ul>
@@ -181,7 +181,7 @@
                     <i class="bx bx-broadcast"></i>
                     <span class="link_name">Campaigns</span>
                 </a>
-                <span class="tooltip">Campaigns</span>
+
             </li>
         @endif
 
@@ -191,7 +191,7 @@
                     <i class="bx bx-git-branch"></i>
                     <span class="link_name">Automations</span>
                 </a>
-                <span class="tooltip">Automations</span>
+
             </li>
         @endif
 
@@ -203,7 +203,7 @@
                     <i class="bx bx-line-chart"></i>
                     <span class="link_name">Reports</span>
                 </a>
-                <span class="tooltip">Reports</span>
+
             </li>
         @endif
 
@@ -213,7 +213,7 @@
                     <i class="bx bx-calendar-check"></i>
                     <span class="link_name">Attendance</span>
                 </a>
-                <span class="tooltip">Attendance</span>
+
             </li>
         @endif
 
@@ -244,7 +244,7 @@
                         <li>
                             <a href="/my-company" @if(Request::segment(1) == 'my-company') class="active" @endif><i
                                     class="bx bx-building"></i> <span class="link_name">My Company</span></a>
-                            <span class="tooltip">My Companys</span>
+
                         </li>
                     @endif
 
@@ -252,7 +252,7 @@
                         <li>
                             <a href="/my-profile" @if(Request::segment(1) == 'my-profile') class="active" @endif><i
                                     class="bx bx-user"></i> <span class="link_name">My Profile</span></a>
-                            <span class="tooltip">My Profile</span>
+
                         </li>
                     @endif
 
@@ -267,7 +267,7 @@
                                 <i class="bx bx-envelope"></i>
                                 <span class="link_name">Email Templates</span>
                             </a>
-                            <span class="tooltip">Email Templates</span>
+
                         </li>
 
                     @endif
@@ -275,14 +275,14 @@
                     <li>
                         <a href="/reset-password" @if(Request::segment(1) == 'reset-password') class="active" @endif><i
                                 class="bx bx-lock"></i> <span class="link_name">Reset Password</span></a>
-                        <span class="tooltip">Reset Password</span>
+
                     </li>
 
                     @if(in_array('settings', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $premium)))
                         <li>
                             <a href="/role-settings" @if(Request::segment(1) == 'role-settings') class="active" @endif><i
                                     class="bx bx-shield"></i> <span class="link_name">Role Settings</span></a>
-                            <span class="tooltip">Role Settings</span>
+
                         </li>
                     @endif
                 </ul>

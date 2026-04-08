@@ -2,7 +2,7 @@
 
     {{-- LEFT: Mobile menu toggle + Page Title --}}
     <div class="header-left">
-        <button class="header-menu-btn d-lg-none" id="mbtn" aria-label="Open sidebar">
+        <button class="header-menu-btn" id="mbtn" aria-label="Open sidebar">
             <i class="bx bx-menu"></i>
         </button>
         <div class="header-title-block">
@@ -182,6 +182,35 @@
 </div>
 
 <style>
+/* ── Sidebar Toggle Button (Hamburger) ── */
+.header-menu-btn {
+    background: #f1f3f4;
+    border: 1px solid #e0e4e8;
+    border-radius: 8px;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #5f6368;
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-right: 12px;
+}
+
+.header-menu-btn:hover {
+    background: #e8eaed;
+    border-color: var(--color-default);
+    color: var(--color-default);
+    transform: scale(1.05);
+    box-shadow: 0 2px 6px rgba(0, 102, 102, 0.1);
+}
+
+.header-menu-btn:active {
+    transform: scale(0.95);
+}
+
 /* ── Global Search Trigger Button ── */
 .header-search-trigger {
     display: flex;
