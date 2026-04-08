@@ -604,4 +604,104 @@ table.dataTable tbody tr:last-child td {
         width: 100% !important;
         margin-top: 5px !important;
     }
+
+    /* --- Global Mobile Overrides --- */
+    .dash-container {
+        padding: 15px 12px 30px !important;
+    }
+
+    .task__section .text {
+        font-size: 1.25rem !important; /* Smaller page titles */
+        padding: 12px 12px !important;
+    }
+
+    /* Dashboard Stat Cards - Better vertical scaling */
+    .dash-stat-card {
+        padding: 15px !important;
+        margin-bottom: 5px !important;
+    }
+
+    .dash-stat-value {
+        font-size: 1.5rem !important;
+    }
+
+    .dash-stat-label {
+        font-size: 0.75rem !important;
+    }
+
+    /* Quick Actions Grid - Force 2 columns if space allows, otherwise stack */
+    .quick-actions-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+    }
+
+    .action-tile {
+        padding: 12px !important;
+        gap: 10px !important;
+    }
+
+    .action-tile i {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 1.1rem !important;
+    }
+
+    .action-tile-body h6 {
+        font-size: 0.82rem !important;
+        margin-bottom: 2px !important;
+    }
+
+    /* Charts scaling */
+    .dash-chart-container {
+        height: 220px !important;
+    }
+
+    /* Responsive Table Standardization */
+    .table-responsive {
+        border: none !important;
+        margin-bottom: 0;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Fix potential sidebar overlap issues on mobile */
+    body.sidebar-open {
+        overflow: hidden !important;
+    }
+
+    /* Ensure modals don't have massive side margins on tiny screens */
+    .modal-dialog {
+        margin: 0.5rem !important;
+    }
+
+    /* Header scaling fix */
+    .dashboard-header {
+        padding: 10px 12px !important;
+    }
+
+    .header-page-title {
+        font-size: 1.1rem !important;
+        max-width: 160px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .header-left {
+        gap: 8px !important;
+    }
+
+    .header-right {
+        gap: 6px !important;
+    }
+
+    /* Adjusting icon buttons for touch */
+    .header-icon-btn, .header-user-btn {
+        padding: 8px !important;
+    }
+
+    .header-avatar {
+        width: 30px !important;
+        height: 30px !important;
+    }
 }
