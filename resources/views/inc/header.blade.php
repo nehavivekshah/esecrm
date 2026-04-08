@@ -2,7 +2,7 @@
 
     {{-- LEFT: Mobile menu toggle + Page Title --}}
     <div class="header-left">
-        <button class="header-menu-btn d-lg-none" id="mbtn" aria-label="Open sidebar">
+        <button class="header-menu-btn" id="mbtn" aria-label="Open sidebar">
             <i class="bx bx-menu"></i>
         </button>
         <div class="header-title-block">
