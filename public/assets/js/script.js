@@ -19,7 +19,7 @@ function getCookie(name) {
     return null;
 }
 
-window.onload = function() {
+document.addEventListener("DOMContentLoaded", function() {
     const sidebar = document.querySelector(".sidebar");
     const closeBtn = document.querySelector("#btn");
     const closemBtn = document.querySelector("#mbtn");
@@ -82,7 +82,7 @@ window.onload = function() {
             setCookie("sidebarOpen", "closed", 1); // Save the 'closed' state for 7 days
         }
     }
-}
+});
 
 function addtask(id){
     document.querySelectorAll('.task-form').forEach(function(el) {
