@@ -1191,37 +1191,37 @@ class LeadController extends Controller
                      |     - else => 0
                      |------------------------------------------------------------------------------
                      */
-                    // Indexes shifted by 1 after company (index 4)
-                    // 0: name, 1: email, 2: mob, 3: whatsapp, 4: company, 5: gst_no, 6: position ...
+                    // CSV Mapping aligned with Export format:
+                    // 0: CID (skip), 1: Name, 2: Email, 3: Mobile, 4: WhatsApp, 5: Company, 6: GST No, 
+                    // 7: Position, 8: Industry, 9: Location, 10: Website, 11: Assigned, 12: Purpose, 
+                    // 13: Values, 14: Language, 15: POC, 16: Status, 17: Last Talk, 18: Created At, 
+                    // 19: Reminder, 20: Note
 
-                    $name = $data[0] ?? null;
+                    $name = $data[1] ?? null;
                     $name = mb_convert_encoding($name, 'UTF-8', 'UTF-8, ISO-8859-1, Windows-1252');
                     $name = mb_substr($name, 0, 230);
-                    $email = $data[1] ?? null;
-                    $mob = $data[2] ?? null;
-                    $whatsapp = $data[3] ?? null;
-                    $company = $data[4] ?? null;
+                    $email = $data[2] ?? null;
+                    $mob = $data[3] ?? null;
+                    $whatsapp = $data[4] ?? null;
+                    $company = $data[5] ?? null;
                     $company = mb_convert_encoding($company, 'UTF-8', 'UTF-8, ISO-8859-1, Windows-1252');
-                    $gst_no = $data[5] ?? null; // New Field
+                    $gst_no = $data[6] ?? null;
 
-                    // Shifted indexes
-                    $position = $data[6] ?? null;
-                    $industry = $data[7] ?? null;
-                    $location = json_encode(explode(',', ($data[8] ?? '')));
-                    $website = $data[9] ?? null;
-                    $source = $data[10] ?? null; // source/assigned?
-                    $assigned = $data[10] ?? null; // Assuming source/assigned same index
-                    $purpose = $data[11] ?? null;
-                    $values = $data[12] ?? null;
-                    $language = $data[13] ?? null;
-                    $poc = $data[14] ?? null;
-                    $statusStr = $data[15] ?? null; // "status" column
+                    $position = $data[7] ?? null;
+                    $industry = $data[8] ?? null;
+                    $location = json_encode(explode(',', ($data[9] ?? '')));
+                    $website = $data[10] ?? null;
+                    $assigned = $data[11] ?? null;
+                    $purpose = $data[12] ?? null;
+                    $values = $data[13] ?? null;
+                    $language = $data[14] ?? null;
+                    $poc = $data[15] ?? null;
+                    $statusStr = $data[16] ?? null;
 
-                    // Date fields shifted
-                    $last_talk_idx = 16;
-                    $created_at_idx = 17;
-                    $reminder_idx = 18;
-                    $note_idx = 19;
+                    $last_talk_idx = 17;
+                    $created_at_idx = 18;
+                    $reminder_idx = 19;
+                    $note_idx = 20;
 
                     $status = 0;
                     if (!empty($statusStr)) {

@@ -135,6 +135,10 @@
                             <i class="bx bx-upload"></i>
                             <span class="d-none d-sm-inline">Import</span>
                         </a>
+                        <a href="{{ route('exportLeads') }}" class="lb-btn lb-btn-ghost" title="Export Leads to CSV">
+                            <i class="bx bx-export"></i>
+                            <span class="d-none d-sm-inline">Export</span>
+                        </a>
                         <a href="{{ asset('assets/leads.csv') }}" class="lb-btn lb-btn-ghost" target="_blank" download="leads.csv" title="Download CSV Sample">
                             <i class="bx bx-download"></i>
                             <span class="d-none d-sm-inline">Sample</span>
@@ -808,6 +812,9 @@
 
 
             // 2. Filters & Refresh
+            $('#importFile').click(function () { $('#impLeadFile').click(); });
+            $('#impLeadFile').change(function () { if (this.value) $('#leadsubmit').submit(); });
+
             $('#ajaxSearch').keyup(function () { table.search($(this).val()).draw(); });
             $('#ajaxTags').keyup(function () { table.draw(); });
             $('#ajaxSalesRep, #ajaxStatus').on('change', function () { table.draw(); });
