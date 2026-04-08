@@ -38,13 +38,25 @@ window.onload = function() {
         closeBtn.classList.replace("bx-menu-alt-right", "bx-menu");
     }
     
-    closeBtn.addEventListener("click", function() {
+    const toggleTriggers = document.querySelectorAll(".sidebar-toggle-trigger");
+
+    toggleTriggers.forEach(trigger => {
+        trigger.addEventListener("click", function() {
+            sidebar.classList.toggle("open");
+            menuBtnChange();
+            saveSidebarState();
+        });
+    });
+
+    closeBtn.addEventListener("click", function(e) {
+        e.stopPropagation(); // Prevent trigger bleed
         sidebar.classList.toggle("open");
         menuBtnChange();
         saveSidebarState();
     });
 
-    closemBtn.addEventListener("click", function() {
+    closemBtn.addEventListener("click", function(e) {
+        e.stopPropagation();
         sidebar.classList.toggle("open");
         menuBtnChange();
         saveSidebarState();

@@ -7,7 +7,7 @@
     $pro = ["premium", "pro"];
 @endphp
 <div class="sidebar @if(isset($_COOKIE['sidebarOpen']) && $_COOKIE['sidebarOpen'] == 'open') open @endif">
-    <div class="logo_details">
+    <div class="logo_details sidebar-toggle-trigger">
         @if(!empty($company->logo))
             <img src="{{ asset('assets/images/company/logos/' . ($company->logo ?? '')) }}"
                 alt="{{$company->name ?? ''}}">
@@ -18,7 +18,7 @@
     </div>
     <ul class="nav-list" id="accordion">
 
-        <li class="profile">
+        <li class="profile sidebar-toggle-trigger">
             <div class="profile_details">
                 @if(!empty(Auth::user()->photo))
                     <img src="{{ asset('assets/images/profile/' . (Auth::user()->photo ?? '')) }}" class="shadow-sm"

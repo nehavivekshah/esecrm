@@ -288,6 +288,11 @@ h2 {
     display: flex;
     align-items: center;
     position: relative;
+    cursor: pointer;
+}
+
+.sidebar .logo_details:hover {
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .sidebar .logo_details .icon,
