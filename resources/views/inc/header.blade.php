@@ -4,6 +4,7 @@
     <div class="header-left">
         <button class="header-menu-btn" id="mbtn" aria-label="Open sidebar">
             <i class="bx bx-menu"></i>
+            <span class="d-none d-md-inline" style="font-size: 0.82rem; font-weight: 700; margin-left: 8px;">MENU</span>
         </button>
         <div class="header-title-block">
             <h1 class="header-page-title">{{ $title ?? 'Dashboard' }}</h1>
@@ -184,31 +185,31 @@
 <style>
 /* ── Sidebar Toggle Button (Hamburger) ── */
 .header-menu-btn {
-    background: #f1f3f4;
-    border: 1px solid #e0e4e8;
+    background: #006666 !important; /* Primary CRM Color */
+    border: none;
     border-radius: 8px;
-    width: 38px;
-    height: 38px;
-    display: flex;
+    width: 42px;
+    height: 42px;
+    display: flex !important; /* Force display */
     align-items: center;
     justify-content: center;
-    color: #5f6368;
-    font-size: 1.4rem;
+    color: #ffffff !important;
+    font-size: 1.6rem;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    margin-right: 12px;
+    margin-right: 18px;
+    box-shadow: 0 4px 12px rgba(0, 102, 102, 0.2);
+    z-index: 100;
 }
 
 .header-menu-btn:hover {
-    background: #e8eaed;
-    border-color: var(--color-default);
-    color: var(--color-default);
-    transform: scale(1.05);
-    box-shadow: 0 2px 6px rgba(0, 102, 102, 0.1);
+    background: #004d4d !important;
+    transform: scale(1.08);
+    box-shadow: 0 6px 16px rgba(0, 102, 102, 0.3);
 }
 
 .header-menu-btn:active {
-    transform: scale(0.95);
+    transform: scale(0.92);
 }
 
 /* ── Global Search Trigger Button ── */
