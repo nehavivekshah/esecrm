@@ -2636,9 +2636,3 @@ div.dataTables_processing>div:last-child>div {
     background: var(--color-default) !important;
     animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
-
-@media (max-height: 1248px) {
-    .sidebar {
-        width: 80px;
-    }
-}
