@@ -185,12 +185,12 @@
 <style>
 /* ── Sidebar Toggle Button (Hamburger) ── */
 .header-menu-btn {
-    background: #006666 !important; /* Primary CRM Color */
+    background: #006666 !important;
     border: none;
     border-radius: 8px;
-    width: 42px;
+    width: 98px;
     height: 42px;
-    display: flex !important; /* Force display */
+    display: flex !important;
     align-items: center;
     justify-content: center;
     color: #ffffff !important;
@@ -198,7 +198,7 @@
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     margin-right: 18px;
-    box-shadow: 0 4px 12px rgba(0, 102, 102, 0.2);
+    /* box-shadow: 0 4px 12px rgba(0, 102, 102, 0.2); */
     z-index: 100;
 }
 
@@ -212,7 +212,16 @@
     transform: scale(0.92);
 }
 
-/* ── Global Search Trigger Button ── */
+/* ── Mobile View Adjustments ── */
+@media (max-width: 768px) {
+    .header-menu-btn {
+        width: 42px !important;
+        margin-right: 12px;
+    }
+    .header-menu-btn span {
+        display: none !important; /* Hide "MENU" text on small mobile */
+    }
+}
 .header-search-trigger {
     display: flex;
     align-items: center;

@@ -32,10 +32,10 @@ window.onload = function() {
     // Apply the saved state (open or closed) from cookies
     if (sidebarState === "open" && screenWidth > 768) {
         sidebar.classList.add("open");
-        closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
+        if (closeBtn) closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
     } else {
         sidebar.classList.remove("open");
-        closeBtn.classList.replace("bx-menu-alt-right", "bx-menu");
+        if (closeBtn) closeBtn.classList.replace("bx-menu-alt-right", "bx-menu");
     }
     
     const toggleTriggers = document.querySelectorAll(".sidebar-toggle-trigger");
@@ -48,21 +48,26 @@ window.onload = function() {
         });
     });
 
-    closeBtn.addEventListener("click", function(e) {
-        e.stopPropagation(); // Prevent trigger bleed
-        sidebar.classList.toggle("open");
-        menuBtnChange();
-        saveSidebarState();
-    });
+    if (closeBtn) {
+        closeBtn.addEventListener("click", function(e) {
+            e.stopPropagation(); // Prevent trigger bleed
+            sidebar.classList.toggle("open");
+            menuBtnChange();
+            saveSidebarState();
+        });
+    }
 
-    closemBtn.addEventListener("click", function(e) {
-        e.stopPropagation();
-        sidebar.classList.toggle("open");
-        menuBtnChange();
-        saveSidebarState();
-    });
+    if (closemBtn) {
+        closemBtn.addEventListener("click", function(e) {
+            e.stopPropagation();
+            sidebar.classList.toggle("open");
+            menuBtnChange();
+            saveSidebarState();
+        });
+    }
 
     function menuBtnChange() {
+        if (!closeBtn) return;
         if (sidebar.classList.contains("open")) {
             closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
         } else {

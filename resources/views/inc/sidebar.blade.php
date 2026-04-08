@@ -14,7 +14,7 @@
         @else
             <div class="logo_name text-white">{{ $company->name ?? 'Admin Panel' }}</div>
         @endif
-        <i class="bx bx-menu-alt-right" id="btn"></i>
+
     </div>
     <ul class="nav-list" id="accordion">
 
