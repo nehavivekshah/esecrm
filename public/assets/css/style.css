@@ -265,7 +265,7 @@ h2 {
 
 .sidebar {
     min-height: 100vh;
-    width: 55px;
+    width: 70px;
     padding: 5px 5px;
     z-index: 99;
     background-color: var(--color-default);
