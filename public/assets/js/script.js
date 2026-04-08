@@ -1,3 +1,6 @@
+// Fallback for Android integration function to prevent ReferenceErrors on non-login pages
+window.loadSharedPrefData = window.loadSharedPrefData || function() {};
+
 function setCookie(name, value, days) {
     let expires = "";
     if (days) {
