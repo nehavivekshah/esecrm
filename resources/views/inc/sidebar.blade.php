@@ -8,14 +8,13 @@
 @endphp
 <div class="sidebar @if(isset($_COOKIE['sidebarOpen']) && $_COOKIE['sidebarOpen'] == 'open') open @endif">
     <div class="logo_details">
-        <div class="logo-wrapper">
-            @if(!empty($company->logo))
-                <img src="{{ asset('assets/images/company/logos/' . ($company->logo ?? '')) }}"
-                    alt="{{$company->name ?? ''}}" class="logo-img">
-            @endif
+        @if(!empty($company->logo))
+            <img src="{{ asset('assets/images/company/logos/' . ($company->logo ?? '')) }}"
+                alt="{{$company->name ?? ''}}">
+        @else
             <div class="logo_name text-white">{{ $company->name ?? 'Admin Panel' }}</div>
-        </div>
-        <i class="bx @if(isset($_COOKIE['sidebarOpen']) && $_COOKIE['sidebarOpen'] == 'open') bx-menu-alt-right @else bx-menu @endif" id="btn"></i>
+        @endif
+        <i class="bx bx-menu-alt-right" id="btn"></i>
     </div>
     <ul class="nav-list" id="accordion">
 
@@ -28,8 +27,8 @@
                     <img src="{{ asset('assets/images/profile/user.png') }}" alt="profile image">
                 @endif
                 <div class="profile_content">
-                    <div class="name" title="{{ Auth::user()->name ?? '' }}">{{ Auth::user()->name ?? '' }}</div>
-                    <div class="designation">{{ $roles->title ?? 'Team Member' }}</div>
+                    <div class="name">{{ Auth::user()->name ?? '' }}</div>
+                    <div class="designation">{{ $roles->title ?? '' }}</div>
                 </div>
             </div>
         </li>

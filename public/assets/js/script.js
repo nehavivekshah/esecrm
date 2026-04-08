@@ -32,45 +32,37 @@ window.onload = function() {
     // Apply the saved state (open or closed) from cookies
     if (sidebarState === "open" && screenWidth > 768) {
         sidebar.classList.add("open");
-        document.body.classList.add("sidebar-open");
-        if(closeBtn) closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
+        closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
     } else {
         sidebar.classList.remove("open");
-        document.body.classList.remove("sidebar-open");
-        if(closeBtn) closeBtn.classList.replace("bx-menu-alt-right", "bx-menu");
+        closeBtn.classList.replace("bx-menu-alt-right", "bx-menu");
     }
     
-    if(closeBtn) {
-        closeBtn.addEventListener("click", function() {
-            sidebar.classList.toggle("open");
-            document.body.classList.toggle("sidebar-open");
-            menuBtnChange();
-            saveSidebarState();
-        });
-    }
+    closeBtn.addEventListener("click", function() {
+        sidebar.classList.toggle("open");
+        menuBtnChange();
+        saveSidebarState();
+    });
 
-    if(closemBtn) {
-        closemBtn.addEventListener("click", function() {
-            sidebar.classList.toggle("open");
-            document.body.classList.toggle("sidebar-open");
-            menuBtnChange();
-            saveSidebarState();
-        });
-    }
+    closemBtn.addEventListener("click", function() {
+        sidebar.classList.toggle("open");
+        menuBtnChange();
+        saveSidebarState();
+    });
 
     function menuBtnChange() {
         if (sidebar.classList.contains("open")) {
-            if(closeBtn) closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
+            closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
         } else {
-            if(closeBtn) closeBtn.classList.replace("bx-menu-alt-right", "bx-menu");
+            closeBtn.classList.replace("bx-menu-alt-right", "bx-menu");
         }
     }
 
     function saveSidebarState() {
         if (sidebar.classList.contains("open")) {
-            setCookie("sidebarOpen", "open", 7); // Save the 'open' state for 7 days
+            setCookie("sidebarOpen", "open", 1); // Save the 'open' state for 7 days
         } else {
-            setCookie("sidebarOpen", "closed", 7); // Save the 'closed' state for 7 days
+            setCookie("sidebarOpen", "closed", 1); // Save the 'closed' state for 7 days
         }
     }
 }
