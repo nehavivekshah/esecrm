@@ -21,6 +21,8 @@ function getCookie(name) {
 
 document.addEventListener("DOMContentLoaded", function() {
     const sidebar = document.querySelector(".sidebar");
+    if (!sidebar) return;
+
     const closeBtn = document.querySelector("#btn");
     const closemBtn = document.querySelector("#mbtn");
 
