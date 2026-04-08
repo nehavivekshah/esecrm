@@ -56,13 +56,13 @@ document.addEventListener("DOMContentLoaded", function() {
     // Toggle menu
     function toggleSidebar() {
         const isOpen = sidebar.classList.toggle("open");
-        setCookie("sidebarOpen", isOpen ? "1" : "0", 30);
+        setCookie("sidebarOpen", isOpen ? "open" : "closed", 30);
         
         // Handle overlay on mobile
         if (window.innerWidth < 992) {
             if (isOpen) {
                 overlay.classList.add("active");
-                document.body.style.overflow = "hidden"; // Prevent scroll when menu open
+                document.body.style.overflow = "hidden";
             } else {
                 overlay.classList.remove("active");
                 document.body.style.overflow = "";
@@ -70,15 +70,20 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
+    // Attach to ALL triggers
     if (closeBtn) closeBtn.onclick = toggleSidebar;
     if (closemBtn) closemBtn.onclick = toggleSidebar;
+    
+    document.querySelectorAll(".sidebar-toggle-trigger").forEach(el => {
+        el.onclick = toggleSidebar;
+    });
     
     // Close sidebar on overlay click (mobile)
     overlay.onclick = function() {
         sidebar.classList.remove("open");
         overlay.classList.remove("active");
         document.body.style.overflow = "";
-        setCookie("sidebarOpen", "0", 30);
+        setCookie("sidebarOpen", "closed", 30);
     };
 
     // Auto-close sidebar on link click for mobile

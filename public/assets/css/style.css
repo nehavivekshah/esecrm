@@ -624,10 +624,15 @@ h2 {
 }
 
 @media (min-width: 992px) {
-    .sidebar.open ~ .task__section,
-    .sidebar.open ~ header.dashboard-header {
+    .sidebar.open ~ .task__section {
         margin-left: 250px;
         width: calc(100% - 250px);
+    }
+    
+    /* Ensure header takes full width of its shrunken parent */
+    .sidebar.open ~ .task__section header.dashboard-header {
+        width: 100%;
+        margin-left: 0;
     }
 }
 
