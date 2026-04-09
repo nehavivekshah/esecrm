@@ -88,10 +88,10 @@
                         <i class="bx bx-refresh"></i>
                     </button>
                     @if(in_array('All', $roleArray))
-                        <a href="/manage-company" class="lb-btn lb-btn-primary">
+                        <button type="button" class="lb-btn lb-btn-primary open-company-modal" data-url="/manage-company?ajax=1">
                             <i class="bx bx-plus"></i>
                             <span class="d-none d-sm-inline">Add Company</span>
-                        </a>
+                        </button>
                     @endif
                 </div>
             </div>
@@ -101,7 +101,7 @@
             ════════════════════════════════ --}}
             <div id="cardView" class="pj-card-grid mb-4" style="display:none;">
                 @forelse($companies as $company)
-                    <div class="pj-card" onclick="window.location.href='/manage-company?id={{ $company->id }}'">
+                    <div class="pj-card open-company-modal" data-url="/manage-company?id={{ $company->id }}&ajax=1">
                         {{-- Top accent --}}
                         <div class="pj-card-accent" style="background: linear-gradient(90deg, #006666, #009688);"></div>
 
@@ -121,10 +121,10 @@
                                 </div>
                             </div>
                             <div class="pj-card-actions" onclick="event.stopPropagation();">
-                                <a href="/manage-company?id={{ $company->id }}" class="btn kb-action-btn" title="Edit"
-                                    style="background:rgba(0,102,102,0.08);color:#006666;">
+                                <button type="button" class="btn kb-action-btn open-company-modal" data-url="/manage-company?id={{ $company->id }}&ajax=1" title="Edit"
+                                    style="background:rgba(0,102,102,0.08);color:#006666; border:none;">
                                     <i class="bx bx-pencil"></i>
-                                </a>
+                                </button>
                             </div>
                         </div>
 
@@ -188,8 +188,8 @@
                         </thead>
                         <tbody>
                             @foreach($companies as $k=>$company)
-                                <tr class="pointer-cursor selectrow"
-                                    onclick="window.location.href='/manage-company?id={{ $company->id }}'">
+                                <tr class="pointer-cursor selectrow open-company-modal"
+                                    data-url="/manage-company?id={{ $company->id }}&ajax=1">
                                     <td class="fw-bold text-muted" style="font-size:0.75rem;">
                                         {{ $k+1 }}
                                     </td>
@@ -233,10 +233,10 @@
                                     </td>
                                     <td class="position-sticky end-0 bg-white" onclick="event.stopPropagation();">
                                         <div class="d-flex align-items-center justify-content-center gap-1">
-                                            <a href="/manage-company?id={{ $company->id }}"
-                                                class="btn kb-action-btn kb-action-edit" title="Edit">
+                                            <button type="button" class="btn kb-action-btn kb-action-edit open-company-modal" 
+                                                data-url="/manage-company?id={{ $company->id }}&ajax=1" title="Edit">
                                                 <i class="bx bx-pencil"></i>
-                                            </a>
+                                            </button>
                                             <a href="javascript:void(0)" class="btn kb-action-btn kb-action-del delete"
                                                 id="{{ $company->id }}" date-page="companyDelete" title="Delete">
                                                 <i class="bx bx-trash"></i>
@@ -252,6 +252,15 @@
 
         </div>
     </section>
+
+    {{-- Manage Company Modal --}}
+    <div class="modal fade" id="manageCompanyModal" aria-labelledby="manageCompanyModalLabel" aria-hidden="true" style="z-index: 1060;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="border-radius:16px; border:none;" id="manageCompanyModalContent">
+                <!-- Content injected via AJAX -->
+            </div>
+        </div>
+    </div>
 
     <style>
         /* ── Project Stat Cards (Reused) ── */
@@ -374,6 +383,45 @@
             if (pref === 'card') {
                 setView('card');
             }
+
+            // AJAX Modal trigger logic (Reused from contracts module)
+            function execScripts(container) {
+                container.querySelectorAll('script').forEach(function (oldScript) {
+                    var newScript = document.createElement('script');
+                    Array.from(oldScript.attributes).forEach(function (attr) {
+                        newScript.setAttribute(attr.name, attr.value);
+                    });
+                    newScript.textContent = oldScript.textContent;
+                    document.body.appendChild(newScript);
+                    oldScript.remove();
+                });
+            }
+
+            // Event delegation for dynamically added rows/cards
+            document.addEventListener('click', function(e) {
+                const trigger = e.target.closest('.open-company-modal');
+                if (trigger) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const url = trigger.dataset.url;
+                    const content = document.getElementById('manageCompanyModalContent');
+                    const modalEl = document.getElementById('manageCompanyModal');
+
+                    content.innerHTML = '<div class="p-5 text-center"><i class="bx bx-loader-alt bx-spin" style="font-size:2rem;color:#006666;"></i><p class="mt-2 text-muted">Loading form...</p></div>';
+
+                    bootstrap.Modal.getOrCreateInstance(modalEl).show();
+
+                    fetch(url)
+                        .then(r => r.text())
+                        .then(html => {
+                            content.innerHTML = html;
+                            execScripts(content);
+                        })
+                        .catch(() => {
+                            content.innerHTML = '<div class="p-5 text-center text-danger"><i class="bx bx-error" style="font-size:2rem;"></i><p>Could not load form. Please try again.</p></div>';
+                        });
+                }
+            });
         });
     </script>
 @endsection

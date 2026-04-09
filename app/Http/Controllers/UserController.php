@@ -214,7 +214,13 @@ class UserController extends Controller
         
         $companies = Companies::where('id','=',$cid)->first();
         
-        return view('manageCompany',['company'=>$companies]);
+        $viewData = ['company'=>$companies];
+
+        if ($request->has('ajax')) {
+            return view('manageCompanyForm', $viewData);
+        }
+        
+        return view('manageCompany', $viewData);
     }
     public function manageCompanyPost(Request $request)
     {
