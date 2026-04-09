@@ -269,9 +269,11 @@ class UserController extends Controller
             $query->where('status', $status);
         }
         $companies = $query->get();
+        $plans = SubscriptionPlan::all();
         
         return view('companies', [
             'companies' => $companies,
+            'plans' => $plans,
             'status' => $status
         ]);
     }
@@ -282,8 +284,12 @@ class UserController extends Controller
         if($segment == 'my-company'){ $cid = Auth::user()->cid ?? ''; }else{ $cid = $request->id ?? ''; }
         
         $companies = Companies::where('id','=',$cid)->first();
+        $plans = SubscriptionPlan::all();
         
-        $viewData = ['company'=>$companies];
+        $viewData = [
+            'company' => $companies,
+            'plans' => $plans
+        ];
 
         if ($request->has('ajax')) {
             return view('manageCompanyForm', $viewData);

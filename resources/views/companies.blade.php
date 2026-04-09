@@ -150,7 +150,10 @@
                                 <span class="badge bg-light text-primary border" style="font-size:0.65rem;">GST: {{ $company->gst }}</span>
                             @endif
                             @if($company->plan)
-                                <span class="badge bg-light text-success border" style="font-size:0.65rem; text-transform:capitalize;">Plan: {{ $company->plan }}</span>
+                                @php $planInfo = $plans->where('name', 'ilike', $company->plan)->first(); @endphp
+                                <span class="badge bg-light text-success border" style="font-size:0.65rem; text-transform:capitalize;">
+                                    Plan: {{ $company->plan }} {{ $planInfo ? '(₹'.number_format($planInfo->price, 0).')' : '' }}
+                                </span>
                             @endif
                             @if($company->status == 1)
                                 <span class="pv-badge pv-badge-success">Active</span>
@@ -226,7 +229,11 @@
                                     </td>
                                     <td class="m-none">
                                         @if($company->plan)
-                                            <span class="pv-badge pv-badge-info" style="text-transform: capitalize;">{{ $company->plan }}</span>
+                                            @php $planInfo = $plans->where('name', 'ilike', $company->plan)->first(); @endphp
+                                            <div class="pv-badge pv-badge-info" style="text-transform: capitalize;">{{ $company->plan }}</div>
+                                            @if($planInfo)
+                                                <div class="small text-muted mt-1">₹{{ number_format($planInfo->price, 0) }}/mo</div>
+                                            @endif
                                         @else
                                             <span class="text-muted small">—</span>
                                         @endif

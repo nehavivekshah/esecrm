@@ -318,13 +318,20 @@
         @if(Auth::user()->role == 'master')
             <div class="cf-section-title mt-4">Subscription Plan</div>
             <div class="cf-field">
-                <div class="d-flex gap-4">
-                    @foreach(["standard", "premium", "pro"] as $plan)
+                <div class="d-flex flex-wrap gap-4">
+                    @forelse($plans as $plan)
                         <label class="d-flex align-items-center gap-2 pointer-cursor" style="font-size:0.85rem;">
-                            <input type="radio" name="subscription" value="{{ $plan }}" {{ ($company->plan ?? '') == $plan ? 'checked' : '' }} style="accent-color:#006666;">
-                            {{ ucfirst($plan) }}
+                            <input type="radio" name="subscription" value="{{ strtolower($plan->name) }}" {{ strtolower($company->plan ?? 'standard') == strtolower($plan->name) ? 'checked' : '' }} style="accent-color:#006666;">
+                            <div>
+                                <span class="fw-600">{{ $plan->name }}</span>
+                                <span class="text-muted ms-1" style="font-size:0.75rem;">(₹{{ number_format($plan->price, 2) }}/mo)</span>
+                            </div>
                         </label>
-                    @endforeach
+                    @empty
+                        <div class="small text-muted border rounded p-2 px-3 bg-light">
+                            <i class="bx bx-info-circle me-1"></i> No plans available. <a href="/subscriptions" class="text-indigo fw-bold">Create one now</a>
+                        </div>
+                    @endforelse
                 </div>
             </div>
         @endif
