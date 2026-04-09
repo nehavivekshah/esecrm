@@ -272,6 +272,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/manage-company', [UserController::class, 'manageCompany'])->name('manageCompany');
     Route::get('/view-company', [UserController::class, 'viewCompany'])->name('viewCompany');
     Route::get('/subscriptions', [UserController::class, 'subscriptions']);
+    Route::get('/manage-plan', [UserController::class, 'managePlan']);
+    Route::post('/manage-plan', [UserController::class, 'managePlanPost'])->name('managePlan');
+    Route::get('/delete-plan', [UserController::class, 'deletePlan']);
     Route::post('/manage-company', [UserController::class, 'manageCompanyPost'])->name('manageCompany');
 
     /*Admin's Account Management Router*/

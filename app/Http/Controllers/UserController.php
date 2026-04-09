@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\Roles;
 use App\Models\Attendances;
 use App\Models\Holidays;
+use App\Models\SubscriptionPlan;
 use Carbon\Carbon;
 
 class UserController extends Controller
@@ -199,8 +200,22 @@ class UserController extends Controller
         }
 
         $companies = Companies::all();
+        $plans = SubscriptionPlan::all();
 
-        // Calculate Plan Stats
+        if ($plans->isEmpty()) {
+            // Seed defaults if empty
+            $defaults = [
+                ['name' => 'Standard', 'price' => 0.00, 'description' => 'A basic plan for essential operations.'],
+                ['name' => 'Premium', 'price' => 29.99, 'description' => 'Advanced features for growing teams.'],
+                ['name' => 'Pro', 'price' => 99.99, 'description' => 'Professional-grade control and analytics.']
+            ];
+            foreach ($defaults as $d) {
+                SubscriptionPlan::create($d);
+            }
+            $plans = SubscriptionPlan::all();
+        }
+
+        // Calculate Plan Stats based on assigned plans in companies
         $stats = [
             'total' => $companies->count(),
             'standard' => $companies->where('plan', 'standard')->count(),
@@ -210,8 +225,40 @@ class UserController extends Controller
 
         return view('subscriptions', [
             'companies' => $companies,
+            'plans' => $plans,
             'stats' => $stats
         ]);
+    }
+
+    public function managePlan(Request $request)
+    {
+        $id = $request->id ?? '';
+        $plan = SubscriptionPlan::find($id);
+        
+        return view('managePlanForm', ['plan' => $plan]);
+    }
+
+    public function managePlanPost(Request $request)
+    {
+        $id = $request->id ?? '';
+        $plan = SubscriptionPlan::updateOrCreate(
+            ['id' => $id],
+            [
+                'name' => $request->name,
+                'price' => $request->price,
+                'description' => $request->description,
+                'features' => $request->features // Assuming JSON input for now, adjust if needed
+            ]
+        );
+
+        return back()->with('success', 'Subscription Plan successfully updated.');
+    }
+
+    public function deletePlan(Request $request)
+    {
+        $id = $request->id ?? '';
+        SubscriptionPlan::find($id)?->delete();
+        return back()->with('success', 'Plan successfully removed.');
     }
 
     //Company Controller
