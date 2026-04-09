@@ -101,7 +101,7 @@
             ════════════════════════════════ --}}
             <div id="cardView" class="pj-card-grid mb-4" style="display:none;">
                 @forelse($companies as $company)
-                    <div class="pj-card open-company-modal" data-url="/manage-company?id={{ $company->id }}&ajax=1">
+                    <div class="pj-card open-company-modal" data-url="/view-company?id={{ $company->id }}&ajax=1">
                         {{-- Top accent --}}
                         <div class="pj-card-accent" style="background: linear-gradient(90deg, #006666, #009688);"></div>
 
@@ -193,7 +193,7 @@
                         <tbody>
                             @foreach($companies as $k=>$company)
                                 <tr class="pointer-cursor selectrow open-company-modal"
-                                    data-url="/manage-company?id={{ $company->id }}&ajax=1">
+                                    data-url="/view-company?id={{ $company->id }}&ajax=1">
                                     <td class="fw-bold text-muted" style="font-size:0.75rem;">
                                         {{ $k+1 }}
                                     </td>

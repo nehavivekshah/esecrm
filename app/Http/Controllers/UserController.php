@@ -222,6 +222,14 @@ class UserController extends Controller
         
         return view('manageCompany', $viewData);
     }
+    function viewCompany(Request $request){
+        $cid = $request->id ?? '';
+        $company = Companies::find($cid);
+        if (!$company) {
+            return response('<div class="p-5 text-center text-danger">Company not found.</div>', 404);
+        }
+        return view('viewCompanyForm', ['company' => $company]);
+    }
     public function manageCompanyPost(Request $request)
     {
         $request->validate([

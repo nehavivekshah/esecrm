@@ -270,6 +270,7 @@ Route::group(['middleware' => 'auth'], function () {
     /*Companies Management Router*/
     Route::get('/companies', [UserController::class, 'companies']);
     Route::get('/manage-company', [UserController::class, 'manageCompany'])->name('manageCompany');
+    Route::get('/view-company', [UserController::class, 'viewCompany'])->name('viewCompany');
     Route::post('/manage-company', [UserController::class, 'manageCompanyPost'])->name('manageCompany');
 
     /*Admin's Account Management Router*/
