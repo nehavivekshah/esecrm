@@ -120,7 +120,7 @@
                                     {{ $company->industry ?? 'Global Company' }}
                                 </div>
                             </div>
-                            <div class="pj-card-actions" onclick="event.stopPropagation();">
+                            <div class="pj-card-actions">
                                 <button type="button" class="btn kb-action-btn open-company-modal" data-url="/manage-company?id={{ $company->id }}&ajax=1" title="Edit"
                                     style="background:rgba(0,102,102,0.08);color:#006666; border:none;">
                                     <i class="bx bx-pencil"></i>
@@ -242,7 +242,7 @@
                                             <span class="pv-badge pv-badge-danger accountstatus" id="{{ $company->id }}" data-page="companyActivate">Inactive</span>
                                         @endif
                                     </td>
-                                    <td class="position-sticky end-0 bg-white" onclick="event.stopPropagation();">
+                                    <td class="position-sticky end-0 bg-white">
                                         <div class="d-flex align-items-center justify-content-center gap-1">
                                             <button type="button" class="btn kb-action-btn kb-action-edit open-company-modal" 
                                                 data-url="/manage-company?id={{ $company->id }}&ajax=1" title="Edit">
