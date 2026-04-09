@@ -17,107 +17,111 @@
     {{-- RIGHT: Actions bar --}}
     <div class="header-right">
 
-        {{-- Quick Add --}}
-        <div class="dropdown">
-            <button class="header-action-btn header-action-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bx bx-plus"></i>
-                <span class="d-none d-lg-inline">Quick Add</span>
-            </button>
-            <ul class="dropdown-menu header-dropdown dropdown-menu-end mt-2">
-                <li class="dropdown-section-label">Create New</li>
-                <li>
-                    <a class="dropdown-item header-dropdown-item" href="/manage-lead">
-                        <span class="hdi-icon" style="background:rgba(26,115,232,0.08); color:#1a73e8;"><i class="bx bx-user-plus"></i></span>
-                        <div>
-                            <div class="hdi-title">New Lead</div>
-                            <small class="hdi-sub">Add to sales pipeline</small>
-                        </div>
-                    </a>
-                </li>
-                <li>
-                    <a class="dropdown-item header-dropdown-item" href="/manage-client">
-                        <span class="hdi-icon" style="background:rgba(52,168,83,0.08); color:#34a853;"><i class="bx bx-group"></i></span>
-                        <div>
-                            <div class="hdi-title">New Client</div>
-                            <small class="hdi-sub">Add to client base</small>
-                        </div>
-                    </a>
-                </li>
-                <li><hr class="dropdown-divider my-1 mx-3"></li>
-                <li>
-                    <a class="dropdown-item header-dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#todoListModal">
-                        <span class="hdi-icon" style="background:rgba(251,188,4,0.10); color:#f9a825;"><i class="bx bx-task"></i></span>
-                        <div>
-                            <div class="hdi-title">Add Task</div>
-                            <small class="hdi-sub">Add to your to-do list</small>
-                        </div>
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        {{-- My Tasks Button --}}
-        <button type="button" class="header-action-btn d-none d-sm-flex" data-bs-toggle="modal" data-bs-target="#todoListModal" title="My Tasks">
-            <i class="bx bx-check-double"></i>
-            <span class="d-none d-lg-inline">Tasks</span>
-        </button>
-
-        {{-- Notifications --}}
-        <div class="dropdown">
-            <button class="header-icon-btn position-relative" type="button" data-bs-toggle="dropdown" aria-label="Notifications">
-                <i class="bx bx-bell"></i>
-                @php 
-                    $newLeadsCount = \App\Models\Leads::where('status', 0)->count(); 
-                    $overdueCount = \App\Models\Leads::where('leads.status', 1)
-                        ->join('lead_comments', 'leads.id', '=', 'lead_comments.lead_id')
-                        ->where('lead_comments.next_date', '<', now())
-                        ->distinct()
-                        ->count('leads.id');
-                    $totalNotifs = $newLeadsCount + $overdueCount;
-                @endphp
-                @if($totalNotifs > 0)
-                    <span class="header-notif-badge">{{ $totalNotifs > 99 ? '99+' : $totalNotifs }}</span>
-                @endif
-            </button>
-            <ul class="dropdown-menu header-dropdown dropdown-menu-end mt-2" style="min-width: 300px;">
-                <li class="dropdown-section-label">Notifications</li>
-                @if($newLeadsCount > 0)
+        @if(Auth::user()->role != 'master')
+            {{-- Quick Add --}}
+            <div class="dropdown">
+                <button class="header-action-btn header-action-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bx bx-plus"></i>
+                    <span class="d-none d-lg-inline">Quick Add</span>
+                </button>
+                <ul class="dropdown-menu header-dropdown dropdown-menu-end mt-2">
+                    <li class="dropdown-section-label">Create New</li>
                     <li>
-                        <a class="dropdown-item header-dropdown-item" href="/newleads?status=0">
+                        <a class="dropdown-item header-dropdown-item" href="/manage-lead">
                             <span class="hdi-icon" style="background:rgba(26,115,232,0.08); color:#1a73e8;"><i class="bx bx-user-plus"></i></span>
                             <div>
-                                <div class="hdi-title">Fresh Leads</div>
-                                <small class="hdi-sub">{{ $newLeadsCount }} fresh leads waiting</small>
+                                <div class="hdi-title">New Lead</div>
+                                <small class="hdi-sub">Add to sales pipeline</small>
                             </div>
                         </a>
                     </li>
-                @endif
-                @if($overdueCount > 0)
                     <li>
-                        <a class="dropdown-item header-dropdown-item" href="/newleads?status=1">
-                            <span class="hdi-icon" style="background:rgba(234,67,53,0.08); color:#ea4335;"><i class="bx bx-time-five"></i></span>
+                        <a class="dropdown-item header-dropdown-item" href="/manage-client">
+                            <span class="hdi-icon" style="background:rgba(52,168,83,0.08); color:#34a853;"><i class="bx bx-group"></i></span>
                             <div>
-                                <div class="hdi-title">Overdue Follow-ups</div>
-                                <small class="hdi-sub" style="color:#ea4335;">{{ $overdueCount }} tasks past reminder</small>
+                                <div class="hdi-title">New Client</div>
+                                <small class="hdi-sub">Add to client base</small>
                             </div>
                         </a>
                     </li>
-                @endif
-                @if($totalNotifs === 0)
+                    <li><hr class="dropdown-divider my-1 mx-3"></li>
                     <li>
-                        <div class="header-dropdown-empty">
-                            <i class="bx bx-bell-off"></i>
-                            <span>No new alerts</span>
-                        </div>
+                        <a class="dropdown-item header-dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#todoListModal">
+                            <span class="hdi-icon" style="background:rgba(251,188,4,0.10); color:#f9a825;"><i class="bx bx-task"></i></span>
+                            <div>
+                                <div class="hdi-title">Add Task</div>
+                                <small class="hdi-sub">Add to your to-do list</small>
+                            </div>
+                        </a>
                     </li>
-                @endif
-            </ul>
-        </div>
+                </ul>
+            </div>
 
-        {{-- Global Search Button --}}
-        <button class="header-icon-btn d-flex" title="Search" onclick="openGlobalSearch()">
-            <i class="bx bx-search"></i>
-        </button>
+            {{-- My Tasks Button --}}
+            <button type="button" class="header-action-btn d-none d-sm-flex" data-bs-toggle="modal" data-bs-target="#todoListModal" title="My Tasks">
+                <i class="bx bx-check-double"></i>
+                <span class="d-none d-lg-inline">Tasks</span>
+            </button>
+        @endif
+
+        @if(Auth::user()->role != 'master')
+            {{-- Notifications --}}
+            <div class="dropdown">
+                <button class="header-icon-btn position-relative" type="button" data-bs-toggle="dropdown" aria-label="Notifications">
+                    <i class="bx bx-bell"></i>
+                    @php 
+                        $newLeadsCount = \App\Models\Leads::where('status', 0)->count(); 
+                        $overdueCount = \App\Models\Leads::where('leads.status', 1)
+                            ->join('lead_comments', 'leads.id', '=', 'lead_comments.lead_id')
+                            ->where('lead_comments.next_date', '<', now())
+                            ->distinct()
+                            ->count('leads.id');
+                        $totalNotifs = $newLeadsCount + $overdueCount;
+                    @endphp
+                    @if($totalNotifs > 0)
+                        <span class="header-notif-badge">{{ $totalNotifs > 99 ? '99+' : $totalNotifs }}</span>
+                    @endif
+                </button>
+                <ul class="dropdown-menu header-dropdown dropdown-menu-end mt-2" style="min-width: 300px;">
+                    <li class="dropdown-section-label">Notifications</li>
+                    @if($newLeadsCount > 0)
+                        <li>
+                            <a class="dropdown-item header-dropdown-item" href="/newleads?status=0">
+                                <span class="hdi-icon" style="background:rgba(26,115,232,0.08); color:#1a73e8;"><i class="bx bx-user-plus"></i></span>
+                                <div>
+                                    <div class="hdi-title">Fresh Leads</div>
+                                    <small class="hdi-sub">{{ $newLeadsCount }} fresh leads waiting</small>
+                                </div>
+                            </a>
+                        </li>
+                    @endif
+                    @if($overdueCount > 0)
+                        <li>
+                            <a class="dropdown-item header-dropdown-item" href="/newleads?status=1">
+                                <span class="hdi-icon" style="background:rgba(234,67,53,0.08); color:#ea4335;"><i class="bx bx-time-five"></i></span>
+                                <div>
+                                    <div class="hdi-title">Overdue Follow-ups</div>
+                                    <small class="hdi-sub" style="color:#ea4335;">{{ $overdueCount }} tasks past reminder</small>
+                                </div>
+                            </a>
+                        </li>
+                    @endif
+                    @if($totalNotifs === 0)
+                        <li>
+                            <div class="header-dropdown-empty">
+                                <i class="bx bx-bell-off"></i>
+                                <span>No new alerts</span>
+                            </div>
+                        </li>
+                    @endif
+                </ul>
+            </div>
+
+            {{-- Global Search Button --}}
+            <button class="header-icon-btn d-flex" title="Search" onclick="openGlobalSearch()">
+                <i class="bx bx-search"></i>
+            </button>
+        @endif
 
         {{-- User Avatar Dropdown --}}
         <div class="dropdown">
