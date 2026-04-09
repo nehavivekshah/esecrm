@@ -12,11 +12,7 @@
     @endphp
     
     <section class="task__section">
-        <div class="text">
-            <i class="bx bx-menu" id="mbtn"></i> 
-            @if(Request::segment(1) != 'my-profile') Manage User @else My Account @endif
-            <a href="/signout" class="logoutbtn"><i class="bx bx-log-out"></i></a>
-        </div>
+        @include('inc.header', ['title' => (Request::segment(1) != 'my-profile' ? 'Manage User' : 'My Account')])
 
         <div class="container-fluid">
             {{-- Header with Back Button --}}
