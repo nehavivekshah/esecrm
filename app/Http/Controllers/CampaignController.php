@@ -40,4 +40,14 @@ class CampaignController extends Controller
         }
         return response()->json(['success' => false], 404);
     }
+
+    public function destroy($id)
+    {
+        $campaign = Campaign::find($id);
+        if ($campaign) {
+            $campaign->delete();
+            return response()->json(['success' => true]);
+        }
+        return response()->json(['success' => false, 'message' => 'Campaign not found.'], 404);
+    }
 }

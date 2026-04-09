@@ -181,6 +181,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/campaigns', [\App\Http\Controllers\CampaignController::class, 'index'])->name('campaigns.index');
     Route::post('/campaigns/store', [\App\Http\Controllers\CampaignController::class, 'store'])->name('campaigns.store');
     Route::post('/campaigns/launch', [\App\Http\Controllers\CampaignController::class, 'launch'])->name('campaigns.launch');
+    Route::delete('/campaigns/{id}', [\App\Http\Controllers\CampaignController::class, 'destroy'])->name('campaigns.destroy');
 
 
     /*Proposal Actions*/
