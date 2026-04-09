@@ -101,9 +101,9 @@
 
             {{-- Price --}}
             <div class="col-md-4 cf-field">
-                <label>Monthly Price ($) <span class="req">*</span></label>
+                <label>Monthly Price (₹) <span class="req">*</span></label>
                 <div class="cf-input-box">
-                    <span class="cf-icon"><i class="bx bx-dollar"></i></span>
+                    <span class="cf-icon"><i class="bx bx-rupee"></i></span>
                     <input type="number" step="0.01" name="price" value="{{ $plan->price ?? '' }}" placeholder="0.00" required>
                 </div>
             </div>

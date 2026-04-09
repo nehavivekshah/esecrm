@@ -32,7 +32,7 @@
                         <i class="bx bx-trending-up"></i>
                     </div>
                     <div>
-                        <div class="pj-stat-num text-success">${{ number_format($plans->avg('price'), 2) }}</div>
+                        <div class="pj-stat-num text-success">₹{{ number_format($plans->avg('price'), 2) }}</div>
                         <div class="pj-stat-label">Avg. Price Point</div>
                     </div>
                 </div>
@@ -94,7 +94,7 @@
                             </div>
                             <div class="pj-card-meta">
                                 <div class="pj-card-name">{{ $plan->name }}</div>
-                                <div class="pj-card-id font-bold text-indigo" style="color:#006666;">${{ number_format($plan->price, 2) }}/mo</div>
+                                <div class="pj-card-id font-bold text-indigo" style="color:#006666;">₹{{ number_format($plan->price, 2) }}/mo</div>
                             </div>
                             <div class="pj-card-actions">
                                 <div class="dropdown">
@@ -152,7 +152,7 @@
                                     </td>
                                     <td>
                                         <div class="badge bg-soft-primary px-3 py-1 rounded-pill text-indigo" style="font-size:0.75rem; background:rgba(0,102,102,0.08); color:#006666;">
-                                            ${{ number_format($plan->price, 2) }}/mo
+                                            ₹{{ number_format($plan->price, 2) }}/mo
                                         </div>
                                     </td>
                                     <td>
