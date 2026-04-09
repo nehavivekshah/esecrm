@@ -72,7 +72,7 @@
                 </div>
                 {{-- Invoice Type Filter --}}
                 <div class="lb-filter-wrapper">
-                    <select class="lb-select" id="typeFilter" style="min-width:160px;">
+                    <select class="form-select" id="typeFilter" style="min-width:180px; height:36px; border-radius:20px; font-size:0.85rem; padding:0 15px;">
                         <option value="">All Types</option>
                         @foreach($availableTypes as $type)
                             <option value="{{ $type }}" {{ $currentType == $type ? 'selected' : '' }}>
@@ -356,7 +356,18 @@
     <script>
         $(document).ready(function () {
             // Ensure DataTable is initialized and get instance
-            const table = $('#lists').DataTable({ retrieve: true });
+            const table = $('#lists').DataTable({
+                retrieve: true,
+                order: [[1, 'desc']], // Default sort by Invoice # (Index 1) DESC
+                columnDefs: [
+                    { targets: [0, 9], orderable: false } // Disable sort for # and Action
+                ],
+                pageLength: 50, // Display more rows by default
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search invoices..."
+                }
+            });
 
             function applyFilter(f) {
                 // Sync the pills UI
