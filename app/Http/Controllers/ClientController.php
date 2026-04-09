@@ -227,12 +227,12 @@ class ClientController extends Controller
     {
         if (Auth::user()->role == 'master') {
             $contracts = Contracts::leftjoin('clients', 'contracts.client_id', '=', 'clients.id')
-                ->select('clients.name', 'clients.email', 'clients.company', 'contracts.*')
+                ->select('clients.name', 'clients.email', 'clients.mob', 'clients.whatsapp', 'clients.company', 'contracts.*')
                 ->orderBy('contracts.end_date', 'DESC')
                 ->get();
         } else {
             $contracts = Contracts::leftjoin('clients', 'contracts.client_id', '=', 'clients.id')
-                ->select('clients.name', 'clients.email', 'clients.company', 'contracts.*')
+                ->select('clients.name', 'clients.email', 'clients.mob', 'clients.whatsapp', 'clients.company', 'contracts.*')
                 ->where('clients.cid', '=', Auth::user()->cid)
                 ->orderByRaw("
                     CASE contracts.status

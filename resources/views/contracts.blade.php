@@ -123,13 +123,13 @@
                             <tr>
                                 <th class="m-none" style="width:40px;">#</th>
                                 <th>Subject</th>
-                                <th>Customer</th>
+                                <th style="min-width: 180px;">Customer</th>
                                 <th class="m-none">Type</th>
-                                <th>Amount (₹)</th>
-                                <th class="m-none">Started</th>
-                                <th class="m-none">Expires</th>
+                                <th style="min-width: 100px;">Amount (₹)</th>
+                                <th class="m-none" style="min-width: 110px;">Started</th>
+                                <th class="m-none" style="min-width: 110px;">Expires</th>
                                 @if(in_array('contracts_edit',$roleArray) || in_array('contracts_delete',$roleArray) || in_array('All',$roleArray))
-                                <th class="text-center position-sticky end-0" style="width:100px;">Action</th>
+                                <th class="text-center position-sticky end-0 bg-white" style="width:130px; border-left: 1px solid #f1f3f4; box-shadow: -4px 0 8px rgba(0,0,0,0.02); z-index: 10;">Action</th>
                                 @endif
                             </tr>
                         </thead>
@@ -184,8 +184,31 @@
                                         @endif
                                     </td>
                                     @if(in_array('contracts_edit',$roleArray) || in_array('contracts_delete',$roleArray) || in_array('All',$roleArray))
-                                    <td class="position-sticky end-0">
+                                    <td class="position-sticky end-0 bg-white" style="border-left: 1px solid #f1f3f4; box-shadow: -4px 0 8px rgba(0,0,0,0.02); z-index: 9;">
                                         <div class="d-flex align-items-center justify-content-center gap-1">
+                                            @php
+                                                $phone = $contract->whatsapp ?: $contract->mob;
+                                                $waUrl = "";
+                                                if ($phone) {
+                                                    $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
+                                                    $message = "Hi " . ($contract->name ?? 'Customer') . ",\n\n" .
+                                                              "This is a reminder regarding your contract: *" . ($contract->subject ?? 'N/A') . "*\n\n" .
+                                                              "📌 *Details:*\n" .
+                                                              "• Type: " . ($contract->contract_type ?? 'N/A') . "\n" .
+                                                              "• Value: ₹" . number_format((float)($contract->value ?? 0), 2) . "\n" .
+                                                              "• Expiry Date: " . (!empty($contract->end_date) ? date('d M, Y', strtotime($contract->end_date)) : 'N/A') . "\n\n" .
+                                                              "Please let us know if you have any questions.\n\n" .
+                                                              "Thank you!";
+                                                    $waUrl = "https://wa.me/" . $cleanPhone . "?text=" . urlencode($message);
+                                                }
+                                            @endphp
+
+                                            @if($waUrl)
+                                            <a href="{{ $waUrl }}" target="_blank" class="btn kb-action-btn" title="Send WhatsApp Reminder" style="background:rgba(37,211,102,0.1);color:#25d366; border:none;">
+                                                <i class="bx bxl-whatsapp"></i>
+                                            </a>
+                                            @endif
+
                                             @if(in_array('contracts_edit',$roleArray) || in_array('All',$roleArray))
                                             <button type="button" class="btn kb-action-btn open-contract-modal" data-url="/manage-contract?id={{ $contract->id }}&ajax=1" title="Edit" style="background:rgba(0,102,102,0.10);color:#006666; border:none;">
                                                 <i class="bx bx-edit"></i>
