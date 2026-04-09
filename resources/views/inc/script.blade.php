@@ -1019,129 +1019,7 @@
             $('.edit').on('click', function () {
                 $('#' + $(this).data('view-id')).trigger('dblclick');
             });
-
-            $('.view').dblclick(function () {
-                let id = $(this).attr('id');
-                let pagename = "client";
-
-                // Reset to Info tab
-                cTab($('.ld-tab').first()[0], 'c-tab-info');
-                
-                // Show modal immediately with loading state
-                var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('clientModal'));
-                modal.show();
-
-                $.ajax({
-                    url: '/view-single-client', 
-                    type: 'GET', 
-                    data: { id: id, pagename: pagename },
-                    success: function (response) {
-                        let l = response.clients;
-                        let loc = {};
-                        try { loc = JSON.parse(l.location) || {}; } catch(e) {}
-
-                        // Header & Actions
-                        $('#clientAvatarBadge').text((l.name || 'C').charAt(0).toUpperCase());
-                        $('#clientModalLabel').text(l.name || '—');
-                        $('#clientAvatarSub').text(l.company || 'Individual');
-                        
-                        var sinceDate = l.created_at ? new Date(l.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
-                        $('#clientSince').text('Joined on ' + sinceDate);
-
-                        $('#c_btnCall').attr('href', l.mob ? 'tel:'+l.mob : '#');
-                        $('#c_btnWa').attr('href', l.whatsapp ? 'https://wa.me/'+l.whatsapp : '#');
-                        $('#c_btnMail').attr('href', l.email ? 'mailto:'+l.email : '#');
-
-                        // Info Cards
-                        $('#c_mob').text(l.mob ? '+'+l.mob : '—');
-                        $('#c_wa').text(l.whatsapp ? '+'+l.whatsapp : '—');
-                        $('#c_email').text(l.email || '—');
-                        $('#c_website').text(l.website || '—').attr('href', l.website || '#');
-                        
-                        $('#c_company_val').text(l.company || '—');
-                        $('#c_gst').text(l.gstno || '—');
-                        $('#c_position').text(l.position || '—');
-                        
-                        // CRM Intelligence
-                        $('#c_purpose').text(l.purpose || '—');
-                        $('#c_value').text(l.values ? '₹' + Number(l.values).toLocaleString('en-IN') : '—');
-                        $('#c_poc').text(l.poc || '—');
-                        $('#c_stage').text(l.lifecycle_stage || '—');
-                        $('#c_industry_val').text(l.industry || '—');
-                        $('#c_tags').text(l.tags || '—');
-                        
-                        // Combined Address
-                        let addressParts = [
-                            loc.address, loc.city, loc.state, loc.zip, loc.country
-                        ].filter(Boolean).join(', ');
-                        $('#c_location_full').text(addressParts || '—');
-
-                        $('#c_editBtn').attr('href', '/manage-client?id='+id);, '/manage-client?id='+id);
-
-                        // Timeline (Interactions)
-                        var timelineHtml = '';
-                        (response.interactions || []).forEach(function(i){
-                            var date = new Date(i.created_at).toLocaleString();
-                            timelineHtml += `
-                                <div class="ld-timeline-item">
-                                    <div class="ld-timeline-icon"><i class="bx bx-chat"></i></div>
-                                    <div class="ld-timeline-content">
-                                        <div class="d-flex justify-content-between">
-                                            <strong>${i.type}</strong>
-                                            <small class="text-muted">${date}</small>
-                                        </div>
-                                        <p class="mb-0 mt-1">${i.content || ''}</p>
-                                    </div>
-                                </div>`;
-                        });
-                        $('#c_timeline').html(timelineHtml || '<p class="text-muted text-center pt-3">No history found.</p>');
-
-                        // Proposals
-                        var propHtml = '';
-                        (response.proposals || []).forEach(function(p){
-                            propHtml += `<tr>
-                                <td>#${p.id}</td>
-                                <td>${p.subject || '—'}</td>
-                                <td>₹${Number(p.grand_total).toLocaleString('en-IN')}</td>
-                                <td><span class="badge bg-info">${p.status || 'Draft'}</span></td>
-                            </tr>`;
-                        });
-                        $('#c_proposals').html(propHtml || '<tr><td colspan="4" class="text-center text-muted py-3">No proposals found.</td></tr>');
-
-                        // Projects
-                        var projHtml = '';
-                        (response.projects || []).forEach(function(p){
-                            projHtml += `<tr>
-                                <td>${p.name || '—'}</td>
-                                <td>₹${Number(p.amount).toLocaleString('en-IN')}</td>
-                                <td>${new Date(p.created_at).toLocaleDateString()}</td>
-                            </tr>`;
-                        });
-                        $('#c_projects').html(projHtml || '<tr><td colspan="3" class="text-center text-muted py-3">No projects found.</td></tr>');
-
-                        // Invoices
-                        var invHtml = '';
-                        (response.invoices || []).forEach(function(v){
-                            invHtml += `<tr>
-                                <td>${v.invoice_number || '—'}</td>
-                                <td>₹${Number(v.total_amount).toLocaleString('en-IN')}</td>
-                                <td>${new Date(v.date).toLocaleDateString()}</td>
-                                <td><span class="badge bg-secondary">${v.status || 'unpaid'}</span></td>
-                            </tr>`;
-                        });
-                        $('#c_invoices').html(invHtml || '<tr><td colspan="4" class="text-center text-muted py-3">No invoices found.</td></tr>');
-                    }
-                });
-            });
         });
-
-        function cTab(btn, tabId) {
-            $('.ld-tab').removeClass('active');
-            $(btn).addClass('active');
-            $('#c-tab-info, #c-tab-timeline, #c-tab-props, #c-tab-projects').hide();
-            $('#' + tabId).show();
-        }
-
     </script>
 
     <script>
@@ -1149,7 +1027,7 @@
             // When the delete button is clicked
             $('.delete').click(function () {
                 var selector = $(this);
-                var pagename = selector.attr("data-page"); // Corrected "date-page" to "data-page"
+                var pagename = selector.attr("data-page");
                 var rowid = selector.attr("id");
 
                 // Confirmation dialog using SweetAlert
@@ -1164,38 +1042,186 @@
                         if (willDelete) {
                             // Perform the AJAX request
                             $.ajax({
-                                type: 'GET',  // Use GET request as per your code, but ideally this should be POST or DELETE for deletion
+                                type: 'GET',
                                 url: "/ajax-send",
                                 data: {
                                     pagename: pagename,
                                     rowid: rowid,
-                                    clientDelete: 'clientDelete'  // Passing the deletion parameter
+                                    clientDelete: 'clientDelete'
                                 },
                                 success: function (response) {
                                     if (response.success) {
-                                        // Hide the row if deletion was successful
-                                        selector.closest('tr').hide();  // Hides the entire row
+                                        selector.closest('tr').hide();
                                         swal("Deleted!", "The row has been deleted successfully.", "success");
                                     } else {
-                                        // Show error message if the server returned an error
                                         swal("Error", response.error || "There was an issue deleting the row.", "error");
                                     }
                                 },
                                 error: function () {
-                                    // Handle errors from the AJAX request
                                     swal("Error", "An error occurred while processing your request.", "error");
                                 }
                             });
                         } else {
-                            // If user canceled the deletion
                             swal("This query is safe.");
                         }
                     });
             });
         });
     </script>
-
 @endif
+
+{{-- Global Client Details Modal Logic --}}
+<script>
+    $(document).ready(function () {
+        // Global Client Modal Trigger
+        $(document).on('click dblclick', '.view-client-details, .view.selectrow', function (e) {
+            // Prevent double trigger if both classes exist (though unlikely)
+            if (e.type === 'click' && $(this).hasClass('selectrow')) return; 
+            
+            let id = $(this).attr('id') || $(this).data('id');
+            if(!id) return;
+
+            let pagename = "client";
+
+            // Reset to Info tab
+            $('.ld-tab').removeClass('active');
+            $('.ld-tab').first().addClass('active');
+            $('#c-tab-info').show();
+            $('#c-tab-timeline, #c-tab-props, #c-tab-projects, #c-tab-invoices').hide();
+            
+            // Show modal immediately with loading state
+            var modalElement = document.getElementById('clientModal');
+            if (!modalElement) return;
+            var modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+            modal.show();
+
+            $.ajax({
+                url: '/view-single-client', 
+                type: 'GET', 
+                data: { id: id, pagename: pagename },
+                success: function (response) {
+                    let l = response.clients;
+                    let loc = {};
+                    try { loc = JSON.parse(l.location) || {}; } catch(e) {}
+
+                    // Header & Actions
+                    let av = (l.name || 'C').charAt(0).toUpperCase();
+                    $('#clientAvatarBadge').text(av);
+                    $('#clientModalLabel').text(l.name || '—');
+                    $('#clientAvatarSub').text(l.company || 'Individual');
+                    
+                    var sinceDate = l.created_at ? new Date(l.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+                    $('#clientSince').text('Joined on ' + sinceDate);
+
+                    $('#c_btnCall').attr('href', l.mob ? 'tel:'+l.mob.replace(/[^0-9]/g, '') : '#');
+                    
+                    // WhatsApp link refinement
+                    if (l.whatsapp || l.mob) {
+                        let waNum = (l.whatsapp || l.mob).replace(/[^0-9]/g, '');
+                        $('#c_btnWa').attr('href', 'https://wa.me/' + waNum).show();
+                    } else {
+                        $('#c_btnWa').hide();
+                    }
+                    
+                    $('#c_btnMail').attr('href', l.email ? 'mailto:'+l.email : '#');
+
+                    // Info Cards
+                    $('#c_mob').text(l.mob ? l.mob : '—');
+                    $('#c_wa').text(l.whatsapp ? l.whatsapp : '—');
+                    $('#c_email').text(l.email || '—');
+                    $('#c_website').text(l.website || '—').attr('href', l.website || '#');
+                    
+                    $('#c_company_val').text(l.company || '—');
+                    $('#c_gst').text(l.gstno || '—');
+                    $('#c_position').text(l.position || '—');
+                    
+                    // CRM Intelligence
+                    $('#c_purpose').text(l.purpose || '—');
+                    $('#c_value').text(l.values ? '₹' + Number(l.values).toLocaleString('en-IN') : '—');
+                    $('#c_poc').text(l.poc || '—');
+                    $('#c_stage').text(l.lifecycle_stage || '—');
+                    $('#c_industry_val').text(l.industry || '—');
+                    $('#c_tags').text(l.tags || '—');
+                    
+                    // Combined Address
+                    let addressParts = [
+                        loc.address, loc.city, loc.state, loc.zip, loc.country
+                    ].filter(Boolean).join(', ');
+                    $('#c_location_full').text(addressParts || '—');
+
+                    $('#c_editBtn').attr('href', '/manage-client?id='+id);
+
+                    // Timeline (Interactions)
+                    var timelineHtml = '';
+                    (response.interactions || []).forEach(function(i){
+                        var date = new Date(i.created_at).toLocaleString();
+                        timelineHtml += `
+                            <div class="ld-timeline-item">
+                                <div class="ld-timeline-icon"><i class="bx bx-chat"></i></div>
+                                <div class="ld-timeline-content">
+                                    <div class="d-flex justify-content-between">
+                                        <strong>${i.type}</strong>
+                                        <small class="text-muted">${date}</small>
+                                    </div>
+                                    <p class="mb-0 mt-1">${i.content || ''}</p>
+                                </div>
+                            </div>`;
+                    });
+                    $('#c_timeline').html(timelineHtml || '<p class="text-muted text-center pt-3">No history found.</p>');
+
+                    // Proposals
+                    var propHtml = '';
+                    (response.proposals || []).forEach(function(p){
+                        propHtml += `<tr>
+                            <td>#${p.id}</td>
+                            <td>${p.subject || '—'}</td>
+                            <td>₹${Number(p.grand_total).toLocaleString('en-IN')}</td>
+                            <td><span class="badge bg-info">${p.status || 'Draft'}</span></td>
+                        </tr>`;
+                    });
+                    $('#c_proposals').html(propHtml || '<tr><td colspan="4" class="text-center text-muted py-3">No proposals found.</td></tr>');
+
+                    // Projects
+                    var projHtml = '';
+                    (response.projects || []).forEach(function(p){
+                        projHtml += `<tr>
+                            <td>${p.name || '—'}</td>
+                            <td>₹${Number(p.amount).toLocaleString('en-IN')}</td>
+                            <td>${new Date(p.created_at).toLocaleDateString()}</td>
+                        </tr>`;
+                    });
+                    $('#c_projects').html(projHtml || '<tr><td colspan="3" class="text-center text-muted py-3">No projects found.</td></tr>');
+
+                    // Invoices
+                    var invHtml = '';
+                    (response.invoices || []).forEach(function(v){
+                        invHtml += `<tr>
+                            <td>${v.invoice_number || '—'}</td>
+                            <td>₹${Number(v.total_amount).toLocaleString('en-IN')}</td>
+                            <td>${new Date(v.date).toLocaleDateString()}</td>
+                            <td><span class="badge bg-secondary">${v.status || 'unpaid'}</span></td>
+                        </tr>`;
+                    });
+                    $('#c_invoices').html(invHtml || '<tr><td colspan="4" class="text-center text-muted py-3">No invoices found.</td></tr>');
+                }
+            });
+        });
+
+        // Global Tab switcher logic
+        window.cTab = function (btn, tabId) {
+            $('.ld-tab').removeClass('active');
+            $(btn).addClass('active');
+            $('#c-tab-info, #c-tab-timeline, #c-tab-props, #c-tab-projects, #c-tab-invoices').hide();
+            $('#' + tabId).show();
+        };
+
+        // Enable Bootstrap Tooltips Globally
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+            new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
 
 
 @if(Request::segment(1) == 'users')
@@ -1710,7 +1736,7 @@
                 return;
             }
 
-            const base = licenseDomian.'manage/public/session.php';
+            const base = licenseDomian + '/manage/public/session.php';
             const url = `${base}?status=2&token=${encodeURIComponent(licenseKey)}`;
 
             try {
@@ -1824,3 +1850,157 @@
         });
     </script>
 @endif
+
+{{-- Global Client Details Modal Logic --}}
+<script>
+    $(document).ready(function () {
+        // Global Client Modal Trigger
+        $(document).on('click dblclick', '.view-client-details, .view.selectrow', function (e) {
+            // Prevent double trigger if both classes exist (though unlikely)
+            if (e.type === 'click' && $(this).hasClass('selectrow')) return; 
+            
+            let id = $(this).attr('id') || $(this).data('id');
+            if(!id) return;
+
+            let pagename = "client";
+
+            // Reset to Info tab
+            $('.ld-tab').removeClass('active');
+            $('.ld-tab').first().addClass('active');
+            $('#c-tab-info').show();
+            $('#c-tab-timeline, #c-tab-props, #c-tab-projects, #c-tab-invoices').hide();
+            
+            // Show modal immediately with loading state
+            var modalElement = document.getElementById('clientModal');
+            if (!modalElement) return;
+            var modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+            modal.show();
+
+            $.ajax({
+                url: '/view-single-client', 
+                type: 'GET', 
+                data: { id: id, pagename: pagename },
+                success: function (response) {
+                    let l = response.clients;
+                    let loc = {};
+                    try { loc = JSON.parse(l.location) || {}; } catch(e) {}
+
+                    // Header & Actions
+                    let av = (l.name || 'C').charAt(0).toUpperCase();
+                    $('#clientAvatarBadge').text(av);
+                    $('#clientModalLabel').text(l.name || '—');
+                    $('#clientAvatarSub').text(l.company || 'Individual');
+                    
+                    var sinceDate = l.created_at ? new Date(l.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+                    $('#clientSince').text('Joined on ' + sinceDate);
+
+                    $('#c_btnCall').attr('href', l.mob ? 'tel:'+l.mob.replace(/[^0-9]/g, '') : '#');
+                    
+                    // WhatsApp link refinement
+                    if (l.whatsapp || l.mob) {
+                        let waNum = (l.whatsapp || l.mob).replace(/[^0-9]/g, '');
+                        $('#c_btnWa').attr('href', 'https://wa.me/' + waNum).show();
+                    } else {
+                        $('#c_btnWa').hide();
+                    }
+                    
+                    $('#c_btnMail').attr('href', l.email ? 'mailto:'+l.email : '#');
+
+                    // Info Cards
+                    $('#c_mob').text(l.mob ? l.mob : '—');
+                    $('#c_wa').text(l.whatsapp ? l.whatsapp : '—');
+                    $('#c_email').text(l.email || '—');
+                    $('#c_website').text(l.website || '—').attr('href', l.website || '#');
+                    
+                    $('#c_company_val').text(l.company || '—');
+                    $('#c_gst').text(l.gstno || '—');
+                    $('#c_position').text(l.position || '—');
+                    
+                    // CRM Intelligence
+                    $('#c_purpose').text(l.purpose || '—');
+                    $('#c_value').text(l.values ? '₹' + Number(l.values).toLocaleString('en-IN') : '—');
+                    $('#c_poc').text(l.poc || '—');
+                    $('#c_stage').text(l.lifecycle_stage || '—');
+                    $('#c_industry_val').text(l.industry || '—');
+                    $('#c_tags').text(l.tags || '—');
+                    
+                    // Combined Address
+                    let addressParts = [
+                        loc.address, loc.city, loc.state, loc.zip, loc.country
+                    ].filter(Boolean).join(', ');
+                    $('#c_location_full').text(addressParts || '—');
+
+                    $('#c_editBtn').attr('href', '/manage-client?id='+id);
+
+                    // Timeline (Interactions)
+                    var timelineHtml = '';
+                    (response.interactions || []).forEach(function(i){
+                        var date = new Date(i.created_at).toLocaleString();
+                        timelineHtml += `
+                            <div class="ld-timeline-item">
+                                <div class="ld-timeline-icon"><i class="bx bx-chat"></i></div>
+                                <div class="ld-timeline-content">
+                                    <div class="d-flex justify-content-between">
+                                        <strong>${i.type}</strong>
+                                        <small class="text-muted">${date}</small>
+                                    </div>
+                                    <p class="mb-0 mt-1">${i.content || ''}</p>
+                                </div>
+                            </div>`;
+                    });
+                    $('#c_timeline').html(timelineHtml || '<p class="text-muted text-center pt-3">No history found.</p>');
+
+                    // Proposals
+                    var propHtml = '';
+                    (response.proposals || []).forEach(function(p){
+                        propHtml += `<tr>
+                            <td>#${p.id}</td>
+                            <td>${p.subject || '—'}</td>
+                            <td>₹${Number(p.grand_total).toLocaleString('en-IN')}</td>
+                            <td><span class="badge bg-info">${p.status || 'Draft'}</span></td>
+                        </tr>`;
+                    });
+                    $('#c_proposals').html(propHtml || '<tr><td colspan="4" class="text-center text-muted py-3">No proposals found.</td></tr>');
+
+                    // Projects
+                    var projHtml = '';
+                    (response.projects || []).forEach(function(p){
+                        projHtml += `<tr>
+                            <td>${p.name || '—'}</td>
+                            <td>₹${Number(p.amount).toLocaleString('en-IN')}</td>
+                            <td>${new Date(p.created_at).toLocaleDateString()}</td>
+                        </tr>`;
+                    });
+                    $('#c_projects').html(projHtml || '<tr><td colspan="3" class="text-center text-muted py-3">No projects found.</td></tr>');
+
+                    // Invoices
+                    var invHtml = '';
+                    (response.invoices || []).forEach(function(v){
+                        invHtml += `<tr>
+                            <td>${v.invoice_number || '—'}</td>
+                            <td>₹${Number(v.total_amount).toLocaleString('en-IN')}</td>
+                            <td>${new Date(v.date).toLocaleDateString()}</td>
+                            <td><span class="badge bg-secondary">${v.status || 'unpaid'}</span></td>
+                        </tr>`;
+                    });
+                    $('#c_invoices').html(invHtml || '<tr><td colspan="4" class="text-center text-muted py-3">No invoices found.</td></tr>');
+                }
+            });
+        });
+
+        // Global Tab switcher logic
+        window.cTab = function (btn, tabId) {
+            $('.ld-tab').removeClass('active');
+            $(btn).addClass('active');
+            $('#c-tab-info, #c-tab-timeline, #c-tab-props, #c-tab-projects, #c-tab-invoices').hide();
+            $('#' + tabId).show();
+        };
+
+        // Enable Bootstrap Tooltips Globally
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+            new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
+

@@ -157,12 +157,12 @@
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
-                                            <div class="lb-avatar-sm" style="background:linear-gradient(135deg,#006666,#009688);color:#fff;flex-shrink:0;">
+                                            <div class="lb-avatar-sm" style="background:linear-gradient(135deg,#006666,#009688);color:#fff; cursor:pointer;" onclick="$('#{{ $contract->id }}').trigger('dblclick')">
                                                 {{ strtoupper(substr($contract->name ?? 'C', 0, 1)) }}
                                             </div>
                                             <div>
-                                                <div class="fw-500">{{ $contract->name ?? '—' }}</div>
-                                                <div class="text-muted" style="font-size:0.72rem;">{{ $contract->email ?? '' }}</div>
+                                                <div class="fw-500 view-client-details" data-id="{{ $contract->client_id }}" style="cursor:pointer; color: #1a73e8;">{{ $contract->name ?? '' }}</div>
+                                                <div class="text-muted small">{{ $contract->company ?? '' }}</div>
                                             </div>
                                         </div>
                                     </td>
@@ -196,10 +196,10 @@
                                                     if (strlen($cleanPhone) >= 10) {
                                                         $message = "Hi " . ($contract->name ?? 'Customer') . ",\n\n" .
                                                                   "This is a reminder regarding your contract: *" . ($contract->subject ?? 'N/A') . "*\n\n" .
-                                                                  "📌 *Details:*\n" .
-                                                                  "• Type: " . ($contract->contract_type ?? 'N/A') . "\n" .
-                                                                  "• Value: ₹" . number_format((float)($contract->value ?? 0), 2) . "\n" .
-                                                                  "• Expiry Date: " . (!empty($contract->end_date) ? date('d M, Y', strtotime($contract->end_date)) : 'N/A') . "\n\n" .
+                                                                  "Details:\n" .
+                                                                  "- Type: " . ($contract->contract_type ?? 'N/A') . "\n" .
+                                                                  "- Value: " . number_format((float)($contract->value ?? 0), 2) . "\n" .
+                                                                  "- Expiry Date: " . (!empty($contract->end_date) ? date('d M, Y', strtotime($contract->end_date)) : 'N/A') . "\n\n" .
                                                                   "Please let us know if you have any questions.\n\n" .
                                                                   "Thank you!";
                                                         $waUrl = "https://wa.me/" . $cleanPhone . "?text=" . urlencode($message);
@@ -323,4 +323,5 @@
             });
         });
     </script>
+    @include('inc.client-modal')
 @endsection

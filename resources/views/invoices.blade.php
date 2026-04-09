@@ -137,7 +137,9 @@
                                             {{ strtoupper(substr($invoice->client_name ?? 'C', 0, 1)) }}
                                         </span>
                                         <div>
-                                            <div class="fw-600">{{ $invoice->client_name ?? '—' }}</div>
+                                            <a href="javascript:void(0)" class="fw-600 view-client-details text-decoration-none" id="{{ $invoice->client_id }}" style="color:inherit;">
+                                                {{ $invoice->client_name ?? '—' }}
+                                            </a>
                                             <div class="text-muted small m-none">{{ $invoice->client_email ?? '' }}</div>
                                         </div>
                                     </span>
@@ -225,6 +227,8 @@
 
         </div>
     </section>
+
+    @include('inc.client-modal')
 
     <style>
         /* ── Stat Row ── */
