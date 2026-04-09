@@ -417,10 +417,17 @@
 
             // Event delegation for dynamically added rows/cards
             document.addEventListener('click', function(e) {
+                // If it's a delete or status change, let those specific handlers run (they bubble or we stop props)
+                if (e.target.closest('.delete') || e.target.closest('.accountstatus') || e.target.closest('.btn-close')) {
+                    return; 
+                }
+
                 const trigger = e.target.closest('.open-company-modal');
                 if (trigger) {
                     e.preventDefault();
-                    e.stopPropagation();
+                    // No stopPropagation here so we don't break other things, 
+                    // but we've already returned if it was a non-modal action.
+                    
                     const url = trigger.dataset.url;
                     const content = document.getElementById('manageCompanyModalContent');
                     const modalEl = document.getElementById('manageCompanyModal');
