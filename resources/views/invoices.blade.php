@@ -72,7 +72,7 @@
                 </div>
                 {{-- Invoice Type Filter --}}
                 <div class="lb-filter-wrapper">
-                    <select class="form-select" id="typeFilter" style="min-width:180px; height:36px !important; border-radius:20px; font-size:0.85rem; padding:0 15px;">
+                    <select class="form-select" id="typeFilter" style="min-width:180px; height:36px !important; border-radius:20px; font-size:0.85rem; padding:0 15px !important;">
                         <option value="">All Types</option>
                         @foreach($availableTypes as $type)
                             <option value="{{ $type }}" {{ $currentType == $type ? 'selected' : '' }}>
