@@ -149,6 +149,9 @@
                             @if($company->gst)
                                 <span class="badge bg-light text-primary border" style="font-size:0.65rem;">GST: {{ $company->gst }}</span>
                             @endif
+                            @if($company->plan)
+                                <span class="badge bg-light text-success border" style="font-size:0.65rem; text-transform:capitalize;">Plan: {{ $company->plan }}</span>
+                            @endif
                             @if($company->status == 1)
                                 <span class="pv-badge pv-badge-success">Active</span>
                             @else
@@ -180,6 +183,7 @@
                                 <th>Company Details</th>
                                 <th class="m-none">Contact</th>
                                 <th class="m-none">Tax / GST</th>
+                                <th class="m-none">Plan</th>
                                 <th class="m-none">Location</th>
                                 <th class="text-center">Status</th>
                                 <th class="text-center position-sticky end-0 mw60" data-orderable="false"
@@ -221,6 +225,13 @@
                                         @endif
                                     </td>
                                     <td class="m-none">
+                                        @if($company->plan)
+                                            <span class="pv-badge pv-badge-info" style="text-transform: capitalize;">{{ $company->plan }}</span>
+                                        @else
+                                            <span class="text-muted small">—</span>
+                                        @endif
+                                    </td>
+                                    <td class="m-none">
                                         <div class="small">{{ $company->city }}</div>
                                         <div class="small text-muted">{{ $company->state }}</div>
                                     </td>
@@ -233,10 +244,10 @@
                                     </td>
                                     <td class="position-sticky end-0 bg-white" onclick="event.stopPropagation();">
                                         <div class="d-flex align-items-center justify-content-center gap-1">
-                                            <!-- <button type="button" class="btn kb-action-btn kb-action-edit open-company-modal" 
+                                            <button type="button" class="btn kb-action-btn kb-action-edit open-company-modal" 
                                                 data-url="/manage-company?id={{ $company->id }}&ajax=1" title="Edit">
                                                 <i class="bx bx-pencil"></i>
-                                            </button> -->
+                                            </button>
                                             <a href="javascript:void(0)" class="btn kb-action-btn kb-action-del delete"
                                                 id="{{ $company->id }}" date-page="companyDelete" title="Delete">
                                                 <i class="bx bx-trash"></i>
