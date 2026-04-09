@@ -70,12 +70,6 @@
             </li>
         @endif
 
-        <li>
-            <a href="/support" @if(Request::segment(1) == 'support') class="active" @endif>
-                <i class="bx bx-help-circle"></i>
-                <span class="link_name">Customer Support</span>
-            </a>
-        </li>
 
         @if(Auth::user()->role != 'master')
             <li class="nav-title">CRM</li>
@@ -233,6 +227,13 @@
                 </li>
             @endif
         @endif
+        
+        <li>
+            <a href="/support" @if(Request::segment(1) == 'support') class="active" @endif>
+                <i class="bx bx-help-circle"></i>
+                <span class="link_name">Customer Support</span>
+            </a>
+        </li>
 
         <li class="nav-title">SYSTEM</li>
 
