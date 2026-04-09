@@ -269,6 +269,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     /*Companies Management Router*/
     Route::get('/companies', [UserController::class, 'companies']);
+    Route::get('/get-company-details/{id}', [UserController::class, 'getCompanyDetails']);
     Route::get('/manage-company', [UserController::class, 'manageCompany'])->name('manageCompany');
     Route::post('/manage-company', [UserController::class, 'manageCompanyPost'])->name('manageCompany');
 

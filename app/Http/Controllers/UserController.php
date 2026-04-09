@@ -216,6 +216,20 @@ class UserController extends Controller
         
         return view('manageCompany',['company'=>$companies]);
     }
+    public function getCompanyDetails($id)
+    {
+        $company = Companies::find($id);
+        if (!$company) {
+            return response()->json(['error' => 'Company not found'], 404);
+        }
+        
+        // Return JSON for AJAX modal
+        return response()->json([
+            'company' => $company,
+            'tax_rates' => explode(',', $company->tax ?? ''),
+            'bank_details' => json_decode($company->bank_details ?? '[]', true)
+        ]);
+    }
     public function manageCompanyPost(Request $request)
     {
         $request->validate([
@@ -233,7 +247,10 @@ class UserController extends Controller
             'zipcode' => 'nullable|string|max:20',
             'country' => 'nullable|string|max:100',
             'subscription' => 'nullable|string|max:100',
+            'industry' => 'nullable|string|max:255',
+            'website' => 'nullable|string|max:255',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'pdf_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
         
@@ -267,6 +284,8 @@ class UserController extends Controller
         $company->state = $request->state;
         $company->zipcode = $request->zipcode;
         $company->country = $request->country;
+        $company->industry = $request->industry;
+        $company->website = $request->website;
         if(!empty($request->id)){
         $company->plan = $request->subscription ?? 'standard';
         }
@@ -274,6 +293,11 @@ class UserController extends Controller
             $fileName = time().'.'.$request->logo->extension();
             $request->logo->move(public_path('/assets/images/company/logos'), $fileName);
             $company->logo = $fileName;
+        }
+        if ($request->hasFile('pdf_logo')) {
+            $fileName = time().'_pdf.'.$request->pdf_logo->extension();
+            $request->pdf_logo->move(public_path('/assets/images/company'), $fileName);
+            $company->pdf_logo = $fileName;
         }
         if ($request->hasFile('img')) {
             $fileName = time().'.'.$request->img->extension();

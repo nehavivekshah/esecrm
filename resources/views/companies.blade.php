@@ -88,10 +88,10 @@
                         <i class="bx bx-refresh"></i>
                     </button>
                     @if(in_array('All', $roleArray))
-                        <a href="/manage-company" class="lb-btn lb-btn-primary">
+                        <button type="button" class="lb-btn lb-btn-primary" onclick="openManageCompanyModal()">
                             <i class="bx bx-plus"></i>
                             <span class="d-none d-sm-inline">Add Company</span>
-                        </a>
+                        </button>
                     @endif
                 </div>
             </div>
@@ -101,7 +101,7 @@
             ════════════════════════════════ --}}
             <div id="cardView" class="pj-card-grid mb-4" style="display:none;">
                 @forelse($companies as $company)
-                    <div class="pj-card" onclick="window.location.href='/manage-company?id={{ $company->id }}'">
+                    <div class="pj-card" onclick="openManageCompanyModal('{{ $company->id }}')">
                         {{-- Top accent --}}
                         <div class="pj-card-accent" style="background: linear-gradient(90deg, #006666, #009688);"></div>
 
@@ -121,10 +121,10 @@
                                 </div>
                             </div>
                             <div class="pj-card-actions" onclick="event.stopPropagation();">
-                                <a href="/manage-company?id={{ $company->id }}" class="btn kb-action-btn" title="Edit"
+                                <button type="button" onclick="openManageCompanyModal('{{ $company->id }}')" class="btn kb-action-btn" title="Edit"
                                     style="background:rgba(0,102,102,0.08);color:#006666;">
                                     <i class="bx bx-pencil"></i>
-                                </a>
+                                </button>
                             </div>
                         </div>
 
@@ -189,7 +189,7 @@
                         <tbody>
                             @foreach($companies as $k=>$company)
                                 <tr class="pointer-cursor selectrow"
-                                    onclick="window.location.href='/manage-company?id={{ $company->id }}'">
+                                    onclick="openManageCompanyModal('{{ $company->id }}')">
                                     <td class="fw-bold text-muted" style="font-size:0.75rem;">
                                         {{ $k+1 }}
                                     </td>
@@ -233,10 +233,10 @@
                                     </td>
                                     <td class="position-sticky end-0 bg-white" onclick="event.stopPropagation();">
                                         <div class="d-flex align-items-center justify-content-center gap-1">
-                                            <a href="/manage-company?id={{ $company->id }}"
+                                            <button type="button" onclick="openManageCompanyModal('{{ $company->id }}')"
                                                 class="btn kb-action-btn kb-action-edit" title="Edit">
                                                 <i class="bx bx-pencil"></i>
-                                            </a>
+                                            </button>
                                             <a href="javascript:void(0)" class="btn kb-action-btn kb-action-del delete"
                                                 id="{{ $company->id }}" date-page="companyDelete" title="Delete">
                                                 <i class="bx bx-trash"></i>
@@ -375,5 +375,353 @@
                 setView('card');
             }
         });
+
+        const gstInput = document.getElementById('c_gst');
+        const vatInput = document.getElementById('c_vat');
+        const taxFields = document.querySelectorAll('.tax-rate-field');
+
+        function refreshTaxVisibility() {
+            const hasGST = gstInput.value.trim() !== '';
+            const hasVAT = vatInput.value.trim() !== '';
+
+            taxFields.forEach(field => {
+                const type = field.getAttribute('data-tax');
+                if (['CGST', 'SGST', 'IGST'].includes(type)) {
+                    field.style.display = hasGST ? 'flex' : 'none';
+                } else if (type === 'VAT') {
+                    field.style.display = hasVAT ? 'flex' : 'none';
+                }
+            });
+        }
+
+        if (gstInput) gstInput.addEventListener('input', refreshTaxVisibility);
+        if (vatInput) vatInput.addEventListener('input', refreshTaxVisibility);
+
+        function openManageCompanyModal(id = null) {
+            const modalEl = document.getElementById('manageCompanyModal');
+            const modal = new bootstrap.Modal(modalEl);
+            const form = document.getElementById('manageCompanyForm');
+            const modalTitle = document.getElementById('modalTitle');
+            const submitBtnText = document.getElementById('submitBtnText');
+
+            form.reset();
+            document.getElementById('company_id').value = '';
+            document.getElementById('logoPreviewWrap').style.display = 'none';
+            document.getElementById('logoDefaultIcon').style.display = 'flex';
+            document.getElementById('pdfLogoPreviewWrap').style.display = 'none';
+            document.getElementById('pdfLogoDefaultIcon').style.display = 'flex';
+            
+            if (id) {
+                modalTitle.innerText = 'Edit Company Details';
+                submitBtnText.innerText = 'Update Company';
+                
+                // Fetch data
+                fetch(`/get-company-details/${id}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        const c = data.company;
+                        document.getElementById('company_id').value = c.id;
+                        document.getElementById('c_name').value = c.name || '';
+                        document.getElementById('c_email').value = c.email || '';
+                        document.getElementById('c_mob').value = c.mob || '';
+                        document.getElementById('c_gst').value = c.gst || '';
+                        document.getElementById('c_vat').value = c.vat || '';
+                        document.getElementById('c_address').value = c.address || '';
+                        document.getElementById('c_city').value = c.city || '';
+                        document.getElementById('c_state').value = c.state || '';
+                        document.getElementById('c_zipcode').value = c.zipcode || '';
+                        document.getElementById('c_country').value = c.country || '';
+                        document.getElementById('c_industry').value = c.industry || '';
+                        document.getElementById('c_website').value = c.website || '';
+                        
+                        // Tax rates
+                        if (data.tax_rates) {
+                            data.tax_rates.forEach((rate, i) => {
+                                const el = document.getElementById(`rate_${i}`);
+                                if (el) el.value = rate;
+                            });
+                        }
+
+                        // Bank details
+                        if (data.bank_details) {
+                            data.bank_details.forEach((val, i) => {
+                                const el = document.getElementById(`bank_${i}`);
+                                if (el) el.value = val;
+                            });
+                        }
+
+                        // Logo preview
+                        if (c.logo) {
+                            document.getElementById('logoPreview').src = `/assets/images/company/logos/${c.logo}`;
+                            document.getElementById('logoPreviewWrap').style.display = 'flex';
+                            document.getElementById('logoDefaultIcon').style.display = 'none';
+                        }
+                        
+                        // PDF Logo preview
+                        if (c.pdf_logo) {
+                            document.getElementById('pdfLogoPreview').src = `/assets/images/company/${c.pdf_logo}`;
+                            document.getElementById('pdfLogoPreviewWrap').style.display = 'flex';
+                            document.getElementById('pdfLogoDefaultIcon').style.display = 'none';
+                        }
+                        
+                        // Plan (master only)
+                        const planEl = document.getElementById(`plan_${c.plan || 'standard'}`);
+                        if (planEl) planEl.checked = true;
+
+                        refreshTaxVisibility();
+                        modal.show();
+                    });
+            } else {
+                modalTitle.innerText = 'Add New Company';
+                submitBtnText.innerText = 'Save Company';
+                refreshTaxVisibility();
+                modal.show();
+            }
+        }
     </script>
-@endsection
+
+    {{-- ════════════════════════════════════════════════════════════════
+         MANAGE COMPANY MODAL
+    ════════════════════════════════════════════════════════════════ --}}
+    <div class="modal fade" id="manageCompanyModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="border-radius:16px; border:none; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+                <form action="/manage-company" method="POST" enctype="multipart/form-data" id="manageCompanyForm">
+                    @csrf
+                    <input type="hidden" name="id" id="company_id">
+
+                    <div class="cf-modal-header">
+                        <div>
+                            <p class="cf-modal-header-title" id="modalTitle">Add New Company</p>
+                            <p class="cf-modal-header-sub">Configure your company identity and settings</p>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body px-4 py-3 cf-wrap" style="max-height:70vh; overflow-y:auto; background:#f8fdfd;">
+                        
+                        {{-- Identity Section --}}
+                        <div class="cf-section-title">Identity & Branding</div>
+                        <div class="row g-3">
+                            <div class="col-md-4 cf-field">
+                                <label>Company Name <span class="req">*</span></label>
+                                <div class="cf-input-box">
+                                    <span class="cf-icon"><i class="bx bx-building"></i></span>
+                                    <input type="text" name="name" id="c_name" placeholder="Enter Company Name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4 cf-field">
+                                <label>Main Logo</label>
+                                <div class="cf-input-box">
+                                    <span class="cf-icon" id="logoPreviewWrap" style="padding:4px; display:none;">
+                                        <img id="logoPreview" src="" style="width:100%; height:100%; border-radius:6px; object-fit:contain;">
+                                    </span>
+                                    <span class="cf-icon" id="logoDefaultIcon"><i class="bx bx-image-add"></i></span>
+                                    <input type="file" name="logo" id="c_logo">
+                                </div>
+                            </div>
+                            <div class="col-md-4 cf-field">
+                                <label>PDF Logo (Invoices)</label>
+                                <div class="cf-input-box">
+                                    <span class="cf-icon" id="pdfLogoPreviewWrap" style="padding:4px; display:none;">
+                                        <img id="pdfLogoPreview" src="" style="width:100%; height:100%; border-radius:6px; object-fit:contain;">
+                                    </span>
+                                    <span class="cf-icon" id="pdfLogoDefaultIcon"><i class="bx bx-file-blank"></i></span>
+                                    <input type="file" name="pdf_logo" id="c_pdf_logo">
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Contact Section --}}
+                        <div class="cf-section-title mt-4">Contact Information</div>
+                        <div class="row g-3">
+                            <div class="col-md-3 cf-field">
+                                <label>Email Address</label>
+                                <div class="cf-input-box">
+                                    <span class="cf-icon"><i class="bx bx-envelope"></i></span>
+                                    <input type="email" name="email" id="c_email" placeholder="email@company.com">
+                                </div>
+                            </div>
+                            <div class="col-md-3 cf-field">
+                                <label>Mobile Number</label>
+                                <div class="cf-input-box">
+                                    <span class="cf-icon"><i class="bx bx-phone"></i></span>
+                                    <input type="tel" name="mob" id="c_mob" placeholder="Phone">
+                                </div>
+                            </div>
+                            <div class="col-md-3 cf-field">
+                                <label>Industry</label>
+                                <div class="cf-input-box">
+                                    <span class="cf-icon"><i class="bx bx-briefcase"></i></span>
+                                    <input type="text" name="industry" id="c_industry" placeholder="e.g. IT, Sales">
+                                </div>
+                            </div>
+                            <div class="col-md-3 cf-field">
+                                <label>Website</label>
+                                <div class="cf-input-box">
+                                    <span class="cf-icon"><i class="bx bx-globe"></i></span>
+                                    <input type="url" name="website" id="c_website" placeholder="https://...">
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Tax Section --}}
+                        <div class="cf-section-title mt-4">Taxation & GST</div>
+                        <div class="row g-3">
+                            <div class="col-md-6 cf-field">
+                                <label>GST Number</label>
+                                <div class="cf-input-box">
+                                    <span class="cf-icon"><i class="bx bx-buildings"></i></span>
+                                    <input type="text" name="gst" id="c_gst" placeholder="Enter GSTIN">
+                                </div>
+                            </div>
+                            <div class="col-md-6 cf-field">
+                                <label>VAT Number</label>
+                                <div class="cf-input-box">
+                                    <span class="cf-icon"><i class="bx bx-file"></i></span>
+                                    <input type="text" name="vat" id="c_vat" placeholder="Enter VAT No.">
+                                </div>
+                            </div>
+                            
+                            {{-- Dynamic Tax Rates --}}
+                            <div class="col-md-3 cf-field tax-rate-field" data-tax="CGST">
+                                <label>CGST (%)</label>
+                                <div class="cf-input-box">
+                                    <input type="number" step="0.01" name="tax_rates[]" id="rate_0" placeholder="0.00">
+                                </div>
+                            </div>
+                            <div class="col-md-3 cf-field tax-rate-field" data-tax="SGST">
+                                <label>SGST (%)</label>
+                                <div class="cf-input-box">
+                                    <input type="number" step="0.01" name="tax_rates[]" id="rate_1" placeholder="0.00">
+                                </div>
+                            </div>
+                            <div class="col-md-3 cf-field tax-rate-field" data-tax="IGST">
+                                <label>IGST (%)</label>
+                                <div class="cf-input-box">
+                                    <input type="number" step="0.01" name="tax_rates[]" id="rate_2" placeholder="0.00">
+                                </div>
+                            </div>
+                            <div class="col-md-3 cf-field tax-rate-field" data-tax="VAT">
+                                <label>VAT (%)</label>
+                                <div class="cf-input-box">
+                                    <input type="number" step="0.01" name="tax_rates[]" id="rate_3" placeholder="0.00">
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Address Section --}}
+                        <div class="cf-section-title mt-4">Location & Address</div>
+                        <div class="row g-3">
+                            <div class="col-12 cf-field">
+                                <label>Full Address</label>
+                                <div class="cf-input-box cf-textarea-box">
+                                    <textarea name="address" id="c_address" rows="2" placeholder="Street, Building, Area..."></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-3 cf-field">
+                                <label>City</label>
+                                <div class="cf-input-box"><input type="text" name="city" id="c_city" placeholder="City"></div>
+                            </div>
+                            <div class="col-md-3 cf-field">
+                                <label>State</label>
+                                <div class="cf-input-box"><input type="text" name="state" id="c_state" placeholder="State"></div>
+                            </div>
+                            <div class="col-md-3 cf-field">
+                                <label>Zip Code</label>
+                                <div class="cf-input-box"><input type="text" name="zipcode" id="c_zipcode" placeholder="Zip"></div>
+                            </div>
+                            <div class="col-md-3 cf-field">
+                                <label>Country</label>
+                                <div class="cf-input-box"><input type="text" name="country" id="c_country" placeholder="Country"></div>
+                            </div>
+                        </div>
+
+                        {{-- Bank Section --}}
+                        <div class="cf-section-title mt-4">Bank Details</div>
+                        <div class="row g-3">
+                            <div class="col-md-6 cf-field">
+                                <label>Bank Name</label>
+                                <div class="cf-input-box"><input type="text" name="bank_details[]" id="bank_0" placeholder="Bank Name"></div>
+                            </div>
+                            <div class="col-md-6 cf-field">
+                                <label>Account Holder</label>
+                                <div class="cf-input-box"><input type="text" name="bank_details[]" id="bank_1" placeholder="Account Name"></div>
+                            </div>
+                            <div class="col-md-6 cf-field">
+                                <label>Account number</label>
+                                <div class="cf-input-box"><input type="text" name="bank_details[]" id="bank_2" placeholder="Account No."></div>
+                            </div>
+                            <div class="col-md-6 cf-field">
+                                <label>IFSC Code</label>
+                                <div class="cf-input-box"><input type="text" name="bank_details[]" id="bank_3" placeholder="IFSC Code"></div>
+                            </div>
+                            <div class="col-md-6 cf-field">
+                                <label>UPI ID</label>
+                                <div class="cf-input-box"><input type="text" name="bank_details[]" id="bank_4" placeholder="UPI Id"></div>
+                            </div>
+                        </div>
+
+                        @if(Auth::user()->role == 'master')
+                            <div class="cf-section-title mt-4">Subscription Plan</div>
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="d-flex gap-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="subscription" value="standard" id="plan_standard" checked>
+                                            <label class="form-check-label" for="plan_standard">Standard</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="subscription" value="premium" id="plan_premium">
+                                            <label class="form-check-label" for="plan_premium">Premium</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="subscription" value="pro" id="plan_pro">
+                                            <label class="form-check-label" for="plan_pro">PRO</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                    </div>
+
+                    <div class="cf-modal-footer">
+                        <button type="button" class="cf-btn-cancel" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="cf-btn-save">
+                            <i class="bx bx-check"></i> <span id="submitBtnText">Save Company</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* ── Modal & UX Refinement ── */
+        .cf-wrap * { box-sizing: border-box; }
+        .cf-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: linear-gradient(135deg, #005757, #007e7e); border-radius: 16px 16px 0 0; }
+        .cf-modal-header-title { font-size: 1rem; font-weight: 700; color: #fff; margin: 0; }
+        .cf-modal-header-sub { font-size: .73rem; color: rgba(255,255,255,.72); margin: 0; }
+        .cf-modal-header .btn-close { filter: invert(1); opacity:.8; }
+
+        .cf-section-title { font-size: .7rem; font-weight: 800; color: #006666; text-transform: uppercase; letter-spacing: .08em; margin: 18px 0 12px; padding-bottom: 5px; border-bottom: 1.5px solid rgba(0,102,102,.1); }
+        .cf-section-title:first-child { margin-top: 0; }
+        .cf-field { display: flex; flex-direction: column; gap: 4px; }
+        .cf-field label { font-size: .78rem; font-weight: 500; color: #5f6368; }
+        .req { color: #ea4335; }
+
+        .cf-input-box { display: flex; align-items: center; border: 1.5px solid #dadce0; border-radius: 10px; background: #fff; height: 42px; overflow: hidden; transition: all 0.2s; }
+        .cf-input-box:focus-within { border-color: #006666; box-shadow: 0 0 0 3.5px rgba(0,102,102,0.08); }
+        .cf-input-box .cf-icon { width: 40px; height: 100%; display: flex; align-items: center; justify-content: center; color: #006666; font-size: 1.1rem; background: #f8fdfd; border-right: 1.5px solid #f1f3f4; }
+        .cf-input-box input, .cf-input-box select { flex: 1; border: none !important; outline: none !important; padding: 0 12px; font-size: 0.88rem; color: #202124; background: transparent; }
+        .cf-input-box.cf-textarea-box { height: auto; min-height: 80px; }
+        .cf-input-box.cf-textarea-box textarea { width: 100%; padding: 12px; border: none; outline: none; font-size: 0.88rem; resize: none; background: transparent; }
+
+        .cf-modal-footer { padding: 14px 20px; border-top: 1px solid #e8eaed; display: flex; justify-content: flex-end; gap: 10px; background: #fff; border-radius: 0 0 16px 16px; }
+        .cf-btn-cancel { height: 38px; padding: 0 20px; border-radius: 10px; border: 1.5px solid #dadce0; background: #fff; color: #5f6368; font-size: 0.85rem; font-weight: 500; cursor: pointer; }
+        .cf-btn-save { height: 38px; padding: 0 22px; border-radius: 10px; border: none; background: #006666; color: #fff; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,102,102,0.2); }
+        .cf-btn-save:hover { background: #004d4d; transform: translateY(-1px); }
+
+        .pj-card-actions button { border: none; padding: 6px; border-radius: 8px; font-size: 1.1rem; line-height: 1; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .pj-card-actions button:hover { transform: scale(1.1); }
