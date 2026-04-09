@@ -233,10 +233,10 @@
                                     </td>
                                     <td class="position-sticky end-0 bg-white" onclick="event.stopPropagation();">
                                         <div class="d-flex align-items-center justify-content-center gap-1">
-                                            <button type="button" class="btn kb-action-btn kb-action-edit open-company-modal" 
+                                            <!-- <button type="button" class="btn kb-action-btn kb-action-edit open-company-modal" 
                                                 data-url="/manage-company?id={{ $company->id }}&ajax=1" title="Edit">
                                                 <i class="bx bx-pencil"></i>
-                                            </button>
+                                            </button> -->
                                             <a href="javascript:void(0)" class="btn kb-action-btn kb-action-del delete"
                                                 id="{{ $company->id }}" date-page="companyDelete" title="Delete">
                                                 <i class="bx bx-trash"></i>
