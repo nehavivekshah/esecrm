@@ -29,4 +29,8 @@ class Companies extends Model
         'industry',
         'website'
     ];
+    public function supportTickets()
+    {
+        return $this->hasMany(SupportTicket::class, 'company_id');
+    }
 }

@@ -277,10 +277,16 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/delete-plan', [UserController::class, 'deletePlan']);
 
     /* Enquiry Management Router */
-    Route::get('/enquiries', [UserController::class, 'enquiries']);
-    Route::get('/manage-enquiry', [UserController::class, 'manageEnquiry'])->name('manageEnquiry');
-    Route::post('/manage-enquiry', [UserController::class, 'manageEnquiryPost'])->name('manageEnquiry');
+    Route::get('/enquiries', [UserController::class, 'enquiries'])->name('enquiries');
+    Route::get('/manage-enquiry', [UserController::class, 'manageEnquiry']);
+    Route::post('/manage-enquiry', [UserController::class, 'manageEnquiryPost']);
     Route::get('/delete-enquiry', [UserController::class, 'deleteEnquiry']);
+
+    // Support Routes
+    Route::get('/support', [App\Http\Controllers\SupportController::class, 'index'])->name('support');
+    Route::get('/manage-support', [App\Http\Controllers\SupportController::class, 'manageSupport']);
+    Route::post('/manage-support', [App\Http\Controllers\SupportController::class, 'storeSupport']);
+    Route::get('/delete-support', [App\Http\Controllers\SupportController::class, 'deleteSupport']);
 
     Route::post('/manage-company', [UserController::class, 'manageCompanyPost'])->name('manageCompany');
 

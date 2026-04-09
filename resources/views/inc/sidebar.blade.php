@@ -70,6 +70,13 @@
             </li>
         @endif
 
+        <li>
+            <a href="/support" @if(Request::segment(1) == 'support') class="active" @endif>
+                <i class="bx bx-help-circle"></i>
+                <span class="link_name">Customer Support</span>
+            </a>
+        </li>
+
         <li class="nav-title">CRM</li>
         @if(in_array('leads', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
             <li>

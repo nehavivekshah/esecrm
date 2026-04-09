@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class SupportTicket extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'ticket_no',
+        'company_id',
+        'subject',
+        'description',
+        'priority',
+        'status'
+    ];
+
+    /**
+     * Get the company that owns the ticket.
+     */
+    public function company()
+    {
+        return $this->belongsTo(Companies::class, 'company_id');
+    }
+}
