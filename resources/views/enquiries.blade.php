@@ -1,340 +1,438 @@
 @extends('layout')
 
+@section('title', 'Enquiries - eseCRM')
+
 @section('content')
-<div class="container-fluid px-4 py-4">
-    {{-- Header Section --}}
-    <div class="row align-items-center mb-4">
-        <div class="col">
-            <h2 class="fw-bold mb-1" style="color: #006666;">Landing Page Enquiries</h2>
-            <p class="text-muted small mb-0">Manage incoming lead requests from your marketing pages</p>
-        </div>
-        <div class="col-auto">
-            <div class="btn-group shadow-sm bg-white p-1" style="border-radius: 12px; border: 1px solid #e0e0e0;">
-                <button type="button" class="btn btn-sm px-3 py-2 border-0 rounded-3 active" id="cardViewBtn" onclick="setView('card')">
-                    <i class="bx bx-grid-alt me-1"></i> Grid
-                </button>
-                <button type="button" class="btn btn-sm px-3 py-2 border-0 rounded-3" id="tableViewBtn" onclick="setView('table')">
-                    <i class="bx bx-list-ul me-1"></i> List
-                </button>
-            </div>
-        </div>
-    </div>
+    <section class="task__section">
+        @include('inc.header', ['title' => 'Landing Enquiries'])
 
-    {{-- Stats Row --}}
-    <div class="row g-3 mb-4">
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm h-100" style="border-radius: 16px; background: linear-gradient(135deg, #006666, #009688);">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-center justify-content-between mb-3 text-white">
-                        <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:48px; height:48px; background: rgba(255,255,255,0.2);">
-                            <i class="bx bx-infinite fs-3"></i>
-                        </div>
-                        <div class="fs-2 fw-bold">{{ $stats['total'] }}</div>
-                    </div>
-                    <div class="text-white opacity-75">Total Requests</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm h-100" style="border-radius: 16px; border-left: 5px solid #0dcaf0 !important;">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div class="rounded-circle d-flex align-items-center justify-content-center bg-info bg-opacity-10 text-info" style="width:48px; height:48px;">
-                            <i class="bx bx-mail-send fs-3"></i>
-                        </div>
-                        <div class="fs-2 fw-bold">{{ $stats['new'] }}</div>
-                    </div>
-                    <div class="text-muted small uppercase fw-semibold tracking-wider">New Leads</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm h-100" style="border-radius: 16px; border-left: 5px solid #ffc107 !important;">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div class="rounded-circle d-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning" style="width:48px; height:48px;">
-                            <i class="bx bx-conversation fs-3"></i>
-                        </div>
-                        <div class="fs-2 fw-bold">{{ $stats['contacted'] }}</div>
-                    </div>
-                    <div class="text-muted small uppercase fw-semibold tracking-wider">In Discussion</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm h-100" style="border-radius: 16px; border-left: 5px solid #198754 !important;">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div class="rounded-circle d-flex align-items-center justify-content-center bg-success bg-opacity-10 text-success" style="width:48px; height:48px;">
-                            <i class="bx bx-check-double fs-3"></i>
-                        </div>
-                        <div class="fs-2 fw-bold">{{ $stats['closed'] }}</div>
-                    </div>
-                    <div class="text-muted small uppercase fw-semibold tracking-wider">Qualified/Closed</div>
-                </div>
-            </div>
-        </div>
-    </div>
+        <div class="dash-container">
 
-    {{-- Toolbar --}}
-    <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px;">
-        <div class="card-body p-3">
-            <div class="row g-3 align-items-center">
-                <div class="col-md-6 col-lg-8">
-                    <div class="input-group search-box" style="width: 300px; max-width: 100%;">
-                        <span class="input-group-text bg-light border-0"><i class="bx bx-search text-muted"></i></span>
-                        <input type="text" class="form-control bg-light border-0 p-2" id="enquirySearch" placeholder="Search inquiries..." style="font-size: 0.9rem;">
+            {{-- ── Stat Cards Row ── --}}
+            <div class="pj-stat-row mb-4">
+                <div class="pj-stat-card">
+                    <div class="pj-stat-icon" style="background:rgba(0,102,102,0.1);color:#006666;">
+                        <i class="bx bx-mail-send"></i>
+                    </div>
+                    <div>
+                        <div class="pj-stat-num">{{ $stats['total'] }}</div>
+                        <div class="pj-stat-label">Total Requests</div>
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-4 text-end">
-                    <select class="form-select border-0 bg-light py-2 shadow-none" id="statusFilter" style="font-size: 0.9rem; border-radius: 8px;">
-                        <option value="all">All Statuses</option>
-                        <option value="0">New Only</option>
-                        <option value="1">Contacted</option>
-                        <option value="2">Closed</option>
-                    </select>
+                <div class="pj-stat-card">
+                    <div class="pj-stat-icon" style="background:rgba(26,115,232,0.1);color:#1a73e8;">
+                        <i class="bx bx-envelope"></i>
+                    </div>
+                    <div>
+                        <div class="pj-stat-num" style="color:#1a73e8;">{{ $stats['new'] }}</div>
+                        <div class="pj-stat-label">New Leads</div>
+                    </div>
+                </div>
+                <div class="pj-stat-card">
+                    <div class="pj-stat-icon" style="background:rgba(255,193,7,0.1);color:#ffc107;">
+                        <i class="bx bx-conversation"></i>
+                    </div>
+                    <div>
+                        <div class="pj-stat-num" style="color:#ffc107;">{{ $stats['contacted'] }}</div>
+                        <div class="pj-stat-label">In Discussion</div>
+                    </div>
+                </div>
+                <div class="pj-stat-card">
+                    <div class="pj-stat-icon" style="background:rgba(52,168,83,0.1);color:#34a853;">
+                        <i class="bx bx-check-double"></i>
+                    </div>
+                    <div>
+                        <div class="pj-stat-num" style="color:#34a853;">{{ $stats['closed'] }}</div>
+                        <div class="pj-stat-label">Qualified/Closed</div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    {{-- Grid View --}}
-    <div id="cardView" class="row g-4 mb-4">
-        @forelse($enquiries as $enquiry)
-            <div class="col-md-6 col-lg-4 enquiry-card-wrapper" data-status="{{ $enquiry->status }}" data-search="{{ strtolower($enquiry->name . ' ' . $enquiry->email . ' ' . $enquiry->subject) }}">
-                <div class="card border-0 shadow-sm h-100 pj-card" style="border-radius: 20px; transition: all 0.3s ease;">
-                    <div class="pj-card-accent" style="height: 6px; background: @if($enquiry->status == 0)#0dcaf0 @elseif($enquiry->status == 1)#ffc107 @else#198754 @endif; border-radius: 20px 20px 0 0;"></div>
-                    <div class="card-body p-4 open-enquiry-modal cur-pointer" data-url="/manage-enquiry?id={{ $enquiry->id }}">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <div class="d-flex align-items-center">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white me-3" 
-                                     style="width:50px; height:50px; font-size:1.2rem; background: linear-gradient(45deg, #006666, #009688);">
-                                    {{ strtoupper(substr($enquiry->name, 0, 1)) }}
-                                </div>
-                                <div>
-                                    <h5 class="fw-bold mb-0" style="color: #2c3e50;">{{ $enquiry->name }}</h5>
-                                    <small class="text-muted">{{ $enquiry->created_at->format('d M, Y · h:i A') }}</small>
+            {{-- ── Toolbar ── --}}
+            <div class="leads-toolbar mb-3">
+                <div class="leads-toolbar-left">
+                    <div class="d-flex align-items-center gap-2">
+                        <select id="statusFilter" class="form-select" style="width: auto; min-width: 140px;">
+                            <option value="all">All Status</option>
+                            <option value="0">New Leads</option>
+                            <option value="1">Contacted</option>
+                            <option value="2">Closed</option>
+                        </select>
+                        <div class="input-group search-box d-none d-md-flex" style="width: 240px;">
+                            <span class="input-group-text bg-white border-end-0"><i class="bx bx-search text-muted"></i></span>
+                            <input type="text" class="form-control border-start-0" id="enquirySearch" placeholder="Search leads...">
+                        </div>
+                    </div>
+
+                    <span class="lb-page-count ms-3">
+                        Showing {{ count($enquiries) }} records
+                    </span>
+                </div>
+                <div class="leads-toolbar-right gap-2">
+                    {{-- View Toggle --}}
+                    <div class="pj-view-toggle">
+                        <button class="pj-view-btn" id="cardViewBtn" title="Card View" onclick="setView('card')">
+                            <i class="bx bx-grid-alt"></i>
+                        </button>
+                        <button class="pj-view-btn active" id="tableViewBtn" title="Table View" onclick="setView('table')">
+                            <i class="bx bx-list-ul"></i>
+                        </button>
+                    </div>
+                    <button class="lb-icon-btn" onclick="location.reload()" title="Refresh">
+                        <i class="bx bx-refresh"></i>
+                    </button>
+                </div>
+            </div>
+
+            {{-- ════════════════════════════════
+            CARD VIEW
+            ════════════════════════════════ --}}
+            <div id="cardView" class="pj-card-grid mb-4" style="display:none;">
+                @forelse($enquiries as $enquiry)
+                    <div class="pj-card enquiry-card-wrapper open-enquiry-modal" 
+                         data-url="/manage-enquiry?id={{ $enquiry->id }}" 
+                         data-status="{{ $enquiry->status }}" 
+                         data-search="{{ strtolower($enquiry->name . ' ' . $enquiry->email . ' ' . $enquiry->subject) }}">
+                        
+                        {{-- Top accent --}}
+                        <div class="pj-card-accent" style="background: @if($enquiry->status == 0)#1a73e8 @elseif($enquiry->status == 1)#ffc107 @else#34a853 @endif;"></div>
+
+                        {{-- Header --}}
+                        <div class="pj-card-header">
+                            <div class="pj-card-avatar">
+                                {{ strtoupper(substr($enquiry->name, 0, 1)) }}
+                            </div>
+                            <div class="pj-card-meta">
+                                <div class="pj-card-name">{{ $enquiry->name }}</div>
+                                <div class="pj-card-id">
+                                    {{ $enquiry->created_at->format('d M, Y · h:i A') }}
                                 </div>
                             </div>
-                            <span class="badge @if($enquiry->status == 0) bg-info @elseif($enquiry->status == 1) bg-warning @else bg-success @endif px-3 py-2" style="border-radius: 8px;">
-                                @if($enquiry->status == 0) New @elseif($enquiry->status == 1) Contacted @else Closed @endif
-                            </span>
-                        </div>
-
-                        <div class="mb-3">
-                            <div class="d-flex align-items-center mb-1 text-muted small">
-                                <i class="bx bx-envelope me-2"></i> {{ $enquiry->email ?? 'N/A' }}
-                            </div>
-                            <div class="d-flex align-items-center text-muted small">
-                                <i class="bx bx-phone me-2"></i> {{ $enquiry->mob ?? 'N/A' }}
+                            <div class="pj-card-actions">
+                                <button type="button" class="btn kb-action-btn open-enquiry-modal" data-url="/manage-enquiry?id={{ $enquiry->id }}" title="Edit">
+                                    <i class="bx bx-pencil"></i>
+                                </button>
                             </div>
                         </div>
 
+                        {{-- Details --}}
+                        <div class="pj-card-info mt-2">
+                            <div class="pj-info-row">
+                                <i class="bx bx-envelope"></i>
+                                <span>{{ $enquiry->email ?? 'No email' }}</span>
+                            </div>
+                            <div class="pj-info-row">
+                                <i class="bx bx-phone"></i>
+                                <span>{{ $enquiry->mob ?? 'No phone' }}</span>
+                            </div>
+                        </div>
+
+                        {{-- Subject Preview --}}
                         @if($enquiry->subject)
-                            <div class="fw-bold mb-2 p-2 bg-light rounded-3" style="font-size: 0.85rem; border-left: 3px solid #006666;">
-                                {{ $enquiry->subject }}
+                            <div class="mt-2 p-2 bg-light rounded-3 small fw-500 border-start border-primary border-3">
+                                {{ Str::limit($enquiry->subject, 50) }}
                             </div>
                         @endif
 
-                        <p class="text-muted small mb-0 message-preview">
-                            {{ Str::limit($enquiry->message, 120) }}
+                        <p class="text-muted small mt-2 mb-0" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.8em;">
+                            {{ $enquiry->message }}
                         </p>
-                    </div>
-                    <div class="card-footer bg-transparent border-top-0 p-4 pt-0">
-                        <div class="d-flex gap-2">
-                             <button type="button" class="btn btn-sm w-100 open-enquiry-modal" data-url="/manage-enquiry?id={{ $enquiry->id }}" style="background: rgba(0,102,102,0.1); color: #006666; font-weight: 500;">
-                                <i class="bx bx-show-alt me-1"></i> Details
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-danger px-3 delete-enquiry-btn" data-id="{{ $enquiry->id }}">
+
+                        {{-- Footer Badge --}}
+                        <div class="mt-3 d-flex justify-content-between align-items-center">
+                            @if($enquiry->status == 0)
+                                <span class="pv-badge pv-badge-info">New Request</span>
+                            @elseif($enquiry->status == 1)
+                                <span class="pv-badge pv-badge-warning" style="background:rgba(255,193,7,0.1);color:#ffc107;">In Discussion</span>
+                            @else
+                                <span class="pv-badge pv-badge-success">Qualified</span>
+                            @endif
+                            <button class="btn btn-sm text-danger border-0 p-0 delete-enquiry-btn" data-id="{{ $enquiry->id }}">
                                 <i class="bx bx-trash"></i>
                             </button>
                         </div>
                     </div>
+                @empty
+                    <div class="pj-empty" style="grid-column:1/-1;">
+                        <i class="bx bx-mail-send"></i>
+                        <p>No enquiries found.</p>
+                    </div>
+                @endforelse
+            </div>
+
+            {{-- ════════════════════════════════
+            TABLE VIEW
+            ════════════════════════════════ --}}
+            <div id="tableView" class="dash-card mb-4"
+                style="background: #fff; border: 1px solid #e8eaed; border-radius: 12px; overflow: hidden;">
+                <div class="table-responsive">
+                    <table class="leads-table projects align-middle" id="lists" style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Lead Details</th>
+                                <th class="m-none">Contact Info</th>
+                                <th class="m-none">Subject</th>
+                                <th class="m-none">Received On</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center position-sticky end-0 mw60" data-orderable="false"
+                                    style="z-index:1;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($enquiries as $k=>$enquiry)
+                                <tr class="pointer-cursor selectrow enquiry-card-wrapper open-enquiry-modal"
+                                    data-url="/manage-enquiry?id={{ $enquiry->id }}"
+                                    data-status="{{ $enquiry->status }}"
+                                    data-search="{{ strtolower($enquiry->name . ' ' . $enquiry->email . ' ' . $enquiry->subject) }}">
+                                    <td class="fw-bold text-muted" style="font-size:0.75rem;">
+                                        {{ $k+1 }}
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="lb-avatar-sm"
+                                                style="background:linear-gradient(135deg,#1a73e8,#00c6ff);color:#fff;">
+                                                {{ strtoupper(substr($enquiry->name, 0, 1)) }}
+                                            </div>
+                                            <div class="min-w-0">
+                                                <div class="fw-600 text-truncate" style="max-width:200px;">{{ $enquiry->name }}</div>
+                                                <div class="small text-muted text-truncate" style="max-width:200px;">{{ $enquiry->created_at->diffForHumans() }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="m-none">
+                                        <div class="small fw-500">{{ $enquiry->email }}</div>
+                                        <div class="small text-muted">{{ $enquiry->mob }}</div>
+                                    </td>
+                                    <td class="m-none">
+                                        <div class="small text-truncate" style="max-width:250px;">{{ $enquiry->subject ?? 'General Enquiry' }}</div>
+                                    </td>
+                                    <td class="m-none">
+                                        <div class="small">{{ $enquiry->created_at->format('d M, Y') }}</div>
+                                        <div class="small text-muted text-uppercase" style="font-size:0.65rem;">{{ $enquiry->created_at->format('h:i A') }}</div>
+                                    </td>
+                                    <td class="text-center">
+                                        @if($enquiry->status == 0)
+                                            <span class="pv-badge pv-badge-info">New</span>
+                                        @elseif($enquiry->status == 1)
+                                            <span class="pv-badge pv-badge-warning" style="background:rgba(255,193,7,0.1);color:#ffc107;">In Contact</span>
+                                        @else
+                                            <span class="pv-badge pv-badge-success">Closed</span>
+                                        @endif
+                                    </td>
+                                    <td class="position-sticky end-0 bg-white">
+                                        <div class="d-flex align-items-center justify-content-center gap-1">
+                                            <button type="button" class="btn kb-action-btn kb-action-edit open-enquiry-modal" 
+                                                data-url="/manage-enquiry?id={{ $enquiry->id }}" title="Edit">
+                                                <i class="bx bx-pencil"></i>
+                                            </button>
+                                            <button class="btn kb-action-btn kb-action-del delete-enquiry-btn" data-id="{{ $enquiry->id }}" title="Delete">
+                                                <i class="bx bx-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        @empty
-            <div class="col-12 text-center py-5">
-                <img src="/assets/images/no-data.svg" alt="No data" style="width: 200px; opacity: 0.5;">
-                <h5 class="text-muted mt-3">No enquiries found yet.</h5>
+
+        </div>
+    </section>
+
+    {{-- Enquiry Modal --}}
+    <div class="modal fade" id="enquiryModal" aria-hidden="true" style="z-index: 1060;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="border-radius:16px; border:none;" id="enquiryModalContent">
+                <!-- Content injected via AJAX -->
             </div>
-        @endforelse
-    </div>
-
-    {{-- Table View --}}
-    <div id="tableView" class="card border-0 shadow-sm mb-4 overflow-hidden" style="display:none; border-radius: 20px;">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="bg-light">
-                    <tr>
-                        <th class="ps-4 py-3 border-0 text-muted small fw-bold">NAME</th>
-                        <th class="py-3 border-0 text-muted small fw-bold">CONTACT</th>
-                        <th class="py-3 border-0 text-muted small fw-bold">STATUS</th>
-                        <th class="py-3 border-0 text-muted small fw-bold">RECEIVED</th>
-                        <th class="pe-4 py-3 border-0 text-end text-muted small fw-bold">ACTIONS</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($enquiries as $enquiry)
-                        <tr class="enquiry-card-wrapper pointer-cursor" data-status="{{ $enquiry->status }}" data-search="{{ strtolower($enquiry->name . ' ' . $enquiry->email . ' ' . $enquiry->subject) }}" onclick="openModal(this)">
-                            <td class="ps-4">
-                                <div class="fw-bold" style="color: #2c3e50;">{{ $enquiry->name }}</div>
-                                <div class="text-muted mini-text">{{ Str::limit($enquiry->subject, 30) }}</div>
-                            </td>
-                            <td>
-                                <div>{{ $enquiry->email }}</div>
-                                <div class="text-muted small">{{ $enquiry->mob }}</div>
-                            </td>
-                            <td>
-                                <span class="badge @if($enquiry->status == 0) bg-info @elseif($enquiry->status == 1) bg-warning @else bg-success @endif px-3 py-1" style="border-radius: 6px;">
-                                    @if($enquiry->status == 0) New @elseif($enquiry->status == 1) Contacted @else Closed @endif
-                                </span>
-                            </td>
-                            <td>
-                                <div class="small">{{ $enquiry->created_at->format('d M, Y') }}</div>
-                                <div class="text-muted mini-text">{{ $enquiry->created_at->diffForHumans() }}</div>
-                            </td>
-                            <td class="pe-4 text-end">
-                                <div class="d-flex justify-content-end gap-1">
-                                    <button class="btn btn-sm bg-light text-primary open-enquiry-modal" 
-                                            data-url="/manage-enquiry?id={{ $enquiry->id }}">
-                                        <i class="bx bx-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-sm bg-light text-danger delete-enquiry-btn" data-id="{{ $enquiry->id }}">
-                                        <i class="bx bx-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
         </div>
     </div>
-</div>
 
-{{-- MODAL --}}
-<div class="modal fade" id="enquiryModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content border-0" style="border-radius: 24px; overflow: hidden;">
-            <div id="enquiryModalContent"></div>
-        </div>
-    </div>
-</div>
-
-{{-- STYLES --}}
-<style>
-    .tracking-wider { letter-spacing: 0.05em; }
-    .uppercase { text-transform: uppercase; }
-    .mini-text { font-size: 0.75rem; }
-    .cur-pointer { cursor: pointer; }
-    
-    .pj-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 30px rgba(0, 102, 102, 0.12) !important;
-    }
-
-    .btn-group .btn.active {
-        background: #006666 !important;
-        color: white !important;
-        box-shadow: 0 4px 12px rgba(0, 102, 102, 0.2);
-    }
-
-    #tableView tr { transition: background 0.2s; }
-    #tableView tr:hover { background-color: rgba(0,102,102,0.03); }
-
-    .message-preview {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        height: 2.8em;
-    }
-</style>
-
-{{-- SCRIPTS --}}
-<script>
-    function setView(view) {
-        localStorage.setItem('enquiry_view_pref', view);
-        const cardView = document.getElementById('cardView');
-        const tableView = document.getElementById('tableView');
-        const cardBtn = document.getElementById('cardViewBtn');
-        const tableBtn = document.getElementById('tableViewBtn');
-
-        if (view === 'card') {
-            cardView.style.display = 'flex';
-            tableView.style.display = 'none';
-            cardBtn.classList.add('active');
-            tableBtn.classList.remove('active');
-        } else {
-            cardView.style.display = 'none';
-            tableView.style.display = 'block';
-            cardBtn.classList.remove('active');
-            tableBtn.classList.add('active');
-        }
-    }
-
-    // Modal Trigger function for table rows
-    function openModal(row) {
-        const url = row.querySelector('.open-enquiry-modal').dataset.url;
-        loadEnquiryModal(url);
-    }
-
-    function loadEnquiryModal(url) {
-        const content = document.getElementById('enquiryModalContent');
-        const modal = new bootstrap.Modal(document.getElementById('enquiryModal'));
-        
-        content.innerHTML = '<div class="p-5 text-center"><i class="bx bx-loader-alt bx-spin fs-1" style="color:#006666;"></i></div>';
-        modal.show();
-
-        fetch(url)
-            .then(res => res.text())
-            .then(html => {
-                content.innerHTML = html;
-            });
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const pref = localStorage.getItem('enquiry_view_pref') || 'card';
-        setView(pref);
-
-        // Search & Filter Logic
-        const searchInput = document.getElementById('enquirySearch');
-        const statusFilter = document.getElementById('statusFilter');
-
-        function applyFilters() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const statusTerm = statusFilter.value;
-            const items = document.querySelectorAll('.enquiry-card-wrapper');
-
-            items.forEach(item => {
-                const searchData = item.dataset.search;
-                const statusData = item.dataset.status;
-                const matchesSearch = searchData.includes(searchTerm);
-                const matchesStatus = statusTerm === 'all' || statusData === statusTerm;
-
-                item.style.display = (matchesSearch && matchesStatus) ? '' : 'none';
-            });
+    <style>
+        /* ── Reusing Company Stat Cards Styling ── */
+        .pj-stat-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
         }
 
-        searchInput.addEventListener('input', applyFilters);
-        statusFilter.addEventListener('change', applyFilters);
+        @media (max-width: 768px) {
+            .pj-stat-row {  grid-template-columns: repeat(2, 1fr); }
+        }
 
-        // Global Modal Delegate
-        document.addEventListener('click', function(e) {
-            const trigger = e.target.closest('.open-enquiry-modal');
-            if (trigger) {
-                e.preventDefault();
-                loadEnquiryModal(trigger.dataset.url);
+        @media (max-width: 480px) {
+            .pj-stat-row { grid-template-columns: 1fr; }
+        }
+
+        .pj-stat-card {
+            background: #fff;
+            border: 1px solid #e8eaed;
+            border-radius: 14px;
+            padding: 16px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: box-shadow 0.18s;
+        }
+
+        .pj-stat-card:hover {  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); }
+
+        .pj-stat-icon {
+            width: 46px; height: 46px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; flex-shrink: 0;
+        }
+
+        .pj-stat-num { font-size: 1.2rem; font-weight: 700; color: #202124; line-height: 1.2; }
+        .pj-stat-label { font-size: 0.72rem; color: #80868b; font-weight: 500; margin-top: 2px; }
+
+        /* ── View Toggle ── */
+        .pj-view-toggle {
+            display: flex; gap: 3px; background: #f1f3f4; border-radius: 20px; padding: 3px;
+        }
+
+        .pj-view-btn {
+            width: 30px; height: 30px; border: none; background: transparent;
+            border-radius: 17px; cursor: pointer; color: #80868b;
+            font-size: 1rem; display: flex; align-items: center; justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .pj-view-btn.active { background: #fff; color: #006666; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12); }
+
+        /* ── Card Grid ── */
+        .pj-card-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;
+        }
+
+        .pj-card {
+            background: #fff; border: 1px solid #e8eaed; border-radius: 16px;
+            overflow: hidden; cursor: pointer; transition: box-shadow 0.2s, transform 0.18s;
+            position: relative; padding: 0 16px 16px;
+        }
+
+        .pj-card:hover { box-shadow: 0 8px 28px rgba(0, 0, 0, 0.10); transform: translateY(-2px); }
+        .pj-card-accent { height: 4px; margin: 0 -16px 14px; }
+
+        .pj-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .pj-card-avatar {
+            width: 42px; height: 42px; border-radius: 12px;
+            background: linear-gradient(135deg, #006666, #009688);
+            color: #fff; font-size: 1.1rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+
+        .pj-card-meta { flex: 1; min-width: 0; }
+        .pj-card-name { font-size: 0.9rem; font-weight: 700; color: #202124; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .pj-card-id { font-size: 0.68rem; color: #80868b; }
+
+        .pj-card-info { display: flex; flex-direction: column; gap: 6px; }
+        .pj-info-row { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: #5f6368; }
+        .pj-info-row i { font-size: 0.95rem; color: #006666; }
+
+        .pv-badge {
+            padding: 3px 10px; border-radius: 20px; font-size: 0.68rem; font-weight: 600;
+        }
+        .pv-badge-success { background: rgba(52,168,83,0.1); color: #34a853; }
+        .pv-badge-info { background: rgba(26,115,232,0.1); color: #1a73e8; }
+        .pv-badge-warning { background: rgba(255,193,7,0.1); color: #ffc107; }
+
+        .pj-empty { text-align: center; padding: 60px 20px; color: #9aa0a6; }
+        .pj-empty i { font-size: 3rem; display: block; margin-bottom: 12px; color: #dadce0; }
+        .pj-empty p { font-size: 0.85rem; margin: 0; }
+    </style>
+
+    <script>
+        function setView(view) {
+            const cardView = document.getElementById('cardView');
+            const tableView = document.getElementById('tableView');
+            const cardBtn = document.getElementById('cardViewBtn');
+            const tableBtn = document.getElementById('tableViewBtn');
+
+            if (view === 'card') {
+                cardView.style.display = 'grid';
+                tableView.style.display = 'none';
+                cardBtn.classList.add('active');
+                tableBtn.classList.remove('active');
+                localStorage.setItem('enquiry_view_pref', 'card');
+            } else {
+                cardView.style.display = 'none';
+                tableView.style.display = 'block';
+                cardBtn.classList.remove('active');
+                tableBtn.classList.add('active');
+                localStorage.setItem('enquiry_view_pref', 'table');
+            }
+        }
+
+        function loadEnquiryModal(url) {
+            const content = document.getElementById('enquiryModalContent');
+            const modalEl = document.getElementById('enquiryModal');
+            
+            content.innerHTML = '<div class="p-5 text-center"><i class="bx bx-loader-alt bx-spin" style="font-size:2rem;color:#006666;"></i><p class="mt-2 text-muted">Loading...</p></div>';
+            
+            bootstrap.Modal.getOrCreateInstance(modalEl).show();
+
+            fetch(url)
+                .then(res => res.text())
+                .then(html => {
+                    content.innerHTML = html;
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const pref = localStorage.getItem('enquiry_view_pref') || 'table';
+            setView(pref);
+
+            // Filtering Logic
+            const searchInput = document.getElementById('enquirySearch');
+            const statusFilter = document.getElementById('statusFilter');
+
+            function applyFilters() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const statusTerm = statusFilter.value;
+                const items = document.querySelectorAll('.enquiry-card-wrapper');
+
+                items.forEach(item => {
+                    const searchData = item.dataset.search;
+                    const statusData = item.dataset.status;
+                    const matchesSearch = searchData.includes(searchTerm);
+                    const matchesStatus = statusTerm === 'all' || statusData === statusTerm;
+
+                    item.style.display = (matchesSearch && matchesStatus) ? '' : 'none';
+                    if (item.tagName === 'TR') {
+                        item.style.display = (matchesSearch && matchesStatus) ? 'table-row' : 'none';
+                    }
+                });
             }
 
-            // Delete logic
-            const delBtn = e.target.closest('.delete-enquiry-btn');
-            if (delBtn) {
-                if (confirm('Are you sure you want to delete this enquiry?')) {
-                    window.location.href = '/delete-enquiry?id=' + delBtn.dataset.id;
+            if(searchInput) searchInput.addEventListener('input', applyFilters);
+            if(statusFilter) statusFilter.addEventListener('change', applyFilters);
+
+            // Global Modal Delegate
+            document.addEventListener('click', function(e) {
+                // Ignore if clicking delete
+                if (e.target.closest('.delete-enquiry-btn') || e.target.closest('.btn-close')) {
+                    return;
                 }
-            }
+
+                const trigger = e.target.closest('.open-enquiry-modal');
+                if (trigger) {
+                    e.preventDefault();
+                    loadEnquiryModal(trigger.dataset.url);
+                }
+
+                // Delete logic
+                const delBtn = e.target.closest('.delete-enquiry-btn');
+                if (delBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (confirm('Are you sure you want to delete this enquiry?')) {
+                        window.location.href = '/delete-enquiry?id=' + delBtn.dataset.id;
+                    }
+                }
+            });
         });
-    });
-</script>
+    </script>
 @endsection
