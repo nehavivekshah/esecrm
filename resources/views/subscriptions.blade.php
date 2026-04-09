@@ -51,65 +51,58 @@
                 {{-- ════════════════════════════════
                 SUBSCRIPTION TIERS (The Plans)
                 ════════════════════════════════ --}}
-                <div class="col-xl-4">
+                <div class="col-12">
                     <div class="dash-card h-100" style="background: #fff; border: 1.5px solid #e8eaed; border-radius: 20px;">
                         <div class="p-4 border-bottom d-flex justify-content-between align-items-center bg-light" style="border-radius: 20px 20px 0 0;">
                             <div>
                                 <h5 class="mb-1 fw-700 text-dark">Subscription Tiers</h5>
-                                <div class="small text-muted">Define pricing & benefits</div>
+                                <div class="small text-muted">Manage your available billing packages and included benefits</div>
                             </div>
                             <button class="btn btn-sm btn-indigo rounded-pill open-plan-modal" data-url="/manage-plan?ajax=1">
-                                <i class="bx bx-plus"></i> New Tier
+                                <i class="bx bx-plus"></i> Add New Tier
                             </button>
                         </div>
-                        <div class="p-3" style="max-height: 600px; overflow-y: auto;">
-                            @foreach($plans as $plan)
-                                <div class="plan-item-card mb-3 p-3 border rounded shadow-sm hover-shadow transition-all" style="background: #fff; position: relative;">
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <div class="badge bg-soft-primary px-3 py-1 rounded-pill text-indigo fw-bold" style="font-size:0.7rem; background:rgba(0,102,102,0.08); color:#006666;">
-                                            ${{ number_format($plan->price, 2) }}/mo
-                                        </div>
-                                        <div class="dropdown">
-                                            <button class="btn btn-sm p-0 text-muted" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
-                                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
-                                                <li><a class="dropdown-item py-2 open-plan-modal" href="javascript:void(0)" data-url="/manage-plan?item={{ $plan->id }}&id={{ $plan->id }}"><i class="bx bx-edit-alt me-2 text-warning"></i> Edit Tier</a></li>
-                                                <li><a class="dropdown-item py-2 text-danger" href="/delete-plan?id={{ $plan->id }}" onclick="return confirm('Archive this plan?')"><i class="bx bx-trash me-2"></i> Archive Tier</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <h6 class="fw-700 mb-1">{{ $plan->name }}</h6>
-                                    <p class="small text-muted mb-3 lh-sm" style="font-size: 0.75rem;">{{ $plan->description }}</p>
-                                    
-                                    @if($plan->features)
-                                        <div class="plan-features-preview mt-2">
-                                            @foreach(array_slice($plan->features, 0, 3) as $feat)
-                                                <div class="d-flex align-items-center gap-2 mb-1" style="font-size: 0.72rem; color: #5f6368;">
-                                                    <i class="bx bx-check text-success"></i> {{ $feat }}
+                        <div class="p-4">
+                            <div class="row g-4">
+                                @foreach($plans as $plan)
+                                    <div class="col-xl-4 col-md-6">
+                                        <div class="plan-item-card p-4 border rounded shadow-sm hover-shadow transition-all" style="background: #fff; position: relative; min-height: 240px;">
+                                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                                <div class="badge bg-soft-primary px-3 py-1 rounded-pill text-indigo fw-bold" style="font-size:0.8rem; background:rgba(0,102,102,0.08); color:#006666;">
+                                                    ${{ number_format($plan->price, 2) }}/mo
                                                 </div>
-                                            @endforeach
-                                            @if(count($plan->features) > 3)
-                                                <div class="text-indigo small mt-1" style="font-size: 0.7rem; cursor: pointer;">+ {{ count($plan->features) - 3 }} more features</div>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-sm p-0 text-muted" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
+                                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                                                        <li><a class="dropdown-item py-2 open-plan-modal" href="javascript:void(0)" data-url="/manage-plan?item={{ $plan->id }}&id={{ $plan->id }}"><i class="bx bx-edit-alt me-2 text-warning"></i> Edit Tier</a></li>
+                                                        <li><a class="dropdown-item py-2 text-danger" href="/delete-plan?id={{ $plan->id }}" onclick="return confirm('Archive this plan?')"><i class="bx bx-trash me-2"></i> Archive Tier</a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <h5 class="fw-700 mb-2">{{ $plan->name }}</h5>
+                                            <p class="small text-muted mb-4 lh-base" style="font-size: 0.85rem;">{{ $plan->description }}</p>
+                                            
+                                            @if($plan->features)
+                                                <div class="plan-features-preview mt-3 pt-3 border-top">
+                                                    <div class="fw-600 mb-2 small" style="text-transform:uppercase; letter-spacing:0.5px; font-size:0.65rem; color:#80868b;">Key Benefits</div>
+                                                    @foreach(array_slice($plan->features, 0, 4) as $feat)
+                                                        <div class="d-flex align-items-center gap-2 mb-2" style="font-size: 0.78rem; color: #5f6368;">
+                                                            <i class="bx bx-check-circle text-success"></i> {{ $feat }}
+                                                        </div>
+                                                    @endforeach
+                                                    @if(count($plan->features) > 4)
+                                                        <div class="text-indigo small mt-1 fw-500" style="font-size: 0.72rem; cursor: pointer;">+ {{ count($plan->features) - 4 }} more features</div>
+                                                    @endif
+                                                </div>
                                             @endif
                                         </div>
-                                    @endif
-                                </div>
-                            @endforeach
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                {{-- ════════════════════════════════
-                COMPANY ASSIGNMENTS
-                ════════════════════════════════ --}}
-                <div class="col-xl-8">
-                    <div class="dash-card" style="background: #fff; border: 1.5px solid #e8eaed; border-radius: 20px;">
-                        <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0 fw-700">Client Subscriptions</h5>
-                            <button class="btn btn-light btn-sm rounded-pill border" onclick="location.reload()"><i class="bx bx-refresh"></i></button>
-                        </div>
-                        
-                        <div class="table-responsive">
-                            <table class="leads-table projects align-middle" id="lists" style="width:100%;">
+            </div>
                         <thead>
                             <tr>
                                 <th>#</th>
