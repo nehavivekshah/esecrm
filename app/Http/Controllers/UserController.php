@@ -192,6 +192,28 @@ class UserController extends Controller
         
     }
     
+    public function subscriptions(Request $request)
+    {
+        if (Auth::user()->role != 'master') {
+            return abort(403);
+        }
+
+        $companies = Companies::all();
+
+        // Calculate Plan Stats
+        $stats = [
+            'total' => $companies->count(),
+            'standard' => $companies->where('plan', 'standard')->count(),
+            'premium' => $companies->where('plan', 'premium')->count(),
+            'pro' => $companies->where('plan', 'pro')->count(),
+        ];
+
+        return view('subscriptions', [
+            'companies' => $companies,
+            'stats' => $stats
+        ]);
+    }
+
     //Company Controller
     function companies(Request $request){
         $status = $request->input('status');

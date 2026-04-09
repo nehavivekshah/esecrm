@@ -55,7 +55,12 @@
             <li>
                 <a href="/companies" @if(Request::segment(1) == 'companies') class="active" @endif><i
                         class="bx bx-building"></i> <span class="link_name">Companies</span></a>
-
+            </li>
+            <li>
+                <a href="/subscriptions" @if(Request::segment(1) == 'subscriptions') class="active" @endif>
+                    <i class="bx bx-crown"></i>
+                    <span class="link_name">Subscriptions</span>
+                </a>
             </li>
         @endif
 
