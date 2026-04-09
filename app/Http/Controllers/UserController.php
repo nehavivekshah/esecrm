@@ -194,10 +194,17 @@ class UserController extends Controller
     
     //Company Controller
     function companies(Request $request){
+        $status = $request->input('status');
+        $query = Companies::query();
+        if($status !== null && $status !== ''){
+            $query->where('status', $status);
+        }
+        $companies = $query->get();
         
-        $companies = Companies::get();
-        
-        return view('companies',['companies'=>$companies]);
+        return view('companies', [
+            'companies' => $companies,
+            'status' => $status
+        ]);
     }
     function manageCompany(Request $request){
         
