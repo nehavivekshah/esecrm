@@ -128,18 +128,9 @@
                     <i class="bx bx-chevron-down"></i>
                 </span>
                 <div id="sales-menu"
-                    class="collapse @if(Request::segment(1) == 'proposals' || Request::segment(1) == 'opportunities' || Request::segment(1) == 'invoices' || Request::segment(1) == 'contracts' || Request::segment(1) == 'recoveries' || Request::segment(1) == 'manage-proposal' || Request::segment(1) == 'manage-invoice' || Request::segment(1) == 'manage-contract' || Request::segment(1) == 'manage-recovery') show @endif"
+                    class="collapse @if(Request::segment(1) == 'proposals' || Request::segment(1) == 'invoices' || Request::segment(1) == 'contracts' || Request::segment(1) == 'recoveries' || Request::segment(1) == 'manage-proposal' || Request::segment(1) == 'manage-invoice' || Request::segment(1) == 'manage-contract' || Request::segment(1) == 'manage-recovery') show @endif"
                     data-bs-parent="#accordion">
                     <ul class="sb_submenu">
-                        @if(in_array('opportunities', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
-                            <li>
-                                <a href="/opportunities" @if(Request::segment(1) == 'opportunities') class="active" @endif>
-                                    <i class="bx bx-doughnut-chart"></i>
-                                    <span class="link_name">Opportunities</span>
-                                </a>
-
-                            </li>
-                        @endif
 
                         @if(in_array('proposals', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $premium)))
                             <li>
