@@ -353,6 +353,7 @@
         }
     </style>
 
+@push('scripts')
     <script>
         $(document).ready(function () {
             // Ensure DataTable is initialized and get instance
@@ -405,5 +406,6 @@
             });
         });
     </script>
+@endpush
 
 @endsection
