@@ -64,12 +64,16 @@
             </button>
         @endif
 
-        @if(Auth::user()->role != 'master')
-            {{-- Notifications --}}
-            <div class="dropdown">
-                <button class="header-icon-btn position-relative" type="button" data-bs-toggle="dropdown" aria-label="Notifications">
-                    <i class="bx bx-bell"></i>
-                    @php 
+        {{-- Notifications --}}
+        <div class="dropdown">
+            <button class="header-icon-btn position-relative" type="button" data-bs-toggle="dropdown" aria-label="Notifications">
+                <i class="bx bx-bell"></i>
+                @php 
+                    if(Auth::user()->role == 'master') {
+                        $supportOpenCount = \App\Models\SupportTicket::where('status', 0)->count();
+                        $totalNotifs = $supportOpenCount;
+                        $notifType = 'master';
+                    } else {
                         $newLeadsCount = \App\Models\Leads::where('status', 0)->count(); 
                         $overdueCount = \App\Models\Leads::where('leads.status', 1)
                             ->join('lead_comments', 'leads.id', '=', 'lead_comments.lead_id')
@@ -77,13 +81,39 @@
                             ->distinct()
                             ->count('leads.id');
                         $totalNotifs = $newLeadsCount + $overdueCount;
+                        $notifType = 'company';
+                    }
+                @endphp
+                @if($totalNotifs > 0)
+                    <span class="header-notif-badge">{{ $totalNotifs > 99 ? '99+' : $totalNotifs }}</span>
+                @endif
+            </button>
+            <ul class="dropdown-menu header-dropdown dropdown-menu-end mt-2" style="min-width: 300px;">
+                <li class="dropdown-section-label">Notifications</li>
+                
+                @if(Auth::user()->role == 'master')
+                    @php 
+                        $openTickets = \App\Models\SupportTicket::with('company')->where('status', 0)->latest()->take(5)->get();
                     @endphp
-                    @if($totalNotifs > 0)
-                        <span class="header-notif-badge">{{ $totalNotifs > 99 ? '99+' : $totalNotifs }}</span>
-                    @endif
-                </button>
-                <ul class="dropdown-menu header-dropdown dropdown-menu-end mt-2" style="min-width: 300px;">
-                    <li class="dropdown-section-label">Notifications</li>
+                    @forelse($openTickets as $ticket)
+                        <li>
+                            <a class="dropdown-item header-dropdown-item" href="/support">
+                                <span class="hdi-icon" style="background:rgba(26,115,232,0.08); color:#1a73e8;"><i class="bx bx-help-circle"></i></span>
+                                <div>
+                                    <div class="hdi-title">{{ $ticket->subject }}</div>
+                                    <small class="hdi-sub">From: {{ $ticket->company->name ?? 'Unknown' }}</small>
+                                </div>
+                            </a>
+                        </li>
+                    @empty
+                        <li>
+                            <div class="header-dropdown-empty">
+                                <i class="bx bx-bell-off"></i>
+                                <span>No open tickets</span>
+                            </div>
+                        </li>
+                    @endforelse
+                @else
                     @if($newLeadsCount > 0)
                         <li>
                             <a class="dropdown-item header-dropdown-item" href="/newleads?status=0">
@@ -114,10 +144,12 @@
                             </div>
                         </li>
                     @endif
-                </ul>
-            </div>
+                @endif
+            </ul>
+        </div>
 
-            {{-- Global Search Button --}}
+        {{-- Global Search Button - Hide only for master if it only searches CRM data --}}
+        @if(Auth::user()->role != 'master')
             <button class="header-icon-btn d-flex" title="Search" onclick="openGlobalSearch()">
                 <i class="bx bx-search"></i>
             </button>
