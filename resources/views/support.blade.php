@@ -58,10 +58,18 @@
                             <option value="1">Processing</option>
                             <option value="2">Resolved</option>
                         </select>
-                        <!-- <div class="input-group search-box d-none d-md-flex" style="width: 240px;">
-                                    <span class="input-group-text bg-white border-end-0"><i class="bx bx-search text-muted"></i></span>
-                                    <input type="text" class="form-control border-start-0" id="ticketSearch" placeholder="Search tickets...">
-                                </div> -->
+                        @if(Auth::user()->role == 'master')
+                            <select id="companyFilter" class="form-select" style="width: auto; min-width: 180px;">
+                                <option value="all">All Companies</option>
+                                @foreach($companies as $company)
+                                    <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                @endforeach
+                            </select>
+                        @endif
+                        <div class="input-group search-box d-none d-md-flex" style="width: 200px;">
+                            <span class="input-group-text bg-white border-end-0"><i class="bx bx-search text-muted"></i></span>
+                            <input type="text" class="form-control border-start-0" id="ticketSearch" placeholder="Search...">
+                        </div>
                     </div>
                 </div>
                 <div class="leads-toolbar-right gap-2">
@@ -89,6 +97,7 @@
                 @forelse($tickets as $ticket)
                     <div class="pj-card ticket-card-wrapper open-support-modal" data-url="/manage-support?id={{ $ticket->id }}"
                         data-status="{{ $ticket->status }}"
+                        data-company-id="{{ $ticket->company_id }}"
                         data-search="{{ strtolower($ticket->ticket_no . ' ' . $ticket->subject . ' ' . ($ticket->company->name ?? '')) }}">
 
                         <div class="pj-card-accent"
@@ -170,7 +179,9 @@
                         <tbody>
                             @foreach($tickets as $k => $ticket)
                                 <tr class="pointer-cursor ticket-card-wrapper open-support-modal"
-                                    data-url="/manage-support?id={{ $ticket->id }}" data-status="{{ $ticket->status }}"
+                                    data-url="/manage-support?id={{ $ticket->id }}" 
+                                    data-status="{{ $ticket->status }}"
+                                    data-company-id="{{ $ticket->company_id }}"
                                     data-search="{{ strtolower($ticket->ticket_no . ' ' . $ticket->subject . ' ' . ($ticket->company->name ?? '')) }}">
                                     <td class="small fw-bold text-muted">{{ $k + 1 }}</td>
                                     <td>
@@ -425,26 +436,35 @@
             // Filtering
             const searchInput = document.getElementById('ticketSearch');
             const statusFilter = document.getElementById('statusFilter');
+            const companyFilter = document.getElementById('companyFilter');
 
             function applyFilters() {
-                const searchTerm = searchInput.value.toLowerCase();
+                const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
                 const statusTerm = statusFilter.value;
+                const companyTerm = companyFilter ? companyFilter.value : 'all';
                 const items = document.querySelectorAll('.ticket-card-wrapper');
 
                 items.forEach(item => {
                     const searchData = item.dataset.search;
                     const statusData = item.dataset.status;
+                    const companyData = item.dataset.companyId;
+
                     const matchesSearch = searchData.includes(searchTerm);
                     const matchesStatus = statusTerm === 'all' || statusData === statusTerm;
-                    item.style.display = (matchesSearch && matchesStatus) ? '' : 'none';
+                    const matchesCompany = companyTerm === 'all' || companyData === companyTerm;
+
+                    const isVisible = matchesSearch && matchesStatus && matchesCompany;
+
+                    item.style.display = isVisible ? '' : 'none';
                     if (item.tagName === 'TR') {
-                        item.style.display = (matchesSearch && matchesStatus) ? 'table-row' : 'none';
+                        item.style.display = isVisible ? 'table-row' : 'none';
                     }
                 });
             }
 
             if (searchInput) searchInput.addEventListener('input', applyFilters);
             if (statusFilter) statusFilter.addEventListener('change', applyFilters);
+            if (companyFilter) companyFilter.addEventListener('change', applyFilters);
 
             // Modal Delegate
             document.addEventListener('click', function (e) {

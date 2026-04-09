@@ -15,7 +15,9 @@ class SupportController extends Controller
         $user = Auth::user();
         $company_session = session('companies');
 
+        $companies = collect();
         if ($user->role == 'master') {
+            $companies = Companies::select('id', 'name')->orderBy('name', 'asc')->get();
             $tickets = SupportTicket::with('company')->orderBy('created_at', 'desc')->get();
             $stats = [
                 'total' => $tickets->count(),
@@ -34,7 +36,7 @@ class SupportController extends Controller
             ];
         }
 
-        return view('support', compact('tickets', 'stats'));
+        return view('support', compact('tickets', 'stats', 'companies'));
     }
 
     public function manageSupport(Request $request)
