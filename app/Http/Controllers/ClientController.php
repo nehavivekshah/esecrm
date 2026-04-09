@@ -832,17 +832,38 @@ class ClientController extends Controller
         }
     }
 
-    public function invoices()
+    public function invoices(Request $request)
     {
+        $cid = Auth::User()->cid;
+        $type = $request->get('type');
 
-        $invoices = Invoices::leftJoin('clients', 'invoices.client_id', '=', 'clients.id')
+        // Fetch distinct types for the filter dropdown
+        $availableTypes = Invoices::where('cid', $cid)
+            ->whereNotNull('invoice')
+            ->where('invoice', '!=', '')
+            ->distinct()
+            ->pluck('invoice');
+
+        $query = Invoices::leftJoin('clients', 'invoices.client_id', '=', 'clients.id')
             ->select('clients.name as client_name', 'clients.company as client_company', 'invoices.*')
-            ->where('clients.cid', '=', Auth::User()->cid)
-            ->orderBy('invoices.date', 'DESC')
-            ->orderBy('invoices.id', 'DESC')->get();
+            ->where('clients.cid', '=', $cid);
 
-        return view('invoices', ['invoices' => $invoices]);
+        // Apply invoice type filter if provided
+        if ($type) {
+            $query->where('invoices.invoice', $type);
+        }
 
+        // Sort by Invoice Number DESC (Logic: handle numeric extraction for accurate sorting)
+        // Using orderByRaw to handle cases where invoice_number might have leading zeros or non-numeric characters
+        $invoices = $query->orderByRaw('CAST(invoices.invoice_number AS UNSIGNED) DESC')
+            ->orderBy('invoices.id', 'DESC')
+            ->get();
+
+        return view('invoices', [
+            'invoices' => $invoices,
+            'availableTypes' => $availableTypes,
+            'currentType' => $type
+        ]);
     }
 
     public function manageInvoice(Request $request)

@@ -70,7 +70,19 @@
                     <button class="pr-filter" data-filter="unpaid" style="--pr-color:#ea4335;"><i class="bx bx-x-circle"></i> Unpaid</button>
                     <button class="pr-filter" data-filter="partial" style="--pr-color:#f29900;"><i class="bx bx-time-five"></i> Partial</button>
                 </div>
-                <button class="lb-icon-btn" onclick="location.reload()" title="Refresh">
+                {{-- Invoice Type Filter --}}
+                <div class="lb-filter-wrapper">
+                    <select class="lb-select" id="typeFilter" style="min-width:160px;">
+                        <option value="">All Types</option>
+                        @foreach($availableTypes as $type)
+                            <option value="{{ $type }}" {{ $currentType == $type ? 'selected' : '' }}>
+                                {{ $type }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <button class="lb-icon-btn" onclick="location.replace('/invoices')" title="Refresh">
                     <i class="bx bx-refresh"></i>
                 </button>
                 @if(in_array('invoice_add', $roleArray) || in_array('All', $roleArray))
@@ -358,6 +370,18 @@
                     table.column(8).search('^' + f + '$', true, false).draw();
                 }
             }
+
+            // Type filter change logic
+            $('#typeFilter').on('change', function () {
+                const type = $(this).val();
+                let url = new URL(window.location.href);
+                if (type) {
+                    url.searchParams.set('type', type);
+                } else {
+                    url.searchParams.delete('type');
+                }
+                window.location.href = url.toString();
+            });
 
             // Status filter pills logic
             $('#statusFilterGroup').on('click', '.pr-filter', function () {
