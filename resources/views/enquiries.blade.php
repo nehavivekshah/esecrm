@@ -241,6 +241,63 @@
                 </div>
             </div>
 
+            {{-- ── API Integration Guide (NEW) ── --}}
+            <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px; background: #f8f9fa; border: 1px dashed #006666 !important;">
+                <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="fw-bold mb-1" style="color: #006666;"><i class="bx bx-code-block me-2"></i>API Integration Guide</h6>
+                        <p class="text-muted small mb-0">How to capture leads from your external landing pages</p>
+                    </div>
+                    <button class="btn btn-sm btn-outline-teal" type="button" data-bs-toggle="collapse" data-bs-target="#apiDocsCollapse">
+                        <i class="bx bx-chevron-down"></i> Toggle Docs
+                    </button>
+                </div>
+                <div class="collapse show" id="apiDocsCollapse">
+                    <div class="card-body p-4 pt-2">
+                        <div class="row g-4">
+                            <div class="col-md-5">
+                                <div class="p-3 bg-white rounded-3 shadow-sm border h-100">
+                                    <div class="small fw-bold mb-2 text-uppercase tracking-wider" style="font-size: 0.65rem; color: #006666;">Endpoint Details</div>
+                                    <div class="mb-3">
+                                        <label class="small text-muted d-block">POST URL</label>
+                                        <div class="p-2 bg-light rounded border small font-monospace mt-1 d-flex justify-content-between align-items-center">
+                                            {{ url('/enquiry-submit') }}
+                                            <i class="bx bx-copy cur-pointer text-primary" onclick="copyApiEndpoint()"></i>
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-borderless mb-0" style="font-size: 0.75rem;">
+                                            <thead>
+                                                <tr class="border-bottom text-muted"><th>Field</th><th>Required</th></tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr><td><code>name</code></td><td><span class="text-danger">Yes</span></td></tr>
+                                                <tr><td><code>email</code></td><td>No</td></tr>
+                                                <tr><td><code>mob</code></td><td>No</td></tr>
+                                                <tr><td><code>subject</code></td><td>No</td></tr>
+                                                <tr><td><code>message</code></td><td>No</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                <div class="p-3 bg-white rounded-3 shadow-sm border h-100">
+                                    <div class="small fw-bold mb-2 text-uppercase tracking-wider" style="font-size: 0.65rem; color: #006666;">Sample HTML Form</div>
+                                    <pre class="bg-dark text-white p-3 rounded-3 mb-0" style="font-size: 0.7rem; overflow-x: auto;">&lt;form action="{{ url('/enquiry-submit') }}" method="POST"&gt;
+    &lt;input type="text" name="name" placeholder="Full Name" required&gt;
+    &lt;input type="email" name="email" placeholder="Email"&gt;
+    &lt;input type="text" name="mob" placeholder="Phone"&gt;
+    &lt;textarea name="message"&gt;&lt;/textarea&gt;
+    &lt;button type="submit"&gt;Submit Enquiry&lt;/button&gt;
+&lt;/form&gt;</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </section>
 
