@@ -16,7 +16,7 @@
 
         <div class="container-fluid">
             {{-- Header with Back Button --}}
-            <div class="board-title board-title-flex mb-3">
+            <!-- <div class="board-title board-title-flex mb-3">
                 @if(Request::segment(1) != 'my-profile')
                     <a href="/users" class="btn btn-light btn-sm back-btn rounded-pill border">
                         <i class="bx bx-arrow-back"></i>
@@ -33,7 +33,7 @@
                         </div>
                     </div>
                 @endif
-            </div>
+            </div> -->
 
             <div class="row g-0">
                 <div class="col-md-11 mx-auto">
