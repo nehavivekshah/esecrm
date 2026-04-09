@@ -731,4 +731,8 @@ table.dataTable tbody tr:last-child td {
         width: 30px !important;
         height: 30px !important;
     }
+
+    span#kbTotalBadge {
+        display: none;
+    }
 }
