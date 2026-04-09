@@ -251,95 +251,6 @@
             </div>
 
 
-            {{-- API Documentation Modal --}}
-            <div class="modal fade" id="apiDocsModal" tabindex="-1" aria-hidden="true" style="z-index: 1060;">
-                <div class="modal-dialog modal-lg modal-dialog-centered">
-                    <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
-                        <div class="modal-header border-0 p-4" style="background: linear-gradient(90deg, #006666, #009688);">
-                            <h5 class="modal-title fw-bold text-white">
-                                <i class="bx bx-code-block me-2"></i> API Integration Guide
-                            </h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body p-4 bg-light">
-                            <p class="text-muted mb-4">Integrate your external landing pages with the eseCRM lead capture system
-                                using the details below.</p>
-
-                            <div class="row g-4">
-                                <div class="col-md-5">
-                                    <div class="p-3 bg-white rounded-3 shadow-sm border h-100">
-                                        <div class="small fw-bold mb-2 text-uppercase tracking-wider"
-                                            style="font-size: 0.65rem; color: #006666;">Endpoint Details</div>
-                                        <div class="mb-3">
-                                            <label class="small text-muted d-block">POST URL</label>
-                                            <div
-                                                class="p-2 bg-light rounded border small font-monospace mt-1 d-flex justify-content-between align-items-center">
-                                                <span id="apiUrlText">{{ url('/enquiry-submit') }}</span>
-                                                <i class="bx bx-copy cur-pointer text-primary" onclick="copyApiEndpoint()"
-                                                    title="Copy URL"></i>
-                                            </div>
-                                        </div>
-                                        <div class="table-responsive">
-                                            <table class="table table-sm table-borderless mb-0" style="font-size: 0.75rem;">
-                                                <thead>
-                                                    <tr class="border-bottom text-muted">
-                                                        <th>Field</th>
-                                                        <th>Required</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td><code>name</code></td>
-                                                        <td><span class="text-danger">Yes</span></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><code>email</code></td>
-                                                        <td>No</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><code>mob</code></td>
-                                                        <td>No</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><code>subject</code></td>
-                                                        <td>No</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><code>message</code></td>
-                                                        <td>No</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-7">
-                                    <div class="p-3 bg-white rounded-3 shadow-sm border h-100">
-                                        <div class="small fw-bold mb-2 text-uppercase tracking-wider"
-                                            style="font-size: 0.65rem; color: #006666;">Sample HTML Form</div>
-                                        <pre class="bg-dark text-white p-3 rounded-3 mb-0" style="font-size: 0.7rem; overflow-x: auto;">&lt;form action="{{ url('/enquiry-submit') }}" method="POST"&gt;
-    &lt;input type="text" name="name" placeholder="Full Name" required&gt;
-    &lt;input type="email" name="email" placeholder="Email"&gt;
-    &lt;input type="text" name="mob" placeholder="Phone"&gt;
-    &lt;textarea name="message"&gt;&lt;/textarea&gt;
-    &lt;button type="submit"&gt;Submit Enquiry&lt;/button&gt;
-&lt;/form&gt;</pre>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer border-0 p-4 bg-white">
-                            <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal"
-                                style="border-radius:12px;">Close</button>
-                            <button type="button" class="btn btn-teal px-4" onclick="copyApiEndpoint()"
-                                style="background:#006666; color:white; border-radius:12px;">
-                                <i class="bx bx-copy me-2"></i> Copy Endpoint URL
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
         </div>
     </section>
@@ -349,6 +260,81 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content" style="border-radius:16px; border:none;" id="enquiryModalContent">
                 <!-- Content injected via AJAX -->
+            </div>
+        </div>
+    </div>
+
+    {{-- API Documentation Modal --}}
+    <div class="modal fade" id="apiDocsModal" tabindex="-1" aria-hidden="true" style="z-index: 1060;">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+                <div class="modal-header border-0 p-4" style="background: linear-gradient(90deg, #006666, #009688);">
+                    <h5 class="modal-title fw-bold text-white">
+                        <i class="bx bx-code-block me-2"></i> API Integration Guide
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 bg-light">
+                    <p class="text-muted mb-4">Integrate your external landing pages with the eseCRM lead capture system
+                        using the details below.</p>
+
+                    <div class="row g-4">
+                        <div class="col-md-5">
+                            <div class="p-3 bg-white rounded-3 shadow-sm border h-100">
+                                <div class="small fw-bold mb-2 text-uppercase tracking-wider"
+                                    style="font-size: 0.65rem; color: #006666;">Endpoint Details</div>
+                                <div class="mb-3">
+                                    <label class="small text-muted d-block">POST URL</label>
+                                    <div
+                                        class="p-2 bg-light rounded border small font-monospace mt-1 d-flex justify-content-between align-items-center">
+                                        <span id="apiUrlText">{{ url('/enquiry-submit') }}</span>
+                                        <i class="bx bx-copy cur-pointer text-primary" onclick="copyApiEndpoint()"
+                                            title="Copy URL"></i>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-borderless mb-0" style="font-size: 0.75rem;">
+                                        <thead>
+                                            <tr class="border-bottom text-muted">
+                                                <th>Field</th>
+                                                <th>Required</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td><code>name</code></td><td><span class="text-danger">Yes</span></td></tr>
+                                            <tr><td><code>email</code></td><td>No</td></tr>
+                                            <tr><td><code>mob</code></td><td>No</td></tr>
+                                            <tr><td><code>subject</code></td><td>No</td></tr>
+                                            <tr><td><code>message</code></td><td>No</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="p-3 bg-white rounded-3 shadow-sm border h-100">
+                                <div class="small fw-bold mb-2 text-uppercase tracking-wider"
+                                    style="font-size: 0.65rem; color: #006666;">Sample HTML Form</div>
+                                <pre class="bg-dark text-white p-3 rounded-3 mb-0" style="font-size: 0.7rem; overflow-x: auto;">&lt;form action="{{ url('/enquiry-submit') }}" method="POST"&gt;
+    &lt;input type="text" name="name" placeholder="Full Name" required&gt;
+    &lt;input type="email" name="email" placeholder="Email"&gt;
+    &lt;input type="text" name="mob" placeholder="Phone"&gt;
+    &lt;textarea name="message"&gt;&lt;/textarea&gt;
+    &lt;button type="submit"&gt;Submit Enquiry&lt;/button&gt;
+&lt;/form&gt;</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 bg-white">
+                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal"
+                        style="border-radius:12px;">Close</button>
+                    <button type="button" class="btn btn-teal px-4" onclick="copyApiEndpoint()"
+                        style="background:#006666; color:white; border-radius:12px;">
+                        <i class="bx bx-copy me-2"></i> Copy Endpoint URL
+                    </button>
+                </div>
             </div>
         </div>
     </div>
