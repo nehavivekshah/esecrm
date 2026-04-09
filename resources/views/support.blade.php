@@ -58,10 +58,10 @@
                             <option value="1">Processing</option>
                             <option value="2">Resolved</option>
                         </select>
-                        <div class="input-group search-box d-none d-md-flex" style="width: 240px;">
-                            <span class="input-group-text bg-white border-end-0"><i class="bx bx-search text-muted"></i></span>
-                            <input type="text" class="form-control border-start-0" id="ticketSearch" placeholder="Search tickets...">
-                        </div>
+                        <!-- <div class="input-group search-box d-none d-md-flex" style="width: 240px;">
+                                    <span class="input-group-text bg-white border-end-0"><i class="bx bx-search text-muted"></i></span>
+                                    <input type="text" class="form-control border-start-0" id="ticketSearch" placeholder="Search tickets...">
+                                </div> -->
                     </div>
                 </div>
                 <div class="leads-toolbar-right gap-2">
@@ -73,7 +73,9 @@
                             <i class="bx bx-list-ul"></i>
                         </button>
                     </div>
-                    <button class="btn btn-teal px-3 open-support-modal" style="background:#006666; color:white; border-radius:20px; font-size: 0.85rem;" data-url="/manage-support">
+                    <button class="btn btn-teal px-3 open-support-modal"
+                        style="background:#006666; color:white; border-radius:20px; font-size: 0.85rem;"
+                        data-url="/manage-support">
                         <i class="bx bx-plus me-1"></i> New Ticket
                     </button>
                     <button class="lb-icon-btn" onclick="location.reload()" title="Refresh">
@@ -85,12 +87,13 @@
             {{-- ── Card View ── --}}
             <div id="cardView" class="pj-card-grid mb-4" style="display:none;">
                 @forelse($tickets as $ticket)
-                    <div class="pj-card ticket-card-wrapper open-support-modal" 
-                         data-url="/manage-support?id={{ $ticket->id }}" 
-                         data-status="{{ $ticket->status }}" 
-                         data-search="{{ strtolower($ticket->ticket_no . ' ' . $ticket->subject . ' ' . ($ticket->company->name ?? '')) }}">
-                        
-                        <div class="pj-card-accent" style="background: @if($ticket->status == 0)#ffc107 @elseif($ticket->status == 1)#006666 @else#34a853 @endif;"></div>
+                    <div class="pj-card ticket-card-wrapper open-support-modal" data-url="/manage-support?id={{ $ticket->id }}"
+                        data-status="{{ $ticket->status }}"
+                        data-search="{{ strtolower($ticket->ticket_no . ' ' . $ticket->subject . ' ' . ($ticket->company->name ?? '')) }}">
+
+                        <div class="pj-card-accent"
+                            style="background: @if($ticket->status == 0)#ffc107 @elseif($ticket->status == 1)#006666 @else#34a853 @endif;">
+                        </div>
 
                         <div class="pj-card-header">
                             <div class="pj-card-avatar" style="background: linear-gradient(135deg, #006666, #1a73e8);">
@@ -98,10 +101,12 @@
                             </div>
                             <div class="pj-card-meta">
                                 <div class="pj-card-name">{{ $ticket->subject }}</div>
-                                <div class="pj-card-id">{{ $ticket->ticket_no }} · {{ $ticket->created_at->format('d M, Y') }}</div>
+                                <div class="pj-card-id">{{ $ticket->ticket_no }} · {{ $ticket->created_at->format('d M, Y') }}
+                                </div>
                             </div>
                             <div class="pj-card-actions">
-                                <button type="button" class="btn kb-action-btn open-support-modal" data-url="/manage-support?id={{ $ticket->id }}">
+                                <button type="button" class="btn kb-action-btn open-support-modal"
+                                    data-url="/manage-support?id={{ $ticket->id }}">
                                     <i class="bx bx-pencil"></i>
                                 </button>
                             </div>
@@ -114,7 +119,9 @@
                             </div>
                             <div class="pj-info-row">
                                 <i class="bx bx-flag"></i>
-                                <span class="badge @if($ticket->priority == 'High') bg-danger @elseif($ticket->priority == 'Medium') bg-warning text-dark @else bg-info @endif" style="font-size:0.6rem; padding: 2px 6px;">
+                                <span
+                                    class="badge @if($ticket->priority == 'High') bg-danger @elseif($ticket->priority == 'Medium') bg-warning text-dark @else bg-info @endif"
+                                    style="font-size:0.6rem; padding: 2px 6px;">
                                     {{ $ticket->priority }} Priority
                                 </span>
                             </div>
@@ -146,7 +153,8 @@
             </div>
 
             {{-- ── Table View ── --}}
-            <div id="tableView" class="dash-card mb-4" style="background: #fff; border: 1px solid #e8eaed; border-radius: 12px; overflow: hidden;">
+            <div id="tableView" class="dash-card mb-4"
+                style="background: #fff; border: 1px solid #e8eaed; border-radius: 12px; overflow: hidden;">
                 <div class="table-responsive">
                     <table class="leads-table projects align-middle" style="width:100%;">
                         <thead>
@@ -162,19 +170,22 @@
                         <tbody>
                             @foreach($tickets as $k => $ticket)
                                 <tr class="pointer-cursor ticket-card-wrapper open-support-modal"
-                                    data-url="/manage-support?id={{ $ticket->id }}"
-                                    data-status="{{ $ticket->status }}"
+                                    data-url="/manage-support?id={{ $ticket->id }}" data-status="{{ $ticket->status }}"
                                     data-search="{{ strtolower($ticket->ticket_no . ' ' . $ticket->subject . ' ' . ($ticket->company->name ?? '')) }}">
-                                    <td class="small fw-bold text-muted">{{ $k+1 }}</td>
+                                    <td class="small fw-bold text-muted">{{ $k + 1 }}</td>
                                     <td>
                                         <div class="fw-600 mb-0" style="font-size:0.85rem;">{{ $ticket->subject }}</div>
-                                        <div class="small text-muted">{{ $ticket->ticket_no }} · {{ $ticket->created_at->diffForHumans() }}</div>
+                                        <div class="small text-muted">{{ $ticket->ticket_no }} ·
+                                            {{ $ticket->created_at->diffForHumans() }}
+                                        </div>
                                     </td>
                                     <td>
                                         <div class="small fw-500">{{ $ticket->company->name ?? 'N/A' }}</div>
                                     </td>
                                     <td>
-                                        <span class="badge @if($ticket->priority == 'High') bg-danger @elseif($ticket->priority == 'Medium') bg-warning text-dark @else bg-info @endif" style="font-size:0.65rem;">
+                                        <span
+                                            class="badge @if($ticket->priority == 'High') bg-danger @elseif($ticket->priority == 'Medium') bg-warning text-dark @else bg-info @endif"
+                                            style="font-size:0.65rem;">
                                             {{ $ticket->priority }}
                                         </span>
                                     </td>
@@ -189,11 +200,12 @@
                                     </td>
                                     <td class="position-sticky end-0 bg-white">
                                         <div class="d-flex align-items-center justify-content-center gap-1">
-                                            <button type="button" class="btn kb-action-btn open-support-modal" 
+                                            <button type="button" class="btn kb-action-btn open-support-modal"
                                                 data-url="/manage-support?id={{ $ticket->id }}" title="Edit">
                                                 <i class="bx bx-pencil"></i>
                                             </button>
-                                            <button class="btn kb-action-btn kb-action-del delete-support-btn" data-id="{{ $ticket->id }}" title="Delete">
+                                            <button class="btn kb-action-btn kb-action-del delete-support-btn"
+                                                data-id="{{ $ticket->id }}" title="Delete">
                                                 <i class="bx bx-trash"></i>
                                             </button>
                                         </div>
@@ -219,40 +231,194 @@
 
     <style>
         /* Reusing established design tokens */
-        .pj-stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-        @media (max-width: 768px) { .pj-stat-row { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 480px) { .pj-stat-row { grid-template-columns: 1fr; } }
-        
-        .pj-stat-card { background: #fff; border: 1px solid #e8eaed; border-radius: 14px; padding: 16px 18px; display: flex; align-items: center; gap: 14px; }
-        .pj-stat-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
-        .pj-stat-num { font-size: 1.15rem; font-weight: 700; color: #202124; line-height: 1; }
-        .pj-stat-label { font-size: 0.7rem; color: #80868b; font-weight: 500; margin-top: 4px; }
+        .pj-stat-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+        }
 
-        .pj-view-toggle { display: flex; gap: 3px; background: #f1f3f4; border-radius: 20px; padding: 3px; }
-        .pj-view-btn { width: 30px; height: 30px; border: none; background: transparent; border-radius: 17px; cursor: pointer; color: #80868b; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
-        .pj-view-btn.active { background: #fff; color: #006666; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12); }
+        @media (max-width: 768px) {
+            .pj-stat-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
 
-        .pj-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
-        .pj-card { background: #fff; border: 1px solid #e8eaed; border-radius: 16px; overflow: hidden; cursor: pointer; transition: all 0.2s; position: relative; padding: 0 16px 16px; }
-        .pj-card:hover { box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08); transform: translateY(-3px); }
-        .pj-card-accent { height: 4px; margin: 0 -16px 14px; }
-        .pj-card-header { display: flex; align-items: center; gap: 10px; }
-        .pj-card-avatar { width: 40px; height: 40px; border-radius: 10px; color: #fff; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .pj-card-name { font-size: 0.88rem; font-weight: 700; color: #202124; }
-        .pj-card-id { font-size: 0.65rem; color: #80868b; }
-        .pj-info-row { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; color: #5f6368; margin-top: 6px; }
-        .pj-info-row i { font-size: 0.9rem; color: #006666; }
+        @media (max-width: 480px) {
+            .pj-stat-row {
+                grid-template-columns: 1fr;
+            }
+        }
 
-        .pv-badge { padding: 3px 10px; border-radius: 20px; font-size: 0.65rem; font-weight: 600; }
-        .pv-badge-success { background: rgba(52,168,83,0.1); color: #34a853; }
-        .pv-badge-info { background: rgba(26,115,232,0.1); color: #1a73e8; }
-        .pv-badge-warning { background: rgba(255,193,7,0.1); color: #ffc107; }
-        .pj-empty { text-align: center; padding: 50px 20px; color: #9aa0a6; }
-        .pj-empty i { font-size: 2.5rem; display: block; margin-bottom: 10px; color: #dadce0; }
+        .pj-stat-card {
+            background: #fff;
+            border: 1px solid #e8eaed;
+            border-radius: 14px;
+            padding: 16px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .pj-stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .pj-stat-num {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #202124;
+            line-height: 1;
+        }
+
+        .pj-stat-label {
+            font-size: 0.7rem;
+            color: #80868b;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        .pj-view-toggle {
+            display: flex;
+            gap: 3px;
+            background: #f1f3f4;
+            border-radius: 20px;
+            padding: 3px;
+        }
+
+        .pj-view-btn {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: transparent;
+            border-radius: 17px;
+            cursor: pointer;
+            color: #80868b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .pj-view-btn.active {
+            background: #fff;
+            color: #006666;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+        }
+
+        .pj-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .pj-card {
+            background: #fff;
+            border: 1px solid #e8eaed;
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            padding: 0 16px 16px;
+        }
+
+        .pj-card:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            transform: translateY(-3px);
+        }
+
+        .pj-card-accent {
+            height: 4px;
+            margin: 0 -16px 14px;
+        }
+
+        .pj-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pj-card-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .pj-card-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #202124;
+        }
+
+        .pj-card-id {
+            font-size: 0.65rem;
+            color: #80868b;
+        }
+
+        .pj-info-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: #5f6368;
+            margin-top: 6px;
+        }
+
+        .pj-info-row i {
+            font-size: 0.9rem;
+            color: #006666;
+        }
+
+        .pv-badge {
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+
+        .pv-badge-success {
+            background: rgba(52, 168, 83, 0.1);
+            color: #34a853;
+        }
+
+        .pv-badge-info {
+            background: rgba(26, 115, 232, 0.1);
+            color: #1a73e8;
+        }
+
+        .pv-badge-warning {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .pj-empty {
+            text-align: center;
+            padding: 50px 20px;
+            color: #9aa0a6;
+        }
+
+        .pj-empty i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 10px;
+            color: #dadce0;
+        }
     </style>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const pref = localStorage.getItem('support_view_pref') || 'table';
             setView(pref);
 
@@ -277,13 +443,13 @@
                 });
             }
 
-            if(searchInput) searchInput.addEventListener('input', applyFilters);
-            if(statusFilter) statusFilter.addEventListener('change', applyFilters);
+            if (searchInput) searchInput.addEventListener('input', applyFilters);
+            if (statusFilter) statusFilter.addEventListener('change', applyFilters);
 
             // Modal Delegate
-            document.addEventListener('click', function(e) {
+            document.addEventListener('click', function (e) {
                 if (e.target.closest('.delete-support-btn') || e.target.closest('.btn-close')) return;
-                
+
                 const trigger = e.target.closest('.open-support-modal');
                 if (trigger) {
                     e.preventDefault();
