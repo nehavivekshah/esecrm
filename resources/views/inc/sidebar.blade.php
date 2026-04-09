@@ -62,6 +62,12 @@
                     <span class="link_name">Subscriptions</span>
                 </a>
             </li>
+            <li>
+                <a href="/enquiries" @if(Request::segment(1) == 'enquiries') class="active" @endif>
+                    <i class="bx bx-mail-send"></i>
+                    <span class="link_name">Landing Enquiries</span>
+                </a>
+            </li>
         @endif
 
         <li class="nav-title">CRM</li>

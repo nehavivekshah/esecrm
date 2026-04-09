@@ -13,6 +13,7 @@ use App\Models\Roles;
 use App\Models\Attendances;
 use App\Models\Holidays;
 use App\Models\SubscriptionPlan;
+use App\Models\Enquiry;
 use Carbon\Carbon;
 
 class UserController extends Controller
@@ -389,5 +390,61 @@ class UserController extends Controller
         $user->update();
         
         return redirect('reset-password')->with('success', 'Successfully updated.');
+    }
+
+    // Enquiry Management
+    public function enquiries(Request $request)
+    {
+        if (Auth::user()->role != 'master') {
+            return abort(403);
+        }
+
+        $enquiries = Enquiry::orderBy('created_at', 'DESC')->get();
+        
+        $stats = [
+            'total'     => $enquiries->count(),
+            'new'       => $enquiries->where('status', 0)->count(),
+            'contacted' => $enquiries->where('status', 1)->count(),
+            'closed'    => $enquiries->where('status', 2)->count(),
+        ];
+
+        return view('enquiries', [
+            'enquiries' => $enquiries,
+            'stats'     => $stats
+        ]);
+    }
+
+    public function manageEnquiry(Request $request)
+    {
+        $id = $request->id ?? '';
+        $enquiry = Enquiry::find($id);
+        
+        return view('manageEnquiryForm', ['enquiry' => $enquiry]);
+    }
+
+    public function manageEnquiryPost(Request $request)
+    {
+        $id = $request->id ?? '';
+        
+        $enquiry = Enquiry::updateOrCreate(
+            ['id' => $id],
+            [
+                'name'    => $request->name,
+                'email'   => $request->email,
+                'mob'     => $request->mob,
+                'subject' => $request->subject,
+                'message' => $request->message,
+                'status'  => $request->status ?? 0
+            ]
+        );
+
+        return back()->with('success', 'Enquiry successfully updated.');
+    }
+
+    public function deleteEnquiry(Request $request)
+    {
+        $id = $request->id ?? '';
+        Enquiry::find($id)?->delete();
+        return back()->with('success', 'Enquiry successfully removed.');
     }
 }

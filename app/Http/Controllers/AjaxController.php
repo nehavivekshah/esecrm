@@ -16,8 +16,8 @@ use App\Models\Task;
 use App\Models\Recoveries;
 use App\Models\Projects;
 use App\Models\Invoices;
-use App\Models\Eselicenses;
 use App\Models\Contracts;
+use App\Models\Enquiry;
 
 class AjaxController extends Controller
 {
@@ -333,5 +333,28 @@ class AjaxController extends Controller
             'proposals' => $proposals->values(),
             'projects'  => $projects->values(),
         ]);
+    }
+
+    /**
+     * Public Enquiry Submission — Form capturing from Landing Page.
+     * Allowed to be called as Guest (must be registered in web.php without auth).
+     */
+    public function storeEnquiry(Request $request)
+    {
+        $validated = $request->validate([
+            'name'    => 'required|string|max:255',
+            'email'   => 'nullable|email|max:255',
+            'mob'     => 'nullable|string|max:20',
+            'subject' => 'nullable|string|max:255',
+            'message' => 'nullable|string',
+        ]);
+
+        $enquiry = Enquiry::create($validated);
+
+        if ($request->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Your enquiry has been submitted successfully!']);
+        }
+
+        return redirect()->back()->with('success', 'Your enquiry has been submitted successfully!');
     }
 }

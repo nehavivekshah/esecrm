@@ -49,7 +49,7 @@ Route::group(['middleware' => 'guest'], function () {
     // NOTE: /reminders is also registered inside the auth group (for logged-in use)
     // This one serves as a cron/scheduler hook (unauthenticated scheduler calls)
     Route::get('/reminders', [LeadController::class, 'reminderScript'])->name('reminderScript');
-
+    Route::post('/enquiry-submit', [AjaxController::class, 'storeEnquiry'])->name('enquiry.submit');
 });
 
 Route::group(['middleware' => 'auth'], function () {
@@ -275,6 +275,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/manage-plan', [UserController::class, 'managePlan']);
     Route::post('/manage-plan', [UserController::class, 'managePlanPost'])->name('managePlan');
     Route::get('/delete-plan', [UserController::class, 'deletePlan']);
+
+    /* Enquiry Management Router */
+    Route::get('/enquiries', [UserController::class, 'enquiries']);
+    Route::get('/manage-enquiry', [UserController::class, 'manageEnquiry'])->name('manageEnquiry');
+    Route::post('/manage-enquiry', [UserController::class, 'manageEnquiryPost'])->name('manageEnquiry');
+    Route::get('/delete-enquiry', [UserController::class, 'deleteEnquiry']);
+
     Route::post('/manage-company', [UserController::class, 'manageCompanyPost'])->name('manageCompany');
 
     /*Admin's Account Management Router*/
