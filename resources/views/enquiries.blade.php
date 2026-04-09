@@ -78,6 +78,9 @@
                             <i class="bx bx-list-ul"></i>
                         </button>
                     </div>
+                    <button class="lb-icon-btn active" id="copyApiBtn" title="Copy API Endpoint" onclick="copyApiEndpoint()">
+                        <i class="bx bx-code-alt"></i>
+                    </button>
                     <button class="lb-icon-btn" onclick="location.reload()" title="Refresh">
                         <i class="bx bx-refresh"></i>
                     </button>
@@ -364,6 +367,27 @@
                 tableBtn.classList.add('active');
                 localStorage.setItem('enquiry_view_pref', 'table');
             }
+        }
+
+        function copyApiEndpoint() {
+            const el = document.createElement('textarea');
+            el.value = '{{ url('/enquiry-submit') }}';
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+
+            const btn = document.getElementById('copyApiBtn');
+            const icon = btn.querySelector('i');
+            const oldIcon = icon.className;
+            
+            icon.className = 'bx bx-check';
+            btn.style.color = '#34a853';
+            
+            setTimeout(() => {
+                icon.className = oldIcon;
+                btn.style.color = '';
+            }, 2000);
         }
 
         function loadEnquiryModal(url) {
