@@ -58,15 +58,15 @@
                             <option value="1">Contacted</option>
                             <option value="2">Closed</option>
                         </select>
-                        <div class="input-group search-box d-none d-md-flex" style="width: 240px;">
-                            <span class="input-group-text bg-white border-end-0"><i class="bx bx-search text-muted"></i></span>
-                            <input type="text" class="form-control border-start-0" id="enquirySearch" placeholder="Search leads...">
-                        </div>
+                        <!-- <div class="input-group search-box d-none d-md-flex" style="width: 240px;">
+                                <span class="input-group-text bg-white border-end-0"><i class="bx bx-search text-muted"></i></span>
+                                <input type="text" class="form-control border-start-0" id="enquirySearch" placeholder="Search leads...">
+                            </div> -->
                     </div>
 
-                    <span class="lb-page-count ms-3">
-                        Showing {{ count($enquiries) }} records
-                    </span>
+                    <!-- <span class="lb-page-count ms-3">
+                            Showing {{ count($enquiries) }} records
+                        </span> -->
                 </div>
                 <div class="leads-toolbar-right gap-2">
                     {{-- View Toggle --}}
@@ -78,7 +78,8 @@
                             <i class="bx bx-list-ul"></i>
                         </button>
                     </div>
-                    <button class="lb-icon-btn active" id="copyApiBtn" title="Copy API Endpoint" onclick="copyApiEndpoint()">
+                    <button class="lb-icon-btn active" id="copyApiBtn" title="Copy API Endpoint"
+                        onclick="copyApiEndpoint()">
                         <i class="bx bx-code-alt"></i>
                     </button>
                     <button class="lb-icon-btn" onclick="location.reload()" title="Refresh">
@@ -92,13 +93,14 @@
             ════════════════════════════════ --}}
             <div id="cardView" class="pj-card-grid mb-4" style="display:none;">
                 @forelse($enquiries as $enquiry)
-                    <div class="pj-card enquiry-card-wrapper open-enquiry-modal" 
-                         data-url="/manage-enquiry?id={{ $enquiry->id }}" 
-                         data-status="{{ $enquiry->status }}" 
-                         data-search="{{ strtolower($enquiry->name . ' ' . $enquiry->email . ' ' . $enquiry->subject) }}">
-                        
+                    <div class="pj-card enquiry-card-wrapper open-enquiry-modal"
+                        data-url="/manage-enquiry?id={{ $enquiry->id }}" data-status="{{ $enquiry->status }}"
+                        data-search="{{ strtolower($enquiry->name . ' ' . $enquiry->email . ' ' . $enquiry->subject) }}">
+
                         {{-- Top accent --}}
-                        <div class="pj-card-accent" style="background: @if($enquiry->status == 0)#1a73e8 @elseif($enquiry->status == 1)#ffc107 @else#34a853 @endif;"></div>
+                        <div class="pj-card-accent"
+                            style="background: @if($enquiry->status == 0)#1a73e8 @elseif($enquiry->status == 1)#ffc107 @else#34a853 @endif;">
+                        </div>
 
                         {{-- Header --}}
                         <div class="pj-card-header">
@@ -112,7 +114,8 @@
                                 </div>
                             </div>
                             <div class="pj-card-actions">
-                                <button type="button" class="btn kb-action-btn open-enquiry-modal" data-url="/manage-enquiry?id={{ $enquiry->id }}" title="Edit">
+                                <button type="button" class="btn kb-action-btn open-enquiry-modal"
+                                    data-url="/manage-enquiry?id={{ $enquiry->id }}" title="Edit">
                                     <i class="bx bx-pencil"></i>
                                 </button>
                             </div>
@@ -137,7 +140,8 @@
                             </div>
                         @endif
 
-                        <p class="text-muted small mt-2 mb-0" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.8em;">
+                        <p class="text-muted small mt-2 mb-0"
+                            style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.8em;">
                             {{ $enquiry->message }}
                         </p>
 
@@ -146,7 +150,8 @@
                             @if($enquiry->status == 0)
                                 <span class="pv-badge pv-badge-info">New Request</span>
                             @elseif($enquiry->status == 1)
-                                <span class="pv-badge pv-badge-warning" style="background:rgba(255,193,7,0.1);color:#ffc107;">In Discussion</span>
+                                <span class="pv-badge pv-badge-warning" style="background:rgba(255,193,7,0.1);color:#ffc107;">In
+                                    Discussion</span>
                             @else
                                 <span class="pv-badge pv-badge-success">Qualified</span>
                             @endif
@@ -183,13 +188,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($enquiries as $k=>$enquiry)
+                            @foreach($enquiries as $k => $enquiry)
                                 <tr class="pointer-cursor selectrow enquiry-card-wrapper open-enquiry-modal"
-                                    data-url="/manage-enquiry?id={{ $enquiry->id }}"
-                                    data-status="{{ $enquiry->status }}"
+                                    data-url="/manage-enquiry?id={{ $enquiry->id }}" data-status="{{ $enquiry->status }}"
                                     data-search="{{ strtolower($enquiry->name . ' ' . $enquiry->email . ' ' . $enquiry->subject) }}">
                                     <td class="fw-bold text-muted" style="font-size:0.75rem;">
-                                        {{ $k+1 }}
+                                        {{ $k + 1 }}
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
@@ -198,8 +202,10 @@
                                                 {{ strtoupper(substr($enquiry->name, 0, 1)) }}
                                             </div>
                                             <div class="min-w-0">
-                                                <div class="fw-600 text-truncate" style="max-width:200px;">{{ $enquiry->name }}</div>
-                                                <div class="small text-muted text-truncate" style="max-width:200px;">{{ $enquiry->created_at->diffForHumans() }}</div>
+                                                <div class="fw-600 text-truncate" style="max-width:200px;">{{ $enquiry->name }}
+                                                </div>
+                                                <div class="small text-muted text-truncate" style="max-width:200px;">
+                                                    {{ $enquiry->created_at->diffForHumans() }}</div>
                                             </div>
                                         </div>
                                     </td>
@@ -208,28 +214,32 @@
                                         <div class="small text-muted">{{ $enquiry->mob }}</div>
                                     </td>
                                     <td class="m-none">
-                                        <div class="small text-truncate" style="max-width:250px;">{{ $enquiry->subject ?? 'General Enquiry' }}</div>
+                                        <div class="small text-truncate" style="max-width:250px;">
+                                            {{ $enquiry->subject ?? 'General Enquiry' }}</div>
                                     </td>
                                     <td class="m-none">
                                         <div class="small">{{ $enquiry->created_at->format('d M, Y') }}</div>
-                                        <div class="small text-muted text-uppercase" style="font-size:0.65rem;">{{ $enquiry->created_at->format('h:i A') }}</div>
+                                        <div class="small text-muted text-uppercase" style="font-size:0.65rem;">
+                                            {{ $enquiry->created_at->format('h:i A') }}</div>
                                     </td>
                                     <td class="text-center">
                                         @if($enquiry->status == 0)
                                             <span class="pv-badge pv-badge-info">New</span>
                                         @elseif($enquiry->status == 1)
-                                            <span class="pv-badge pv-badge-warning" style="background:rgba(255,193,7,0.1);color:#ffc107;">In Contact</span>
+                                            <span class="pv-badge pv-badge-warning"
+                                                style="background:rgba(255,193,7,0.1);color:#ffc107;">In Contact</span>
                                         @else
                                             <span class="pv-badge pv-badge-success">Closed</span>
                                         @endif
                                     </td>
                                     <td class="position-sticky end-0 bg-white">
                                         <div class="d-flex align-items-center justify-content-center gap-1">
-                                            <button type="button" class="btn kb-action-btn kb-action-edit open-enquiry-modal" 
+                                            <button type="button" class="btn kb-action-btn kb-action-edit open-enquiry-modal"
                                                 data-url="/manage-enquiry?id={{ $enquiry->id }}" title="Edit">
                                                 <i class="bx bx-pencil"></i>
                                             </button>
-                                            <button class="btn kb-action-btn kb-action-del delete-enquiry-btn" data-id="{{ $enquiry->id }}" title="Delete">
+                                            <button class="btn kb-action-btn kb-action-del delete-enquiry-btn"
+                                                data-id="{{ $enquiry->id }}" title="Delete">
                                                 <i class="bx bx-trash"></i>
                                             </button>
                                         </div>
@@ -242,13 +252,17 @@
             </div>
 
             {{-- ── API Integration Guide (NEW) ── --}}
-            <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px; background: #f8f9fa; border: 1px dashed #006666 !important;">
-                <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+            <div class="card border-0 shadow-sm mb-4"
+                style="border-radius: 16px; background: #f8f9fa; border: 1px dashed #006666 !important;">
+                <div
+                    class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="fw-bold mb-1" style="color: #006666;"><i class="bx bx-code-block me-2"></i>API Integration Guide</h6>
+                        <h6 class="fw-bold mb-1" style="color: #006666;"><i class="bx bx-code-block me-2"></i>API
+                            Integration Guide</h6>
                         <p class="text-muted small mb-0">How to capture leads from your external landing pages</p>
                     </div>
-                    <button class="btn btn-sm btn-outline-teal" type="button" data-bs-toggle="collapse" data-bs-target="#apiDocsCollapse">
+                    <button class="btn btn-sm btn-outline-teal" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#apiDocsCollapse">
                         <i class="bx bx-chevron-down"></i> Toggle Docs
                     </button>
                 </div>
@@ -257,10 +271,12 @@
                         <div class="row g-4">
                             <div class="col-md-5">
                                 <div class="p-3 bg-white rounded-3 shadow-sm border h-100">
-                                    <div class="small fw-bold mb-2 text-uppercase tracking-wider" style="font-size: 0.65rem; color: #006666;">Endpoint Details</div>
+                                    <div class="small fw-bold mb-2 text-uppercase tracking-wider"
+                                        style="font-size: 0.65rem; color: #006666;">Endpoint Details</div>
                                     <div class="mb-3">
                                         <label class="small text-muted d-block">POST URL</label>
-                                        <div class="p-2 bg-light rounded border small font-monospace mt-1 d-flex justify-content-between align-items-center">
+                                        <div
+                                            class="p-2 bg-light rounded border small font-monospace mt-1 d-flex justify-content-between align-items-center">
                                             {{ url('/enquiry-submit') }}
                                             <i class="bx bx-copy cur-pointer text-primary" onclick="copyApiEndpoint()"></i>
                                         </div>
@@ -268,14 +284,32 @@
                                     <div class="table-responsive">
                                         <table class="table table-sm table-borderless mb-0" style="font-size: 0.75rem;">
                                             <thead>
-                                                <tr class="border-bottom text-muted"><th>Field</th><th>Required</th></tr>
+                                                <tr class="border-bottom text-muted">
+                                                    <th>Field</th>
+                                                    <th>Required</th>
+                                                </tr>
                                             </thead>
                                             <tbody>
-                                                <tr><td><code>name</code></td><td><span class="text-danger">Yes</span></td></tr>
-                                                <tr><td><code>email</code></td><td>No</td></tr>
-                                                <tr><td><code>mob</code></td><td>No</td></tr>
-                                                <tr><td><code>subject</code></td><td>No</td></tr>
-                                                <tr><td><code>message</code></td><td>No</td></tr>
+                                                <tr>
+                                                    <td><code>name</code></td>
+                                                    <td><span class="text-danger">Yes</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><code>email</code></td>
+                                                    <td>No</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><code>mob</code></td>
+                                                    <td>No</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><code>subject</code></td>
+                                                    <td>No</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><code>message</code></td>
+                                                    <td>No</td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -283,14 +317,16 @@
                             </div>
                             <div class="col-md-7">
                                 <div class="p-3 bg-white rounded-3 shadow-sm border h-100">
-                                    <div class="small fw-bold mb-2 text-uppercase tracking-wider" style="font-size: 0.65rem; color: #006666;">Sample HTML Form</div>
-                                    <pre class="bg-dark text-white p-3 rounded-3 mb-0" style="font-size: 0.7rem; overflow-x: auto;">&lt;form action="{{ url('/enquiry-submit') }}" method="POST"&gt;
-    &lt;input type="text" name="name" placeholder="Full Name" required&gt;
-    &lt;input type="email" name="email" placeholder="Email"&gt;
-    &lt;input type="text" name="mob" placeholder="Phone"&gt;
-    &lt;textarea name="message"&gt;&lt;/textarea&gt;
-    &lt;button type="submit"&gt;Submit Enquiry&lt;/button&gt;
-&lt;/form&gt;</pre>
+                                    <div class="small fw-bold mb-2 text-uppercase tracking-wider"
+                                        style="font-size: 0.65rem; color: #006666;">Sample HTML Form</div>
+                                    <pre class="bg-dark text-white p-3 rounded-3 mb-0"
+                                        style="font-size: 0.7rem; overflow-x: auto;">&lt;form action="{{ url('/enquiry-submit') }}" method="POST"&gt;
+        &lt;input type="text" name="name" placeholder="Full Name" required&gt;
+        &lt;input type="email" name="email" placeholder="Email"&gt;
+        &lt;input type="text" name="mob" placeholder="Phone"&gt;
+        &lt;textarea name="message"&gt;&lt;/textarea&gt;
+        &lt;button type="submit"&gt;Submit Enquiry&lt;/button&gt;
+    &lt;/form&gt;</pre>
                                 </div>
                             </div>
                         </div>
@@ -319,11 +355,15 @@
         }
 
         @media (max-width: 768px) {
-            .pj-stat-row {  grid-template-columns: repeat(2, 1fr); }
+            .pj-stat-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         @media (max-width: 480px) {
-            .pj-stat-row { grid-template-columns: 1fr; }
+            .pj-stat-row {
+                grid-template-columns: 1fr;
+            }
         }
 
         .pj-stat-card {
@@ -337,71 +377,191 @@
             transition: box-shadow 0.18s;
         }
 
-        .pj-stat-card:hover {  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); }
-
-        .pj-stat-icon {
-            width: 46px; height: 46px; border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.4rem; flex-shrink: 0;
+        .pj-stat-card:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
         }
 
-        .pj-stat-num { font-size: 1.2rem; font-weight: 700; color: #202124; line-height: 1.2; }
-        .pj-stat-label { font-size: 0.72rem; color: #80868b; font-weight: 500; margin-top: 2px; }
+        .pj-stat-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        .pj-stat-num {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #202124;
+            line-height: 1.2;
+        }
+
+        .pj-stat-label {
+            font-size: 0.72rem;
+            color: #80868b;
+            font-weight: 500;
+            margin-top: 2px;
+        }
 
         /* ── View Toggle ── */
         .pj-view-toggle {
-            display: flex; gap: 3px; background: #f1f3f4; border-radius: 20px; padding: 3px;
+            display: flex;
+            gap: 3px;
+            background: #f1f3f4;
+            border-radius: 20px;
+            padding: 3px;
         }
 
         .pj-view-btn {
-            width: 30px; height: 30px; border: none; background: transparent;
-            border-radius: 17px; cursor: pointer; color: #80868b;
-            font-size: 1rem; display: flex; align-items: center; justify-content: center;
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: transparent;
+            border-radius: 17px;
+            cursor: pointer;
+            color: #80868b;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: all 0.15s;
         }
 
-        .pj-view-btn.active { background: #fff; color: #006666; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12); }
+        .pj-view-btn.active {
+            background: #fff;
+            color: #006666;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+        }
 
         /* ── Card Grid ── */
         .pj-card-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
         }
 
         .pj-card {
-            background: #fff; border: 1px solid #e8eaed; border-radius: 16px;
-            overflow: hidden; cursor: pointer; transition: box-shadow 0.2s, transform 0.18s;
-            position: relative; padding: 0 16px 16px;
+            background: #fff;
+            border: 1px solid #e8eaed;
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: box-shadow 0.2s, transform 0.18s;
+            position: relative;
+            padding: 0 16px 16px;
         }
 
-        .pj-card:hover { box-shadow: 0 8px 28px rgba(0, 0, 0, 0.10); transform: translateY(-2px); }
-        .pj-card-accent { height: 4px; margin: 0 -16px 14px; }
+        .pj-card:hover {
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.10);
+            transform: translateY(-2px);
+        }
 
-        .pj-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .pj-card-accent {
+            height: 4px;
+            margin: 0 -16px 14px;
+        }
+
+        .pj-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
         .pj-card-avatar {
-            width: 42px; height: 42px; border-radius: 12px;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
             background: linear-gradient(135deg, #006666, #009688);
-            color: #fff; font-size: 1.1rem; font-weight: 700;
-            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
 
-        .pj-card-meta { flex: 1; min-width: 0; }
-        .pj-card-name { font-size: 0.9rem; font-weight: 700; color: #202124; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .pj-card-id { font-size: 0.68rem; color: #80868b; }
+        .pj-card-meta {
+            flex: 1;
+            min-width: 0;
+        }
 
-        .pj-card-info { display: flex; flex-direction: column; gap: 6px; }
-        .pj-info-row { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: #5f6368; }
-        .pj-info-row i { font-size: 0.95rem; color: #006666; }
+        .pj-card-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #202124;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .pj-card-id {
+            font-size: 0.68rem;
+            color: #80868b;
+        }
+
+        .pj-card-info {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .pj-info-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.78rem;
+            color: #5f6368;
+        }
+
+        .pj-info-row i {
+            font-size: 0.95rem;
+            color: #006666;
+        }
 
         .pv-badge {
-            padding: 3px 10px; border-radius: 20px; font-size: 0.68rem; font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.68rem;
+            font-weight: 600;
         }
-        .pv-badge-success { background: rgba(52,168,83,0.1); color: #34a853; }
-        .pv-badge-info { background: rgba(26,115,232,0.1); color: #1a73e8; }
-        .pv-badge-warning { background: rgba(255,193,7,0.1); color: #ffc107; }
 
-        .pj-empty { text-align: center; padding: 60px 20px; color: #9aa0a6; }
-        .pj-empty i { font-size: 3rem; display: block; margin-bottom: 12px; color: #dadce0; }
-        .pj-empty p { font-size: 0.85rem; margin: 0; }
+        .pv-badge-success {
+            background: rgba(52, 168, 83, 0.1);
+            color: #34a853;
+        }
+
+        .pv-badge-info {
+            background: rgba(26, 115, 232, 0.1);
+            color: #1a73e8;
+        }
+
+        .pv-badge-warning {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .pj-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9aa0a6;
+        }
+
+        .pj-empty i {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 12px;
+            color: #dadce0;
+        }
+
+        .pj-empty p {
+            font-size: 0.85rem;
+            margin: 0;
+        }
     </style>
 
     <script>
@@ -437,10 +597,10 @@
             const btn = document.getElementById('copyApiBtn');
             const icon = btn.querySelector('i');
             const oldIcon = icon.className;
-            
+
             icon.className = 'bx bx-check';
             btn.style.color = '#34a853';
-            
+
             setTimeout(() => {
                 icon.className = oldIcon;
                 btn.style.color = '';
@@ -450,9 +610,9 @@
         function loadEnquiryModal(url) {
             const content = document.getElementById('enquiryModalContent');
             const modalEl = document.getElementById('enquiryModal');
-            
+
             content.innerHTML = '<div class="p-5 text-center"><i class="bx bx-loader-alt bx-spin" style="font-size:2rem;color:#006666;"></i><p class="mt-2 text-muted">Loading...</p></div>';
-            
+
             bootstrap.Modal.getOrCreateInstance(modalEl).show();
 
             fetch(url)
@@ -462,7 +622,7 @@
                 });
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const pref = localStorage.getItem('enquiry_view_pref') || 'table';
             setView(pref);
 
@@ -488,11 +648,11 @@
                 });
             }
 
-            if(searchInput) searchInput.addEventListener('input', applyFilters);
-            if(statusFilter) statusFilter.addEventListener('change', applyFilters);
+            if (searchInput) searchInput.addEventListener('input', applyFilters);
+            if (statusFilter) statusFilter.addEventListener('change', applyFilters);
 
             // Global Modal Delegate
-            document.addEventListener('click', function(e) {
+            document.addEventListener('click', function (e) {
                 // Ignore if clicking delete
                 if (e.target.closest('.delete-enquiry-btn') || e.target.closest('.btn-close')) {
                     return;
