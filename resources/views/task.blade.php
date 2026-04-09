@@ -17,7 +17,7 @@
                     </span>
                     
                     {{-- Status Legend --}}
-                    <div class="d-none d-md-flex align-items-center gap-2 border-start ps-3 border-light">
+                    <div class="d-md-flex align-items-center gap-2 border-start ps-3 border-light m-none">
                         <span class="tb-legend tb-legend-urgent">Urgent</span>
                         <span class="tb-legend tb-legend-pending">Pending</span>
                         <span class="tb-legend tb-legend-progress">In Progress</span>
@@ -285,7 +285,7 @@
         .cf-select2-wrap select { border: 0 !important; outline: none !important; box-shadow: none !important; }
         
         /* Filter override for Select2 */
-        .tk-project-filter-box .select2-container--default .select2-selection--single { height: 38px; border: 1.5px solid #d1d5db !important; border-radius: 20px !important; display: flex; align-items: center; padding-left: 12px; }
+        .tk-project-filter-box .select2-container--default .select2-selection--single { height: 38px; border: 1.5px solid #d1d5db !important; border-radius: 10px !important; display: flex; align-items: center; padding-left: 12px; }
         .tk-project-filter-box .select2-container--default.select2-container--open .select2-selection--single,
         .tk-project-filter-box .select2-container--default.select2-container--focus .select2-selection--single { border-color: #006666 !important; box-shadow: 0 0 0 3px rgba(0,102,102,.08) !important; }
         

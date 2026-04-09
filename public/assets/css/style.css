@@ -2313,6 +2313,10 @@ table.dataTable thead>tr>td.sorting_desc_disabled {
     .actionWidth {
         max-width: 30px !important;
     }
+
+    button.header-action-btn.header-action-primary.dropdown-toggle {
+        display: none;
+    }
 }
 
 @keyframes hide {

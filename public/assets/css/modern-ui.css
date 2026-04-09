@@ -393,7 +393,7 @@ table.dataTable tbody tr:last-child td {
     border: 1px solid var(--border-color) !important;
     border-radius: 10px !important;
     padding: 0 14px !important;
-    height: 36px !important;
+    min-height: 36px !important;
     font-size: 0.85rem !important;
     color: var(--text-main);
     background: #f8fafc;
@@ -484,7 +484,7 @@ table.dataTable tbody tr:last-child td {
     .leads-toolbar-left {
         flex-wrap: nowrap !important;
         overflow-x: auto !important;
-        padding: 5px 10px !important;
+        padding: 5px 15px !important;
         /* Safe side padding */
         margin: 0 !important;
         -webkit-overflow-scrolling: touch !important;
@@ -518,7 +518,7 @@ table.dataTable tbody tr:last-child td {
     }
 
     #ajaxTags {
-        min-width: 160px;
+        min-width: 100% !important;
     }
 
     /* Action Buttons - Structured Grid */
@@ -569,18 +569,19 @@ table.dataTable tbody tr:last-child td {
         font-size: 0.85rem !important;
     }
 
-    .leads-toolbar-left .d-md-flex {
-        display: flex !important; /* Force visible */
+    /* .leads-toolbar-left .d-md-flex {
+        display: flex !important;
         justify-content: center !important;
         overflow-x: auto;
         padding: 5px 0 !important;
         width: 100% !important;
         gap: 10px !important;
-        border: none !important; /* Remove the vertical divider on mobile */
+        border: none !important;
         margin: 0 !important;
         -webkit-overflow-scrolling: touch;
     }
 
+    */
     .tb-legend {
         flex-shrink: 0;
         white-space: nowrap;
@@ -594,10 +595,14 @@ table.dataTable tbody tr:last-child td {
     /* Action Grid - Project filter and Search tasks to be stacked */
     .leads-toolbar-right {
         display: flex !important;
-        flex-direction: column !important;
+        /* flex-direction: column !important; */
         gap: 12px !important;
         width: 100% !important;
-        padding: 0 !important;
+        padding: 0 15px !important;
+    }
+
+    button#refreshBtn {
+        display: none;
     }
 
     .tk-project-filter-wrap,
@@ -617,7 +622,12 @@ table.dataTable tbody tr:last-child td {
         padding: 12px !important;
         font-weight: 600 !important;
         margin-top: 5px !important;
-        border-radius: 12px !important;
+        border-radius: 10px !important;
+        margin-left: 0px !important;
+    }
+
+    span.select2.select2-container.select2-container--default {
+        width: 100% !important;
     }
 
     /* --- Global Mobile Overrides --- */
@@ -626,7 +636,8 @@ table.dataTable tbody tr:last-child td {
     }
 
     .task__section .text {
-        font-size: 1.25rem !important; /* Smaller page titles */
+        font-size: 1.25rem !important;
+        /* Smaller page titles */
         padding: 12px 12px !important;
     }
 
@@ -711,7 +722,8 @@ table.dataTable tbody tr:last-child td {
     }
 
     /* Adjusting icon buttons for touch */
-    .header-icon-btn, .header-user-btn {
+    .header-icon-btn,
+    .header-user-btn {
         padding: 8px !important;
     }
 
