@@ -442,26 +442,32 @@ class ClientController extends Controller
 
     public function licensing()
     {
+        $query = Eselicenses::leftjoin('projects', 'eselicenses.project_id', 'projects.id')
+            ->leftjoin('clients', 'projects.client_id', 'clients.id')
+            ->select('clients.name as client_name', 'projects.name as project_name', 'projects.deployment_url', 'eselicenses.*');
 
-        if (Auth::user()->role == 'master') {
-
-            $licenses = Eselicenses::leftjoin('projects', 'eselicenses.project_id', 'projects.id')
-                ->leftjoin('clients', 'projects.client_id', 'clients.id')
-                ->select('clients.name as client_name', 'projects.*', 'eselicenses.*')
-                ->orderBy('eselicenses.expiry_date', 'ASC')->get();
-
-        } else {
-
-            $licenses = Eselicenses::leftjoin('projects', 'eselicenses.project_id', 'projects.id')
-                ->leftjoin('clients', 'projects.client_id', 'clients.id')
-                ->select('clients.name as client_name', 'projects.*', 'eselicenses.*')
-                ->where('projects.cid', '=', Auth::user()->cid)
-                ->orderBy('eselicenses.expiry_date', 'ASC')->get();
-
+        if (Auth::user()->role != 'master') {
+            $query->where('projects.cid', '=', Auth::user()->cid);
         }
 
-        return view('licenses', ['licenses' => $licenses]);
+        $licenses = $query->orderBy('eselicenses.expiry_date', 'ASC')->get();
 
+        // Calculate Stats
+        $today = now();
+        $thirtyDays = now()->addDays(30);
+
+        $stats = [
+            'total' => $licenses->count(),
+            'active' => $licenses->where('expiry_date', '>=', $today)->count(),
+            'expired' => $licenses->where('expiry_date', '<', $today)->count(),
+            'expiring_soon' => $licenses->where('expiry_date', '>=', $today)
+                                       ->where('expiry_date', '<=', $thirtyDays)->count(),
+        ];
+
+        return view('licenses', [
+            'licenses' => $licenses,
+            'stats' => $stats
+        ]);
     }
 
     public function manageLicense(Request $request)
@@ -469,26 +475,27 @@ class ClientController extends Controller
         $id = $request->id ?? '';
         $license = Eselicenses::leftjoin('projects', 'eselicenses.project_id', 'projects.id')
             ->leftjoin('clients', 'projects.client_id', 'clients.id')
-            ->select('clients.name as client_name', 'clients.company', 'clients.mob', 'clients.email', 'projects.*', 'eselicenses.*')
+            ->select('clients.name as client_name', 'clients.company', 'clients.mob', 'clients.email', 'projects.name as project_name', 'projects.deployment_url', 'projects.type', 'projects.amount', 'projects.note', 'eselicenses.*')
             ->where('eselicenses.id', '=', $id)->first();
 
         if (Auth::user()->role == 'master') {
-
             $projects = Projects::leftjoin('clients', 'clients.id', 'projects.client_id')
                 ->select('clients.name as client_name', 'clients.company', 'clients.email', 'clients.mob', 'clients.location', 'projects.*')
-                ->orderBy('name', 'ASC')->get();
-
+                ->orderBy('projects.name', 'ASC')->get();
         } else {
-
             $projects = Projects::leftjoin('clients', 'clients.id', 'projects.client_id')
                 ->select('clients.name as client_name', 'clients.company', 'clients.email', 'clients.mob', 'clients.location', 'projects.*')
                 ->where('projects.cid', '=', Auth::user()->cid)
-                ->orderBy('name', 'ASC')->get();
-
+                ->orderBy('projects.name', 'ASC')->get();
         }
 
-        return view('manageLicense', ['license' => $license, 'projects' => $projects]);
+        $viewData = ['license' => $license, 'projects' => $projects];
 
+        if ($request->has('ajax')) {
+            return view('manageLicenseForm', $viewData);
+        }
+
+        return view('manageLicense', $viewData);
     }
 
     public function manageLicensePost(Request $request)
