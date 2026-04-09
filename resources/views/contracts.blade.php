@@ -191,15 +191,19 @@
                                                 $waUrl = "";
                                                 if ($phone) {
                                                     $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
-                                                    $message = "Hi " . ($contract->name ?? 'Customer') . ",\n\n" .
-                                                              "This is a reminder regarding your contract: *" . ($contract->subject ?? 'N/A') . "*\n\n" .
-                                                              "📌 *Details:*\n" .
-                                                              "• Type: " . ($contract->contract_type ?? 'N/A') . "\n" .
-                                                              "• Value: ₹" . number_format((float)($contract->value ?? 0), 2) . "\n" .
-                                                              "• Expiry Date: " . (!empty($contract->end_date) ? date('d M, Y', strtotime($contract->end_date)) : 'N/A') . "\n\n" .
-                                                              "Please let us know if you have any questions.\n\n" .
-                                                              "Thank you!";
-                                                    $waUrl = "https://wa.me/" . $cleanPhone . "?text=" . urlencode($message);
+                                                    
+                                                    // Basic validation: ensure the number has at least 10 digits
+                                                    if (strlen($cleanPhone) >= 10) {
+                                                        $message = "Hi " . ($contract->name ?? 'Customer') . ",\n\n" .
+                                                                  "This is a reminder regarding your contract: *" . ($contract->subject ?? 'N/A') . "*\n\n" .
+                                                                  "📌 *Details:*\n" .
+                                                                  "• Type: " . ($contract->contract_type ?? 'N/A') . "\n" .
+                                                                  "• Value: ₹" . number_format((float)($contract->value ?? 0), 2) . "\n" .
+                                                                  "• Expiry Date: " . (!empty($contract->end_date) ? date('d M, Y', strtotime($contract->end_date)) : 'N/A') . "\n\n" .
+                                                                  "Please let us know if you have any questions.\n\n" .
+                                                                  "Thank you!";
+                                                        $waUrl = "https://wa.me/" . $cleanPhone . "?text=" . urlencode($message);
+                                                    }
                                                 }
                                             @endphp
 
