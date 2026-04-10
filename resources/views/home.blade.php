@@ -217,8 +217,8 @@
 
         </div>
 
-        {{-- ═══════════════════════ ACTIVITY + ALERTS ROW ═══════════════════════ --}}
-        <div class="db-grid-2 mb-28">
+        {{-- ═══════════════════════ ACTIVITY | ALERTS | LIVE FEED ═══════════════════════ --}}
+        <div class="db-grid-3 mb-28">
 
             {{-- Activity Bar Chart --}}
             <div class="db-card">
@@ -242,10 +242,10 @@
                     <span class="db-card-icon" style="color:#ea4335; background:rgba(234,67,53,.08);"><i class="bx bxs-zap"></i></span>
                     <span class="db-card-title">CRM Alerts</span>
                     @if(count($overdueLeadsList) + count($expiringProposals) > 0)
-                    <span class="db-card-badge" style="background:#fdecea; color:#ea4335;">{{ count($overdueLeadsList) + count($expiringProposals) }} Need Attention</span>
+                    <span class="db-card-badge" style="background:#fdecea; color:#ea4335;">{{ count($overdueLeadsList) + count($expiringProposals) }} Alerts</span>
                     @endif
                 </div>
-                <div class="db-alerts-body" style="flex:1; overflow-y:auto; max-height:248px;">
+                <div class="db-alerts-body" style="flex:1; overflow-y:auto; max-height:260px;">
                     @foreach($overdueLeadsList as $ol)
                     <a href="/manage-lead?id={{ $ol->id }}" class="db-alert-row db-alert-red">
                         <div class="db-alert-dot"></div>
@@ -260,8 +260,8 @@
                     <a href="/manage-proposal?id={{ $ep->id }}" class="db-alert-row db-alert-yellow">
                         <div class="db-alert-dot"></div>
                         <div class="db-alert-text">
-                            <strong>{{ Str::limit($ep->subject, 32) }}</strong>
-                            <small>Proposal expires · {{ \Carbon\Carbon::parse($ep->open_till)->diffForHumans() }}</small>
+                            <strong>{{ Str::limit($ep->subject, 28) }}</strong>
+                            <small>Expires · {{ \Carbon\Carbon::parse($ep->open_till)->diffForHumans() }}</small>
                         </div>
                         <i class="bx bx-chevron-right"></i>
                     </a>
@@ -269,30 +269,27 @@
                     @if(count($overdueLeadsList) == 0 && count($expiringProposals) == 0)
                     <div class="db-empty-state">
                         <i class="bx bx-check-shield" style="font-size:2.2rem; color:#34a853;"></i>
-                        <p>All clear! No urgent tasks.</p>
+                        <p>All clear!</p>
                     </div>
                     @endif
                 </div>
             </div>
 
-        </div>
-
-        {{-- ═══════════════════════ LIVE FEED ROW ═══════════════════════ --}}
-        <div class="mb-28">
+            {{-- Live Activity Feed --}}
             <div class="db-card" style="display:flex; flex-direction:column;">
                 <div class="db-card-head">
                     <span class="db-card-icon" style="color:#ea4335; background:rgba(234,67,53,.08);"><i class="bx bx-pulse"></i></span>
-                    <span class="db-card-title">Live Activity Feed</span>
+                    <span class="db-card-title">Live Feed</span>
                     <span class="db-live-dot"></span>
                     <span class="db-card-badge ms-1" style="background:#fdecea; color:#ea4335; font-size:0.58rem; letter-spacing:.5px;">LIVE</span>
                 </div>
-                <div class="db-feed-wrap db-feed-horiz">
-                    @forelse(collect($activities ?? [])->take(12) as $act)
+                <div class="db-feed-wrap" style="flex:1; overflow-y:auto; max-height:260px;">
+                    @forelse(collect($activities ?? [])->take(10) as $act)
                     <div class="db-feed-item">
                         <div class="db-feed-avatar">{{ strtoupper(substr($act->user_name ?? 'S', 0, 1)) }}</div>
                         <div class="db-feed-body">
                             <div class="db-feed-user">{{ $act->user_name ?? 'System' }}</div>
-                            <div class="db-feed-desc">{{ $act->type }} — {{ Str::limit($act->description ?? 'Action recorded', 48) }}</div>
+                            <div class="db-feed-desc">{{ $act->type }} — {{ Str::limit($act->description ?? 'Action recorded', 40) }}</div>
                             <div class="db-feed-time">{{ \Carbon\Carbon::parse($act->created_at)->diffForHumans() }}</div>
                         </div>
                     </div>
@@ -304,6 +301,7 @@
                     @endforelse
                 </div>
             </div>
+
         </div>
 
         @else
