@@ -58,7 +58,7 @@
                     <button class="lb-icon-btn" onclick="location.reload()" title="Refresh Analytics">
                         <i class="bx bx-refresh"></i>
                     </button>
-                    <button class="lb-btn lb-btn-light ms-2">
+                    <button class="lb-btn" onclick="window.print()" style="background:#fff; border:1.5px solid #e8eaed; color:#5f6368; border-radius:10px; gap:6px;">
                         <i class="bx bx-download"></i>
                         <span class="d-none d-sm-inline">Export PDF</span>
                     </button>
@@ -141,7 +141,7 @@
 
     <style>
         /* ── Page Layout ── */
-        .dash-container { padding: 0 24px 24px; }
+        .dash-container { padding: 24px 24px 24px; }
         .rv-stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
         @media (max-width: 991px) { .rv-stat-row { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 576px) { .rv-stat-row { grid-template-columns: repeat(1, 1fr); } }

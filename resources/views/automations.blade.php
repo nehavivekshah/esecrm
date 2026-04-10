@@ -188,7 +188,7 @@
                     </div>
                     <div class="modal-footer border-0 p-4 pt-0">
                         <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold">Enable Workflow</button>
+                        <button type="submit" class="lb-btn lb-btn-primary rounded-pill px-4 fw-bold">Enable Workflow</button>
                     </div>
                 </form>
             </div>
@@ -197,7 +197,7 @@
 
     <style>
         /* ── Page Layout ── */
-        .dash-container { padding: 0 24px 24px; }
+        .dash-container { padding: 24px 24px 24px; }
         .rv-stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
         @media (max-width: 991px) { .rv-stat-row { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 576px) { .rv-stat-row { grid-template-columns: repeat(1, 1fr); } }
