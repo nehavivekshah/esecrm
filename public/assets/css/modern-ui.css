@@ -451,6 +451,7 @@ table.dataTable tbody tr:last-child td {
 }
 
 .lb-icon-btn {
+    min-width: 36px;
     width: 36px;
     height: 36px;
     border-radius: 50%;

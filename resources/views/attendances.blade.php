@@ -449,6 +449,7 @@
 
         .leads-toolbar-right {
             display: flex;
+            flex-wrap: nowrap;
             align-items: center;
             gap: 8px;
         }
@@ -494,7 +495,7 @@
             padding: 12px 20px;
             font-size: 0.75rem;
             font-weight: 600;
-            min-width: 120px
+            min-width: 150px
         }
     </style>
 
