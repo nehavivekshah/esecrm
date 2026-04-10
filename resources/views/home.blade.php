@@ -190,7 +190,7 @@
                     @endif
                 </div>
                 <div class="db-alerts-body" style="flex:1; overflow-y:auto; max-height:248px;">
-                    @forelse($overdueLeadsList as $ol)
+                    @foreach($overdueLeadsList as $ol)
                     <a href="/manage-lead?id={{ $ol->id }}" class="db-alert-row db-alert-red">
                         <div class="db-alert-dot"></div>
                         <div class="db-alert-text">
@@ -199,8 +199,8 @@
                         </div>
                         <i class="bx bx-chevron-right"></i>
                     </a>
-                    @endforelse
-                    @forelse($expiringProposals as $ep)
+                    @endforeach
+                    @foreach($expiringProposals as $ep)
                     <a href="/manage-proposal?id={{ $ep->id }}" class="db-alert-row db-alert-yellow">
                         <div class="db-alert-dot"></div>
                         <div class="db-alert-text">
@@ -209,7 +209,7 @@
                         </div>
                         <i class="bx bx-chevron-right"></i>
                     </a>
-                    @endforelse
+                    @endforeach
                     @if(count($overdueLeadsList) == 0 && count($expiringProposals) == 0)
                     <div class="db-empty-state">
                         <i class="bx bx-check-shield" style="font-size:2.2rem; color:#34a853;"></i>
