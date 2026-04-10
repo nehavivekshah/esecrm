@@ -328,21 +328,13 @@
                                                     data-container="body" required>
                                                 <option value="">Search for a client...</option>
                                                 @foreach($clients as $client)
-                                                    @php 
-                                                        $rawLoc = $client->location ?? '';
-                                                        $addrStr = $rawLoc;
-                                                        if (str_starts_with(trim($rawLoc), '[')) {
-                                                            $locArr = json_decode($rawLoc, true);
-                                                            $addrStr = is_array($locArr) ? ($locArr[0] ?? '') : $rawLoc;
-                                                        }
-                                                    @endphp
                                                     <option value="{{ $client->id }}"
                                                             data-name="{{ $client->name ?? '' }}"
                                                             data-company="{{ $client->company ?? '' }}"
                                                             data-email="{{ $client->email ?? '' }}"
                                                             data-phone="{{ $client->mob ?? '' }}"
                                                             data-gstno="{{ $client->gstno ?? '' }}"
-                                                            data-address="{{ $addrStr }}"
+                                                            data-loc-raw="{{ $client->location ?? '' }}"
                                                             @if((old('client_id', $invoice->client_id ?? '') == $client->id) || (!empty($project_id) && $client->project_id == $project_id)) selected @endif>
                                                         {{ $client->name }} ({{ $client->company }})
                                                     </option>
@@ -1120,7 +1112,31 @@
                 const opt = $(this).find(':selected');
                 const clientId = opt.val();
                 if (clientId) {
-                    const addr = opt.attr('data-address') || '';
+                    // Optimized Address Parsing Logic (Handles Array and Object formats)
+                    let addr = '';
+                    const rawLoc = opt.attr('data-loc-raw') || '';
+                    try {
+                        const loc = JSON.parse(rawLoc);
+                        if (Array.isArray(loc)) {
+                            // Format: ["Level 5","Hubtown Viva",...]
+                            addr = loc.filter(Boolean).join("\n");
+                        } else if (typeof loc === 'object' && loc !== null) {
+                            // Format: {"address":"...","city":"...","state":"...","country":"...","zip":"..."}
+                            const parts = [
+                                loc.address,
+                                loc.city,
+                                loc.state,
+                                loc.zip,
+                                loc.country
+                            ].filter(Boolean);
+                            addr = parts.join(", ");
+                        } else {
+                            addr = rawLoc;
+                        }
+                    } catch (e) {
+                        addr = rawLoc; // Fallback to raw string if not JSON
+                    }
+
                     $('#billing_address').val(addr);
                     $('#shipping_address').val(addr);
                     $('#client_gst').val(opt.attr('data-gstno') || '');

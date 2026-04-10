@@ -101,17 +101,12 @@
                                             <select name="lead_id" id="relatedList" class="form-select">
                                                 <option>Select…</option>
                                                 @foreach($clients as $lead)
-                                                    @php $location = json_decode(($lead->location ?? ''), true) @endphp
                                                     <option value="{{ $lead->id ?? '' }}"
                                                         data-name="{{ $lead->name ?? '' }}"
                                                         data-company="{{ $lead->company ?? '' }}"
                                                         data-email="{{ $lead->email ?? '' }}"
                                                         data-mob="{{ $lead->mob ?? '' }}"
-                                                        data-address="{{ $location[0] ?? '' }}"
-                                                        data-city="{{ $location[1] ?? '' }}"
-                                                        data-state="{{ $location[2] ?? '' }}"
-                                                        data-country="{{ $location[3] ?? '' }}"
-                                                        data-zip="{{ $location[4] ?? '' }}"
+                                                        data-loc-raw="{{ $lead->location ?? '' }}"
                                                         @if(($proposal->lead_id ?? '') == ($lead->id ?? '')) selected @endif>
                                                         {{ $lead->name ?? '' }}
                                                     </option>
@@ -122,17 +117,12 @@
                                                     class="selectpicker form-select" data-live-search="true">
                                                 <option>Select…</option>
                                                 @foreach($leads as $lead)
-                                                    @php $location = json_decode(($lead->location ?? ''), true) @endphp
                                                     <option value="{{ $lead->id ?? '' }}"
                                                         data-name="{{ $lead->name ?? '' }}"
                                                         data-company="{{ $lead->company ?? '' }}"
                                                         data-email="{{ $lead->email ?? '' }}"
                                                         data-mob="{{ $lead->mob ?? '' }}"
-                                                        data-address="{{ $location[0] ?? '' }}"
-                                                        data-city="{{ $location[1] ?? '' }}"
-                                                        data-state="{{ $location[2] ?? '' }}"
-                                                        data-country="{{ $location[3] ?? '' }}"
-                                                        data-zip="{{ $location[4] ?? '' }}"
+                                                        data-loc-raw="{{ $lead->location ?? '' }}"
                                                         @if(($proposal->lead_id ?? '') == ($lead->id ?? '')) selected @endif>
                                                         {{ $lead->name ?? '' }}
                                                     </option>
@@ -594,11 +584,34 @@
             document.getElementById('clientName').value    = opt.getAttribute('data-name')    || '';
             document.getElementById('clientEmail').value   = opt.getAttribute('data-email')   || '';
             document.getElementById('clientPhone').value   = opt.getAttribute('data-mob')     || '';
-            document.getElementById('clientAddress').value = opt.getAttribute('data-address') || '';
-            document.getElementById('clientCity').value    = opt.getAttribute('data-city')    || '';
-            document.getElementById('clientState').value   = opt.getAttribute('data-state')   || '';
-            document.getElementById('clientZip').value     = opt.getAttribute('data-zip')     || '';
-            document.getElementById('clientCountry').value = opt.getAttribute('data-country') || '';
+            
+            // Robust Address Parsing
+            const rawLoc = opt.getAttribute('data-loc-raw') || '';
+            let address = '', city = '', state = '', zip = '', country = '';
+            try {
+                const loc = JSON.parse(rawLoc);
+                if (Array.isArray(loc)) {
+                    address = loc[0] || '';
+                    city    = loc[1] || '';
+                    state   = loc[2] || '';
+                    country = loc[3] || '';
+                    zip     = loc[4] || '';
+                } else if (typeof loc === 'object' && loc !== null) {
+                    address = loc.address || '';
+                    city    = loc.city || '';
+                    state   = loc.state || '';
+                    zip     = loc.zip || '';
+                    country = loc.country || '';
+                }
+            } catch (e) {
+                address = rawLoc;
+            }
+
+            document.getElementById('clientAddress').value = address;
+            document.getElementById('clientCity').value    = city;
+            document.getElementById('clientState').value   = state;
+            document.getElementById('clientZip').value     = zip;
+            document.getElementById('clientCountry').value = country;
             // Expand client details if collapsed
             const body = document.getElementById('clientDetailsBody');
             if (body && !body.classList.contains('show')) {
@@ -621,14 +634,11 @@
             try { items = JSON.parse(resp)[cfg.key] ?? []; if (!Array.isArray(items)) throw 0; }
             catch (e) { $related.append('<option value="">Error loading data</option>'); return; }
             items.forEach(item => {
-                const loc = item.location ? JSON.parse(item.location) : [];
                 $('<option>', {
                     value: item.id, text: item.name,
                     'data-name': item.name, 'data-company': item.company,
                     'data-email': item.email, 'data-mob': item.mob,
-                    'data-address': loc[0] || '', 'data-city': loc[1] || '',
-                    'data-state': loc[2] || '', 'data-country': loc[3] || '',
-                    'data-zip': loc[4] || ''
+                    'data-loc-raw': item.location || ''
                 }).appendTo($related);
             });
             $related.selectpicker('refresh');

@@ -638,9 +638,14 @@ class LeadController extends Controller
                     "signature" => nl2br(Auth::User()->esign) ?? "Regards<br>Webbrella Global"
                 ];
 
-                $this->leadService->sendMail($to, $subject, 'emails.proposal', $viewData);
-
-                return back()->with('success', 'Proposal sent successfully!');
+                try {
+                    $this->leadService->sendMail($to, $subject, 'emails.proposal', $viewData);
+                    $this->logActivity('Proposal Sent', 'proposals', $proposal->id, $proposal->subject, "Sent proposal: {$proposal->subject}");
+                    return back()->with('success', 'Proposal sent successfully!');
+                } catch (\Exception $e) {
+                    \Log::error("Failed to send proposal mail: " . $e->getMessage());
+                    return back()->with('success', 'Proposal saved, but email could not be sent. Please check your SMTP settings.')->with('error_detail', $e->getMessage());
+                }
             }
 
             if ($request->submit == 'Save & Send') {
