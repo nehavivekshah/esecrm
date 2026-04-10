@@ -502,8 +502,10 @@
             </div>-->
             <br><br>
             <h4>Authorized Signature</h4>
-            <img src="{{ asset('assets/images/signs/'.(Auth::User()->imgsign ?? 'default.png')) }}" style="height: 90px;" />
-            <div class="signature-line"></div>
+            @if(!empty($signBase64))
+                <img src="{{ $signBase64 }}" style="height: 90px;" />
+            @endif
+            <div style="border-top: 1px solid #000; width: 200px;"></div>
         </div>
 
         <!--<div class="footer">

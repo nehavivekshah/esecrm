@@ -1170,13 +1170,26 @@ class ClientController extends Controller
         $invoice_items = Invoice_items::where('invoice_id', '=', $id)->get();
 
         // Get company logo in base64
-        $imagePath = public_path('assets/images/company/' . $invoice->img); // Local path
-        $type = pathinfo($imagePath, PATHINFO_EXTENSION);
-        $data = file_get_contents($imagePath);
-        $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+        $imagePath = public_path('assets/images/company/' . $invoice->img);
+        $base64 = '';
+        if (file_exists($imagePath)) {
+            $type = pathinfo($imagePath, PATHINFO_EXTENSION);
+            $data = file_get_contents($imagePath);
+            $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+        }
+
+        // Get user signature in base64
+        $userSign = Auth::user()->imgsign ?? 'default.png';
+        $signPath = public_path('assets/images/signs/' . $userSign);
+        $signBase64 = '';
+        if (file_exists($signPath)) {
+            $signData = file_get_contents($signPath);
+            $signType = pathinfo($signPath, PATHINFO_EXTENSION);
+            $signBase64 = 'data:image/' . $signType . ';base64,' . base64_encode($signData);
+        }
 
         // Load the PDF view for preview
-        $pdf = Pdf::loadView('invoices.download', compact('invoice', 'invoice_items', 'base64'));
+        $pdf = Pdf::loadView('invoices.download', compact('invoice', 'invoice_items', 'base64', 'signBase64'));
 
         // Remove all characters except letters and digits
         $invoice->invoice_number = preg_replace('/[^A-Za-z0-9]/', '', $invoice->invoice_number);
@@ -1197,13 +1210,27 @@ class ClientController extends Controller
         // Fetch the invoice items
         $invoice_items = Invoice_items::where('invoice_id', '=', $id)->get();
 
-        $imagePath = public_path('assets/images/company/' . $invoice->img); // Local path
-        $type = pathinfo($imagePath, PATHINFO_EXTENSION);
-        $data = file_get_contents($imagePath);
-        $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+        // Get company logo in base64
+        $imagePath = public_path('assets/images/company/' . $invoice->img);
+        $base64 = '';
+        if (file_exists($imagePath)) {
+            $type = pathinfo($imagePath, PATHINFO_EXTENSION);
+            $data = file_get_contents($imagePath);
+            $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+        }
+
+        // Get user signature in base64
+        $userSign = Auth::user()->imgsign ?? 'default.png';
+        $signPath = public_path('assets/images/signs/' . $userSign);
+        $signBase64 = '';
+        if (file_exists($signPath)) {
+            $signData = file_get_contents($signPath);
+            $signType = pathinfo($signPath, PATHINFO_EXTENSION);
+            $signBase64 = 'data:image/' . $signType . ';base64,' . base64_encode($signData);
+        }
 
         // Load the PDF view
-        $pdf = Pdf::loadView('invoices.download', compact('invoice', 'invoice_items', 'base64'));
+        $pdf = Pdf::loadView('invoices.download', compact('invoice', 'invoice_items', 'base64', 'signBase64'));
 
         // Remove all characters except letters and digits
         $invoice->invoice_number = preg_replace('/[^A-Za-z0-9]/', '', $invoice->invoice_number);
