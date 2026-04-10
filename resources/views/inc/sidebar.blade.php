@@ -267,7 +267,7 @@
 
                     @if(in_array('smtp_edit', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $premium)))
                         <li>
-                            <a href="/smtp-settings" @if(Request::segment(1) == 'smtp-setup') class="active" @endif><i
+                            <a href="/smtp-settings" @if(Request::segment(1) == 'smtp-settings') class="active" @endif><i
                                     class="bx bx-cog"></i> <span class="link_name">SMTP Settings</span></a>
                             <span class="tooltip">SMTP Settings</span>
                         </li>
