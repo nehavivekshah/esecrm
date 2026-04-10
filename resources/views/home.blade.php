@@ -115,8 +115,64 @@
 
         </div>
 
-        {{-- ═══════════════════════ CHARTS ROW ═══════════════════════ --}}
-        <div class="db-grid-2-1 mb-28">
+        {{-- ═══════════════════════ QUICK ACTIONS + REVENUE ROW ═══════════════════════ --}}
+        <div class="db-grid-1-2 mb-28">
+
+            {{-- Quick Actions --}}
+            <div class="db-card">
+                <div class="db-card-head">
+                    <span class="db-card-icon" style="color:#8b5cf6; background:rgba(139,92,246,.08);"><i class="bx bx-bolt-circle"></i></span>
+                    <span class="db-card-title">Quick Actions</span>
+                </div>
+                <div class="db-qa-grid">
+                    @if(in_array('leads', $roleArray) || in_array('All', $roleArray) || Auth::user()->role == '0')
+                    <a href="/manage-lead" class="db-qa-btn" style="--qa:#34a853;">
+                        <i class="bx bx-plus-circle"></i>
+                        <span>New Lead</span>
+                    </a>
+                    @endif
+                    @if(in_array('clients', $roleArray) || in_array('All', $roleArray))
+                    <a href="/manage-client" class="db-qa-btn" style="--qa:#1a73e8;">
+                        <i class="bx bx-user-plus"></i>
+                        <span>Add Customer</span>
+                    </a>
+                    @endif
+                    @if(in_array('proposals', $roleArray) || in_array('All', $roleArray))
+                    <a href="/manage-proposal" class="db-qa-btn" style="--qa:#ea4335;">
+                        <i class="bx bx-file-blank"></i>
+                        <span>New Proposal</span>
+                    </a>
+                    @endif
+                    @if(in_array('invoice', $roleArray) || in_array('All', $roleArray))
+                    <a href="/manage-invoice" class="db-qa-btn" style="--qa:#006666;">
+                        <i class="bx bx-receipt"></i>
+                        <span>New Invoice</span>
+                    </a>
+                    @endif
+                    @if(in_array('tasks', $roleArray) || in_array('All', $roleArray))
+                    <a href="/task" class="db-qa-btn" style="--qa:#fbbc04;">
+                        <i class="bx bx-task"></i>
+                        <span>My Tasks</span>
+                    </a>
+                    @endif
+                    @if(in_array('attendances', $roleArray) || in_array('All', $roleArray))
+                    <a href="/attendances" class="db-qa-btn" style="--qa:#0d47a1;">
+                        <i class="bx bx-calendar-check"></i>
+                        <span>Attendance</span>
+                    </a>
+                    @endif
+                    @if(in_array('reports', $roleArray) || in_array('All', $roleArray))
+                    <a href="/reports" class="db-qa-btn" style="--qa:#5f6368;">
+                        <i class="bx bx-line-chart"></i>
+                        <span>Reports</span>
+                    </a>
+                    @endif
+                    <a href="/support" class="db-qa-btn" style="--qa:#8b5cf6;">
+                        <i class="bx bx-help-circle"></i>
+                        <span>Support</span>
+                    </a>
+                </div>
+            </div>
 
             {{-- Revenue Line Chart --}}
             <div class="db-card">
@@ -128,34 +184,6 @@
                 </div>
                 <div class="db-chart-wrap">
                     <canvas id="revenueChart"></canvas>
-                </div>
-            </div>
-
-            {{-- Lead Pipeline Donut --}}
-            <div class="db-card">
-                <div class="db-card-head">
-                    <span class="db-card-icon" style="color:#006666; background:rgba(0,102,102,.08);"><i class="bx bx-pie-chart-alt-2"></i></span>
-                    <span class="db-card-title">Lead Pipeline</span>
-                    <span class="db-card-badge" style="background:#e6f4f4; color:#006666;">{{ count($leads) }} Total</span>
-                </div>
-                <div class="db-donut-wrap">
-                    <div class="db-donut-canvas-area">
-                        <canvas id="leadsDonutChart"></canvas>
-                        <div class="db-donut-center">
-                            <div class="db-donut-num">{{ count($leads) }}</div>
-                            <div class="db-donut-sub">Leads</div>
-                        </div>
-                    </div>
-                    <div class="db-donut-legend">
-                        @foreach($leadStatusMap as $stat => $meta)
-                        @php $cnt = $leadByStatus[$stat] ?? 0; @endphp
-                        <div class="db-legend-item">
-                            <span class="db-legend-dot" style="background:{{ $meta['color'] }};"></span>
-                            <span class="db-legend-label">{{ $meta['label'] }}</span>
-                            <span class="db-legend-val">{{ $cnt }}</span>
-                        </div>
-                        @endforeach
-                    </div>
                 </div>
             </div>
 
@@ -221,62 +249,34 @@
 
         </div>
 
-        {{-- ═══════════════════════ QUICK ACTIONS + LIVE FEED ═══════════════════════ --}}
-        <div class="db-grid-3-2 mb-28">
+        {{-- ═══════════════════════ LEAD PIPELINE + LIVE FEED ROW ═══════════════════════ --}}
+        <div class="db-grid-1-2 mb-28">
 
-            {{-- Quick Actions --}}
+            {{-- Lead Pipeline Donut --}}
             <div class="db-card">
                 <div class="db-card-head">
-                    <span class="db-card-icon" style="color:#8b5cf6; background:rgba(139,92,246,.08);"><i class="bx bx-bolt-circle"></i></span>
-                    <span class="db-card-title">Quick Actions</span>
+                    <span class="db-card-icon" style="color:#006666; background:rgba(0,102,102,.08);"><i class="bx bx-pie-chart-alt-2"></i></span>
+                    <span class="db-card-title">Lead Pipeline</span>
+                    <span class="db-card-badge" style="background:#e6f4f4; color:#006666;">{{ count($leads) }} Total</span>
                 </div>
-                <div class="db-qa-grid">
-                    @if(in_array('leads', $roleArray) || in_array('All', $roleArray) || Auth::user()->role == '0')
-                    <a href="/manage-lead" class="db-qa-btn" style="--qa:#34a853;">
-                        <i class="bx bx-plus-circle"></i>
-                        <span>New Lead</span>
-                    </a>
-                    @endif
-                    @if(in_array('clients', $roleArray) || in_array('All', $roleArray))
-                    <a href="/manage-client" class="db-qa-btn" style="--qa:#1a73e8;">
-                        <i class="bx bx-user-plus"></i>
-                        <span>Add Customer</span>
-                    </a>
-                    @endif
-                    @if(in_array('proposals', $roleArray) || in_array('All', $roleArray))
-                    <a href="/manage-proposal" class="db-qa-btn" style="--qa:#ea4335;">
-                        <i class="bx bx-file-blank"></i>
-                        <span>New Proposal</span>
-                    </a>
-                    @endif
-                    @if(in_array('invoice', $roleArray) || in_array('All', $roleArray))
-                    <a href="/manage-invoice" class="db-qa-btn" style="--qa:#006666;">
-                        <i class="bx bx-receipt"></i>
-                        <span>New Invoice</span>
-                    </a>
-                    @endif
-                    @if(in_array('tasks', $roleArray) || in_array('All', $roleArray))
-                    <a href="/task" class="db-qa-btn" style="--qa:#fbbc04;">
-                        <i class="bx bx-task"></i>
-                        <span>My Tasks</span>
-                    </a>
-                    @endif
-                    @if(in_array('attendances', $roleArray) || in_array('All', $roleArray))
-                    <a href="/attendances" class="db-qa-btn" style="--qa:#0d47a1;">
-                        <i class="bx bx-calendar-check"></i>
-                        <span>Attendance</span>
-                    </a>
-                    @endif
-                    @if(in_array('reports', $roleArray) || in_array('All', $roleArray))
-                    <a href="/reports" class="db-qa-btn" style="--qa:#5f6368;">
-                        <i class="bx bx-line-chart"></i>
-                        <span>Reports</span>
-                    </a>
-                    @endif
-                    <a href="/support" class="db-qa-btn" style="--qa:#8b5cf6;">
-                        <i class="bx bx-help-circle"></i>
-                        <span>Support</span>
-                    </a>
+                <div class="db-donut-wrap">
+                    <div class="db-donut-canvas-area">
+                        <canvas id="leadsDonutChart"></canvas>
+                        <div class="db-donut-center">
+                            <div class="db-donut-num">{{ count($leads) }}</div>
+                            <div class="db-donut-sub">Leads</div>
+                        </div>
+                    </div>
+                    <div class="db-donut-legend">
+                        @foreach($leadStatusMap as $stat => $meta)
+                        @php $cnt = $leadByStatus[$stat] ?? 0; @endphp
+                        <div class="db-legend-item">
+                            <span class="db-legend-dot" style="background:{{ $meta['color'] }};"></span>
+                            <span class="db-legend-label">{{ $meta['label'] }}</span>
+                            <span class="db-legend-val">{{ $cnt }}</span>
+                        </div>
+                        @endforeach
+                    </div>
                 </div>
             </div>
 
@@ -473,6 +473,7 @@
 /* ── Grid Layouts ── */
 .db-grid-2   { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .db-grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+.db-grid-1-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; }
 .db-grid-3-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; }
 .mb-28 { margin-bottom: 22px; }
 
@@ -540,7 +541,7 @@
 /* ── Responsive ── */
 @media (max-width: 1200px) {
     .db-kpi-row { grid-template-columns: repeat(3, 1fr); }
-    .db-grid-2-1, .db-grid-3-2 { grid-template-columns: 1fr; }
+    .db-grid-2-1, .db-grid-1-2, .db-grid-3-2 { grid-template-columns: 1fr; }
 }
 @media (max-width: 900px) {
     .db-kpi-row { grid-template-columns: repeat(2, 1fr); }
