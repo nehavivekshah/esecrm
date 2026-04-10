@@ -303,7 +303,8 @@
                                                 placeholder="e.g. K2, Hot, VIP"
                                                 value="{{ $leads->tags ?? '' }}">
                                         </div>
-                                        <div class="col-md-6">
+                                    </div>
+                                    <div class="col-md-6">
                                         <label class="ml-label">Status</label>
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="bx bx-list-check"></i></span>
