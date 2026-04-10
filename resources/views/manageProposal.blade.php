@@ -68,7 +68,7 @@
                         <div class="ml-card-body">
                             <div class="row g-3">
                                 {{-- Subject --}}
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="ml-label">Subject <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bx bx-rename"></i></span>
@@ -80,7 +80,7 @@
                                 </div>
 
                                 {{-- Related type --}}
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="ml-label">Related To</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bx bx-link"></i></span>
@@ -93,7 +93,7 @@
                                 </div>
 
                                 {{-- Related list --}}
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="ml-label" id="proposalType">Leads List</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bx bx-list-ul"></i></span>
