@@ -193,6 +193,11 @@
                     </div>
                 </div>
                 <div class="leads-toolbar-right gap-2">
+                    {{-- Live Preview --}}
+                    <button type="button" class="inv-btn-draft" id="previewInvoiceBtn" title="Preview Invoice PDF"
+                            style="color:#1a73e8;border-color:rgba(26,115,232,0.3);background:rgba(26,115,232,0.05);">
+                        <i class="bx bx-show"></i> Live Preview
+                    </button>
                     {{-- Save Draft --}}
                     <button type="button" class="inv-btn-draft" id="btnSaveDraft" title="Save as draft — client won't be notified">
                         <i class="bx bx-file-blank"></i> Save Draft
@@ -769,10 +774,10 @@
                                         <div style="border-top:1px solid #f1f3f4;margin:4px 0;"></div>
 
                                         {{-- Live Preview --}}
-                                        <!-- <button type="button" class="lb-btn w-100 justify-content-center" id="previewInvoiceBtn"
-                                                style="background:rgba(26,115,232,0.08);color:#1a73e8;">
+                                        <button type="button" class="inv-btn-draft w-100 justify-content-center" id="previewInvoiceBtnSidebar"
+                                                style="color:#1a73e8;border-color:rgba(26,115,232,0.3);background:rgba(26,115,232,0.05);">
                                             <i class="bx bx-show"></i> Live Preview
-                                        </button> -->
+                                        </button>
 
                                         {{-- Cancel --}}
                                         <a href="/invoices" class="lb-btn w-100 justify-content-center"
@@ -1062,7 +1067,7 @@
             });
 
             // Live Preview button
-            $(document).on('click', '#previewInvoiceBtn', function () {
+            $(document).on('click', '#previewInvoiceBtn, #previewInvoiceBtnSidebar', function () {
                 @if(!empty($invoice->id))
                     window.open('/invoices/preview/{{ $invoice->id }}', '_blank');
                 @else
