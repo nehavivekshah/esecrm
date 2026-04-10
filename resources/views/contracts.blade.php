@@ -129,7 +129,7 @@
                                 <th class="m-none" style="min-width: 110px;">Started</th>
                                 <th class="m-none" style="min-width: 110px;">Expires</th>
                                 @if(in_array('contracts_edit',$roleArray) || in_array('contracts_delete',$roleArray) || in_array('All',$roleArray))
-                                <th class="text-center position-sticky end-0 bg-white" style="width:130px; border-left: 1px solid #f1f3f4; box-shadow: -4px 0 8px rgba(0,0,0,0.02); z-index: 10;">Action</th>
+                                <th class="text-center position-sticky end-0 bg-white" style="min-width:130px; background-color:#ffffff !important; background-clip: padding-box; border-left: 1px solid #f1f3f4; box-shadow: -4px 0 8px rgba(0,0,0,0.02); z-index: 10;">Action</th>
                                 @endif
                             </tr>
                         </thead>
@@ -184,8 +184,8 @@
                                         @endif
                                     </td>
                                     @if(in_array('contracts_edit',$roleArray) || in_array('contracts_delete',$roleArray) || in_array('All',$roleArray))
-                                    <td class="position-sticky end-0 bg-white" style="border-left: 1px solid #f1f3f4; box-shadow: -4px 0 8px rgba(0,0,0,0.02); z-index: 9;">
-                                        <div class="d-flex align-items-center justify-content-center gap-1">
+                                    <td class="position-sticky end-0 bg-white" style="background-color:#ffffff !important; background-clip: padding-box; border-left: 1px solid #f1f3f4; box-shadow: -4px 0 8px rgba(0,0,0,0.02); z-index: 9;">
+                                        <div class="d-flex align-items-center justify-content-center gap-1" style="flex-wrap: nowrap;">
                                             @php
                                                 $phone = $contract->whatsapp ?: $contract->mob;
                                                 $waUrl = "";
