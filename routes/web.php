@@ -116,35 +116,31 @@ Route::group(['middleware' => 'auth'], function () {
 
 
     /*Leads Management Router*/
-    Route::get('/leads', [LeadController::class, 'leads']);
-    Route::get('/leads/kanban', [\App\Http\Controllers\LeadUIController::class, 'kanbanView'])->name('leads.kanban');
+    Route::get('/leads', [LeadController::class, 'leads'])->middleware('permission:leads,assign');
+    Route::get('/leads/kanban', [\App\Http\Controllers\LeadUIController::class, 'kanbanView'])->name('leads.kanban')->middleware('permission:leads,assign');
     Route::get('/leads/kanban-data', [\App\Http\Controllers\LeadUIController::class, 'kanbanData'])->name('leads.kanban_data');
-    Route::post('/leads/update-status', [\App\Http\Controllers\LeadUIController::class, 'updateStatus'])->name('leads.update_status');
+    Route::post('/leads/update-status', [\App\Http\Controllers\LeadUIController::class, 'updateStatus'])->name('leads.update_status')->middleware('permission:leads,edit');
     Route::get('/view-single-lead', [LeadController::class, 'singleLeadsGet'])->name('singleLead');
 
     /* Assign Leads Router*/
     Route::get('/leads-list', [LeadController::class, 'leadList']);
-    Route::post('/leads', [LeadController::class, 'leadsPost'])->name('leads');
+    Route::post('/leads', [LeadController::class, 'leadsPost'])->name('leads')->middleware('permission:leads,assign');
 
-    Route::get('/newleads', [NewLeadController::class, 'newleads'])->name('leads.index');
-    Route::post('/bulk-assign-leads', [NewLeadController::class, 'bulkAssign'])->name('leads.bulkAssign');
+    Route::get('/newleads', [NewLeadController::class, 'newleads'])->name('leads.index')->middleware('permission:leads,assign');
+    Route::post('/bulk-assign-leads', [NewLeadController::class, 'bulkAssign'])->name('leads.bulkAssign')->middleware('permission:leads,assign');
 
     Route::get('/get-lead-details/{id}', [NewLeadController::class, 'getLeadDetails']);
-    Route::post('/leads/update-profile', [NewLeadController::class, 'updateLead'])->name('leads.update');
+    Route::post('/leads/update-profile', [NewLeadController::class, 'updateLead'])->name('leads.update')->middleware('permission:leads,edit');
     Route::post('/leads/store-comment', [NewLeadController::class, 'storeComment'])->name('leads.storeComment');
-    Route::post('/delete-lead', [NewLeadController::class, 'deleteLead'])->name('leads.delete');
+    Route::post('/delete-lead', [NewLeadController::class, 'deleteLead'])->name('leads.delete')->middleware('permission:leads,delete');
 
     /*Manage Lead Data*/
-    Route::get('/manage-lead', [LeadController::class, 'manageLead'])->name('manageLead');
-    Route::post('/manage-lead', [LeadController::class, 'manageLeadPost'])->name('manageLead');
-    /* NOTE: bulk-assign-leads is handled by NewLeadController above */
-
-
-    //Route::get('/get-lead-data', [LeadController::class, 'getLeadData']);
+    Route::get('/manage-lead', [LeadController::class, 'manageLead'])->name('manageLead')->middleware('permission:leads,add');
+    Route::post('/manage-lead', [LeadController::class, 'manageLeadPost'])->name('manageLead')->middleware('permission:leads,add');
 
     /*Import & export Leads Data Router*/
-    Route::post('/import-leads-file', [LeadController::class, 'importLeads'])->name('importLeads');
-    Route::get('/export-leads-file', [LeadController::class, 'exportLeads'])->name('exportLeads');
+    Route::post('/import-leads-file', [LeadController::class, 'importLeads'])->name('importLeads')->middleware('permission:leads,import');
+    Route::get('/export-leads-file', [LeadController::class, 'exportLeads'])->name('exportLeads')->middleware('permission:leads,export');
 
     /*Leads Comments Management Router*/
     Route::get('/lead-comments', [LeadController::class, 'leadComments']);
@@ -154,9 +150,9 @@ Route::group(['middleware' => 'auth'], function () {
 
 
     /*Manage Proposal Router*/
-    Route::get('/proposals', [LeadController::class, 'proposals']);
-    Route::get('/manage-proposal', [LeadController::class, 'manageProposal'])->name('manageProposal');
-    Route::post('/manage-proposal', [LeadController::class, 'manageProposalPost'])->name('manageProposal');
+    Route::get('/proposals', [LeadController::class, 'proposals'])->middleware('permission:proposals,assign');
+    Route::get('/manage-proposal', [LeadController::class, 'manageProposal'])->name('manageProposal')->middleware('permission:proposals,add');
+    Route::post('/manage-proposal', [LeadController::class, 'manageProposalPost'])->name('manageProposal')->middleware('permission:proposals,add');
 
     /* Sales Pipeline (Opportunities) */
     Route::get('/opportunities', [\App\Http\Controllers\OpportunityController::class, 'index'])->name('opportunities.index');
@@ -173,15 +169,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/reports', [\App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
 
     /* Automation Workflows */
-    Route::get('/automations', [\App\Http\Controllers\AutomationController::class, 'index'])->name('automations.index');
-    Route::post('/automations/store', [\App\Http\Controllers\AutomationController::class, 'store'])->name('automations.store');
-    Route::post('/automations/toggle-status', [\App\Http\Controllers\AutomationController::class, 'toggleStatus'])->name('automations.toggle_status');
+    Route::get('/automations', [\App\Http\Controllers\AutomationController::class, 'index'])->name('automations.index')->middleware('permission:automations,assign');
+    Route::post('/automations/store', [\App\Http\Controllers\AutomationController::class, 'store'])->name('automations.store')->middleware('permission:automations,add');
+    Route::post('/automations/toggle-status', [\App\Http\Controllers\AutomationController::class, 'toggleStatus'])->name('automations.toggle_status')->middleware('permission:automations,edit');
 
     /* Marketing Campaigns */
-    Route::get('/campaigns', [\App\Http\Controllers\CampaignController::class, 'index'])->name('campaigns.index');
-    Route::post('/campaigns/store', [\App\Http\Controllers\CampaignController::class, 'store'])->name('campaigns.store');
-    Route::post('/campaigns/launch', [\App\Http\Controllers\CampaignController::class, 'launch'])->name('campaigns.launch');
-    Route::delete('/campaigns/{id}', [\App\Http\Controllers\CampaignController::class, 'destroy'])->name('campaigns.destroy');
+    Route::get('/campaigns', [\App\Http\Controllers\CampaignController::class, 'index'])->name('campaigns.index')->middleware('permission:campaigns,assign');
+    Route::post('/campaigns/store', [\App\Http\Controllers\CampaignController::class, 'store'])->name('campaigns.store')->middleware('permission:campaigns,add');
+    Route::post('/campaigns/launch', [\App\Http\Controllers\CampaignController::class, 'launch'])->name('campaigns.launch')->middleware('permission:campaigns,edit');
+    Route::delete('/campaigns/{id}', [\App\Http\Controllers\CampaignController::class, 'destroy'])->name('campaigns.destroy')->middleware('permission:campaigns,delete');
 
 
     /*Proposal Actions*/
@@ -192,13 +188,13 @@ Route::group(['middleware' => 'auth'], function () {
 
 
     /*Clients Management Router*/
-    Route::get('/clients', [ClientController::class, 'clients']);
+    Route::get('/clients', [ClientController::class, 'clients'])->middleware('permission:clients,assign');
     Route::get('/get-client/{clientId}', [ClientController::class, 'getClient']);
     Route::get('/clients-list', [ClientController::class, 'clientList']);
     Route::post('/clients', [ClientController::class, 'clientsPost'])->name('clients');
     Route::get('/view-single-client', [ClientController::class, 'singleClientGet'])->name('singleClient');
-    Route::get('/manage-client', [ClientController::class, 'manageClient'])->name('manageClient');
-    Route::post('/manage-client', [ClientController::class, 'manageClientPost'])->name('manageClient');
+    Route::get('/manage-client', [ClientController::class, 'manageClient'])->name('manageClient')->middleware('permission:clients,edit');
+    Route::post('/manage-client', [ClientController::class, 'manageClientPost'])->name('manageClient')->middleware('permission:clients,edit');
     Route::post('/manage-client/interaction', [ClientController::class, 'storeInteraction'])->name('clients.interaction');
 
     /*Client Comments Management Router*/
@@ -209,30 +205,30 @@ Route::group(['middleware' => 'auth'], function () {
 
 
     /*Recoveries's Account Management Router*/
-    Route::get('/recoveries', [ClientController::class, 'recoveries']);
-    Route::get('/manage-recovery', [ClientController::class, 'manageRecovery'])->name('manageRecovery');
-    Route::post('/manage-recovery', [ClientController::class, 'manageRecoveryPost'])->name('manageRecovery');
+    Route::get('/recoveries', [ClientController::class, 'recoveries'])->middleware('permission:recoveries,assign');
+    Route::get('/manage-recovery', [ClientController::class, 'manageRecovery'])->name('manageRecovery')->middleware('permission:recoveries,add');
+    Route::post('/manage-recovery', [ClientController::class, 'manageRecoveryPost'])->name('manageRecovery')->middleware('permission:recoveries,add');
     Route::get('/recovery/{id}/{title}', [ClientController::class, 'recovery'])->name('recovery');
-    Route::post('/recovery', [ClientController::class, 'recoveryPost'])->name('recovery');
-    Route::get('/update-recovery-amount', [ClientController::class, 'updateRecoveryAmount'])->name('recovery');
-    Route::get('/delete-recovery-amount', [AjaxController::class, 'ajaxSend']);
+    Route::post('/recovery', [ClientController::class, 'recoveryPost'])->name('recovery')->middleware('permission:recoveries,edit');
+    Route::get('/update-recovery-amount', [ClientController::class, 'updateRecoveryAmount'])->name('recovery')->middleware('permission:recoveries,edit');
+    Route::get('/delete-recovery-amount', [AjaxController::class, 'ajaxSend'])->middleware('permission:recoveries,delete');
 
 
 
     /*Project's Account Management Router*/
-    Route::get('/projects', [ClientController::class, 'projects']);
+    Route::get('/projects', [ClientController::class, 'projects'])->middleware('permission:projects,assign');
     Route::get('/project/view/{id}', [ClientController::class, 'viewProject'])->name('project.view');
     Route::get('/get-projects/{clientId}', [ClientController::class, 'getProjects']);
     Route::get('/view-single-project', [ClientController::class, 'singleProjectGet'])->name('singleProject');
-    Route::get('/manage-project', [ClientController::class, 'manageProject'])->name('manageProject');
-    Route::post('/manage-project', [ClientController::class, 'manageProjectPost'])->name('manageProject');
+    Route::get('/manage-project', [ClientController::class, 'manageProject'])->name('manageProject')->middleware('permission:projects,add');
+    Route::post('/manage-project', [ClientController::class, 'manageProjectPost'])->name('manageProject')->middleware('permission:projects,add');
 
 
 
     /*Contract's Account Management Router*/
-    Route::get('/contracts', [ClientController::class, 'contracts']);
-    Route::get('/manage-contract', [ClientController::class, 'manageContract'])->name('manageContract');
-    Route::post('/manage-contract', [ClientController::class, 'manageContractPost'])->name('manageContract');
+    Route::get('/contracts', [ClientController::class, 'contracts'])->middleware('permission:contracts,assign');
+    Route::get('/manage-contract', [ClientController::class, 'manageContract'])->name('manageContract')->middleware('permission:contracts,add');
+    Route::post('/manage-contract', [ClientController::class, 'manageContractPost'])->name('manageContract')->middleware('permission:contracts,add');
 
 
 
@@ -244,27 +240,27 @@ Route::group(['middleware' => 'auth'], function () {
 
 
     /*Invoice's Router*/
-    Route::get('/invoices', [ClientController::class, 'invoices']);
+    Route::get('/invoices', [ClientController::class, 'invoices'])->middleware('permission:invoice,assign');
     Route::get('/invoices/preview/{id}', [ClientController::class, 'invoicePreview'])->name('invoicePreview');
     Route::get('/invoices/pdf/preview/{id}', [ClientController::class, 'invoicePdfPreview'])->name('invoicePdfPreview');
-    Route::get('/invoices/download/{id}', [ClientController::class, 'invoiceDownload'])->name('invoiceDownload');
-    Route::get('/manage-invoice', [ClientController::class, 'manageInvoice'])->name('manageInvoice');
-    Route::post('/manage-invoice', [ClientController::class, 'manageInvoicePost'])->name('manageInvoice');
-    Route::post('/manage-invoice-client', [ClientController::class, 'manageInvoiceClientPost']);
+    Route::get('/invoices/download/{id}', [ClientController::class, 'invoiceDownload'])->name('invoiceDownload')->middleware('permission:invoice,export');
+    Route::get('/manage-invoice', [ClientController::class, 'manageInvoice'])->name('manageInvoice')->middleware('permission:invoice,add');
+    Route::post('/manage-invoice', [ClientController::class, 'manageInvoicePost'])->name('manageInvoice')->middleware('permission:invoice,add');
+    Route::post('/manage-invoice-client', [ClientController::class, 'manageInvoiceClientPost'])->middleware('permission:invoice,add');
 
 
 
     /*User's Attendances Management Router*/
-    Route::get('/attendances', [UserController::class, 'attendances']);
-    Route::get('/manage-attendance', [UserController::class, 'manageAttendance'])->name('manageAttendance');
-    Route::post('/manage-attendance', [UserController::class, 'manageAttendancePost'])->name('manageAttendance');
+    Route::get('/attendances', [UserController::class, 'attendances'])->middleware('permission:attendances,assign');
+    Route::get('/manage-attendance', [UserController::class, 'manageAttendance'])->name('manageAttendance')->middleware('permission:attendances,add');
+    Route::post('/manage-attendance', [UserController::class, 'manageAttendancePost'])->name('manageAttendance')->middleware('permission:attendances,add');
 
 
 
     /*User's Account Management Router*/
-    Route::get('/users', [UserController::class, 'users']);
-    Route::get('/manage-user', [UserController::class, 'manageUser'])->name('manageUser');
-    Route::post('/manage-user', [UserController::class, 'manageUserPost'])->name('manageUser');
+    Route::get('/users', [UserController::class, 'users'])->middleware('permission:users,assign');
+    Route::get('/manage-user', [UserController::class, 'manageUser'])->name('manageUser')->middleware('permission:users,add');
+    Route::post('/manage-user', [UserController::class, 'manageUserPost'])->name('manageUser')->middleware('permission:users,add');
 
 
 
@@ -306,16 +302,16 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/my-profile', [UserController::class, 'manageUserPost'])->name('manageUser');
 
     /*My Company Profile Management Router*/
-    Route::get('/my-company', [UserController::class, 'manageCompany']);
-    Route::post('/my-company', [UserController::class, 'manageCompanyPost'])->name('manageCompany');
+    Route::get('/my-company', [UserController::class, 'manageCompany'])->middleware('permission:company,edit');
+    Route::post('/my-company', [UserController::class, 'manageCompanyPost'])->name('manageCompany')->middleware('permission:company,edit');
 
     Route::get('/reset-password', [UserController::class, 'resetPassword']);
     Route::post('/reset-password', [UserController::class, 'resetPasswordPost'])->name('resetPassword');
 
     /*User's Role Management Router*/
-    Route::get('/role-settings', [SettingController::class, 'roleSettings']);
-    Route::get('/manage-role-setting', [SettingController::class, 'manageRoleSettings'])->name('manageRoleSettings');
-    Route::post('/manage-role-setting', [SettingController::class, 'manageRoleSettingsPost'])->name('manageRoleSettings');
+    Route::get('/role-settings', [SettingController::class, 'roleSettings'])->middleware('permission:settings,edit');
+    Route::get('/manage-role-setting', [SettingController::class, 'manageRoleSettings'])->name('manageRoleSettings')->middleware('permission:settings,edit');
+    Route::post('/manage-role-setting', [SettingController::class, 'manageRoleSettingsPost'])->name('manageRoleSettings')->middleware('permission:settings,edit');
 
     Route::resource('email-templates', SettingController::class);
     Route::post('email-templates/{id}/toggle', [SettingController::class, 'toggle'])
@@ -326,8 +322,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/global-search', [AjaxController::class, 'globalSearch'])->name('globalSearch');
 
     //SMTP Email Setup
-    Route::get('/smtp-settings', [SettingController::class, 'smtpSetup'])->name('smtpSetup');
-    Route::post('/smtp-settings', [SettingController::class, 'smtpSetupPost'])->name('smtpSetup');
+    Route::get('/smtp-settings', [SettingController::class, 'smtpSetup'])->name('smtpSetup')->middleware('permission:smtp,edit');
+    Route::post('/smtp-settings', [SettingController::class, 'smtpSetupPost'])->name('smtpSetup')->middleware('permission:smtp,edit');
 
     //Notification Reminders
     Route::get('/reminders', [LeadController::class, 'reminderScript'])->name('reminderScript');
