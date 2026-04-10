@@ -192,6 +192,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/get-client/{clientId}', [ClientController::class, 'getClient']);
     Route::get('/clients-list', [ClientController::class, 'clientList']);
     Route::post('/clients', [ClientController::class, 'clientsPost'])->name('clients');
+    Route::post('/clients/toggle-status', [ClientController::class, 'toggleClientStatus'])->name('clients.toggle_status');
     Route::get('/view-single-client', [ClientController::class, 'singleClientGet'])->name('singleClient');
     Route::get('/manage-client', [ClientController::class, 'manageClient'])->name('manageClient')->middleware('permission:clients,edit');
     Route::post('/manage-client', [ClientController::class, 'manageClientPost'])->name('manageClient')->middleware('permission:clients,edit');

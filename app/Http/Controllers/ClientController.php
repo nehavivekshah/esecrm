@@ -595,6 +595,33 @@ class ClientController extends Controller
         return $this->clients($request);
     }
 
+    /**
+     * Toggle a customer's active / inactive status via AJAX.
+     */
+    public function toggleClientStatus(Request $request)
+    {
+        $request->validate(['id' => 'required|exists:clients,id']);
+
+        $client = Clients::findOrFail($request->id);
+        $client->status = $client->status == '1' ? '0' : '1';
+        $client->save();
+
+        $label = $client->status == '1' ? 'Active' : 'Inactive';
+        $this->logActivity(
+            "Customer {$label}",
+            'clients',
+            $client->id,
+            $client->name,
+            "Set customer {$client->name} as {$label}"
+        );
+
+        return response()->json([
+            'success' => true,
+            'status'  => $client->status,
+            'label'   => $label,
+        ]);
+    }
+
     public function manageClient(Request $request)
     {
         $clients = Clients::with('departments')->where('id', '=', $request->id)->first();

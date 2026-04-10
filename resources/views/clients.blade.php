@@ -1,4 +1,4 @@
-@extends('layout')
+﻿@extends('layout')
 @section('title', 'Customers - eseCRM')
 
 @section('content')
@@ -23,7 +23,7 @@
 
         <div class="dash-container">
 
-            {{-- ── Stat Cards ── --}}
+            {{-- â”€â”€ Stat Cards â”€â”€ --}}
             <div class="cl-stat-row mb-4">
                 <div class="cl-stat-card">
                     <div class="cl-stat-icon" style="background:rgba(0,102,102,0.10);color:#006666;">
@@ -185,6 +185,15 @@
                                                 </a>
                                             @endif
                                             @if(in_array('client_edit', $roleArray) || in_array('All', $roleArray))
+                                                {{-- Active / Inactive Toggle --}}
+                                                <button class="btn kb-action-btn cl-toggle-status
+                                                        {{ $client->status == '1' ? 'cl-toggle-active' : 'cl-toggle-inactive' }}"
+                                                    data-id="{{ $client->id }}"
+                                                    data-status="{{ $client->status }}"
+                                                    title="{{ $client->status == '1' ? 'Click to Deactivate' : 'Click to Activate' }}"
+                                                    onclick="event.stopPropagation()">
+                                                    <i class="bx {{ $client->status == '1' ? 'bx-toggle-right' : 'bx-toggle-left' }}"></i>
+                                                </button>
                                                 <a href="/manage-client?id={{ $client->id ?? '' }}"
                                                     class="btn kb-action-btn kb-action-edit" title="Edit">
                                                     <i class="bx bx-pencil"></i>
@@ -209,7 +218,7 @@
     </section>
 
     <style>
-        /* ── Client Stat Row ── */
+        /* â”€â”€ Client Stat Row â”€â”€ */
         .cl-stat-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -268,6 +277,40 @@
             font-weight: 500;
         }
 
+        /* â”€â”€ Active / Inactive Toggle Button â”€â”€ */
+        .cl-toggle-status {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+        }
+        .cl-toggle-active {
+            background: rgba(52, 168, 83, 0.12);
+            color: #34a853;
+        }
+        .cl-toggle-active:hover {
+            background: rgba(52, 168, 83, 0.22);
+            transform: scale(1.08);
+        }
+        .cl-toggle-inactive {
+            background: rgba(234, 67, 53, 0.10);
+            color: #ea4335;
+        }
+        .cl-toggle-inactive:hover {
+            background: rgba(234, 67, 53, 0.20);
+            transform: scale(1.08);
+        }
+        .cl-toggle-status.cl-toggling {
+            opacity: 0.45;
+            pointer-events: none;
+        }
+
         /* Reuse inv-status-pill from invoices page */
         .inv-status-pill {
             display: inline-flex;
@@ -294,4 +337,37 @@
     @include('inc.client-modal')
 </div>
 
+
+    <script>
+    (function () {
+        const CSRF = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
+        document.querySelectorAll('.cl-toggle-status').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const id = this.dataset.id; const button = this;
+                button.classList.add('cl-toggling');
+                fetch('/clients/toggle-status', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' }, body: JSON.stringify({ id }) })
+                .then(r => r.json())
+                .then(data => {
+                    if (!data.success) throw new Error('Toggle failed');
+                    const isActive = data.status == '1';
+                    button.dataset.status = data.status;
+                    button.title = isActive ? 'Click to Deactivate' : 'Click to Activate';
+                    button.className = 'btn kb-action-btn cl-toggle-status ' + (isActive ? 'cl-toggle-active' : 'cl-toggle-inactive');
+                    button.innerHTML = isActive ? '<i class="bx bx-toggle-right"></i>' : '<i class="bx bx-toggle-left"></i>';
+                    const row = button.closest('tr'); const pill = row?.querySelector('.inv-status-pill');
+                    if (pill) {
+                        if (isActive) { pill.style.background = 'rgba(52,168,83,0.10)'; pill.style.color = '#34a853'; pill.innerHTML = '<i class="bx bx-check-circle"></i> Active'; }
+                        else          { pill.style.background = 'rgba(234,67,53,0.10)';  pill.style.color = '#ea4335'; pill.innerHTML = '<i class="bx bx-minus-circle"></i> Inactive'; }
+                    }
+                    let active = 0, inactive = 0; document.querySelectorAll('.cl-toggle-status').forEach(b => { if (b.dataset.status == '1') active++; else inactive++; });
+                    const nums = document.querySelectorAll('.cl-stat-num');
+                    if (nums[1]) nums[1].textContent = active; if (nums[2]) nums[2].textContent = inactive;
+                    row?.classList.add('table-success'); setTimeout(() => row?.classList.remove('table-success'), 800);
+                })
+                .catch(() => alert('Could not update status. Please try again.'))
+                .finally(() => button.classList.remove('cl-toggling'));
+            });
+        });
+    })();
+    </script>
 @endsection
