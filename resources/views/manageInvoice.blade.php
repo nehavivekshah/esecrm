@@ -10,7 +10,7 @@
         .mp-item-row-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid #f1f3f4; padding-bottom: 10px; }
         .mp-item-num { width: 24px; height: 24px; background: #006666; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; }
         .mp-item-row-title { font-size: 0.88rem; font-weight: 700; color: #202124; }
-        .mp-item-row-body { display: grid; grid-template-columns: 2fr 2fr 0.8fr 1.2fr 1.5fr 1.2fr; gap: 12px; }
+        .mp-item-row-body { display: grid; grid-template-columns: 1fr 1.2fr 170px 170px 170px 170px 120px; gap: 12px; }
         .mp-item-label { display: block; font-size: 0.68rem; font-weight: 700; color: #80868b; text-transform: uppercase; margin-bottom: 4px; }
         .mp-item-amount-val { font-size: 0.9rem; font-weight: 700; color: #202124; display: block; margin-top: 6px; }
         .mp-add-item-btn { width: 100%; padding: 12px; background: #fff; border: 1px dashed #ced4da; border-radius: 12px; color: #5f6368; font-weight: 600; font-size: 0.85rem; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
@@ -38,8 +38,8 @@
         .mp-autoresize { resize: none; overflow: hidden; }
         .inv-status-pill { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
         .bank-info-bg { background: #f8fdfd; border: 1.5px dashed rgba(0,102,102,.25); border-radius: 12px; padding: 16px; }
-        @media (max-width: 1200px) { .mp-item-row-body { grid-template-columns: 1.5fr 1.5fr 0.8fr 1fr 1fr 1fr; } }
-        @media (max-width: 991px) { .mp-sidebar-sticky { position: static; } .mp-item-row-body { grid-template-columns: 1fr 1fr; gap: 15px; } }
+        @media (max-width: 1400px) { .mp-item-row-body { grid-template-columns: 1fr 1fr 130px 100px 130px 140px 110px; } }
+        @media (max-width: 1100px) { .mp-sidebar-sticky { position: static; } .mp-item-row-body { grid-template-columns: 1fr 1fr; gap: 15px; } }
         @media (max-width: 575px) { .mp-item-row-body { grid-template-columns: 1fr; } }
 
         /* ── cf- Design System (matching Recovery & Contract forms) ── */
@@ -512,13 +512,13 @@
                                                 </button>
                                             </div>
                                             <div class="mp-item-row-body">
-                                                <div class="mp-item-field" style="grid-column: span 2;">
+                                                <div class="mp-item-field">
                                                     <label class="mp-item-label">Item Name</label>
                                                     <textarea class="form-control form-control-sm item-name mp-autoresize"
                                                               name="invoice_items[{{ $k }}][short_description]"
                                                               placeholder="e.g. Web Development" rows="1">{{ $item->short_description ?? '' }}</textarea>
                                                 </div>
-                                                <div class="mp-item-field" style="grid-column: span 2;">
+                                                <div class="mp-item-field">
                                                     <label class="mp-item-label">Description</label>
                                                     <textarea class="form-control form-control-sm item-longdesc mp-autoresize"
                                                               name="invoice_items[{{ $k }}][long_description]"
@@ -581,13 +581,13 @@
                                                 </button>
                                             </div>
                                             <div class="mp-item-row-body">
-                                                <div class="mp-item-field" style="grid-column: span 2;">
+                                                <div class="mp-item-field">
                                                     <label class="mp-item-label">Item Name</label>
                                                     <textarea class="form-control form-control-sm item-name mp-autoresize"
                                                               name="invoice_items[0][short_description]"
                                                               placeholder="e.g. Web Development" rows="1" required></textarea>
                                                 </div>
-                                                <div class="mp-item-field" style="grid-column: span 2;">
+                                                <div class="mp-item-field">
                                                     <label class="mp-item-label">Description</label>
                                                     <textarea class="form-control form-control-sm item-longdesc mp-autoresize"
                                                               name="invoice_items[0][long_description]"
@@ -1005,11 +1005,11 @@
                             <button type="button" class="btn kb-action-btn kb-action-del removeRowButton ms-auto" style="width:28px;height:28px;" title="Remove item"><i class="bx bx-trash"></i></button>
                         </div>
                         <div class="mp-item-row-body">
-                            <div class="mp-item-field" style="grid-column: span 2;">
+                            <div class="mp-item-field">
                                 <label class="mp-item-label">Item Name</label>
                                 <textarea class="form-control form-control-sm item-name mp-autoresize" name="invoice_items[${index}][short_description]" rows="1" required></textarea>
                             </div>
-                            <div class="mp-item-field" style="grid-column: span 2;">
+                            <div class="mp-item-field">
                                 <label class="mp-item-label">Description</label>
                                 <textarea class="form-control form-control-sm item-longdesc mp-autoresize" name="invoice_items[${index}][long_description]" rows="1"></textarea>
                             </div>
