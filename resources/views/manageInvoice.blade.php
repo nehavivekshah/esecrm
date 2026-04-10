@@ -1068,7 +1068,7 @@
                         recalculateTotals();
                     });
                 } else {
-                    Swal.fire('Warning', 'At least one item is required.', 'warning');
+                    swal("Warning", "At least one item is required.", "warning");
                 }
             });
 
@@ -1077,12 +1077,11 @@
                 @if(!empty($invoice->id))
                     window.open('/invoices/preview/{{ $invoice->id }}', '_blank');
                 @else
-                    Swal.fire({
-                        title: 'Save First',
-                        text: 'Please save the invoice before previewing it.',
-                        icon: 'info',
-                        confirmButtonText: 'OK',
-                        confirmButtonColor: '#006666'
+                    swal({
+                        title: "Save First",
+                        text: "Please save the invoice before previewing it.",
+                        icon: "info",
+                        button: "OK"
                     });
                 @endif
             });
@@ -1103,17 +1102,13 @@
 
             // Save & Send — confirm before sending email to client
             $(document).on('click', '#btnSaveAndSend, #btnSaveAndSendSidebar', function () {
-                Swal.fire({
-                    title: 'Save & Send Invoice?',
-                    text: 'The invoice will be saved and emailed to the client immediately.',
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: '<i class="bx bx-send me-1"></i> Yes, Send It',
-                    cancelButtonText: 'Cancel',
-                    confirmButtonColor: '#006666',
-                    cancelButtonColor: '#6c757d'
-                }).then((result) => {
-                    if (result.isConfirmed) {
+                swal({
+                    title: "Save & Send Invoice?",
+                    text: "The invoice will be saved and emailed to the client immediately.",
+                    icon: "info",
+                    buttons: ["Cancel", "Yes, Send It"],
+                }).then((isConfirm) => {
+                    if (isConfirm) {
                         $('#invoiceAction').val('send');
                         $('#invoiceForm').trigger('submit');
                     }
