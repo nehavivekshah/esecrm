@@ -181,11 +181,11 @@
                     {{-- Revenue Line Chart --}}
                     <div class="db-card">
                         <div class="db-card-head">
-                            <span class="db-card-icon" style="color:#34a853; background:rgba(52,168,83,.08);"><i
-                                    class="bx bx-line-chart"></i></span>
+                            <span class="db-card-icon" style="color:#34a853; background:rgba(52,168,83,.08);"><i class="bx bx-line-chart"></i></span>
                             <span class="db-card-title">Revenue Growth</span>
                             <span class="db-card-badge" style="background:#e8f5e9; color:#2e7d32;">{{ date('Y') }}</span>
                             <span class="ms-auto db-card-sub">Monthly revenue</span>
+                            <button class="db-zoom-btn" onclick="dbZoom('revenue')" title="Expand"><i class="bx bx-expand-alt"></i></button>
                         </div>
                         <div class="db-chart-wrap">
                             <canvas id="revenueChart"></canvas>
@@ -230,14 +230,14 @@
                     {{-- Activity Bar Chart --}}
                     <div class="db-card">
                         <div class="db-card-head">
-                            <span class="db-card-icon" style="color:#1a73e8; background:rgba(26,115,232,.08);"><i
-                                    class="bx bx-bar-chart-alt-2"></i></span>
+                            <span class="db-card-icon" style="color:#1a73e8; background:rgba(26,115,232,.08);"><i class="bx bx-bar-chart-alt-2"></i></span>
                             <span class="db-card-title">Activity Monitor</span>
                             <select id="activityDateRange" class="db-select ms-auto">
                                 <option value="7" {{ $selectedActivityDays == 7 ? 'selected' : '' }}>Last 7 Days</option>
                                 <option value="30" {{ $selectedActivityDays == 30 ? 'selected' : '' }}>Last 30 Days</option>
                                 <option value="90" {{ $selectedActivityDays == 90 ? 'selected' : '' }}>Last 90 Days</option>
                             </select>
+                            <button class="db-zoom-btn" onclick="dbZoom('activity')" title="Expand"><i class="bx bx-expand-alt"></i></button>
                         </div>
                         <div class="db-chart-wrap">
                             <canvas id="activityFlowChart"></canvas>
@@ -247,16 +247,14 @@
                     {{-- CRM Alerts --}}
                     <div class="db-card" style="display:flex; flex-direction:column;">
                         <div class="db-card-head">
-                            <span class="db-card-icon" style="color:#ea4335; background:rgba(234,67,53,.08);"><i
-                                    class="bx bxs-zap"></i></span>
+                            <span class="db-card-icon" style="color:#ea4335; background:rgba(234,67,53,.08);"><i class="bx bxs-zap"></i></span>
                             <span class="db-card-title">CRM Alerts</span>
                             @if(count($overdueLeadsList) + count($expiringProposals) > 0)
-                                <span class="db-card-badge"
-                                    style="background:#fdecea; color:#ea4335;">{{ count($overdueLeadsList) + count($expiringProposals) }}
-                                    Alerts</span>
+                                <span class="db-card-badge" style="background:#fdecea; color:#ea4335;">{{ count($overdueLeadsList) + count($expiringProposals) }} Alerts</span>
                             @endif
+                            <button class="db-zoom-btn ms-auto" onclick="dbZoom('alerts')" title="Expand"><i class="bx bx-expand-alt"></i></button>
                         </div>
-                        <div class="db-alerts-body" style="flex:1; overflow-y:auto; max-height:260px;">
+                        <div id="alertsBody" class="db-alerts-body" style="flex:1; overflow-y:auto; max-height:260px;">
                             @foreach($overdueLeadsList as $ol)
                                 <a href="/manage-lead?id={{ $ol->id }}" class="db-alert-row db-alert-red">
                                     <div class="db-alert-dot"></div>
@@ -289,23 +287,20 @@
                     {{-- Live Activity Feed --}}
                     <div class="db-card" style="display:flex; flex-direction:column;">
                         <div class="db-card-head">
-                            <span class="db-card-icon" style="color:#ea4335; background:rgba(234,67,53,.08);"><i
-                                    class="bx bx-pulse"></i></span>
+                            <span class="db-card-icon" style="color:#ea4335; background:rgba(234,67,53,.08);"><i class="bx bx-pulse"></i></span>
                             <span class="db-card-title">Live Feed</span>
                             <span class="db-live-dot"></span>
-                            <span class="db-card-badge ms-1"
-                                style="background:#fdecea; color:#ea4335; font-size:0.58rem; letter-spacing:.5px;">LIVE</span>
+                            <span class="db-card-badge ms-1" style="background:#fdecea; color:#ea4335; font-size:0.58rem; letter-spacing:.5px;">LIVE</span>
+                            <button class="db-zoom-btn ms-auto" onclick="dbZoom('feed')" title="Expand"><i class="bx bx-expand-alt"></i></button>
                         </div>
-                        <div class="db-feed-wrap" style="flex:1; overflow-y:auto; max-height:260px;">
+                        <div id="feedBody" class="db-feed-wrap" style="flex:1; overflow-y:auto; max-height:260px;">
                             @forelse(collect($activities ?? [])->take(10) as $act)
                                 <div class="db-feed-item">
                                     <div class="db-feed-avatar">{{ strtoupper(substr($act->user_name ?? 'S', 0, 1)) }}</div>
                                     <div class="db-feed-body">
                                         <div class="db-feed-user">{{ $act->user_name ?? 'System' }}</div>
-                                        <div class="db-feed-desc">{{ $act->type }} —
-                                            {{ Str::limit($act->description ?? 'Action recorded', 40) }}</div>
-                                        <div class="db-feed-time">{{ \Carbon\Carbon::parse($act->created_at)->diffForHumans() }}
-                                        </div>
+                                        <div class="db-feed-desc">{{ $act->type }} — {{ Str::limit($act->description ?? 'Action recorded', 40) }}</div>
+                                        <div class="db-feed-time">{{ \Carbon\Carbon::parse($act->created_at)->diffForHumans() }}</div>
                                     </div>
                                 </div>
                             @empty
@@ -359,6 +354,17 @@
 
         </div>{{-- end .db-wrap --}}
     </section>
+
+    {{-- ═══════════ ZOOM MODAL ═══════════ --}}
+    <div id="dbZoomModal" class="dbzm-overlay" onclick="if(event.target===this)dbZoomClose()">
+        <div class="dbzm-dialog">
+            <div class="dbzm-header">
+                <span id="dbzmTitle" class="dbzm-title"></span>
+                <button class="dbzm-close" onclick="dbZoomClose()"><i class="bx bx-x"></i></button>
+            </div>
+            <div id="dbzmBody" class="dbzm-body"></div>
+        </div>
+    </div>
 
     <style>
         /* ═══════════ DASHBOARD SHELL ═══════════ */
@@ -977,6 +983,64 @@
         }
     </style>
 
+    <style>
+        /* ── Zoom Button ── */
+        .db-zoom-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 28px; height: 28px; border-radius: 8px;
+            border: 1px solid #e8eaed; background: #f8f9fa;
+            color: #5f6368; cursor: pointer; font-size: 1.05rem;
+            transition: all .15s; flex-shrink: 0;
+        }
+        .db-zoom-btn:hover { background: #e8f0fe; color: #1a73e8; border-color: #c5d8fb; }
+
+        /* ── Zoom Modal Overlay ── */
+        .dbzm-overlay {
+            display: none; position: fixed; inset: 0; z-index: 9999;
+            background: rgba(0,0,0,.55);
+            backdrop-filter: blur(6px);
+            align-items: center; justify-content: center;
+            animation: dbzm-in .22s ease;
+        }
+        .dbzm-overlay.active { display: flex; }
+        @keyframes dbzm-in { from { opacity:0; } to { opacity:1; } }
+
+        .dbzm-dialog {
+            background: #fff;
+            border-radius: 20px;
+            width: min(92vw, 960px);
+            max-height: 88vh;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 24px 80px rgba(0,0,0,.22);
+            animation: dbzm-rise .25s cubic-bezier(.34,1.44,.64,1);
+        }
+        @keyframes dbzm-rise { from { transform: scale(.94) translateY(16px); opacity:0; } to { transform:none; opacity:1; } }
+
+        .dbzm-header {
+            display: flex; align-items: center; gap: 10px;
+            padding: 16px 22px 14px;
+            border-bottom: 1px solid #f1f3f4;
+            flex-shrink: 0;
+        }
+        .dbzm-title { font-size: 1rem; font-weight: 700; color: #202124; flex: 1; }
+        .dbzm-close {
+            width: 34px; height: 34px; border-radius: 50%;
+            border: none; background: #f1f3f4;
+            font-size: 1.3rem; color: #5f6368; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: background .12s;
+        }
+        .dbzm-close:hover { background: #fdecea; color: #ea4335; }
+
+        .dbzm-body {
+            flex: 1; overflow-y: auto; padding: 20px 22px;
+        }
+        .dbzm-body .db-chart-wrap { height: 400px !important; }
+        .dbzm-body .db-alerts-body { max-height: none !important; }
+        .dbzm-body .db-feed-wrap  { max-height: none !important; }
+    </style>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         // ── Live Clock ──
@@ -1006,7 +1070,7 @@
             const revGrad = revenueCtx.createLinearGradient(0, 0, 0, 200);
             revGrad.addColorStop(0, 'rgba(52,168,83,0.25)');
             revGrad.addColorStop(1, 'rgba(52,168,83,0)');
-            new Chart(revenueCtx, {
+            const _revCfg = {
                 type: 'line',
                 data: {
                     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -1014,13 +1078,9 @@
                         label: 'Revenue (₹)',
                         data: monthlyRevenue,
                         borderColor: '#34a853',
-                        backgroundColor: revGrad,
-                        fill: true,
-                        tension: 0.45,
-                        pointBackgroundColor: '#34a853',
-                        pointRadius: 4,
-                        pointHoverRadius: 7,
-                        borderWidth: 2.5
+                        backgroundColor: 'rgba(52,168,83,0.15)',
+                        fill: true, tension: 0.45,
+                        pointBackgroundColor: '#34a853', pointRadius: 4, pointHoverRadius: 7, borderWidth: 2.5
                     }]
                 },
                 options: {
@@ -1037,7 +1097,9 @@
                         }
                     }
                 }
-            });
+            };
+            new Chart(revenueCtx, _revCfg);
+            _dbChartConfigs.revenue = _revCfg;
 
             // ── Lead Pipeline Donut Chart ──
             const donutCtx = document.getElementById('leadsDonutChart').getContext('2d');
@@ -1066,7 +1128,7 @@
             const actDatasets = {!! json_encode($activityChartDatasets) !!};
             const palette = ['rgba(52,168,83,.7)', 'rgba(26,115,232,.7)', 'rgba(139,92,246,.7)',
                 'rgba(251,188,4,.7)', 'rgba(234,67,53,.7)', 'rgba(0,102,102,.7)'];
-            new Chart(actCtx, {
+            const _actCfg = {
                 type: 'bar',
                 data: {
                     labels: actLabels,
@@ -1093,7 +1155,9 @@
                         }
                     }
                 }
-            });
+            };
+            new Chart(actCtx, _actCfg);
+            _dbChartConfigs.activity = _actCfg;
 
             // ── Activity date range selector ──
             document.getElementById('activityDateRange')?.addEventListener('change', function () {
@@ -1102,6 +1166,56 @@
                 window.location.href = url.toString();
             });
         @endif
+
+        // ══════════════════════ ZOOM MODAL ══════════════════════
+        let _dbZoomChart = null;
+
+        // Stored chart configs built after the original charts are created
+        const _dbChartConfigs = {};
+
+        function dbZoom(type) {
+            const modal = document.getElementById('dbZoomModal');
+            const body  = document.getElementById('dbzmBody');
+            const title = document.getElementById('dbzmTitle');
+            body.innerHTML = '';
+            if (_dbZoomChart) { _dbZoomChart.destroy(); _dbZoomChart = null; }
+
+            if (type === 'revenue') {
+                title.textContent = '📈 Revenue Growth — ' + new Date().getFullYear();
+                body.innerHTML = '<div class="db-chart-wrap"><canvas id="zmRevenueChart"></canvas></div>';
+                modal.classList.add('active');
+                requestAnimationFrame(() => {
+                    const cfg = _dbChartConfigs.revenue;
+                    if (cfg) _dbZoomChart = new Chart(document.getElementById('zmRevenueChart'), cfg);
+                });
+            } else if (type === 'activity') {
+                title.textContent = '📊 Activity Monitor';
+                body.innerHTML = '<div class="db-chart-wrap"><canvas id="zmActivityChart"></canvas></div>';
+                modal.classList.add('active');
+                requestAnimationFrame(() => {
+                    const cfg = _dbChartConfigs.activity;
+                    if (cfg) _dbZoomChart = new Chart(document.getElementById('zmActivityChart'), cfg);
+                });
+            } else if (type === 'alerts') {
+                title.textContent = '⚡ CRM Alerts';
+                const src = document.getElementById('alertsBody');
+                body.appendChild(src.cloneNode(true));
+                modal.classList.add('active');
+            } else if (type === 'feed') {
+                title.textContent = '🔴 Live Activity Feed';
+                const src = document.getElementById('feedBody');
+                body.appendChild(src.cloneNode(true));
+                modal.classList.add('active');
+            }
+        }
+
+        function dbZoomClose() {
+            document.getElementById('dbZoomModal').classList.remove('active');
+            if (_dbZoomChart) { _dbZoomChart.destroy(); _dbZoomChart = null; }
+        }
+
+        // Close on Escape key
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') dbZoomClose(); });
     </script>
 
     <!-- Firebase Scripts -->
