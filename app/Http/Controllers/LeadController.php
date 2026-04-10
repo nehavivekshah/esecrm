@@ -665,8 +665,9 @@ class LeadController extends Controller
 
     public function proposal($id, $token)
     {
-        $proposal = Proposals::leftJoin('leads', 'proposals.lead_id', '=', 'leads.id')
-            ->leftJoin('companies', 'leads.cid', '=', 'companies.id')
+        $proposal = Proposals::leftJoin('users', 'proposals.uid', '=', 'users.id')
+            ->leftJoin('companies', 'users.cid', '=', 'companies.id')
+            ->leftJoin('leads', 'proposals.lead_id', '=', 'leads.id')
             ->select(
                 'leads.name as lead_name',
                 'companies.name as companyName',
@@ -698,8 +699,9 @@ class LeadController extends Controller
     public function downloadPdf($id, $token)
     {
         try {
-            $proposal = Proposals::leftJoin('leads', 'proposals.lead_id', '=', 'leads.id')
-                ->leftJoin('companies', 'leads.cid', '=', 'companies.id')
+            $proposal = Proposals::leftJoin('users', 'proposals.uid', '=', 'users.id')
+                ->leftJoin('companies', 'users.cid', '=', 'companies.id')
+                ->leftJoin('leads', 'proposals.lead_id', '=', 'leads.id')
                 ->select(
                     'leads.name as lead_name',
                     'companies.name as companyName',
