@@ -108,7 +108,7 @@
                             <th>Status</th>
                             <th class="m-none">Tags</th>
                             @if(in_array('proposals_edit',$roleArray) || in_array('proposals_delete',$roleArray) || in_array('All',$roleArray))
-                                <th class="text-end position-sticky end-0" style="background:#f1f5f9; z-index:2; box-shadow: -2px 0 5px rgba(0,0,0,0.02);">Action</th>
+                                <th class="text-end position-sticky end-0" style="background:#ffffff; z-index:10; box-shadow: -2px 0 5px rgba(0,0,0,0.05);">Action</th>
                             @endif
                         </tr>
                     </thead>
@@ -202,7 +202,7 @@
 
                                 {{-- Actions --}}
                                 @if(in_array('proposals_edit',$roleArray) || in_array('proposals_delete',$roleArray) || in_array('All',$roleArray))
-                                    <td class="text-end position-sticky end-0" style="background:#fff; z-index:1; box-shadow: -2px 0 5px rgba(0,0,0,0.02);">
+                                    <td class="text-end position-sticky end-0" style="background:#fff; z-index:5; box-shadow: -2px 0 5px rgba(0,0,0,0.02);">
                                         <div class="d-flex align-items-center justify-content-end gap-1" style="flex-wrap: nowrap;">
                                             <a href="/quotation/{{ $proposal->id }}/{{ md5($proposal->client_email) }}"
                                                class="btn kb-action-btn" title="View" target="_blank"
