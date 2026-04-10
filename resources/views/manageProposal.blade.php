@@ -68,7 +68,7 @@
                         <div class="ml-card-body">
                             <div class="row g-3">
                                 {{-- Subject --}}
-                                <div class="col-md-3">
+                                <div class="col-md-6">
                                     <label class="ml-label">Subject <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bx bx-rename"></i></span>
@@ -191,7 +191,7 @@
                                 </div>
 
                                 {{-- Tags --}}
-                                <div class="col-md-8">
+                                <div class="col-md-6">
                                     <label class="ml-label">Tags</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bx bx-tag"></i></span>
@@ -225,7 +225,7 @@
                         </div>
                         <div class="collapse show ml-card-body" id="clientDetailsBody">
                             <div class="row g-3">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="ml-label">Name <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bx bx-user"></i></span>
@@ -234,7 +234,7 @@
                                                value="{{ $proposal->client_name ?? '' }}" required>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="ml-label">Email <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bx bx-envelope"></i></span>
@@ -243,7 +243,7 @@
                                                value="{{ $proposal->client_email ?? '' }}" required>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="ml-label">Phone</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bx bx-phone"></i></span>
@@ -252,7 +252,7 @@
                                                value="{{ $proposal->client_phone ?? '91' }}">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="ml-label">Address</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bx bx-home"></i></span>
@@ -261,7 +261,7 @@
                                                value="{{ $proposal->client_address ?? '' }}">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="ml-label">City</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bx bx-map"></i></span>
@@ -270,7 +270,7 @@
                                                value="{{ $proposal->client_city ?? '' }}">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="ml-label">State / Province</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bx bx-map-pin"></i></span>
@@ -279,7 +279,7 @@
                                                value="{{ $proposal->client_state ?? '' }}">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="ml-label">Zip / Postal Code</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bx bx-pin"></i></span>
@@ -288,7 +288,7 @@
                                                value="{{ $proposal->client_zip ?? '' }}">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="ml-label">Country</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bx bx-globe"></i></span>
