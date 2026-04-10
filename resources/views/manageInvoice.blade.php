@@ -420,30 +420,6 @@
                             </div>
                             <div class="ml-card-body">
                                 <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="ml-label">Payment Mode</label>
-                                        <div class="cf-input-box">
-                                            <span class="cf-icon"><i class="bx bx-wallet"></i></span>
-                                            <select name="payment_mode">
-                                                <option value="">Select Mode...</option>
-                                                <option value="cash" @if(old('payment_mode', $invoice->payment_mode ?? '') == 'cash') selected @endif>Cash</option>
-                                                <option value="card" @if(old('payment_mode', $invoice->payment_mode ?? '') == 'card') selected @endif>Credit/Debit Card</option>
-                                                <option value="bank" @if(old('payment_mode', $invoice->payment_mode ?? '') == 'bank') selected @endif>Bank Transfer</option>
-                                                <option value="paypal" @if(old('payment_mode', $invoice->payment_mode ?? '') == 'paypal') selected @endif>PayPal</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="ml-label">Currency</label>
-                                        <div class="cf-input-box">
-                                            <span class="cf-icon"><i class="bx bx-globe"></i></span>
-                                            <select id="currency" name="currency">
-                                                <option value="INR" @if(old('currency', $invoice->currency ?? 'INR') == 'INR') selected @endif>₹ INR</option>
-                                                <option value="USD" @if(old('currency', $invoice->currency ?? '') == 'USD') selected @endif>$ USD</option>
-                                                <option value="EUR" @if(old('currency', $invoice->currency ?? '') == 'EUR') selected @endif>€ EUR</option>
-                                            </select>
-                                        </div>
-                                    </div>
                                     <div class="col-12 mt-2">
                                         <div class="bank-info-bg">
                                             <h6 class="fw-700 mb-3 text-dark small text-uppercase" style="letter-spacing:0.5px;">Organization Bank Details</h6>
@@ -453,25 +429,49 @@
                                                 if (!is_array($bank)) $bank = ["","","","",""];
                                             @endphp
                                             <div class="row g-3">
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
+                                                    <label class="ml-label">Payment Mode</label>
+                                                    <div class="cf-input-box">
+                                                        <span class="cf-icon"><i class="bx bx-wallet"></i></span>
+                                                        <select name="payment_mode">
+                                                            <option value="">Select Mode...</option>
+                                                            <option value="cash" @if(old('payment_mode', $invoice->payment_mode ?? '') == 'cash') selected @endif>Cash</option>
+                                                            <option value="card" @if(old('payment_mode', $invoice->payment_mode ?? '') == 'card') selected @endif>Credit/Debit Card</option>
+                                                            <option value="bank" @if(old('payment_mode', $invoice->payment_mode ?? '') == 'bank') selected @endif>Bank Transfer</option>
+                                                            <option value="paypal" @if(old('payment_mode', $invoice->payment_mode ?? '') == 'paypal') selected @endif>PayPal</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
                                                     <label class="ml-label" style="font-size:0.68rem;">Bank Name</label>
                                                     <input type="text" class="form-control cf-bank-input" name="bank_details[]" value="{{ $bank[0] ?? '' }}" placeholder="e.g. HDFC Bank">
                                                 </div>
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <label class="ml-label" style="font-size:0.68rem;">Account Holder</label>
                                                     <input type="text" class="form-control cf-bank-input" name="bank_details[]" value="{{ $bank[1] ?? '' }}" placeholder="Account Holder Name">
                                                 </div>
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <label class="ml-label" style="font-size:0.68rem;">Account Number</label>
                                                     <input type="text" class="form-control cf-bank-input" name="bank_details[]" value="{{ $bank[2] ?? '' }}" placeholder="XXXX XXXX XXXX">
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-3">
                                                     <label class="ml-label" style="font-size:0.68rem;">IFSC / SWIFT</label>
                                                     <input type="text" class="form-control cf-bank-input" name="bank_details[]" value="{{ $bank[3] ?? '' }}" placeholder="e.g. HDFC0001234">
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-3">
                                                     <label class="ml-label" style="font-size:0.68rem;">UPI ID</label>
                                                     <input type="text" class="form-control cf-bank-input" name="bank_details[]" value="{{ $bank[4] ?? '' }}" placeholder="name@upi">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="ml-label">Currency</label>
+                                                    <div class="cf-input-box">
+                                                        <span class="cf-icon"><i class="bx bx-globe"></i></span>
+                                                        <select id="currency" name="currency">
+                                                            <option value="INR" @if(old('currency', $invoice->currency ?? 'INR') == 'INR') selected @endif>₹ INR</option>
+                                                            <option value="USD" @if(old('currency', $invoice->currency ?? '') == 'USD') selected @endif>$ USD</option>
+                                                            <option value="EUR" @if(old('currency', $invoice->currency ?? '') == 'EUR') selected @endif>€ EUR</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
