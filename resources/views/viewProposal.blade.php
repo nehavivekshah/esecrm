@@ -199,42 +199,41 @@
                  margin-bottom: 0;
              }
     
-            /* Action Buttons Area (Separate from Document) */
+            /* ── Action Buttons Bar ── */
             .proposal-actions-container {
-                text-align: right;
+                position: sticky;
+                top: 0;
+                z-index: 100;
+                background: #fff;
+                border-bottom: 1px solid #e2e8f0;
+                padding: 10px 16px;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                gap: 8px;
+                flex-wrap: wrap;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+                margin-bottom: 16px;
             }
             .proposal-actions-container .btn {
-                margin: 8px 5px;
-                padding: 10px 20px;
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                padding: 7px 16px;
                 font-weight: 500;
-                font-size: 0.95rem;
+                font-size: 0.88rem;
                 border-radius: 6px;
-            }
-            .proposal-actions-container .btn i {
-                 margin-right: 5px;
-                 vertical-align: text-bottom; /* Better icon alignment */
+                white-space: nowrap;
             }
             .action-feedback p {
                  font-weight: 500;
-                 font-size: 1rem;
+                 font-size: 0.9rem;
+                 margin: 0;
             }
             .action-feedback i {
-                margin-right: 5px;
-                font-size: 1.2rem;
+                margin-right: 4px;
+                font-size: 1rem;
                 vertical-align: middle;
-            }
-            .proposal-actions-container {
-                text-align: right;
-                display: flex;
-                justify-content: right;
-            }
-            .proposal-actions-container .btn-sm {
-                padding: 6px 8px !important;
-                font-size: 14px;
-                display: flex;
-                align-items: center;
-                max-width: 230px;
-                border-radius: 3px;
             }
             .company-address, .client-address {
                 width: 50%;
@@ -268,14 +267,16 @@
                 }
             }
             @media (max-width: 576px) {
-                 .proposal-actions-container .btn,
-                 .proposal-actions-container form {
-                     display: block;
-                     width: 100%;
-                     margin-left: auto;
-                     margin-right: auto;
-                     margin-bottom: 0px;
-                 }
+                .proposal-actions-container {
+                    justify-content: center;
+                    padding: 8px 10px;
+                    gap: 6px;
+                }
+                .proposal-actions-container .btn {
+                    flex: 1 1 auto;
+                    justify-content: center;
+                    min-width: 100px;
+                }
             }
         </style>
 </head>
@@ -353,53 +354,49 @@
 @endphp
 <div class="proposal-page-container"> {{-- Overall page wrapper --}}
 
-    {{-- Action Buttons Area (Outside the document visually) --}}
+    {{-- ── Sticky Action Bar ── --}}
     <div class="proposal-actions-container">
-
-        @php
-            $action_token = md5($proposal->client_email);
-        @endphp
+        @php $action_token = md5($proposal->client_email); @endphp
 
         @if(!empty($action_token))
-            {{-- Download Button --}}
-            <a href="{{ route('proposal.download', ['id' => $proposal->id, 'token' => $action_token]) }}" class="btn btn-dark btn-sm"> {{-- Dark button like Perfex --}}
+            {{-- Download PDF --}}
+            <a href="{{ route('proposal.download', ['id' => $proposal->id, 'token' => $action_token]) }}"
+               class="btn btn-dark btn-sm">
                 <i class='bx bxs-download'></i> Download PDF
             </a>
 
-            {{-- Accept/Decline Buttons/Messages --}}
+            {{-- Status-dependent buttons --}}
             @if($proposal->status == 'Sent')
-                 <form action="{{ route('proposal.decline', ['id' => $proposal->id, 'token' => $action_token]) }}" method="POST" class="d-inline-block">
+                <form action="{{ route('proposal.decline', ['id' => $proposal->id, 'token' => $action_token]) }}"
+                      method="POST" style="margin:0;">
                     @csrf
                     <button type="submit" class="btn btn-danger btn-sm">
                         <i class='bx bx-x-circle'></i> Decline
                     </button>
                 </form>
-                <!--<form action="{{ route('proposal.accept', ['id' => $proposal->id, 'token' => $action_token]) }}" method="POST" class="d-inline-block">
-                    @csrf
-                    <button type="submit" class="btn btn-success btn-sm">
-                        <i class='bx bx-check-circle'></i> Accept
-                    </button>
-                </form>-->
-                <!-- Trigger Button -->
-                <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#signatureModal">
+                <button type="button" class="btn btn-success btn-sm"
+                        data-bs-toggle="modal" data-bs-target="#signatureModal">
                     <i class='bx bx-check-circle'></i> Accept
                 </button>
 
             @elseif($proposal->status == 'Accepted')
-                <div class="action-feedback">
-                    <p class="btn btn-success btn-sm"><i class='bx bx-check-circle'></i> Proposal Accepted</p>
-                </div>
+                <span class="btn btn-success btn-sm" style="pointer-events:none;">
+                    <i class='bx bx-check-circle'></i> Accepted
+                </span>
+
             @elseif($proposal->status == 'Declined')
-                <!--<div class="action-feedback mt-3">
-                    <p class="text-danger"><i class='bx bx-x-circle'></i> Proposal Declined</p>
-                </div>-->
+                <span class="btn btn-secondary btn-sm" style="pointer-events:none;">
+                    <i class='bx bx-x-circle'></i> Declined
+                </span>
+
             @elseif($proposal->status == 'Expired')
-                <div class="action-feedback mt-3">
-                    <p class="btn btn-danger btn-sm"><i class='bx bx-time'></i> Proposal Expired</p>
-                </div>
+                <span class="btn btn-danger btn-sm" style="pointer-events:none;">
+                    <i class='bx bx-time'></i> Expired
+                </span>
             @endif
+
         @else
-            <p class="text-danger mt-3">Action links are currently unavailable.</p>
+            <p class="text-danger mb-0">Action links are currently unavailable.</p>
         @endif
     </div>
 
