@@ -11,9 +11,12 @@ use App\Models\Leads;
 use App\Models\Clients;
 use App\Models\Proposals;
 use Exception;
+use App\Traits\ActivityLogger;
 
 class NewLeadController extends Controller
 {
+    use ActivityLogger;
+
     public function newleads(Request $request)
     {
         $today = Carbon::now()->format('Y-m-d H:i:s');
@@ -362,6 +365,8 @@ class NewLeadController extends Controller
             }
         });
 
+        $this->logActivity('Lead Updated', 'leads', (int)$request->id, $request->name, "Updated lead: {$request->name}");
+
         return response()->json([
             'status' => 'success',
             'message' => 'Lead updated successfully'
@@ -378,6 +383,8 @@ class NewLeadController extends Controller
         try {
             $lead = Leads::findOrFail($request->id);
             $lead->delete();
+
+            $this->logActivity('Lead Deleted', 'leads', (int)$request->id, $lead->name ?? null, "Deleted lead: {$lead->name}");
 
             return response()->json([
                 'status' => 'success',

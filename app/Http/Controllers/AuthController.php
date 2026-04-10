@@ -23,9 +23,12 @@ use App\Models\Roles;
 use App\Models\SmtpSettings;
 use App\Models\User;
 use App\Models\Eselicenses;
+use App\Traits\ActivityLogger;
 
 class AuthController extends Controller
 {
+    use ActivityLogger;
+
     public function register()
     {
         return view('register');
@@ -154,6 +157,8 @@ class AuthController extends Controller
 
             $_SESSION['loginEmail'] = $request->login_email ?? '';
             // Plaintext password storage removed for security.
+
+            $this->logLogin();
 
             return redirect('/home')->with('success', 'Successfully logged in.');
         }

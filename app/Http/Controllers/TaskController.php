@@ -17,6 +17,8 @@ use App\Models\Todo_lists;
 
 class TaskController extends Controller
 {
+    use \App\Traits\ActivityLogger;
+
     protected $taskService;
 
     public function __construct(\App\Services\TaskService $taskService)
@@ -78,6 +80,8 @@ class TaskController extends Controller
         // Sync assignees (always include the primary user)
         $assigneeIds = collect($request->assignee_ids ?? [])->push($request->uid)->unique()->values()->toArray();
         $task->assignees()->sync($assigneeIds);
+
+        $this->logActivity('Task Created', 'tasks', $task->id, $task->title, "Created task: {$task->title}");
 
         return back()->with('success', 'New Task Added');
     }
@@ -318,6 +322,13 @@ class TaskController extends Controller
             $task->label = $statusColors[$request->status] ?? '#80868b';
             
             $task->save();
+
+            // Log task completion
+            if ($request->status == '4') {
+                $this->logActivity('Task Completed', 'tasks', $task->id, $task->title, "Completed task: {$task->title}");
+            } else {
+                $this->logActivity('Task Status Changed', 'tasks', $task->id, $task->title, "Changed task status: {$task->title}");
+            }
         }
 
         // Sync assignees

@@ -30,9 +30,12 @@ use DateTime;
 
 use App\Services\LeadService;
 use App\Services\ProposalService;
+use App\Traits\ActivityLogger;
 
 class LeadController extends Controller
 {
+    use ActivityLogger;
+
     protected $leadService;
     protected $proposalService;
 
@@ -311,6 +314,8 @@ class LeadController extends Controller
                     $leadComment->save();
                 }
 
+                $this->logActivity('Lead Created', 'leads', $leadSingle->id, $leadSingle->name, "Added new lead: {$leadSingle->name}");
+
                 return redirect($redirectTo)->with('success', 'This Lead was successfully added to the Leads Table.');
             } else {
                 return redirect($redirectTo)->with('error', 'Failed to add this lead to the leads table.');
@@ -362,6 +367,8 @@ class LeadController extends Controller
                     $leadSingle->update();
 
 
+                    $this->logActivity('Lead Converted', 'leads', (int)$id, $request->name ?? '', "Lead converted to customer: {$request->name}");
+
                     return redirect($redirectTo)->with('success', "Successfully converted leads moved to client list.");
                 } else {
                     return redirect($redirectTo)->with('error', 'Failed to add this lead to the client list.');
@@ -395,7 +402,9 @@ class LeadController extends Controller
                 $leadSingle->status = ($request->status ?? '10');
 
                 if ($leadSingle->update()) {
-                    return redirect($redirectTo)->with('success', 'This Lead was successfully updated in the Leads Table.');
+                    $this->logActivity('Lead Updated', 'leads', (int)$id, $leadSingle->name, "Updated lead: {$leadSingle->name}");
+
+                return redirect($redirectTo)->with('success', 'This Lead was successfully updated in the Leads Table.');
                 } else {
                     return redirect($redirectTo)->with('error', 'Failed to update this lead in the leads table.');
                 }
@@ -429,6 +438,8 @@ class LeadController extends Controller
 
                     $leadSingle->status = '1';
                     $leadSingle->update();
+
+                    $this->logActivity('Lead Comment Added', 'leads', (int)$leadId, null, "Added follow-up comment on lead #{$leadId}");
 
                     return redirect('leads?page=' . $currentPage)->with('success', 'This comment was successfully added to the Leads Table.');
 
@@ -630,6 +641,12 @@ class LeadController extends Controller
                 $this->leadService->sendMail($to, $subject, 'emails.proposal', $viewData);
 
                 return back()->with('success', 'Proposal sent successfully!');
+            }
+
+            if ($request->submit == 'Save & Send') {
+                $this->logActivity('Proposal Sent', 'proposals', $proposal->id, $proposal->subject, "Sent proposal: {$proposal->subject}");
+            } else {
+                $this->logActivity('Proposal Saved', 'proposals', $proposal->id, $proposal->subject, "Saved proposal: {$proposal->subject}");
             }
 
             return back()->with('success', 'Proposal saved successfully!');

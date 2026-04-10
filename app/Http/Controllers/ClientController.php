@@ -27,9 +27,12 @@ use App\Models\Invoice_items;
 use App\Models\CustomerDepartments;
 
 use App\Services\ClientService;
+use App\Traits\ActivityLogger;
 
 class ClientController extends Controller
 {
+    use ActivityLogger;
+
     protected $clientService;
 
     public function __construct(ClientService $clientService)
@@ -719,6 +722,8 @@ class ClientController extends Controller
                     ->whereNotIn('id', $submittedDeptIds)
                     ->delete();
 
+                $this->logActivity('Customer Created', 'clients', $client->id, $client->name, "Added new customer: {$client->name}");
+
                 return redirect('clients')->with('success', 'New customer successfully added.');
             } else {
                 return back()->with('error', 'Failed to list new client.');
@@ -777,6 +782,8 @@ class ClientController extends Controller
                 CustomerDepartments::where('client_id', $leadSingle->id)
                     ->whereNotIn('id', $submittedDeptIds)
                     ->delete();
+
+                $this->logActivity('Customer Updated', 'clients', $leadSingle->id, $leadSingle->name, "Updated customer: {$leadSingle->name}");
 
                 return back()->with('success', 'client successfully updated.');
             } else {
@@ -1063,6 +1070,8 @@ class ClientController extends Controller
                 $invoiceItem->save();
             }
         }
+
+        $this->logActivity('Invoice Saved', 'invoices', $invoice->id, $invoice->invoice_no ?? "#{$invoice->id}", "Invoice #{$invoice->id} saved", (string)($invoice->grand_total ?? ''));
 
         // 6) Redirect or return a response
         return redirect()
