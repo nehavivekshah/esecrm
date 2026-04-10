@@ -101,18 +101,18 @@
                             </div>
                         </div>
                         <div class="col-md-6 mc-field">
-                            <label>PDF Logo <small class="text-muted">(used in invoices/proposals)</small></label>
+                            <label>PDF / Proposal Logo <small class="text-muted">(appears on invoices &amp; quotations)</small></label>
                             <div class="mc-file-box">
-                                @if(!empty($company->pdf_logo))
+                                @if(!empty($company->img))
                                     <div class="mc-file-preview">
-                                        <img src="{{ asset('assets/images/company/'.$company->pdf_logo) }}"
+                                        <img src="{{ asset('assets/images/company/'.$company->img) }}"
                                              alt="pdf_logo" style="height:36px; object-fit:contain; border-radius:6px;">
                                     </div>
                                 @else
                                     <span class="mc-file-icon"><i class="bx bx-file-blank"></i></span>
                                 @endif
-                                <input type="file" name="pdf_logo" accept="image/*" class="mc-file-input">
-                                <span class="mc-file-label">{{ !empty($company->pdf_logo) ? 'Change PDF logo…' : 'Choose PDF logo…' }}</span>
+                                <input type="file" name="img" accept="image/*" class="mc-file-input">
+                                <span class="mc-file-label">{{ !empty($company->img) ? 'Change PDF logo…' : 'Choose PDF logo…' }}</span>
                             </div>
                         </div>
                     </div>
