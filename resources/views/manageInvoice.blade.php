@@ -247,7 +247,7 @@
                             </div>
                             <div class="ml-card-body">
                                 <div class="row g-3">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <label class="ml-label">Invoice Number <span class="text-danger">*</span></label>
                                         <div class="cf-input-box">
                                             <span class="cf-icon"><i class="bx bx-hash"></i></span>
@@ -255,7 +255,7 @@
                                                    value="{{ old('invoice_number', $invoice->invoice_number ?? '') }}" required placeholder="e.g. INV-001">
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <label class="ml-label">Type <span class="text-danger">*</span></label>
                                         <div class="cf-input-box">
                                             <span class="cf-icon"><i class="bx bx-category"></i></span>
@@ -266,7 +266,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <label class="ml-label">Status</label>
                                         <div class="cf-input-box">
                                             <span class="cf-icon"><i class="bx bx-info-circle"></i></span>
@@ -277,7 +277,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <label class="ml-label">Invoice Date <span class="text-danger">*</span></label>
                                         <div class="cf-input-box">
                                             <span class="cf-icon"><i class="bx bx-calendar"></i></span>
@@ -285,7 +285,7 @@
                                                    value="{{ old('date', $invoice && $invoice->date ? \Carbon\Carbon::parse($invoice->date)->format('Y-m-d') : now()->format('Y-m-d')) }}" required>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <label class="ml-label">Due Date</label>
                                         <div class="cf-input-box">
                                             <span class="cf-icon"><i class="bx bx-calendar-check"></i></span>
@@ -293,7 +293,7 @@
                                                    value="{{ old('due_date', $invoice && $invoice->due_date ? \Carbon\Carbon::parse($invoice->due_date)->format('Y-m-d') : '') }}">
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <label class="ml-label">Reference / PO #</label>
                                         <div class="cf-input-box">
                                             <span class="cf-icon"><i class="bx bx-note"></i></span>
@@ -302,7 +302,7 @@
                                                    value="{{ old('reference', $invoice->reference ?? '') }}">
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <label class="ml-label">Linked Project</label>
                                         <div class="cf-input-box">
                                             <span class="cf-icon"><i class="bx bx-folder-open"></i></span>
