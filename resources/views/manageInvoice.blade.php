@@ -652,18 +652,18 @@
                             </div>
                             <div class="ml-card-body">
                                 <div class="row g-3">
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <label class="ml-label">Admin Note (Internal)</label>
                                         <div class="cf-input-box cf-textarea-box">
-                                            <span class="cf-icon"><i class="bx bx-lock-alt"></i></span>
+                                            <!-- <span class="cf-icon"><i class="bx bx-lock-alt"></i></span> -->
                                             <textarea name="admin_note" rows="2" class="mp-autoresize"
                                                       placeholder="Not visible to client">{{ old('admin_note', $invoice->admin_note ?? '') }}</textarea>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <label class="ml-label">Client Note (on PDF)</label>
                                         <div class="cf-input-box cf-textarea-box">
-                                            <span class="cf-icon"><i class="bx bx-message-square-dots"></i></span>
+                                            <!-- <span class="cf-icon"><i class="bx bx-message-square-dots"></i></span> -->
                                             <textarea name="client_note" rows="2" class="mp-autoresize"
                                                       placeholder="Visible on PDF">{{ old('client_note', $invoice->client_note ?? '') }}</textarea>
                                         </div>
@@ -671,7 +671,7 @@
                                     <div class="col-12">
                                         <label class="ml-label">Terms &amp; Conditions</label>
                                         <div class="cf-input-box cf-textarea-box">
-                                            <span class="cf-icon"><i class="bx bx-file-blank"></i></span>
+                                            <!-- <span class="cf-icon"><i class="bx bx-file-blank"></i></span> -->
                                             <textarea name="terms" rows="2" class="mp-autoresize"
                                                       placeholder="Terms and conditions">{{ old('terms', $invoice->terms ?? '') }}</textarea>
                                         </div>
