@@ -115,8 +115,8 @@
 
         </div>
 
-        {{-- ═══════════════════════ QUICK ACTIONS + REVENUE ROW ═══════════════════════ --}}
-        <div class="db-grid-1-2 mb-28">
+        {{-- ═══════════════════════ QUICK ACTIONS | REVENUE | LEAD PIPELINE ═══════════════════════ --}}
+        <div class="db-grid-3 mb-28">
 
             {{-- Quick Actions --}}
             <div class="db-card">
@@ -124,7 +124,7 @@
                     <span class="db-card-icon" style="color:#8b5cf6; background:rgba(139,92,246,.08);"><i class="bx bx-bolt-circle"></i></span>
                     <span class="db-card-title">Quick Actions</span>
                 </div>
-                <div class="db-qa-grid">
+                <div class="db-qa-grid db-qa-grid-2col">
                     @if(in_array('leads', $roleArray) || in_array('All', $roleArray) || Auth::user()->role == '0')
                     <a href="/manage-lead" class="db-qa-btn" style="--qa:#34a853;">
                         <i class="bx bx-plus-circle"></i>
@@ -180,10 +180,38 @@
                     <span class="db-card-icon" style="color:#34a853; background:rgba(52,168,83,.08);"><i class="bx bx-line-chart"></i></span>
                     <span class="db-card-title">Revenue Growth</span>
                     <span class="db-card-badge" style="background:#e8f5e9; color:#2e7d32;">{{ date('Y') }}</span>
-                    <span class="ms-auto db-card-sub">Monthly revenue from invoices</span>
+                    <span class="ms-auto db-card-sub">Monthly revenue</span>
                 </div>
                 <div class="db-chart-wrap">
                     <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+
+            {{-- Lead Pipeline Donut --}}
+            <div class="db-card">
+                <div class="db-card-head">
+                    <span class="db-card-icon" style="color:#006666; background:rgba(0,102,102,.08);"><i class="bx bx-pie-chart-alt-2"></i></span>
+                    <span class="db-card-title">Lead Pipeline</span>
+                    <span class="db-card-badge" style="background:#e6f4f4; color:#006666;">{{ count($leads) }} Total</span>
+                </div>
+                <div class="db-donut-wrap">
+                    <div class="db-donut-canvas-area">
+                        <canvas id="leadsDonutChart"></canvas>
+                        <div class="db-donut-center">
+                            <div class="db-donut-num">{{ count($leads) }}</div>
+                            <div class="db-donut-sub">Leads</div>
+                        </div>
+                    </div>
+                    <div class="db-donut-legend">
+                        @foreach($leadStatusMap as $stat => $meta)
+                        @php $cnt = $leadByStatus[$stat] ?? 0; @endphp
+                        <div class="db-legend-item">
+                            <span class="db-legend-dot" style="background:{{ $meta['color'] }};"></span>
+                            <span class="db-legend-label">{{ $meta['label'] }}</span>
+                            <span class="db-legend-val">{{ $cnt }}</span>
+                        </div>
+                        @endforeach
+                    </div>
                 </div>
             </div>
 
@@ -249,47 +277,17 @@
 
         </div>
 
-        {{-- ═══════════════════════ LEAD PIPELINE + LIVE FEED ROW ═══════════════════════ --}}
-        <div class="db-grid-1-2 mb-28">
-
-            {{-- Lead Pipeline Donut --}}
-            <div class="db-card">
-                <div class="db-card-head">
-                    <span class="db-card-icon" style="color:#006666; background:rgba(0,102,102,.08);"><i class="bx bx-pie-chart-alt-2"></i></span>
-                    <span class="db-card-title">Lead Pipeline</span>
-                    <span class="db-card-badge" style="background:#e6f4f4; color:#006666;">{{ count($leads) }} Total</span>
-                </div>
-                <div class="db-donut-wrap">
-                    <div class="db-donut-canvas-area">
-                        <canvas id="leadsDonutChart"></canvas>
-                        <div class="db-donut-center">
-                            <div class="db-donut-num">{{ count($leads) }}</div>
-                            <div class="db-donut-sub">Leads</div>
-                        </div>
-                    </div>
-                    <div class="db-donut-legend">
-                        @foreach($leadStatusMap as $stat => $meta)
-                        @php $cnt = $leadByStatus[$stat] ?? 0; @endphp
-                        <div class="db-legend-item">
-                            <span class="db-legend-dot" style="background:{{ $meta['color'] }};"></span>
-                            <span class="db-legend-label">{{ $meta['label'] }}</span>
-                            <span class="db-legend-val">{{ $cnt }}</span>
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-
-            {{-- Live Activity Feed --}}
+        {{-- ═══════════════════════ LIVE FEED ROW ═══════════════════════ --}}
+        <div class="mb-28">
             <div class="db-card" style="display:flex; flex-direction:column;">
                 <div class="db-card-head">
                     <span class="db-card-icon" style="color:#ea4335; background:rgba(234,67,53,.08);"><i class="bx bx-pulse"></i></span>
-                    <span class="db-card-title">Live Feed</span>
+                    <span class="db-card-title">Live Activity Feed</span>
                     <span class="db-live-dot"></span>
                     <span class="db-card-badge ms-1" style="background:#fdecea; color:#ea4335; font-size:0.58rem; letter-spacing:.5px;">LIVE</span>
                 </div>
-                <div class="db-feed-wrap" style="flex:1; overflow-y:auto; max-height:300px;">
-                    @forelse(collect($activities ?? [])->take(15) as $act)
+                <div class="db-feed-wrap db-feed-horiz">
+                    @forelse(collect($activities ?? [])->take(12) as $act)
                     <div class="db-feed-item">
                         <div class="db-feed-avatar">{{ strtoupper(substr($act->user_name ?? 'S', 0, 1)) }}</div>
                         <div class="db-feed-body">
@@ -306,7 +304,6 @@
                     @endforelse
                 </div>
             </div>
-
         </div>
 
         @else
@@ -472,12 +469,29 @@
 
 /* ── Grid Layouts ── */
 .db-grid-2   { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.db-grid-3   { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
 .db-grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
 .db-grid-1-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; }
 .db-grid-3-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; }
 .mb-28 { margin-bottom: 22px; }
 
-/* ── CRM Alerts ── */
+/* ── Quick Actions — 2-col when inside narrow card ── */
+.db-qa-grid-2col { grid-template-columns: repeat(2, 1fr) !important; }
+
+/* ── Horizontal Live Feed ── */
+.db-feed-horiz {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1px;
+    background: #f1f3f4;
+    max-height: 120px;
+    overflow: hidden;
+}
+.db-feed-horiz .db-feed-item {
+    background: #fff;
+    padding: 12px 16px;
+    border-bottom: none;
+}
 .db-alerts-body { padding: 6px 0; }
 .db-alert-row {
     display: flex; align-items: center; gap: 10px;
@@ -542,11 +556,12 @@
 @media (max-width: 1200px) {
     .db-kpi-row { grid-template-columns: repeat(3, 1fr); }
     .db-grid-2-1, .db-grid-1-2, .db-grid-3-2 { grid-template-columns: 1fr; }
+    .db-grid-3 { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 900px) {
     .db-kpi-row { grid-template-columns: repeat(2, 1fr); }
-    .db-grid-2  { grid-template-columns: 1fr; }
-    .db-qa-grid { grid-template-columns: repeat(3, 1fr); }
+    .db-grid-2, .db-grid-3 { grid-template-columns: 1fr; }
+    .db-qa-grid, .db-qa-grid-2col { grid-template-columns: repeat(3, 1fr) !important; }
     .db-hero    { flex-direction: column; gap: 16px; align-items: flex-start; }
     .db-hero-right { align-self: stretch; text-align: left; }
 }
