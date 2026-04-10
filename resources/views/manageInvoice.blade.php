@@ -61,7 +61,7 @@
             flex: 1; border: none !important; outline: none !important;
             box-shadow: none !important; background: transparent;
             font-size: .875rem; color: #202124; padding: 0 10px; height: 100%;
-            appearance: none; -webkit-appearance: none;
+            appearance: none; -webkit-appearance: none; width: 100%; min-width: 0;
         }
         .cf-input-box select {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%235f6368'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
@@ -342,7 +342,7 @@
                                         <div class="cf-client-wrap">
                                             <span class="cf-icon"><i class="bx bx-user-pin"></i></span>
                                             <select class="selectpicker" id="client_id" name="client_id"
-                                                    data-live-search="true" data-width="auto"
+                                                    data-live-search="true" data-width="100%"
                                                     data-container="body" required>
                                                 <option value="">Search for a client...</option>
                                                 @foreach($clients as $client)
