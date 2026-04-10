@@ -281,8 +281,15 @@ class LeadController extends Controller
             $leadSingle->location = ($location ?? '');
             $leadSingle->website = ($request->website ?? '');
             
-            // Auto-Assignment Logic
-            $leadSingle->assigned = $request->assigned ?: $this->leadService->getLeastLoadedUser(Auth::user()->cid);
+            // Auto-Assignment Logic: If current user is Sales, assign to self
+            $roles = session('roles'); 
+            $isSales = $roles && str_contains(strtolower($roles->title), 'sales');
+
+            if ($isSales) {
+                $leadSingle->assigned = Auth::id();
+            } else {
+                $leadSingle->assigned = $request->assigned ?: $this->leadService->getLeastLoadedUser(Auth::user()->cid);
+            }
 
             // Lead Scoring Algorithm
             $leadSingle->score = $this->leadService->calculateScore($request->all());
@@ -1197,6 +1204,9 @@ class LeadController extends Controller
         $notUploadedRows = [];
 
         try {
+            $roles = session('roles');
+            $isSales = $roles && str_contains(strtolower($roles->title), 'sales');
+
             // Open the file and read its contents
             if (($handle = fopen($request->file('impLeadFile')->getRealPath(), 'r')) !== FALSE) {
                 // Skip the header row
@@ -1235,7 +1245,7 @@ class LeadController extends Controller
                     $industry = $data[8] ?? null;
                     $location = json_encode(explode(',', ($data[9] ?? '')));
                     $website = $data[10] ?? null;
-                    $assigned = $data[11] ?? null;
+                    $assigned = $isSales ? Auth::id() : ($data[11] ?? null);
                     $purpose = $data[12] ?? null;
                     $values = $data[13] ?? null;
                     $language = $data[14] ?? null;
