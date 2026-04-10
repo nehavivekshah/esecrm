@@ -43,6 +43,73 @@ class UserController extends Controller
         ]));
     }
 
+    public function manageAttendance(Request $request)
+    {
+        $authUser = Auth::user();
+        $roles    = session('roles');
+        $isAdmin  = $roles && $roles->title === 'Admin';
+
+        $id      = $request->input('id');
+        $userId  = $request->input('user_id');
+        $date    = $request->input('date');
+
+        // Look up by primary key OR by user_id + date combination
+        if ($id) {
+            $att = Attendances::find($id);
+        } elseif ($userId && $date) {
+            $att = Attendances::where('user_id', $userId)->where('date', $date)->first();
+        } else {
+            $att = null;
+        }
+
+        // For admin: allow picking any user in their company
+        $users = $isAdmin
+            ? User::select('id', 'name')->where('cid', $authUser->cid)->get()
+            : collect([$authUser]);
+
+        return view('manageAttendance', [
+            'attendance' => $att,
+            'users'      => $users,
+            'isAdmin'    => $isAdmin,
+            'authUser'   => $authUser,
+            'prefillUser'=> $userId,
+            'prefillDate'=> $date,
+        ]);
+    }
+
+    public function manageAttendancePost(Request $request)
+    {
+        $authUser = Auth::user();
+        $roles    = session('roles');
+        $isAdmin  = $roles && $roles->title === 'Admin';
+
+        $request->validate([
+            'user_id'   => 'required|integer',
+            'date'      => 'required|date',
+            'check_in'  => 'nullable|date_format:H:i',
+            'check_out' => 'nullable|date_format:H:i',
+            'method'    => 'nullable|string|max:50',
+            'status'    => 'required|string|max:20',
+            'remarks'   => 'nullable|string|max:500',
+        ]);
+
+        // Non-admins can only save their own records
+        $userId = $isAdmin ? $request->input('user_id') : $authUser->id;
+
+        Attendances::updateOrCreate(
+            ['user_id' => $userId, 'date' => $request->input('date')],
+            [
+                'check_in'  => $request->input('check_in')  ?: null,
+                'check_out' => $request->input('check_out') ?: null,
+                'method'    => $request->input('method')    ?: null,
+                'status'    => $request->input('status'),
+                'remarks'   => $request->input('remarks')   ?: null,
+            ]
+        );
+
+        return redirect('/attendances')->with('success', 'Attendance record saved successfully.');
+    }
+
     //User Controller
     public function users(Request $request)
     {

@@ -18,6 +18,7 @@ use App\Models\Projects;
 use App\Models\Invoices;
 use App\Models\Contracts;
 use App\Models\Enquiry;
+use App\Models\Attendances;
 
 class AjaxController extends Controller
 {
@@ -222,6 +223,14 @@ class AjaxController extends Controller
                 }
             } else {
                 return response()->json(['error' => 'Recovery not found.'], 404);
+            }
+        } elseif (($request->attendanceDelete ?? '') == 'attendanceDelete') {
+            $attendance = Attendances::find($id);
+            if ($attendance) {
+                $attendance->delete();
+                return response()->json(['success' => 'Attendance record deleted successfully.']);
+            } else {
+                return response()->json(['error' => 'Attendance record not found.'], 404);
             }
         } else {
             // Handle other operations here, if needed

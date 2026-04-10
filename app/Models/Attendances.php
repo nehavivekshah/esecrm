@@ -7,6 +7,21 @@
     class Attendances extends Model
     {
         use HasFactory;
+
+        protected $fillable = [
+            'user_id',
+            'date',
+            'check_in',
+            'check_out',
+            'method',
+            'status',
+            'remarks',
+        ];
+
+        public function user()
+        {
+            return $this->belongsTo(\App\Models\User::class, 'user_id');
+        }
     }
 
 ?>

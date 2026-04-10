@@ -110,33 +110,36 @@ class UserService
             $expectedHours = Carbon::parse($end)->diffInHours(Carbon::parse($start));
 
             foreach ($dates as $date) {
-                $dayName = Carbon::parse($date)->format('l');
-                $checkIn = $checkOut = $method = $remarks = '-';
+                $dayName    = Carbon::parse($date)->format('l');
+                $checkIn    = $checkOut = $method = $remarks = '-';
                 $workedHours = 0;
-                $type = 'Working Day';
-                $status = 'Absent';
+                $type       = 'Working Day';
+                $status     = 'Absent';
+                $attId      = null;
 
                 if ($userAttendance->has($date)) {
-                    $att = $userAttendance[$date];
-                    $checkIn = $att->check_in ?? '-';
+                    $att    = $userAttendance[$date];
+                    $attId  = $att->id;
+                    $checkIn  = $att->check_in  ?? '-';
                     $checkOut = $att->check_out ?? '-';
-                    $method = $att->method ?? '-';
-                    $remarks = $att->remarks ?? '-';
-                    $status = $att->status;
+                    $method   = $att->method    ?? '-';
+                    $remarks  = $att->remarks   ?? '-';
+                    $status   = $att->status;
 
                     if ($checkIn !== '-' && $checkOut !== '-') {
-                        $minutes = Carbon::parse($checkOut)->diffInMinutes(Carbon::parse($checkIn));
+                        $minutes     = Carbon::parse($checkOut)->diffInMinutes(Carbon::parse($checkIn));
                         $workedHours = round($minutes / 60, 2);
                     }
                 } elseif (isset($holidays[$date])) {
                     $status = 'Holiday';
-                    $type = 'Holiday: ' . $holidays[$date]->title;
+                    $type   = 'Holiday: ' . $holidays[$date]->title;
                 } elseif ($dayName === 'Sunday') {
                     $status = 'Holiday';
-                    $type = 'Sunday';
+                    $type   = 'Sunday';
                 } else {
-                    $status = 'Leave';
-                    $type = 'Leave';
+                    // No attendance record + not a holiday → mark Absent
+                    $status = 'Absent';
+                    $type   = 'Absent';
                 }
 
                 // Update summary counters
@@ -152,18 +155,19 @@ class UserService
                 }
 
                 $final[] = [
-                    'user' => $u->name,
-                    'user_id' => $uid,
-                    'date' => $date,
-                    'day' => $dayName,
-                    'status' => $status,
-                    'type' => $type,
-                    'check_in' => $checkIn,
-                    'check_out' => $checkOut,
-                    'method' => $method,
-                    'remarks' => $remarks,
+                    'user'           => $u->name,
+                    'user_id'        => $uid,
+                    'date'           => $date,
+                    'day'            => $dayName,
+                    'status'         => $status,
+                    'type'           => $type,
+                    'check_in'       => $checkIn,
+                    'check_out'      => $checkOut,
+                    'method'         => $method,
+                    'remarks'        => $remarks,
                     'expected_hours' => $expectedHours,
-                    'worked_hours' => $workedHours,
+                    'worked_hours'   => $workedHours,
+                    'att_id'         => $attId,
                 ];
             }
         }
