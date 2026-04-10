@@ -108,7 +108,7 @@
                             <th>Status</th>
                             <th class="m-none">Tags</th>
                             @if(in_array('proposals_edit',$roleArray) || in_array('proposals_delete',$roleArray) || in_array('All',$roleArray))
-                                <th class="text-end position-sticky end-0">Action</th>
+                                <th class="text-end position-sticky end-0" style="background:#f1f5f9; z-index:2; box-shadow: -2px 0 5px rgba(0,0,0,0.02);">Action</th>
                             @endif
                         </tr>
                     </thead>
@@ -202,24 +202,25 @@
 
                                 {{-- Actions --}}
                                 @if(in_array('proposals_edit',$roleArray) || in_array('proposals_delete',$roleArray) || in_array('All',$roleArray))
-                                    <td class="text-end position-sticky end-0">
-                                        <div class="d-flex align-items-center justify-content-end gap-1">
+                                    <td class="text-end position-sticky end-0" style="background:#fff; z-index:1; box-shadow: -2px 0 5px rgba(0,0,0,0.02);">
+                                        <div class="d-flex align-items-center justify-content-end gap-1" style="flex-wrap: nowrap;">
                                             <a href="/quotation/{{ $proposal->id }}/{{ md5($proposal->client_email) }}"
                                                class="btn kb-action-btn" title="View" target="_blank"
-                                               style="background:rgba(26,115,232,0.08);color:#1a73e8;">
+                                               style="background:rgba(26,115,232,0.08);color:#1a73e8; flex-shrink: 0;">
                                                 <i class="bx bx-show"></i>
                                             </a>
                                             @if(in_array('proposals_edit',$roleArray) || in_array('All',$roleArray))
                                                 <a href="/manage-proposal?id={{ $proposal->id }}"
                                                    class="btn kb-action-btn" title="Edit"
-                                                   style="background:rgba(0,102,102,0.08);color:#006666;">
+                                                   style="background:rgba(0,102,102,0.08);color:#006666; flex-shrink: 0;">
                                                     <i class="bx bx-edit"></i>
                                                 </a>
                                             @endif
                                             @if(in_array('proposals_delete',$roleArray) || in_array('All',$roleArray))
                                                 <a href="javascript:void(0)"
                                                    class="btn kb-action-btn kb-action-del delete" title="Delete"
-                                                   id="{{ $proposal->id }}" data-page="proposalDelete">
+                                                   id="{{ $proposal->id }}" data-page="proposalDelete"
+                                                   style="flex-shrink: 0;">
                                                     <i class="bx bx-trash"></i>
                                                 </a>
                                             @endif
