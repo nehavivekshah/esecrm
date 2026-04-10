@@ -67,14 +67,20 @@ class UserController extends Controller
             ? User::select('id', 'name')->where('cid', $authUser->cid)->get()
             : collect([$authUser]);
 
-        return view('manageAttendance', [
-            'attendance' => $att,
-            'users'      => $users,
-            'isAdmin'    => $isAdmin,
-            'authUser'   => $authUser,
-            'prefillUser'=> $userId,
-            'prefillDate'=> $date,
-        ]);
+        $viewData = [
+            'attendance'  => $att,
+            'users'       => $users,
+            'isAdmin'     => $isAdmin,
+            'authUser'    => $authUser,
+            'prefillUser' => $userId,
+            'prefillDate' => $date,
+        ];
+
+        if ($request->has('ajax')) {
+            return view('manageAttendanceForm', $viewData);
+        }
+
+        return view('manageAttendance', $viewData);
     }
 
     public function manageAttendancePost(Request $request)
