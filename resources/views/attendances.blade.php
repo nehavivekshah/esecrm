@@ -81,8 +81,7 @@
             {{-- ── Toolbar & Filters ── --}}
             <div class="leads-toolbar mb-3">
                 <div class="leads-toolbar-left">
-                    <form method="GET" id="filterForm" class="d-flex align-items-center gap-2 m-0 p-0"
-                        style="flex-wrap:wrap;">
+                    <form method="GET" id="filterForm" class="d-flex align-items-center gap-2 m-0 p-0">
                         @if($isAdmin)
                             <select name="user_id" id="user_id"
                                 class="form-select form-select-sm border-0 bg-light fw-600 att-select"
