@@ -1064,7 +1064,7 @@
             }, 80 + i * 60);
         });
 
-        // Chart configs storage (must be declared before @if so zoom modal can always access it)
+        // Chart configs storage (declared before the role check so zoom modal can always access it)
         const _dbChartConfigs = {};
 
         @if(Auth::user()->role != 'master')
@@ -1172,7 +1172,7 @@
         @endif
 
         // \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 ZOOM MODAL \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
-        // NOTE: _dbChartConfigs already declared above inside @if block; alias here for safety
+        // NOTE: _dbChartConfigs already declared above; zoom works for all roles
         let _dbZoomChart = null;
 
         function dbZoom(type) {
