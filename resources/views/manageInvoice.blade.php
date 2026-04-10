@@ -341,14 +341,21 @@
                                                     data-container="body" required>
                                                 <option value="">Search for a client...</option>
                                                 @foreach($clients as $client)
-                                                    @php $location = json_decode(($client->location ?? '["","","","",""]'), true) @endphp
+                                                    @php 
+                                                        $rawLoc = $client->location ?? '';
+                                                        $addrStr = $rawLoc;
+                                                        if (str_starts_with(trim($rawLoc), '[')) {
+                                                            $locArr = json_decode($rawLoc, true);
+                                                            $addrStr = is_array($locArr) ? ($locArr[0] ?? '') : $rawLoc;
+                                                        }
+                                                    @endphp
                                                     <option value="{{ $client->id }}"
                                                             data-name="{{ $client->name ?? '' }}"
                                                             data-company="{{ $client->company ?? '' }}"
                                                             data-email="{{ $client->email ?? '' }}"
                                                             data-phone="{{ $client->mob ?? '' }}"
                                                             data-gstno="{{ $client->gstno ?? '' }}"
-                                                            data-address="{{ $location[0] ?? '' }}"
+                                                            data-address="{{ $addrStr }}"
                                                             @if((old('client_id', $invoice->client_id ?? '') == $client->id) || (!empty($project_id) && $client->project_id == $project_id)) selected @endif>
                                                         {{ $client->name }} ({{ $client->company }})
                                                     </option>
@@ -1107,10 +1114,10 @@
                 const opt = $(this).find(':selected');
                 const clientId = opt.val();
                 if (clientId) {
-                    const addr = opt.data('address') || '';
+                    const addr = opt.attr('data-address') || '';
                     $('#billing_address').val(addr);
                     $('#shipping_address').val(addr);
-                    $('#client_gst').val(opt.data('gstno') || '');
+                    $('#client_gst').val(opt.attr('data-gstno') || '');
 
                     // Load projects for this client
                     $('#projectDropdown').html('<option value="">Loading projects…</option>').prop('disabled', true);
