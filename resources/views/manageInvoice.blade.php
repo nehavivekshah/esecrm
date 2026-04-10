@@ -302,24 +302,6 @@
                                                    value="{{ old('reference', $invoice->reference ?? '') }}">
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
-                                        <label class="ml-label">Linked Project</label>
-                                        <div class="cf-input-box">
-                                            <span class="cf-icon"><i class="bx bx-folder-open"></i></span>
-                                            <select name="project_id" id="projectDropdown" style="color:#5f6368;">
-                                                <option value="">— Select Client First —</option>
-                                                @if(!empty($invoice->project_id))
-                                                    <option value="{{ $invoice->project_id }}" selected>Loading…</option>
-                                                @endif
-                                            </select>
-                                        </div>
-                                        <div id="projectValueBadge" class="mt-1" style="display:none;">
-                                            <span style="font-size:0.72rem;color:#006666;font-weight:600;">
-                                                <i class="bx bx-rupee"></i>
-                                                <span id="projectValueText">0</span> — Contract Value
-                                            </span>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -337,7 +319,7 @@
                             </div>
                             <div class="ml-card-body">
                                 <div class="row g-3">
-                                    <div class="col-12">
+                                    <div class="col-md-3">
                                         <label class="ml-label">Select Client <span class="text-danger">*</span></label>
                                         <div class="cf-client-wrap">
                                             <span class="cf-icon"><i class="bx bx-user-pin"></i></span>
@@ -372,23 +354,25 @@
                                             </button>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <label class="ml-label">Billing Address</label>
-                                        <div class="cf-input-box cf-textarea-box">
-                                            <span class="cf-icon"><i class="bx bx-map"></i></span>
-                                            <textarea name="billing_address" id="billing_address" rows="2"
-                                                      placeholder="Standard billing address" class="mp-autoresize">{{ old('billing_address', $invoice->billing_address ?? '') }}</textarea>
+                                    <div class="col-md-3">
+                                        <label class="ml-label">Linked Project</label>
+                                        <div class="cf-input-box">
+                                            <span class="cf-icon"><i class="bx bx-folder-open"></i></span>
+                                            <select name="project_id" id="projectDropdown" style="color:#5f6368;">
+                                                <option value="">— Select Client First —</option>
+                                                @if(!empty($invoice->project_id))
+                                                    <option value="{{ $invoice->project_id }}" selected>Loading…</option>
+                                                @endif
+                                            </select>
+                                        </div>
+                                        <div id="projectValueBadge" class="mt-1" style="display:none;">
+                                            <span style="font-size:0.72rem;color:#006666;font-weight:600;">
+                                                <i class="bx bx-rupee"></i>
+                                                <span id="projectValueText">0</span> — Contract Value
+                                            </span>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <label class="ml-label">Shipping Address</label>
-                                        <div class="cf-input-box cf-textarea-box">
-                                            <span class="cf-icon"><i class="bx bx-map-pin"></i></span>
-                                            <textarea name="shipping_address" id="shipping_address" rows="2"
-                                                      placeholder="Standard shipping address" class="mp-autoresize">{{ old('shipping_address', $invoice->shipping_address ?? '') }}</textarea>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <label class="ml-label">GST No.</label>
                                         <div class="cf-input-box">
                                             <span class="cf-icon"><i class="bx bx-id-card"></i></span>
@@ -396,11 +380,27 @@
                                                    value="{{ old('client_gst', $invoice->client_gstno ?? '') }}" placeholder="GST Number">
                                         </div>
                                     </div>
-                                    <div class="col-md-8 d-flex align-items-center">
+                                    <div class="col-md-3 d-flex align-items-center">
                                         <div class="form-check mt-3">
                                             <input type="checkbox" class="form-check-input" id="recurring_invoice"
                                                    name="recurring_invoice" value="1" @if(old('recurring_invoice', $invoice->recurring_invoice ?? false)) checked @endif>
                                             <label class="form-check-label fw-600 text-muted" for="recurring_invoice" style="font-size:0.85rem;">Enable Recurring Invoice</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="ml-label">Billing Address</label>
+                                        <div class="cf-input-box cf-textarea-box">
+                                            <!-- <span class="cf-icon"><i class="bx bx-map"></i></span> -->
+                                            <textarea name="billing_address" id="billing_address" rows="2"
+                                                      placeholder="Standard billing address" class="mp-autoresize">{{ old('billing_address', $invoice->billing_address ?? '') }}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="ml-label">Shipping Address</label>
+                                        <div class="cf-input-box cf-textarea-box">
+                                            <!-- <span class="cf-icon"><i class="bx bx-map-pin"></i></span> -->
+                                            <textarea name="shipping_address" id="shipping_address" rows="2"
+                                                      placeholder="Standard shipping address" class="mp-autoresize">{{ old('shipping_address', $invoice->shipping_address ?? '') }}</textarea>
                                         </div>
                                     </div>
                                 </div>
