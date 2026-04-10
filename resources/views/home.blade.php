@@ -353,18 +353,19 @@
             @endif
 
         </div>{{-- end .db-wrap --}}
-    </section>
 
-    {{-- ═══════════ ZOOM MODAL ═══════════ --}}
-    <div id="dbZoomModal" class="dbzm-overlay" onclick="if(event.target===this)dbZoomClose()">
-        <div class="dbzm-dialog">
-            <div class="dbzm-header">
-                <span id="dbzmTitle" class="dbzm-title"></span>
-                <button class="dbzm-close" onclick="dbZoomClose()"><i class="bx bx-x"></i></button>
+        {{-- ═══════════ ZOOM MODAL ═══════════ --}}
+        <div id="dbZoomModal" class="dbzm-overlay" onclick="if(event.target===this)dbZoomClose()">
+            <div class="dbzm-dialog">
+                <div class="dbzm-header">
+                    <span id="dbzmTitle" class="dbzm-title"></span>
+                    <button class="dbzm-close" onclick="dbZoomClose()"><i class="bx bx-x"></i></button>
+                </div>
+                <div id="dbzmBody" class="dbzm-body"></div>
             </div>
-            <div id="dbzmBody" class="dbzm-body"></div>
         </div>
-    </div>
+
+    </section>
 
     <style>
         /* ═══════════ DASHBOARD SHELL ═══════════ */
@@ -1063,6 +1064,9 @@
             }, 80 + i * 60);
         });
 
+        // Chart configs storage (must be declared before @if so zoom modal can always access it)
+        const _dbChartConfigs = {};
+
         @if(Auth::user()->role != 'master')
             // ── Revenue Line Chart ──
             const revenueCtx = document.getElementById('revenueChart').getContext('2d');
@@ -1159,7 +1163,7 @@
             new Chart(actCtx, _actCfg);
             _dbChartConfigs.activity = _actCfg;
 
-            // ── Activity date range selector ──
+            // \u2500\u2500 Activity date range selector \u2500\u2500
             document.getElementById('activityDateRange')?.addEventListener('change', function () {
                 const url = new URL(window.location.href);
                 url.searchParams.set('activity_days', this.value);
@@ -1167,11 +1171,9 @@
             });
         @endif
 
-        // ══════════════════════ ZOOM MODAL ══════════════════════
+        // \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 ZOOM MODAL \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+        // NOTE: _dbChartConfigs already declared above inside @if block; alias here for safety
         let _dbZoomChart = null;
-
-        // Stored chart configs built after the original charts are created
-        const _dbChartConfigs = {};
 
         function dbZoom(type) {
             const modal = document.getElementById('dbZoomModal');
@@ -1185,26 +1187,26 @@
                 body.innerHTML = '<div class="db-chart-wrap"><canvas id="zmRevenueChart"></canvas></div>';
                 modal.classList.add('active');
                 requestAnimationFrame(() => {
-                    const cfg = _dbChartConfigs.revenue;
-                    if (cfg) _dbZoomChart = new Chart(document.getElementById('zmRevenueChart'), cfg);
+                    const cfg = (typeof _dbChartConfigs !== 'undefined') ? _dbChartConfigs.revenue : null;
+                    if (cfg) _dbZoomChart = new Chart(document.getElementById('zmRevenueChart'), JSON.parse(JSON.stringify(cfg)));
                 });
             } else if (type === 'activity') {
                 title.textContent = '📊 Activity Monitor';
                 body.innerHTML = '<div class="db-chart-wrap"><canvas id="zmActivityChart"></canvas></div>';
                 modal.classList.add('active');
                 requestAnimationFrame(() => {
-                    const cfg = _dbChartConfigs.activity;
-                    if (cfg) _dbZoomChart = new Chart(document.getElementById('zmActivityChart'), cfg);
+                    const cfg = (typeof _dbChartConfigs !== 'undefined') ? _dbChartConfigs.activity : null;
+                    if (cfg) _dbZoomChart = new Chart(document.getElementById('zmActivityChart'), JSON.parse(JSON.stringify(cfg)));
                 });
             } else if (type === 'alerts') {
                 title.textContent = '⚡ CRM Alerts';
                 const src = document.getElementById('alertsBody');
-                body.appendChild(src.cloneNode(true));
+                if (src) body.appendChild(src.cloneNode(true));
                 modal.classList.add('active');
             } else if (type === 'feed') {
                 title.textContent = '🔴 Live Activity Feed';
                 const src = document.getElementById('feedBody');
-                body.appendChild(src.cloneNode(true));
+                if (src) body.appendChild(src.cloneNode(true));
                 modal.classList.add('active');
             }
         }
