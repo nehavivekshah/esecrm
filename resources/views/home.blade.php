@@ -2,467 +2,688 @@
 @section('title', 'Dashboard - eseCRM')
 
 @section('content')
+@php
+    $company   = session('companies');
+    $roles     = session('roles');
+    $roleArray = array_filter(explode(',', ($roles->features ?? '')));
+    $hour      = (int) date('G');
+    $greeting  = $hour < 12 ? 'Good Morning' : ($hour < 17 ? 'Good Afternoon' : 'Good Evening');
 
-    @php
-        $company = session('companies');
-        $roles = session('roles');
-        $roleArray = explode(',', ($roles->features ?? ''));
+    // Lead status counts for funnel
+    $leadStatusMap = [
+        1 => ['label' => 'New',         'color' => '#1a73e8'],
+        2 => ['label' => 'In Progress',  'color' => '#34a853'],
+        3 => ['label' => 'Follow-up',    'color' => '#fbbc04'],
+        4 => ['label' => 'Negotiation', 'color' => '#ff6d00'],
+        5 => ['label' => 'Converted',   'color' => '#006666'],
+        6 => ['label' => 'Rejected',    'color' => '#ea4335'],
+    ];
+    $leadByStatus = [];
+    foreach ($leads as $lead) {
+        $s = (int)($lead->status ?? 1);
+        $leadByStatus[$s] = ($leadByStatus[$s] ?? 0) + 1;
+    }
+    $totalLeadsForDonut = array_sum($leadByStatus) ?: 1;
+@endphp
 
-        if (!function_exists('formatLeadCount')) {
-            function formatLeadCount($num)
-            {
-                if ($num >= 1000000)
-                    return round($num / 1000000, 1) . 'M';
-                if ($num >= 1000)
-                    return round($num / 1000, 1) . 'K';
-                if ($num >= 99)
-                    return '99+';
-                return $num;
+<section class="task__section">
+    @include('inc.header', ['title' => 'Dashboard'])
+
+    <div class="db-wrap">
+
+        {{-- ═══════════════════════ GREETING BANNER ═══════════════════════ --}}
+        <div class="db-hero">
+            <div class="db-hero-left">
+                <div class="db-hero-greeting">{{ $greeting }}, {{ explode(' ', Auth::user()->name ?? 'User')[0] }} 👋</div>
+                <div class="db-hero-sub">
+                    @if(Auth::user()->role == 'master')
+                        Welcome back to eseCRM Master Panel — {{ date('l, d M Y') }}
+                    @else
+                        Here's what's happening with <strong>{{ $company->name ?? 'your company' }}</strong> today.
+                    @endif
+                </div>
+                @if(Auth::user()->role != 'master')
+                <div class="db-hero-pills">
+                    <span class="db-pill db-pill-green"><i class="bx bx-trending-up"></i> {{ count($leads) }} Leads</span>
+                    <span class="db-pill db-pill-blue"><i class="bx bx-user"></i> {{ count($clients) }} Customers</span>
+                    <span class="db-pill db-pill-yellow"><i class="bx bx-task"></i> {{ $myPendingTasks }} Tasks</span>
+                    @if(count($overdueLeadsList) > 0)
+                        <span class="db-pill db-pill-red"><i class="bx bx-alarm"></i> {{ count($overdueLeadsList) }} Overdue</span>
+                    @endif
+                </div>
+                @endif
+            </div>
+            <div class="db-hero-right">
+                <div class="db-clock" id="dbClock">--:--</div>
+                <div class="db-date-label">{{ date('D, d M Y') }}</div>
+            </div>
+        </div>
+
+        @if(Auth::user()->role != 'master')
+        {{-- ═══════════════════════ KPI CARDS ═══════════════════════ --}}
+        <div class="db-kpi-row">
+
+            <a href="/invoices" class="db-kpi-card" style="--kc:#006666;">
+                <div class="db-kpi-icon"><i class="bx bx-receipt"></i></div>
+                <div class="db-kpi-body">
+                    <div class="db-kpi-val">₹{{ number_format($outstandingInvoices, 0) }}</div>
+                    <div class="db-kpi-label">Outstanding Invoices</div>
+                    <div class="db-kpi-meta"><i class="bx bx-time-five"></i> Pending Payment</div>
+                </div>
+                <div class="db-kpi-glow"></div>
+            </a>
+
+            <a href="/leads" class="db-kpi-card" style="--kc:#34a853;">
+                <div class="db-kpi-icon"><i class="bx bx-trending-up"></i></div>
+                <div class="db-kpi-body">
+                    <div class="db-kpi-val">{{ count($leads) }}</div>
+                    <div class="db-kpi-label">Total Leads</div>
+                    <div class="db-kpi-meta"><i class="bx bx-up-arrow-alt"></i> Sales Pipeline</div>
+                </div>
+                <div class="db-kpi-glow"></div>
+            </a>
+
+            <a href="/proposals" class="db-kpi-card" style="--kc:#ea4335;">
+                <div class="db-kpi-icon"><i class="bx bx-file-blank"></i></div>
+                <div class="db-kpi-body">
+                    <div class="db-kpi-val">{{ $pendingProposals }}</div>
+                    <div class="db-kpi-label">Pending Proposals</div>
+                    <div class="db-kpi-meta"><i class="bx bx-error-circle"></i> Awaiting Action</div>
+                </div>
+                <div class="db-kpi-glow"></div>
+            </a>
+
+            <a href="/task" class="db-kpi-card" style="--kc:#fbbc04;">
+                <div class="db-kpi-icon"><i class="bx bx-task"></i></div>
+                <div class="db-kpi-body">
+                    <div class="db-kpi-val">{{ $myPendingTasks }}</div>
+                    <div class="db-kpi-label">My Tasks</div>
+                    <div class="db-kpi-meta"><i class="bx bx-list-ul"></i> Your Queue</div>
+                </div>
+                <div class="db-kpi-glow"></div>
+            </a>
+
+            <a href="/clients" class="db-kpi-card" style="--kc:#1a73e8;">
+                <div class="db-kpi-icon"><i class="bx bx-user-check"></i></div>
+                <div class="db-kpi-body">
+                    <div class="db-kpi-val">{{ count($clients) }}</div>
+                    <div class="db-kpi-label">Customers</div>
+                    <div class="db-kpi-meta"><i class="bx bx-group"></i> Active Base</div>
+                </div>
+                <div class="db-kpi-glow"></div>
+            </a>
+
+        </div>
+
+        {{-- ═══════════════════════ CHARTS ROW ═══════════════════════ --}}
+        <div class="db-grid-2-1 mb-28">
+
+            {{-- Revenue Line Chart --}}
+            <div class="db-card">
+                <div class="db-card-head">
+                    <span class="db-card-icon" style="color:#34a853; background:rgba(52,168,83,.08);"><i class="bx bx-line-chart"></i></span>
+                    <span class="db-card-title">Revenue Growth</span>
+                    <span class="db-card-badge" style="background:#e8f5e9; color:#2e7d32;">{{ date('Y') }}</span>
+                    <span class="ms-auto db-card-sub">Monthly revenue from invoices</span>
+                </div>
+                <div class="db-chart-wrap">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+
+            {{-- Lead Pipeline Donut --}}
+            <div class="db-card">
+                <div class="db-card-head">
+                    <span class="db-card-icon" style="color:#006666; background:rgba(0,102,102,.08);"><i class="bx bx-pie-chart-alt-2"></i></span>
+                    <span class="db-card-title">Lead Pipeline</span>
+                    <span class="db-card-badge" style="background:#e6f4f4; color:#006666;">{{ count($leads) }} Total</span>
+                </div>
+                <div class="db-donut-wrap">
+                    <div class="db-donut-canvas-area">
+                        <canvas id="leadsDonutChart"></canvas>
+                        <div class="db-donut-center">
+                            <div class="db-donut-num">{{ count($leads) }}</div>
+                            <div class="db-donut-sub">Leads</div>
+                        </div>
+                    </div>
+                    <div class="db-donut-legend">
+                        @foreach($leadStatusMap as $stat => $meta)
+                        @php $cnt = $leadByStatus[$stat] ?? 0; @endphp
+                        <div class="db-legend-item">
+                            <span class="db-legend-dot" style="background:{{ $meta['color'] }};"></span>
+                            <span class="db-legend-label">{{ $meta['label'] }}</span>
+                            <span class="db-legend-val">{{ $cnt }}</span>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        {{-- ═══════════════════════ ACTIVITY + ALERTS ROW ═══════════════════════ --}}
+        <div class="db-grid-2 mb-28">
+
+            {{-- Activity Bar Chart --}}
+            <div class="db-card">
+                <div class="db-card-head">
+                    <span class="db-card-icon" style="color:#1a73e8; background:rgba(26,115,232,.08);"><i class="bx bx-bar-chart-alt-2"></i></span>
+                    <span class="db-card-title">Activity Monitor</span>
+                    <select id="activityDateRange" class="db-select ms-auto">
+                        <option value="7"  {{ $selectedActivityDays == 7  ? 'selected' : '' }}>Last 7 Days</option>
+                        <option value="30" {{ $selectedActivityDays == 30 ? 'selected' : '' }}>Last 30 Days</option>
+                        <option value="90" {{ $selectedActivityDays == 90 ? 'selected' : '' }}>Last 90 Days</option>
+                    </select>
+                </div>
+                <div class="db-chart-wrap">
+                    <canvas id="activityFlowChart"></canvas>
+                </div>
+            </div>
+
+            {{-- CRM Alerts --}}
+            <div class="db-card" style="display:flex; flex-direction:column;">
+                <div class="db-card-head">
+                    <span class="db-card-icon" style="color:#ea4335; background:rgba(234,67,53,.08);"><i class="bx bxs-zap"></i></span>
+                    <span class="db-card-title">CRM Alerts</span>
+                    @if(count($overdueLeadsList) + count($expiringProposals) > 0)
+                    <span class="db-card-badge" style="background:#fdecea; color:#ea4335;">{{ count($overdueLeadsList) + count($expiringProposals) }} Need Attention</span>
+                    @endif
+                </div>
+                <div class="db-alerts-body" style="flex:1; overflow-y:auto; max-height:248px;">
+                    @forelse($overdueLeadsList as $ol)
+                    <a href="/manage-lead?id={{ $ol->id }}" class="db-alert-row db-alert-red">
+                        <div class="db-alert-dot"></div>
+                        <div class="db-alert-text">
+                            <strong>{{ $ol->name }}</strong>
+                            <small>Overdue · {{ \Carbon\Carbon::parse($ol->next_date)->diffForHumans() }}</small>
+                        </div>
+                        <i class="bx bx-chevron-right"></i>
+                    </a>
+                    @endforelse
+                    @forelse($expiringProposals as $ep)
+                    <a href="/manage-proposal?id={{ $ep->id }}" class="db-alert-row db-alert-yellow">
+                        <div class="db-alert-dot"></div>
+                        <div class="db-alert-text">
+                            <strong>{{ Str::limit($ep->subject, 32) }}</strong>
+                            <small>Proposal expires · {{ \Carbon\Carbon::parse($ep->open_till)->diffForHumans() }}</small>
+                        </div>
+                        <i class="bx bx-chevron-right"></i>
+                    </a>
+                    @endforelse
+                    @if(count($overdueLeadsList) == 0 && count($expiringProposals) == 0)
+                    <div class="db-empty-state">
+                        <i class="bx bx-check-shield" style="font-size:2.2rem; color:#34a853;"></i>
+                        <p>All clear! No urgent tasks.</p>
+                    </div>
+                    @endif
+                </div>
+            </div>
+
+        </div>
+
+        {{-- ═══════════════════════ QUICK ACTIONS + LIVE FEED ═══════════════════════ --}}
+        <div class="db-grid-3-2 mb-28">
+
+            {{-- Quick Actions --}}
+            <div class="db-card">
+                <div class="db-card-head">
+                    <span class="db-card-icon" style="color:#8b5cf6; background:rgba(139,92,246,.08);"><i class="bx bx-bolt-circle"></i></span>
+                    <span class="db-card-title">Quick Actions</span>
+                </div>
+                <div class="db-qa-grid">
+                    @if(in_array('leads', $roleArray) || in_array('All', $roleArray) || Auth::user()->role == '0')
+                    <a href="/manage-lead" class="db-qa-btn" style="--qa:#34a853;">
+                        <i class="bx bx-plus-circle"></i>
+                        <span>New Lead</span>
+                    </a>
+                    @endif
+                    @if(in_array('clients', $roleArray) || in_array('All', $roleArray))
+                    <a href="/manage-client" class="db-qa-btn" style="--qa:#1a73e8;">
+                        <i class="bx bx-user-plus"></i>
+                        <span>Add Customer</span>
+                    </a>
+                    @endif
+                    @if(in_array('proposals', $roleArray) || in_array('All', $roleArray))
+                    <a href="/manage-proposal" class="db-qa-btn" style="--qa:#ea4335;">
+                        <i class="bx bx-file-blank"></i>
+                        <span>New Proposal</span>
+                    </a>
+                    @endif
+                    @if(in_array('invoice', $roleArray) || in_array('All', $roleArray))
+                    <a href="/manage-invoice" class="db-qa-btn" style="--qa:#006666;">
+                        <i class="bx bx-receipt"></i>
+                        <span>New Invoice</span>
+                    </a>
+                    @endif
+                    @if(in_array('tasks', $roleArray) || in_array('All', $roleArray))
+                    <a href="/task" class="db-qa-btn" style="--qa:#fbbc04;">
+                        <i class="bx bx-task"></i>
+                        <span>My Tasks</span>
+                    </a>
+                    @endif
+                    @if(in_array('attendances', $roleArray) || in_array('All', $roleArray))
+                    <a href="/attendances" class="db-qa-btn" style="--qa:#0d47a1;">
+                        <i class="bx bx-calendar-check"></i>
+                        <span>Attendance</span>
+                    </a>
+                    @endif
+                    @if(in_array('reports', $roleArray) || in_array('All', $roleArray))
+                    <a href="/reports" class="db-qa-btn" style="--qa:#5f6368;">
+                        <i class="bx bx-line-chart"></i>
+                        <span>Reports</span>
+                    </a>
+                    @endif
+                    <a href="/support" class="db-qa-btn" style="--qa:#8b5cf6;">
+                        <i class="bx bx-help-circle"></i>
+                        <span>Support</span>
+                    </a>
+                </div>
+            </div>
+
+            {{-- Live Activity Feed --}}
+            <div class="db-card" style="display:flex; flex-direction:column;">
+                <div class="db-card-head">
+                    <span class="db-card-icon" style="color:#ea4335; background:rgba(234,67,53,.08);"><i class="bx bx-pulse"></i></span>
+                    <span class="db-card-title">Live Feed</span>
+                    <span class="db-live-dot"></span>
+                    <span class="db-card-badge ms-1" style="background:#fdecea; color:#ea4335; font-size:0.58rem; letter-spacing:.5px;">LIVE</span>
+                </div>
+                <div class="db-feed-wrap" style="flex:1; overflow-y:auto; max-height:300px;">
+                    @forelse(collect($activities ?? [])->take(15) as $act)
+                    <div class="db-feed-item">
+                        <div class="db-feed-avatar">{{ strtoupper(substr($act->user_name ?? 'S', 0, 1)) }}</div>
+                        <div class="db-feed-body">
+                            <div class="db-feed-user">{{ $act->user_name ?? 'System' }}</div>
+                            <div class="db-feed-desc">{{ $act->type }} — {{ Str::limit($act->description ?? 'Action recorded', 48) }}</div>
+                            <div class="db-feed-time">{{ \Carbon\Carbon::parse($act->created_at)->diffForHumans() }}</div>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="db-empty-state">
+                        <i class="bx bx-news" style="font-size:2rem; color:#dadce0;"></i>
+                        <p>No recent activity</p>
+                    </div>
+                    @endforelse
+                </div>
+            </div>
+
+        </div>
+
+        @else
+        {{-- ════════ MASTER VIEW ════════ --}}
+        <div class="db-grid-2 mb-28">
+            <a href="/companies" class="db-kpi-card" style="--kc:#006666;">
+                <div class="db-kpi-icon"><i class="bx bx-building"></i></div>
+                <div class="db-kpi-body">
+                    <div class="db-kpi-val">Companies</div>
+                    <div class="db-kpi-label">Manage all clients</div>
+                    <div class="db-kpi-meta"><i class="bx bx-chevron-right"></i> Open Panel</div>
+                </div>
+            </a>
+            <a href="/subscriptions" class="db-kpi-card" style="--kc:#fbbc04;">
+                <div class="db-kpi-icon"><i class="bx bx-crown"></i></div>
+                <div class="db-kpi-body">
+                    <div class="db-kpi-val">Subscriptions</div>
+                    <div class="db-kpi-label">Plans & Billing</div>
+                    <div class="db-kpi-meta"><i class="bx bx-chevron-right"></i> Open Panel</div>
+                </div>
+            </a>
+            <a href="/enquiries" class="db-kpi-card" style="--kc:#34a853;">
+                <div class="db-kpi-icon"><i class="bx bx-mail-send"></i></div>
+                <div class="db-kpi-body">
+                    <div class="db-kpi-val">Enquiries</div>
+                    <div class="db-kpi-label">Landing Page Leads</div>
+                    <div class="db-kpi-meta"><i class="bx bx-chevron-right"></i> Open Panel</div>
+                </div>
+            </a>
+            <a href="/licensing" class="db-kpi-card" style="--kc:#ea4335;">
+                <div class="db-kpi-icon"><i class="bx bx-file"></i></div>
+                <div class="db-kpi-body">
+                    <div class="db-kpi-val">Licensing</div>
+                    <div class="db-kpi-label">Product Keys</div>
+                    <div class="db-kpi-meta"><i class="bx bx-chevron-right"></i> Open Panel</div>
+                </div>
+            </a>
+        </div>
+        @endif
+
+    </div>{{-- end .db-wrap --}}
+</section>
+
+<style>
+/* ═══════════ DASHBOARD SHELL ═══════════ */
+.db-wrap { padding: 20px 24px 36px; }
+
+/* ── Hero Banner ── */
+.db-hero {
+    background: linear-gradient(135deg, #005757 0%, #007e7e 60%, #34a853 100%);
+    border-radius: 20px; padding: 28px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px; position: relative; overflow: hidden;
+}
+.db-hero::before {
+    content: ''; position: absolute; right: -60px; top: -60px;
+    width: 240px; height: 240px; border-radius: 50%;
+    background: rgba(255,255,255,.06); pointer-events: none;
+}
+.db-hero::after {
+    content: ''; position: absolute; right: 80px; bottom: -80px;
+    width: 180px; height: 180px; border-radius: 50%;
+    background: rgba(255,255,255,.04); pointer-events: none;
+}
+.db-hero-greeting { font-size: 1.5rem; font-weight: 800; color: #fff; }
+.db-hero-sub { font-size: 0.83rem; color: rgba(255,255,255,.75); margin-top: 4px; }
+.db-hero-pills { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 14px; }
+.db-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 0.72rem; font-weight: 700; padding: 4px 11px;
+    border-radius: 20px; background: rgba(255,255,255,.15);
+    color: #fff; border: 1px solid rgba(255,255,255,.25);
+}
+.db-pill i { font-size: 0.82rem; }
+.db-hero-right { text-align: right; flex-shrink: 0; }
+.db-clock { font-size: 2.4rem; font-weight: 800; color: #fff; letter-spacing: 2px; line-height: 1; }
+.db-date-label { font-size: 0.72rem; color: rgba(255,255,255,.7); margin-top: 4px; }
+
+/* ── KPI Cards ── */
+.db-kpi-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px; margin-bottom: 24px;
+}
+.db-kpi-card {
+    position: relative; overflow: hidden;
+    background: #fff; border-radius: 16px;
+    border: 1px solid #e8eaed;
+    padding: 18px 18px 16px;
+    display: flex; align-items: center; gap: 14px;
+    text-decoration: none; transition: transform .18s, box-shadow .18s;
+    cursor: pointer;
+}
+.db-kpi-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,.10); }
+.db-kpi-glow {
+    position: absolute; right: -20px; top: -20px;
+    width: 80px; height: 80px; border-radius: 50%;
+    background: var(--kc); opacity: .06; pointer-events: none;
+}
+.db-kpi-icon {
+    width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0;
+    background: color-mix(in srgb, var(--kc) 12%, transparent);
+    color: var(--kc); font-size: 1.4rem;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid color-mix(in srgb, var(--kc) 18%, transparent);
+}
+.db-kpi-body { min-width: 0; }
+.db-kpi-val  { font-size: 1.35rem; font-weight: 800; color: #202124; line-height: 1.1; }
+.db-kpi-label{ font-size: 0.72rem; color: #5f6368; margin-top: 2px; font-weight: 500; }
+.db-kpi-meta {
+    display: inline-flex; align-items: center; gap: 3px;
+    font-size: 0.65rem; font-weight: 700; color: var(--kc);
+    background: color-mix(in srgb, var(--kc) 10%, transparent);
+    border-radius: 20px; padding: 2px 8px; margin-top: 5px;
+}
+
+/* ── Generic Card ── */
+.db-card {
+    background: #fff; border: 1px solid #e8eaed;
+    border-radius: 18px; overflow: hidden;
+    transition: box-shadow .18s;
+}
+.db-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,.07); }
+.db-card-head {
+    display: flex; align-items: center; gap: 8px;
+    padding: 14px 18px 12px; border-bottom: 1px solid #f1f3f4;
+    flex-wrap: wrap;
+}
+.db-card-icon {
+    width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
+    font-size: 1.05rem; display: flex; align-items: center; justify-content: center;
+}
+.db-card-title { font-size: 0.83rem; font-weight: 700; color: #202124; }
+.db-card-badge {
+    font-size: 0.64rem; font-weight: 700; padding: 2px 8px;
+    border-radius: 20px; white-space: nowrap;
+}
+.db-card-sub { font-size: 0.65rem; color: #9aa0a6; }
+.db-select {
+    font-size: 0.70rem; border: 1px solid #dadce0; border-radius: 20px;
+    padding: 3px 10px; color: #3c4043; outline: none;
+    background: #fff; cursor: pointer;
+}
+
+/* ── Chart wrappers ── */
+.db-chart-wrap { padding: 16px 18px; height: 220px; position: relative; }
+.db-chart-wrap canvas { width: 100% !important; height: 100% !important; }
+
+/* ── Donut ── */
+.db-donut-wrap { display: flex; align-items: center; gap: 20px; padding: 16px 18px; }
+.db-donut-canvas-area { position: relative; width: 160px; height: 160px; flex-shrink: 0; }
+.db-donut-center {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    text-align: center;
+}
+.db-donut-num  { font-size: 1.5rem; font-weight: 800; color: #202124; }
+.db-donut-sub  { font-size: 0.65rem; color: #9aa0a6; }
+.db-donut-legend { flex: 1; display: flex; flex-direction: column; gap: 7px; }
+.db-legend-item { display: flex; align-items: center; gap: 7px; }
+.db-legend-dot  { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.db-legend-label{ font-size: 0.73rem; color: #5f6368; flex: 1; }
+.db-legend-val  { font-size: 0.73rem; font-weight: 700; color: #202124; }
+
+/* ── Grid Layouts ── */
+.db-grid-2   { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.db-grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+.db-grid-3-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; }
+.mb-28 { margin-bottom: 22px; }
+
+/* ── CRM Alerts ── */
+.db-alerts-body { padding: 6px 0; }
+.db-alert-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 18px; text-decoration: none;
+    border-bottom: 1px solid #f8f9fa; transition: background .12s;
+}
+.db-alert-row:hover { background: #f8f9fa; }
+.db-alert-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.db-alert-red  .db-alert-dot { background: #ea4335; }
+.db-alert-yellow .db-alert-dot { background: #fbbc04; }
+.db-alert-text { flex: 1; min-width: 0; }
+.db-alert-text strong { display: block; font-size: 0.78rem; color: #202124; }
+.db-alert-text small  { font-size: 0.68rem; color: #9aa0a6; }
+.db-alert-row .bx-chevron-right { color: #dadce0; flex-shrink: 0; }
+
+/* ── Quick Actions ── */
+.db-qa-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 10px; padding: 14px 18px;
+}
+.db-qa-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 14px 8px; border-radius: 12px; text-decoration: none;
+    background: color-mix(in srgb, var(--qa) 7%, #fff);
+    border: 1.5px solid color-mix(in srgb, var(--qa) 15%, transparent);
+    color: var(--qa); transition: all .15s;
+    font-size: 0.68rem; font-weight: 700; text-align: center;
+}
+.db-qa-btn i { font-size: 1.4rem; }
+.db-qa-btn:hover {
+    background: color-mix(in srgb, var(--qa) 15%, #fff);
+    transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.08);
+}
+
+/* ── Live Feed ── */
+.db-live-dot {
+    width: 7px; height: 7px; border-radius: 50%; background: #ea4335;
+    animation: db-blink 1.2s infinite; flex-shrink: 0;
+}
+@keyframes db-blink { 0%,100%{opacity:1;} 50%{opacity:.3;} }
+.db-feed-wrap { padding: 6px 0; }
+.db-feed-item { display: flex; gap: 10px; padding: 10px 18px; border-bottom: 1px solid #f8f9fa; }
+.db-feed-avatar {
+    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+    background: linear-gradient(135deg, #006666, #34a853);
+    color: #fff; font-size: 0.8rem; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+}
+.db-feed-body { min-width: 0; flex: 1; }
+.db-feed-user { font-size: 0.75rem; font-weight: 700; color: #202124; }
+.db-feed-desc { font-size: 0.68rem; color: #5f6368; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.db-feed-time { font-size: 0.63rem; color: #9aa0a6; margin-top: 2px; }
+
+/* ── Empty State ── */
+.db-empty-state {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 8px; padding: 32px 0; color: #9aa0a6;
+    font-size: 0.78rem; text-align: center;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1200px) {
+    .db-kpi-row { grid-template-columns: repeat(3, 1fr); }
+    .db-grid-2-1, .db-grid-3-2 { grid-template-columns: 1fr; }
+}
+@media (max-width: 900px) {
+    .db-kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .db-grid-2  { grid-template-columns: 1fr; }
+    .db-qa-grid { grid-template-columns: repeat(3, 1fr); }
+    .db-hero    { flex-direction: column; gap: 16px; align-items: flex-start; }
+    .db-hero-right { align-self: stretch; text-align: left; }
+}
+@media (max-width: 600px) {
+    .db-wrap { padding: 12px 14px 28px; }
+    .db-kpi-row { grid-template-columns: 1fr 1fr; }
+    .db-hero { padding: 20px; }
+    .db-clock { font-size: 1.8rem; }
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// ── Live Clock ──
+(function tickClock() {
+    const el = document.getElementById('dbClock');
+    if (!el) return;
+    const now = new Date();
+    el.textContent = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+    setTimeout(tickClock, 1000);
+})();
+
+// ── KPI card entrance animation ──
+document.querySelectorAll('.db-kpi-card').forEach((card, i) => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(12px)';
+    setTimeout(() => {
+        card.style.transition = 'opacity .35s ease, transform .35s ease';
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+    }, 80 + i * 60);
+});
+
+@if(Auth::user()->role != 'master')
+// ── Revenue Line Chart ──
+const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+const monthlyRevenue = {!! json_encode($monthlyRevenue) !!};
+const revGrad = revenueCtx.createLinearGradient(0, 0, 0, 200);
+revGrad.addColorStop(0, 'rgba(52,168,83,0.25)');
+revGrad.addColorStop(1, 'rgba(52,168,83,0)');
+new Chart(revenueCtx, {
+    type: 'line',
+    data: {
+        labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+        datasets: [{
+            label: 'Revenue (₹)',
+            data: monthlyRevenue,
+            borderColor: '#34a853',
+            backgroundColor: revGrad,
+            fill: true,
+            tension: 0.45,
+            pointBackgroundColor: '#34a853',
+            pointRadius: 4,
+            pointHoverRadius: 7,
+            borderWidth: 2.5
+        }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: ctx => '₹ ' + ctx.raw.toLocaleString('en-IN') } }
+        },
+        scales: {
+            x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+            y: {
+                beginAtZero: true, grid: { color: '#f1f3f4' },
+                ticks: { callback: v => v >= 1000 ? '₹' + (v/1000).toFixed(0) + 'K' : '₹' + v, font: { size: 11 } }
             }
         }
-    @endphp
+    }
+});
 
-        <section class="task__section">
-            @include('inc.header', ['title' => 'Dashboard'])
+// ── Lead Pipeline Donut Chart ──
+const donutCtx = document.getElementById('leadsDonutChart').getContext('2d');
+const donutData  = {!! json_encode(array_values(array_map(fn($s)=>$leadByStatus[$s]??0, array_keys($leadStatusMap)))) !!};
+const donutColors = ['#1a73e8','#34a853','#fbbc04','#ff6d00','#006666','#ea4335'];
+const donutLabels = {!! json_encode(array_values(array_map(fn($m)=>$m['label'], $leadStatusMap))) !!};
+new Chart(donutCtx, {
+    type: 'doughnut',
+    data: {
+        labels: donutLabels,
+        datasets: [{ data: donutData, backgroundColor: donutColors, borderWidth: 2, borderColor: '#fff', hoverOffset: 6 }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        cutout: '72%',
+        plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: ctx => ctx.label + ': ' + ctx.raw } }
+        }
+    }
+});
 
-            <div class="dash-container">
+// ── Activity Bar Chart ──
+const actCtx = document.getElementById('activityFlowChart').getContext('2d');
+const actLabels   = {!! json_encode($activityChartLabels) !!};
+const actDatasets = {!! json_encode($activityChartDatasets) !!};
+const palette = ['rgba(52,168,83,.7)','rgba(26,115,232,.7)','rgba(139,92,246,.7)',
+                 'rgba(251,188,4,.7)','rgba(234,67,53,.7)','rgba(0,102,102,.7)'];
+new Chart(actCtx, {
+    type: 'bar',
+    data: {
+        labels: actLabels,
+        datasets: actDatasets.map((ds, i) => ({
+            label: ds.label, data: ds.data,
+            backgroundColor: palette[i % palette.length],
+            borderRadius: 4
+        }))
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+            legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 }, padding: 8 } },
+            tooltip: {
+                mode: 'index', intersect: false,
+                callbacks: { footer: items => 'Total: ' + items.reduce((s, i) => s + i.raw, 0) }
+            }
+        },
+        scales: {
+            x: { stacked: true, grid: { display: false }, ticks: { font: { size: 10 } } },
+            y: { stacked: true, beginAtZero: true, grid: { color: '#f1f3f4' },
+                 ticks: { stepSize: 1, precision: 0, font: { size: 10 } } }
+        }
+    }
+});
 
-                @if(Auth::user()->role != 'master')
-                    {{-- STAT WIDGETS ROW --}}
-                    <div class="row g-3 mb-4">
+// ── Activity date range selector ──
+document.getElementById('activityDateRange')?.addEventListener('change', function () {
+    const url = new URL(window.location.href);
+    url.searchParams.set('activity_days', this.value);
+    window.location.href = url.toString();
+});
+@endif
+</script>
 
-                        <div class="col-xl-3 col-md-6">
-                            <a href="/invoices" class="dash-stat-card text-decoration-none" style="--card-accent: #006666;">
-                                <div class="dash-stat-icon" style="background:rgba(0,102,102,0.10); color:#006666;">
-                                    <i class="bx bx-receipt"></i>
-                                </div>
-                                <div class="dash-stat-body">
-                                    <span class="dash-stat-label">Outstanding Invoices</span>
-                                    <div class="dash-stat-value">₹{{ number_format($outstandingInvoices, 0) }}</div>
-                                    <span class="dash-stat-badge" style="background:#e6f4f1; color:#006666;">
-                                        <i class="bx bx-time-five"></i> Pending Payment
-                                    </span>
-                                </div>
-                            </a>
-                        </div>
-
-                        <div class="col-xl-3 col-md-6">
-                            <a href="/proposals" class="dash-stat-card text-decoration-none" style="--card-accent: #ea4335;">
-                                <div class="dash-stat-icon" style="background:rgba(234,67,53,0.10); color:#ea4335;">
-                                    <i class="bx bx-file-blank"></i>
-                                </div>
-                                <div class="dash-stat-body">
-                                    <span class="dash-stat-label">Pending Proposals</span>
-                                    <div class="dash-stat-value">{{ $pendingProposals }}</div>
-                                    <span class="dash-stat-badge" style="background:#fdecea; color:#ea4335;">
-                                        <i class="bx bx-error-circle"></i> Awaiting Action
-                                    </span>
-                                </div>
-                            </a>
-                        </div>
-
-                        <div class="col-xl-3 col-md-6">
-                            <a href="/task" class="dash-stat-card text-decoration-none" style="--card-accent: #fbbc04;">
-                                <div class="dash-stat-icon" style="background:rgba(251,188,4,0.10); color:#f9a825;">
-                                    <i class="bx bx-task"></i>
-                                </div>
-                                <div class="dash-stat-body">
-                                    <span class="dash-stat-label">Assigned Tasks</span>
-                                    <div class="dash-stat-value">{{ $myPendingTasks }}</div>
-                                    <span class="dash-stat-badge" style="background:#fffde7; color:#f57f17;">
-                                        <i class="bx bx-list-ul"></i> Your Queue
-                                    </span>
-                                </div>
-                            </a>
-                        </div>
-
-                        <div class="col-xl-3 col-md-6">
-                            <a href="/leads" class="dash-stat-card text-decoration-none" style="--card-accent: #34a853;">
-                                <div class="dash-stat-icon" style="background:rgba(52,168,83,0.10); color:#34a853;">
-                                    <i class="bx bx-trending-up"></i>
-                                </div>
-                                <div class="dash-stat-body">
-                                    <span class="dash-stat-label">Total Leads</span>
-                                    <div class="dash-stat-value">{{ $totalLeads }}</div>
-                                    <span class="dash-stat-badge" style="background:#e8f5e9; color:#2e7d32;">
-                                        <i class="bx bx-up-arrow-alt"></i> Sales Pipeline
-                                    </span>
-                                </div>
-                            </a>
-                        </div>
-
-                    </div>
-                @endif
-
-                {{-- QUICK ACTIONS --}}
-                <div class="dash-section mb-4">
-                    <div class="dash-section-header">
-                        <div class="dash-section-icon" style="background:rgba(0,102,102,0.08); color:#006666;">
-                            <i class="bx bx-bolt-circle"></i>
-                        </div>
-                        <h6 class="dash-section-title">Quick Actions</h6>
-                    </div>
-                    <div class="quick-actions-grid">
-                        @if(Auth::user()->role == 'master')
-                            <a href="/companies" class="action-tile">
-                                <i class="bx bx-building" style="background:rgba(0,102,102,0.08); color:#006666;"></i>
-                                <div class="action-tile-body">
-                                    <h6>Compnanies</h6>
-                                    <span>Manage</span>
-                                </div>
-                            </a>
-                            <a href="/enquiries" class="action-tile" style="--tile-color: #34a853;">
-                                <i class="bx bx-mail-send" style="background:rgba(52,168,83,0.08); color:#34a853;"></i>
-                                <div class="action-tile-body">
-                                    <h6>Enquiries</h6>
-                                    <span>Leads</span>
-                                </div>
-                            </a>
-                            <a href="/subscriptions" class="action-tile" style="--tile-color: #fbbc04;">
-                                <i class="bx bx-crown" style="background:rgba(251,188,4,0.08); color:#fbbc04;"></i>
-                                <div class="action-tile-body">
-                                    <h6>Subscriptions</h6>
-                                    <span>Plans</span>
-                                </div>
-                            </a>
-                            <a href="/support" class="action-tile" style="--tile-color: #1a73e8;">
-                                <i class="bx bx-help-circle" style="background:rgba(26,115,232,0.08); color:#1a73e8;"></i>
-                                <div class="action-tile-body">
-                                    <h6>Support</h6>
-                                    <span>Tickets</span>
-                                </div>
-                            </a>
-                        @else
-                            @if(in_array('leads', $roleArray) || in_array('All', $roleArray) || (Auth::user()->role == '0'))
-                                <a href="/leads" class="action-tile">
-                                    <i class="bx bx-filter-alt" style="background:rgba(0,102,102,0.08); color:#006666;"></i>
-                                    <div class="action-tile-body">
-                                        <h6>Leads Pipeline</h6>
-                                        <span>{{ count($leads ?? []) }}</span>
-                                    </div>
-                                </a>
-                            @endif
-                            @if(in_array('clients', $roleArray) || in_array('All', $roleArray) || (Auth::user()->role == '0'))
-                                <a href="/clients" class="action-tile" style="--tile-color: #3b82f6;">
-                                    <i class="bx bx-group" style="background:rgba(59,130,246,0.08); color:#3b82f6;"></i>
-                                    <div class="action-tile-body">
-                                        <h6>Client Base</h6>
-                                        <span>{{ count($clients ?? []) }}</span>
-                                    </div>
-                                </a>
-                                <a href="/recoveries" class="action-tile" style="--tile-color: #f59e0b;">
-                                    <i class="bx bx-coin-stack" style="background:rgba(245,158,11,0.08); color:#f59e0b;"></i>
-                                    <div class="action-tile-body">
-                                        <h6>Recovery Log</h6>
-                                        <span>{{ count($recoveries ?? []) }}</span>
-                                    </div>
-                                </a>
-                            @endif
-                            @if(in_array('users', $roleArray) || in_array('All', $roleArray) || (Auth::user()->role == '0'))
-                                <a href="/users" class="action-tile" style="--tile-color: #f43f5e;">
-                                    <i class="bx bx-user" style="background:rgba(244,63,94,0.08); color:#f43f5e;"></i>
-                                    <div class="action-tile-body">
-                                        <h6>Team Users</h6>
-                                        <span>{{ count($users ?? []) }}</span>
-                                    </div>
-                                </a>
-                            @endif
-                            {{-- My Tasks shortcut --}}
-                            <a href="#" class="action-tile" style="--tile-color: #8b5cf6;" data-bs-toggle="modal" data-bs-target="#todoListModal">
-                                <i class="bx bx-check-double" style="background:rgba(139,92,246,0.08); color:#8b5cf6;"></i>
-                                <div class="action-tile-body">
-                                    <h6>My Tasks</h6>
-                                    <span style="color:#8b5cf6;">Todo</span>
-                                </div>
-                            </a>
-                        @endif
-                    </div>
-                </div>
-
-                @if(Auth::user()->role != 'master')
-                    {{-- CRM ALERTS --}}
-                    <div class="dash-section mb-4">
-                        <div class="dash-section-header">
-                            <div class="dash-section-icon" style="background:rgba(234,67,53,0.08); color:#ea4335;">
-                                <i class="bx bxs-zap"></i>
-                            </div>
-                            <h6 class="dash-section-title">Action Required &amp; CRM Alerts</h6>
-                        </div>
-                        <div class="row g-3">
-                            <div class="col-lg-6">
-                                <div class="dash-card">
-                                    <div class="dash-card-header">
-                                        <i class="bx bx-history" style="color:#ea4335;"></i>
-                                        <span>Overdue Follow-ups</span>
-                                        <span class="dash-badge ms-auto" style="background:#fdecea; color:#ea4335;">{{ count($overdueLeadsList) }}</span>
-                                        @if(count($overdueLeadsList))
-                                            <a href="/leads" class="ms-2 text-decoration-none" style="font-size:0.70rem; color:#006666; font-weight:600; white-space:nowrap;">View all →</a>
-                                        @endif
-                                    </div>
-                                    <div class="dash-list">
-                                        @forelse($overdueLeadsList as $olead)
-                                            <a href="/manage-lead?id={{ $olead->id }}" class="dash-list-item">
-                                                <div style="min-width:0; flex:1;">
-                                                    <div class="dash-list-title">{{ $olead->name }}</div>
-                                                    <div class="dash-list-sub" style="color:#ea4335;"><i class="bx bx-time-five"></i> Missed: {{ \Carbon\Carbon::parse($olead->next_date)->diffForHumans() }}</div>
-                                                </div>
-                                                <i class="bx bx-chevron-right dash-list-arrow"></i>
-                                            </a>
-                                        @empty
-                                            <div class="dash-list-empty"><i class="bx bx-check-circle"></i><span>No overdue follow-ups! Great job.</span></div>
-                                        @endforelse
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="dash-card">
-                                    <div class="dash-card-header">
-                                        <i class="bx bx-time-five" style="color:#fbbc04;"></i>
-                                        <span>Proposals Near Expiry</span>
-                                        <span class="dash-badge ms-auto" style="background:#fffde7; color:#f57f17;">{{ count($expiringProposals) }}</span>
-                                        @if(count($expiringProposals))
-                                            <a href="/proposals" class="ms-2 text-decoration-none" style="font-size:0.70rem; color:#006666; font-weight:600; white-space:nowrap;">View all →</a>
-                                        @endif
-                                    </div>
-                                    <div class="dash-list">
-                                        @forelse($expiringProposals as $eprop)
-                                            <a href="/manage-proposal?id={{ $eprop->id }}" class="dash-list-item">
-                                                <div style="min-width:0; flex:1;">
-                                                    <div class="dash-list-title">{{ $eprop->subject }}</div>
-                                                    <div class="dash-list-sub" style="color:#f57f17;"><i class="bx bx-calendar"></i> Expires {{ \Carbon\Carbon::parse($eprop->open_till)->diffForHumans() }}</div>
-                                                </div>
-                                                <i class="bx bx-chevron-right dash-list-arrow"></i>
-                                            </a>
-                                        @empty
-                                            <div class="dash-list-empty"><i class="bx bx-check-circle"></i><span>All proposals are up to date.</span></div>
-                                        @endforelse
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-
-                {{-- CHARTS + ACTIVITY FEED --}}
-                <div class="dash-section mb-4">
-                    <div class="dash-section-header">
-                        <div class="dash-section-icon" style="background:rgba(26,115,232,0.08); color:#1a73e8;">
-                            <i class="bx bx-bar-chart-square"></i>
-                        </div>
-                        <h6 class="dash-section-title">Analytics &amp; Live Feed</h6>
-                    </div>
-                    <div class="row g-3">
-                        <div class="col-lg-8">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="dash-card h-100">
-                                        <div class="dash-card-header">
-                                            <i class="bx bx-line-chart" style="color:#34a853;"></i>
-                                            <span>Revenue Growth</span>
-                                            <span class="dash-badge ms-auto" style="background:#e8f5e9; color:#2e7d32;">{{ date('Y') }}</span>
-                                        </div>
-                                        <div class="dash-chart-container">
-                                            <canvas id="revenueChart"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="dash-card h-100">
-                                        <div class="dash-card-header">
-                                            <i class="bx bx-bar-chart-alt-2" style="color:#1a73e8;"></i>
-                                            <span>Activity Flux</span>
-                                            <select id="activityDateRange" class="ms-auto" style="font-size:0.72rem; border:1px solid #dadce0; border-radius:20px; padding:3px 10px; color:#3c4043; outline:none; background:#fff; cursor:pointer;">
-                                                <option value="7" {{ $selectedActivityDays == 7 ? 'selected' : '' }}>7 Days</option>
-                                                <option value="30"{{ $selectedActivityDays == 30 ? 'selected' : '' }}>30 Days</option>
-                                                <option value="90"{{ $selectedActivityDays == 90 ? 'selected' : '' }}>90 Days</option>
-                                            </select>
-                                        </div>
-                                        <div class="dash-chart-container">
-                                            <canvas id="activityFlowChart"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4">
-                            <div class="dash-card" style="max-height:376px; display:flex; flex-direction:column;">
-                                <div class="dash-card-header">
-                                    <i class="bx bx-pulse" style="color:#ea4335;"></i>
-                                    <span>Live Activities</span>
-                                    <span class="dash-badge ms-auto" style="background:#fdecea; color:#ea4335; font-size:0.60rem; letter-spacing:0.5px;">REAL-TIME</span>
-                                </div>
-                                <div class="activity-log" style="flex:1; overflow-y:auto;">
-                                    @forelse(collect($activities ?? [])->take(20) as $activity)
-                                        <div class="activity-feed-item">
-                                            <div class="d-flex justify-content-between align-items-start mb-1">
-                                                <span class="activity-feed-user">{{ $activity->user_name ?? 'System' }}</span>
-                                                <span class="activity-feed-time">{{ \Carbon\Carbon::parse($activity->created_at)->diffForHumans() }}</span>
-                                            </div>
-                                            <p class="activity-feed-text mb-1">{{ $activity->type }} &mdash; {{ $activity->description ?? 'Action recorded' }}</p>
-                                            @if(isset($activity->subject))
-                                                <span class="dash-badge" style="background:rgba(0,102,102,0.08); color:#006666; font-size:0.60rem;">{{ strtoupper($activity->subject) }}</span>
-                                            @endif
-                                        </div>
-                                    @empty
-                                        <div class="dash-list-empty" style="padding:40px 0;">
-                                            <i class="bx bx-news" style="font-size:2.5rem; color:#dadce0;"></i>
-                                            <span style="color:#9aa0a6;">Waiting for activities...</span>
-                                        </div>
-                                    @endforelse
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>{{-- end .dash-container --}}
-
-        </section>
-
-
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script>
-            // REVENUE CHART (Dynamic)
-            const ctx = document.getElementById('revenueChart').getContext('2d');
-            const monthlyRevenue = {!! json_encode($monthlyRevenue) !!}; // Passed from Controller
-
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                    datasets: [
-                        {
-                            label: 'Total Revenue ({{ date("Y") }})',
-                            data: monthlyRevenue,
-                            borderColor: '#2ecc71',
-                            backgroundColor: 'rgba(46, 204, 113, 0.1)',
-                            fill: true,
-                            tension: 0.3
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function (value) { return '₹' + value; }
-                            }
-                        }
-                    },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function (context) {
-                                    return 'Revenue: ₹' + context.raw;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            // ACTIVITY MONITOR FLOW CHART (Day-wise, stacked by user)
-            const activityCtx = document.getElementById('activityFlowChart').getContext('2d');
-
-            const activityLabels = {!! json_encode($activityChartLabels) !!}; // Dates
-            const activityDatasets = {!! json_encode($activityChartDatasets) !!}; // User datasets
-
-            // Generate colors for each user
-            const colors = [
-                'rgba(46, 204, 113, 0.7)',   // Green
-                'rgba(52, 152, 219, 0.7)',   // Blue
-                'rgba(155, 89, 182, 0.7)',   // Purple
-                'rgba(241, 196, 15, 0.7)',   // Yellow
-                'rgba(231, 76, 60, 0.7)',    // Red
-                'rgba(26, 188, 156, 0.7)',   // Teal
-                'rgba(230, 126, 34, 0.7)',   // Orange
-                'rgba(149, 165, 166, 0.7)',  // Gray
-            ];
-
-            const datasets = activityDatasets.map((dataset, index) => ({
-                label: dataset.label,
-                data: dataset.data,
-                backgroundColor: colors[index % colors.length],
-                borderColor: colors[index % colors.length].replace('0.7', '1'),
-                borderWidth: 1
-            }));
-
-            new Chart(activityCtx, {
-                type: 'bar',
-                data: {
-                    labels: activityLabels,
-                    datasets: datasets
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top',
-                            labels: {
-                                boxWidth: 12,
-                                padding: 10,
-                                font: { size: 11 }
-                            }
-                        },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false,
-                            callbacks: {
-                                footer: function (tooltipItems) {
-                                    let total = 0;
-                                    tooltipItems.forEach(item => total += item.parsed.y);
-                                    return 'Total: ' + total;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            stacked: true,
-                            grid: { display: false }
-                        },
-                        y: {
-                            stacked: true,
-                            beginAtZero: true,
-                            grid: { color: '#f0f0f0' },
-                            ticks: {
-                                stepSize: 1,
-                                precision: 0
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Date range selector event listener
-            document.getElementById('activityDateRange').addEventListener('change', function () {
-                const days = this.value;
-                const url = new URL(window.location.href);
-                url.searchParams.set('activity_days', days);
-                window.location.href = url.toString();
-            });
-        </script>
-
-        <!-- Firebase Scripts -->
-        <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js"></script>
-
-
-        <!-- UI MODALS -->
-
-
-
-
-
-
-
-        <!-- MY TODO LIST MODAL — Enhanced -->
+<!-- Firebase Scripts -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js"></script>
 
 @endsection
-
