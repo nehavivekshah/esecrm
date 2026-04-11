@@ -1806,7 +1806,9 @@
 
         $(document).ready(function () {
             // When the delete button is clicked
-            $(document).on('click', '.delete', function () {
+            $(document).on('click', '.delete', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
                 var selector = $(this);
                 var pagename = selector.attr("data-page");
                 var rowid = selector.attr("id");
@@ -1832,7 +1834,9 @@
                                 },
                                 success: function (response) {
                                     if (response.success) {
-                                        selector.closest('tr').hide();  // Hides the entire row
+                                        // Use DataTables API to remove the row properly
+                                        var table = $('#lists').DataTable();
+                                        table.row(selector.closest('tr')).remove().draw(false);
                                         swal("Deleted!", "The project has been deleted successfully.", "success");
                                     } else {
                                         swal("Error", response.error || "There was an issue deleting the project.", "error");

@@ -128,11 +128,13 @@
         <script>
             $(document).ready(function() {
                 
-                $('#lists').DataTable({
-                    "destroy": true,
-                    "pageLength": 50,
-                    "order": [],
-                });
+                if (!$.fn.DataTable.isDataTable('#lists')) {
+                    $('#lists').DataTable({
+                        "destroy": true,
+                        "pageLength": 50,
+                        "order": [],
+                    });
+                }
                 
                 $("#leadslists_filter label input").attr("placeholder", "Search..");
                 $("#lists_filter label input").attr("placeholder", "Search..");
