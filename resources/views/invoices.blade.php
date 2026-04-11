@@ -199,7 +199,7 @@
                                         {{-- Delete --}}
                                         @if(in_array('invoice_delete', $roleArray) || in_array('All', $roleArray))
                                             <a href="javascript:void(0)" class="btn kb-action-btn delete"
-                                                data-id="{{ $invoice->id }}" data-page="invoiceDelete" title="Delete"
+                                                id="{{ $invoice->id }}" data-page="invoiceDelete" title="Delete"
                                                 style="background:rgba(234,67,53,0.08);color:#ea4335;">
                                                 <i class="bx bx-trash"></i>
                                             </a>

@@ -206,6 +206,21 @@ class AjaxController extends Controller
             } else {
                 return response()->json(['error' => 'Project not found.'], 404);
             }
+        }elseif (($request->invoiceDelete ?? '') == 'invoiceDelete') {
+            // Find the invoice by ID
+            $invoice = Invoices::find($id);
+    
+            // Check if the invoice exists
+            if ($invoice) {
+                // Delete related items
+                \App\Models\Invoice_items::where('invoice_id', $id)->delete();
+                // Delete the invoice
+                $invoice->delete();
+                
+                return response()->json(['success' => 'Invoice deleted successfully.']);
+            } else {
+                return response()->json(['error' => 'Invoice not found.'], 404);
+            }
         }elseif (($request->recoveryAmountDelete ?? '') == 'recoveryAmountDelete') {
             // Find the user by ID
             $recovery = Recoveries::find($id);
