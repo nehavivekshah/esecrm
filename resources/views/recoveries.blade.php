@@ -321,45 +321,44 @@
         });
 
         // ── Delete Recovery ──
-        document.querySelectorAll('.delete').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                var pagename = this.getAttribute("data-page");
-                var rowid = this.getAttribute("id");
-                var clickedBtn = this;
+        $(document).on('click', '.delete', function(e) {
+            e.preventDefault();
+            var pagename = this.getAttribute("data-page");
+            var rowid = this.getAttribute("id");
+            var clickedBtn = this;
 
-                swal({
-                    title: "Are you sure?",
-                    text: "You want to delete this recovery?",
-                    icon: "warning",
-                    buttons: true,
-                    dangerMode: true,
-                })
-                .then((willDelete) => {
-                    if (willDelete) {
-                        $.ajax({
-                            type: 'GET',
-                            url: "/ajax-send",
-                            data: {
-                                pagename: pagename,
-                                rowid: rowid,
-                                recoveryAmountDelete: 'recoveryAmountDelete'
-                            },
-                            success: function (response) {
-                                if (response.success) {
-                                    clickedBtn.closest('tr').style.display = 'none';
-                                    swal("Deleted!", "The recovery has been deleted successfully.", "success");
-                                } else {
-                                    swal("Error", response.error || "There was an issue deleting this record.", "error");
-                                }
-                            },
-                            error: function () {
-                                swal("Error", "An error occurred while processing your request.", "error");
+            swal({
+                title: "Are you sure?",
+                text: "You want to delete this recovery?",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: 'GET',
+                        url: "/ajax-send",
+                        data: {
+                            pagename: pagename,
+                            rowid: rowid,
+                            recoveryAmountDelete: 'recoveryAmountDelete'
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                $(clickedBtn).closest('tr').hide();
+                                swal("Deleted!", "The recovery has been deleted successfully.", "success");
+                            } else {
+                                swal("Error", response.error || "There was an issue deleting this record.", "error");
                             }
-                        });
-                    } else {
-                        swal("This recovery is safe.");
-                    }
-                });
+                        },
+                        error: function () {
+                            swal("Error", "An error occurred while processing your request.", "error");
+                        }
+                    });
+                } else {
+                    swal("This recovery is safe.");
+                }
             });
         });
 

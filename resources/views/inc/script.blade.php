@@ -154,7 +154,7 @@
     <script>
         $(document).ready(function () {
             // When the delete button is clicked
-            $('.delete').click(function () {
+            $(document).on('click', '.delete', function () {
                 var selector = $(this);
                 var pagename = selector.attr("data-page"); // Corrected "date-page" to "data-page"
                 var rowid = selector.attr("id");
@@ -209,7 +209,7 @@
     <script>
         $(document).ready(function () {
             // When the delete button is clicked
-            $('.delete').click(function () {
+            $(document).on('click', '.delete', function () {
                 var selector = $(this);
                 var pagename = selector.attr("data-page"); // Corrected "date-page" to "data-page"
                 var rowid = selector.attr("id");
@@ -1025,7 +1025,7 @@
     <script>
         $(document).ready(function () {
             // When the delete button is clicked
-            $('.delete').click(function () {
+            $(document).on('click', '.delete', function () {
                 var selector = $(this);
                 var pagename = selector.attr("data-page");
                 var rowid = selector.attr("id");
@@ -1229,7 +1229,7 @@
     <script>
         $(document).ready(function () {
             // When the delete button is clicked
-            $('.delete').click(function () {
+            $(document).on('click', '.delete', function () {
                 var selector = $(this);
                 var pagename = selector.attr("data-page"); // Corrected "date-page" to "data-page"
                 var rowid = selector.attr("id");
@@ -1429,7 +1429,7 @@
     <script>
         $(document).ready(function () {
             // When the delete button is clicked
-            $('.delete').click(function () {
+            $(document).on('click', '.delete', function () {
                 var selector = $(this);
                 var pagename = selector.attr("data-page"); // Corrected "date-page" to "data-page"
                 var rowid = selector.attr("id");
@@ -1542,7 +1542,7 @@
     <script>
         $(document).ready(function () {
             // When the delete button is clicked
-            $('.delete').click(function () {
+            $(document).on('click', '.delete', function () {
                 var selector = $(this);
                 var pagename = selector.attr("data-page"); // Corrected "date-page" to "data-page"
                 var rowid = selector.attr("id");
@@ -1806,7 +1806,7 @@
 
         $(document).ready(function () {
             // When the delete button is clicked
-            $('.delete').click(function () {
+            $(document).on('click', '.delete', function () {
                 var selector = $(this);
                 var pagename = selector.attr("data-page");
                 var rowid = selector.attr("id");
