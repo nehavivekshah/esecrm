@@ -112,7 +112,7 @@
                         $pctColor = $pct >= 80 ? '#34a853' : ($pct >= 40 ? '#fbbc04' : '#ea4335');
                         $remaining = $amount - $paid;
                     @endphp
-                    <div class="pj-card" onclick="window.location.href='/project/view/{{ $project->id }}'">
+                    <div class="pj-card project-row-click" data-url="/project/view/{{ $project->id }}">
                         {{-- Top accent --}}
                         <div class="pj-card-accent" style="background: linear-gradient(90deg, #006666, #009688);"></div>
 
@@ -130,7 +130,7 @@
                                     @endif
                                 </div>
                             </div>
-                            <div class="pj-card-actions" onclick="event.stopPropagation();">
+                            <div class="pj-card-actions">
                                 @if($project->deployment_url)
                                     <a href="{{ $project->deployment_url }}" target="_blank" class="btn kb-action-btn"
                                         title="Visit Site" style="background:rgba(26,115,232,0.08);color:#1a73e8;">
@@ -243,8 +243,7 @@
                                     $pctColor = $pct >= 80 ? '#34a853' : ($pct >= 40 ? '#fbbc04' : '#ea4335');
                                     $isDone = ($project->status == 0);
                                 @endphp
-                                <tr class="pointer-cursor selectrow"
-                                    onclick="window.location.href='/project/view/{{ $project->id }}'">
+                                <tr class="pointer-cursor selectrow project-row-click" data-url="/project/view/{{ $project->id }}">
                                     <td class="fw-bold text-muted" style="font-size:0.75rem;">
                                         @if($project->project_id_custom)
                                             <span class="text-primary">{{ $project->project_id_custom }}</span>
@@ -318,7 +317,7 @@
                                             —
                                         @endif
                                     </td>
-                                    <td class="position-sticky end-0 bg-white" onclick="event.stopPropagation();">
+                                    <td class="position-sticky end-0 bg-white">
                                         <div class="d-flex align-items-center justify-content-center gap-1">
                                             <a href="/manage-project?id={{ $project->id }}"
                                                 class="btn kb-action-btn kb-action-edit" title="Edit">

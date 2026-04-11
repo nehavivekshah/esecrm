@@ -154,6 +154,8 @@
             // Universal Event Delegation for CRM Delete Actions
             $(document).on('click', '.delete', function (e) {
                 e.preventDefault();
+                e.stopPropagation(); // Prevent row clicks from triggering
+
                 var selector = $(this);
                 // Support both data-page and date-page attributes
                 var pagename = selector.data("page") || selector.attr("data-page") || selector.attr("date-page");
@@ -189,15 +191,24 @@
                             data: ajaxData,
                             success: function (response) {
                                 if (response.success) {
-                                    // Hide the row or card visually
-                                    if(selector.closest('tr').length) {
-                                        selector.closest('tr').hide();
-                                    } else if(selector.closest('.pj-card').length) {
-                                        selector.closest('.pj-card').hide();
+                                    // Handle UI updates (DataTable, Table Row, or Card)
+                                    var row = selector.closest('tr');
+                                    var card = selector.closest('.pj-card') || selector.closest('.dash-card') || selector.closest('.kb-card');
+                                    var table = selector.closest('table');
+
+                                    if (table.length && $.fn.DataTable && $.fn.DataTable.isDataTable(table)) {
+                                        // Properly remove from DataTables
+                                        var dt = table.DataTable();
+                                        dt.row(row).remove().draw(false);
+                                    } else if (row.length) {
+                                        row.hide();
+                                    } else if (card.length) {
+                                        card.hide();
                                     }
                                     
-                                    swal("Deleted!", "The row has been deleted successfully.", "success").then(() => {
-                                        // Auto-reload to refresh pagination if necessary
+                                    swal("Deleted!", response.success || "The row has been deleted successfully.", "success").then(() => {
+                                        // Auto-reload to refresh pagination/statistics if necessary
+                                        // Contracts and Proposals are handled smoothly without reload
                                         if(pagename !== 'contractDelete' && pagename !== 'proposalDelete') {
                                            location.reload();
                                         }
@@ -206,12 +217,13 @@
                                     swal("Error", response.error || "There was an issue deleting the row.", "error");
                                 }
                             },
-                            error: function () {
-                                swal("Error", "An error occurred while processing your request.", "error");
+                            error: function (xhr) {
+                                var errorMsg = xhr.responseJSON ? xhr.responseJSON.error : "An error occurred while processing your request.";
+                                swal("Error", errorMsg, "error");
                             }
                         });
                     } else {
-                        swal("This query is safe.");
+                        // Optional: swal("This query is safe.");
                     }
                 });
             });
@@ -1565,6 +1577,19 @@
             // Restore view preference
             const savedView = localStorage.getItem('pjView_v2') || 'table';
             setView(savedView);
+
+            // Delegated navigation for project rows / cards
+            $(document).on('click', '.project-row-click', function (e) {
+                // If the click was on an action button or link inside the row, don't navigate
+                if ($(e.target).closest('.btn, a, button').length) {
+                    return;
+                }
+                
+                var url = $(this).data('url');
+                if (url) {
+                    window.location.href = url;
+                }
+            });
         });
 
         function setView(view) {
