@@ -202,5 +202,52 @@
             output.textContent = 'Thank you for payment of ₹' + this.value + ' to ' + companyName + '.';
         });
     }
+
+    // ── Delete Recovery Part ──
+    document.querySelectorAll('.recoveryAmountDelete').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var rowid = this.getAttribute("data-id");
+            var pagename = this.getAttribute("data-page");
+            var clickedBtn = this;
+
+            swal({
+                title: "Are you sure?",
+                text: "You want to delete this payment record?",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: 'GET',
+                        url: "/ajax-send",
+                        data: {
+                            pagename: pagename,
+                            rowid: rowid,
+                            recoveryAmountDelete: 'recoveryAmountDelete'
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                clickedBtn.closest('tr').style.display = 'none';
+                                swal("Deleted!", "The record has been deleted.", "success").then(() => {
+                                    // Optional: Reload parent page to reflect balance change
+                                    location.reload(); 
+                                });
+                            } else {
+                                swal("Error", response.error || "There was an issue deleting this record.", "error");
+                            }
+                        },
+                        error: function () {
+                            swal("Error", "An error occurred while processing your request.", "error");
+                        }
+                    });
+                } else {
+                    swal("This record is safe.");
+                }
+            });
+        });
+    });
+
 })();
 </script>

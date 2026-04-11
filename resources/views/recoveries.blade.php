@@ -200,6 +200,13 @@
                                                 title="Edit" style="background:rgba(0,102,102,0.10);color:#006666;">
                                                 <i class="bx bx-edit"></i>
                                             </button>
+                                            {{-- Delete --}}
+                                            @if(in_array('recoveries_delete', $roleArray) || in_array('All', $roleArray))
+                                                <a href="javascript:void(0)" class="btn kb-action-btn kb-action-del delete"
+                                                    id="{{ $recovery->id ?? '' }}" data-page="recoveryAmountDelete" title="Delete" style="background:rgba(234,67,53,0.10);color:#ea4335;">
+                                                    <i class="bx bx-trash"></i>
+                                                </a>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>
@@ -310,6 +317,49 @@
                     document.getElementById('recoveryModalContent'),
                     url
                 );
+            });
+        });
+
+        // ── Delete Recovery ──
+        document.querySelectorAll('.delete').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var pagename = this.getAttribute("data-page");
+                var rowid = this.getAttribute("id");
+                var clickedBtn = this;
+
+                swal({
+                    title: "Are you sure?",
+                    text: "You want to delete this recovery?",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        $.ajax({
+                            type: 'GET',
+                            url: "/ajax-send",
+                            data: {
+                                pagename: pagename,
+                                rowid: rowid,
+                                recoveryAmountDelete: 'recoveryAmountDelete'
+                            },
+                            success: function (response) {
+                                if (response.success) {
+                                    clickedBtn.closest('tr').style.display = 'none';
+                                    swal("Deleted!", "The recovery has been deleted successfully.", "success");
+                                } else {
+                                    swal("Error", response.error || "There was an issue deleting this record.", "error");
+                                }
+                            },
+                            error: function () {
+                                swal("Error", "An error occurred while processing your request.", "error");
+                            }
+                        });
+                    } else {
+                        swal("This recovery is safe.");
+                    }
+                });
             });
         });
 

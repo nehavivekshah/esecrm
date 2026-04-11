@@ -193,6 +193,12 @@ class AjaxController extends Controller
     
             // Check if the project exists
             if ($project) {
+                // Delete related records
+                \App\Models\CrmTask::where('project_id', $id)->delete();
+                \App\Models\Task::where('project_id', $id)->delete();
+                \App\Models\Invoices::where('project_id', $id)->delete();
+                \App\Models\Recoveries::where('project_id', $id)->delete();
+                
                 // Delete the project
                 $project->delete();
                 
