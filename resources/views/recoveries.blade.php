@@ -105,9 +105,9 @@
                             <tr>
                                 <th class="m-none" style="width:40px;">#</th>
                                 <th class="m-none" style="width:80px;">Batch</th>
-                                <th>Client</th>
+                                <th>Client & Project</th>
                                 <th class="m-none">Company</th>
-                                <th>Pending (₹)</th>
+                                <th>Recovery Status (₹)</th>
                                 <th class="m-none">Reminder</th>
                                 <th class="m-none">Executive</th>
                                 <th class="text-center position-sticky end-0" style="width:130px;">Action</th>
@@ -121,7 +121,13 @@
                                     $isOverdue = !$isPaid &&
                                         !empty($recovery->reminder) &&
                                         date('Y-m-d', strtotime($recovery->reminder)) <= date('Y-m-d');
-                                    $isFullyPaid = ($recovery->remaining_amount ?? 0) == 0;
+                                    $isFullyPaid = ($recovery->remaining_amount ?? 0) <= 0;
+                                    
+                                    $totalAmt = $recovery->project_amount ?? 0;
+                                    $pendingAmt = $recovery->remaining_amount ?? 0;
+                                    $paidAmt = $totalAmt - $pendingAmt;
+                                    $recPct = $totalAmt > 0 ? min(100, round(($paidAmt / $totalAmt) * 100)) : 0;
+                                    $recColor = $recPct >= 80 ? '#34a853' : ($recPct >= 40 ? '#fbbc04' : '#ea4335');
                                 @endphp
                                 <tr class="lead-row-{{ $reminderTimes }}">
                                     <td class="m-none text-muted" style="font-size:0.78rem;">{{ $k + 1 }}</td>
@@ -134,23 +140,33 @@
                                                 style="background:linear-gradient(135deg,#006666,#009688);color:#fff;flex-shrink:0;">
                                                 {{ strtoupper(substr($recovery->name ?? 'R', 0, 1)) }}
                                             </div>
-                                            <div>
-                                                <div class="fw-500">{{ $recovery->name ?? '—' }}</div>
-                                                <div class="text-muted" style="font-size:0.72rem;">
-                                                    {{ $recovery->company ?? '' }}</div>
+                                            <div class="min-w-0">
+                                                <div class="fw-600 text-truncate" style="max-width:180px;">{{ $recovery->name ?? '—' }}</div>
+                                                <div class="text-muted d-flex align-items-center gap-1" style="font-size:0.72rem;">
+                                                    <i class="bx bx-briefcase" style="font-size:0.8rem;"></i>
+                                                    <span class="text-truncate">{{ $recovery->project ?? 'General' }}</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="m-none text-muted">{{ $recovery->company ?? '—' }}</td>
                                     <td>
                                         @if($isFullyPaid)
-                                            <span class="rv-amount-badge rv-paid">
+                                            <div class="fw-bold" style="color:#34a853; font-size:0.85rem;">₹{{ number_format($totalAmt, 0) }}</div>
+                                            <span class="rv-amount-badge rv-paid mt-1">
                                                 <i class="bx bx-check-circle"></i> Cleared
                                             </span>
                                         @else
-                                            <span class="rv-amount {{ $isOverdue ? 'rv-overdue-amount' : '' }}">
-                                                ₹{{ number_format($recovery->remaining_amount ?? 0, 0) }}
-                                            </span>
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <span class="rv-amount text-danger" style="font-size:0.85rem;">₹{{ number_format($pendingAmt, 0) }}</span>
+                                                <span class="text-muted" style="font-size:0.65rem;">of ₹{{ number_format($totalAmt, 0) }}</span>
+                                            </div>
+                                            <div class="d-flex align-items-center gap-1">
+                                                <div style="flex:1; height:4px; background:#f0f0f0; border-radius:2px; overflow:hidden;">
+                                                    <div style="width:{{ $recPct }}%; height:100%; background:{{ $recColor }};"></div>
+                                                </div>
+                                                <span style="font-size:0.65rem; font-weight:700; color:{{ $recColor }};">{{ $recPct }}%</span>
+                                            </div>
                                         @endif
                                     </td>
                                     <td class="m-none">
@@ -320,47 +336,7 @@
             });
         });
 
-        // ── Delete Recovery ──
-        $(document).on('click', '.delete', function(e) {
-            e.preventDefault();
-            var pagename = this.getAttribute("data-page");
-            var rowid = this.getAttribute("id");
-            var clickedBtn = this;
 
-            swal({
-                title: "Are you sure?",
-                text: "You want to delete this recovery?",
-                icon: "warning",
-                buttons: true,
-                dangerMode: true,
-            })
-            .then((willDelete) => {
-                if (willDelete) {
-                    $.ajax({
-                        type: 'GET',
-                        url: "/ajax-send",
-                        data: {
-                            pagename: pagename,
-                            rowid: rowid,
-                            recoveryAmountDelete: 'recoveryAmountDelete'
-                        },
-                        success: function (response) {
-                            if (response.success) {
-                                $(clickedBtn).closest('tr').hide();
-                                swal("Deleted!", "The recovery has been deleted successfully.", "success");
-                            } else {
-                                swal("Error", response.error || "There was an issue deleting this record.", "error");
-                            }
-                        },
-                        error: function () {
-                            swal("Error", "An error occurred while processing your request.", "error");
-                        }
-                    });
-                } else {
-                    swal("This recovery is safe.");
-                }
-            });
-        });
 
     });
     </script>
