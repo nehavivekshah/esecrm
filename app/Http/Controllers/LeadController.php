@@ -786,26 +786,10 @@ class LeadController extends Controller
             "signature" => $signature
         ];
 
-        $smtpSettings = SmtpSettings::where('user_id', $user->id)->first();
-        if (!$smtpSettings && $user->cid) {
-            $smtpSettings = SmtpSettings::where('cid', $user->cid)->first();
-        }
-
-        $fromAddress = $smtpSettings?->from_address;
-        $fromName = $smtpSettings?->from_name;
-
-        $mailable = new CustomMailable(
-            $subject,
-            $viewName,
-            $viewData,
-            $fromAddress,
-            $fromName
-        );
+        $this->leadService->sendMail($to, $subject, $viewName, $viewData, $user->id, $user->cid);
 
         $proposal->status = 'Declined';
         $proposal->save();
-
-        Mail::to($to)->send($mailable);
 
         return back()->with('success', 'Proposal declined and email sent successfully!');
     }
@@ -869,25 +853,7 @@ class LeadController extends Controller
             "signature" => $signature
         ];
 
-        // Load SMTP Settings
-        $smtpSettings = SmtpSettings::where('user_id', $user->id)->first();
-        if (!$smtpSettings && $user->cid) {
-            $smtpSettings = SmtpSettings::where('cid', $user->cid)->first();
-        }
-
-        $fromAddress = $smtpSettings?->from_address;
-        $fromName = $smtpSettings?->from_name;
-
-        // Send Email
-        $mailable = new CustomMailable(
-            $subject,
-            $viewName,
-            $viewData,
-            $fromAddress,
-            $fromName
-        );
-
-        Mail::to($to)->send($mailable);
+        $this->leadService->sendMail($to, $subject, $viewName, $viewData, $user->id, $user->cid);
 
         $proposal->status = 'Accepted';
         $proposal->save();

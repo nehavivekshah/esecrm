@@ -37,11 +37,14 @@ class NewLeadController extends Controller
                     $query->where('status', $request->status);
                 }
 
-                // Filter by Assigned User (Sales Rep) — assigned stores user ID
+                // Filter by Assigned User (Sales Rep) — assigned stores user ID or Name (legacy)
                 if ($request->filled('assign_user')) {
                     $query->where('assigned', $request->assign_user);
                 } elseif (Auth::user()->role != 'master' && ($roles->features ?? '') != 'All') {
-                    $query->where('assigned', Auth::user()->id);
+                    $query->where(function ($q) {
+                        $q->where('assigned', Auth::user()->id)
+                          ->orWhere('assigned', Auth::user()->name);
+                    });
                 }
 
                 // Filter by Tags

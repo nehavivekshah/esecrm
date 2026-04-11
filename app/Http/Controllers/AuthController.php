@@ -24,10 +24,18 @@ use App\Models\SmtpSettings;
 use App\Models\User;
 use App\Models\Eselicenses;
 use App\Traits\ActivityLogger;
+use App\Services\LeadService;
 
 class AuthController extends Controller
 {
     use ActivityLogger;
+
+    protected $leadService;
+
+    public function __construct(LeadService $leadService)
+    {
+        $this->leadService = $leadService;
+    }
 
     public function register()
     {
@@ -84,19 +92,8 @@ class AuthController extends Controller
             $user->role = $roles->id ?? '';
             $user->save();
 
-            $fromAddress = "info@esecrm.com"; // Get from DB if available
-            $fromName = "eseCRM";       // Get from DB if available
-
-            $mailable = new CustomMailable(
-                $subject,
-                $viewName,
-                $viewData,
-                $fromAddress, // Pass DB value or null
-                $fromName     // Pass DB value or null
-            );
-
             try {
-                Mail::to($to)->send($mailable);
+                $this->leadService->sendMail($to, $subject, $viewName, $viewData, $user->id, $user->cid);
             } catch (\Exception $e) {
                 Log::error('Registration Email Failed: ' . $e->getMessage());
             }
@@ -211,24 +208,7 @@ class AuthController extends Controller
         $viewName = 'emails.welcome';
         $viewData = ["name" => $getUser->name, "messages" => $message];
 
-        $smtpSettings = SmtpSettings::where('user_id', $getUser->id)->first();
-
-        if (!$smtpSettings && !empty($getUser->cid)) {
-            $smtpSettings = SmtpSettings::where('cid', $getUser->cid)->first();
-        }
-
-        $fromAddress = $smtpSettings?->from_address;
-        $fromName = $smtpSettings?->from_name;
-
-        $mailable = new CustomMailable(
-            $subject,
-            $viewName,
-            $viewData,
-            $fromAddress,
-            $fromName
-        );
-
-        Mail::to($to)->send($mailable);
+        $this->leadService->sendMail($to, $subject, $viewName, $viewData, $getUser->id, $getUser->cid);
 
         return back()->with('success', 'Reset password link has been sent to your registered email address!');
 

@@ -19,9 +19,16 @@ use App\Models\Activity;
 use App\Models\Invoices;
 use App\Models\Proposals;
 use App\Models\Task;
+use App\Services\LeadService;
 
 class HomeController extends Controller
 {
+    protected $leadService;
+
+    public function __construct(LeadService $leadService)
+    {
+        $this->leadService = $leadService;
+    }
     public function index()
     {
         return view('landingpg.index');
@@ -36,9 +43,6 @@ class HomeController extends Controller
             'services' => 'nullable|string',
             'message' => 'required|string',
         ]);
-        $fromAddress = 'website@creativekey.in';
-        $fromName = 'Introduction';
-
         $viewData = [
             'name' => $validatedData['name'],
             'phone' => $validatedData['phone'],
@@ -51,8 +55,7 @@ class HomeController extends Controller
         $viewName = 'emails.welcome';
         $to = 'iwebbrella@gmail.com';
 
-        $mailable = new CustomMailable($subject, $viewName, $viewData, $fromAddress, $fromName);
-        Mail::to($to)->send($mailable);
+        $this->leadService->sendMail($to, $subject, $viewName, $viewData);
 
         return back()->with('success', 'Thank you for contacting us. We will get back to you soon.');
     }

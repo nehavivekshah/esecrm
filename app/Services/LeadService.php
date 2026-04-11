@@ -91,14 +91,15 @@ class LeadService extends BaseService
     public function getLeastLoadedUser($companyId)
     {
         $user = DB::table('users')
-            ->leftJoin('leads', 'users.name', '=', 'leads.assigned')
+            ->leftJoin('leads', 'users.id', '=', 'leads.assigned')
             ->where('users.cid', $companyId)
-            ->select('users.name', DB::raw('COUNT(leads.id) as leads_count'))
-            ->groupBy('users.id', 'users.name')
+            ->where('users.status', '1') // Only active users
+            ->select('users.id', DB::raw('COUNT(leads.id) as leads_count'))
+            ->groupBy('users.id')
             ->orderBy('leads_count', 'asc')
             ->first();
 
-        return $user ? $user->name : Auth::user()->name;
+        return $user ? $user->id : Auth::id();
     }
 
     /**
