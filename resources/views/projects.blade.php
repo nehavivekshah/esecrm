@@ -141,6 +141,12 @@
                                     style="background:rgba(0,102,102,0.08);color:#006666;">
                                     <i class="bx bx-pencil"></i>
                                 </a>
+                                @if(in_array('projects_delete', $roleArray) || in_array('All', $roleArray))
+                                    <a href="javascript:void(0)" class="btn kb-action-btn kb-action-del delete"
+                                        id="{{ $project->id }}" data-page="projectDelete" title="Delete" style="background:rgba(234,67,53,0.08);color:#ea4335;">
+                                        <i class="bx bx-trash"></i>
+                                    </a>
+                                @endif
                             </div>
                         </div>
 

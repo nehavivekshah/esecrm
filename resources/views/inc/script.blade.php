@@ -189,8 +189,13 @@
                             data: ajaxData,
                             success: function (response) {
                                 if (response.success) {
-                                    // Hide the row visually
-                                    selector.closest('tr').hide();
+                                    // Hide the row or card visually
+                                    if(selector.closest('tr').length) {
+                                        selector.closest('tr').hide();
+                                    } else if(selector.closest('.pj-card').length) {
+                                        selector.closest('.pj-card').hide();
+                                    }
+                                    
                                     swal("Deleted!", "The row has been deleted successfully.", "success").then(() => {
                                         // Auto-reload to refresh pagination if necessary
                                         if(pagename !== 'contractDelete' && pagename !== 'proposalDelete') {
@@ -977,52 +982,7 @@
         });
     </script>
 
-    <script>
-        $(document).ready(function () {
-            // When the delete button is clicked
-            $(document).on('click', '.delete', function () {
-                var selector = $(this);
-                var pagename = selector.attr("data-page");
-                var rowid = selector.attr("id");
 
-                // Confirmation dialog using SweetAlert
-                swal({
-                    title: "Are you sure?",
-                    text: "You want to delete this row?",
-                    icon: "warning",
-                    buttons: true,
-                    dangerMode: true,
-                })
-                    .then((willDelete) => {
-                        if (willDelete) {
-                            // Perform the AJAX request
-                            $.ajax({
-                                type: 'GET',
-                                url: "/ajax-send",
-                                data: {
-                                    pagename: pagename,
-                                    rowid: rowid,
-                                    clientDelete: 'clientDelete'
-                                },
-                                success: function (response) {
-                                    if (response.success) {
-                                        selector.closest('tr').hide();
-                                        swal("Deleted!", "The row has been deleted successfully.", "success");
-                                    } else {
-                                        swal("Error", response.error || "There was an issue deleting the row.", "error");
-                                    }
-                                },
-                                error: function () {
-                                    swal("Error", "An error occurred while processing your request.", "error");
-                                }
-                            });
-                        } else {
-                            swal("This query is safe.");
-                        }
-                    });
-            });
-        });
-    </script>
 @endif
 
 {{-- Global Client Details Modal Logic --}}
@@ -1181,56 +1141,7 @@
 
 @if(Request::segment(1) == 'users')
 
-    <script>
-        $(document).ready(function () {
-            // When the delete button is clicked
-            $(document).on('click', '.delete', function () {
-                var selector = $(this);
-                var pagename = selector.attr("data-page"); // Corrected "date-page" to "data-page"
-                var rowid = selector.attr("id");
 
-                // Confirmation dialog using SweetAlert
-                swal({
-                    title: "Are you sure?",
-                    text: "You want to delete this row?",
-                    icon: "warning",
-                    buttons: true,
-                    dangerMode: true,
-                })
-                    .then((willDelete) => {
-                        if (willDelete) {
-                            // Perform the AJAX request
-                            $.ajax({
-                                type: 'GET',  // Use GET request as per your code, but ideally this should be POST or DELETE for deletion
-                                url: "/ajax-send",
-                                data: {
-                                    pagename: pagename,
-                                    rowid: rowid,
-                                    userDelete: 'userDelete'  // Passing the deletion parameter
-                                },
-                                success: function (response) {
-                                    if (response.success) {
-                                        // Hide the row if deletion was successful
-                                        selector.closest('tr').hide();  // Hides the entire row
-                                        swal("Deleted!", "The row has been deleted successfully.", "success");
-                                    } else {
-                                        // Show error message if the server returned an error
-                                        swal("Error", response.error || "There was an issue deleting the row.", "error");
-                                    }
-                                },
-                                error: function () {
-                                    // Handle errors from the AJAX request
-                                    swal("Error", "An error occurred while processing your request.", "error");
-                                }
-                            });
-                        } else {
-                            // If user canceled the deletion
-                            swal("This query is safe.");
-                        }
-                    });
-            });
-        });
-    </script>
 
 @endif
 
@@ -1383,52 +1294,6 @@
 
     <script>
         $(document).ready(function () {
-            // When the delete button is clicked
-            $(document).on('click', '.delete', function () {
-                var selector = $(this);
-                var pagename = selector.attr("data-page"); // Corrected "date-page" to "data-page"
-                var rowid = selector.attr("id");
-
-                // Confirmation dialog using SweetAlert
-                swal({
-                    title: "Are you sure?",
-                    text: "You want to delete this row?",
-                    icon: "warning",
-                    buttons: true,
-                    dangerMode: true,
-                })
-                    .then((willDelete) => {
-                        if (willDelete) {
-                            // Perform the AJAX request
-                            $.ajax({
-                                type: 'GET',  // Use GET request as per your code, but ideally this should be POST or DELETE for deletion
-                                url: "/ajax-send",
-                                data: {
-                                    pagename: pagename,
-                                    rowid: rowid,
-                                    companyDelete: 'companyDelete'  // Passing the deletion parameter
-                                },
-                                success: function (response) {
-                                    if (response.success) {
-                                        // Hide the row if deletion was successful
-                                        selector.closest('tr').hide();  // Hides the entire row
-                                        swal("Deleted!", "The row has been deleted successfully.", "success");
-                                    } else {
-                                        // Show error message if the server returned an error
-                                        swal("Error", response.error || "There was an issue deleting the row.", "error");
-                                    }
-                                },
-                                error: function () {
-                                    // Handle errors from the AJAX request
-                                    swal("Error", "An error occurred while processing your request.", "error");
-                                }
-                            });
-                        } else {
-                            // If user canceled the deletion
-                            swal("This query is safe.");
-                        }
-                    });
-            });
 
             // When the account status button is clicked
             $('.accountstatus').click(function () {
@@ -1496,52 +1361,6 @@
 
     <script>
         $(document).ready(function () {
-            // When the delete button is clicked
-            $(document).on('click', '.delete', function () {
-                var selector = $(this);
-                var pagename = selector.attr("data-page"); // Corrected "date-page" to "data-page"
-                var rowid = selector.attr("id");
-
-                // Confirmation dialog using SweetAlert
-                swal({
-                    title: "Are you sure?",
-                    text: "You want to delete this row?",
-                    icon: "warning",
-                    buttons: true,
-                    dangerMode: true,
-                })
-                    .then((willDelete) => {
-                        if (willDelete) {
-                            // Perform the AJAX request
-                            $.ajax({
-                                type: 'GET',  // Use GET request as per your code, but ideally this should be POST or DELETE for deletion
-                                url: "/ajax-send",
-                                data: {
-                                    pagename: pagename,
-                                    rowid: rowid,
-                                    licenseDelete: 'licenseDelete'  // Passing the deletion parameter
-                                },
-                                success: function (response) {
-                                    if (response.success) {
-                                        // Hide the row if deletion was successful
-                                        selector.closest('tr').hide();  // Hides the entire row
-                                        swal("Deleted!", "The row has been deleted successfully.", "success");
-                                    } else {
-                                        // Show error message if the server returned an error
-                                        swal("Error", response.error || "There was an issue deleting the row.", "error");
-                                    }
-                                },
-                                error: function () {
-                                    // Handle errors from the AJAX request
-                                    swal("Error", "An error occurred while processing your request.", "error");
-                                }
-                            });
-                        } else {
-                            // If user canceled the deletion
-                            swal("This query is safe.");
-                        }
-                    });
-            });
 
             // When the account status button is clicked
             $('.accountstatus').click(function () {
@@ -1759,54 +1578,7 @@
             }
         }
 
-        $(document).ready(function () {
-            // When the delete button is clicked
-            $(document).on('click', '.delete', function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                var selector = $(this);
-                var pagename = selector.attr("data-page");
-                var rowid = selector.attr("id");
 
-                // Confirmation dialog using SweetAlert
-                swal({
-                    title: "Are you sure?",
-                    text: "You want to delete this project?",
-                    icon: "warning",
-                    buttons: true,
-                    dangerMode: true,
-                })
-                    .then((willDelete) => {
-                        if (willDelete) {
-                            // Perform the AJAX request
-                            $.ajax({
-                                type: 'GET',
-                                url: "/ajax-send",
-                                data: {
-                                    pagename: pagename,
-                                    rowid: rowid,
-                                    projectDelete: 'projectDelete'
-                                },
-                                success: function (response) {
-                                    if (response.success) {
-                                        // Use DataTables API to remove the row properly
-                                        var table = $('#lists').DataTable();
-                                        table.row(selector.closest('tr')).remove().draw(false);
-                                        swal("Deleted!", "The project has been deleted successfully.", "success");
-                                    } else {
-                                        swal("Error", response.error || "There was an issue deleting the project.", "error");
-                                    }
-                                },
-                                error: function () {
-                                    swal("Error", "An error occurred while processing your request.", "error");
-                                }
-                            });
-                        } else {
-                            swal("This query is safe.");
-                        }
-                    });
-            });
-        });
     </script>
 @endif
 
