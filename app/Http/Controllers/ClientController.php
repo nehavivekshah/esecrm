@@ -197,33 +197,71 @@ class ClientController extends Controller
 
     public function manageRecoveryPost(Request $request)
     {
-        $client = $this->clientService->firstOrCreateClient([
-            'phone' => $request->phone,
-            'name' => $request->name,
-            'company' => $request->company,
-            'email' => $request->email
-        ]);
+        $clientId = $request->clientId;
+        $projectId = $request->projectId;
 
-        $project = $this->clientService->updateOrCreateProject(array_merge($request->all(), [
-            'client_id' => $client->id,
-            'project_name' => $request->project
-        ]), $request->id);
+        // 1. Resolve Client
+        if ($clientId === 'new') {
+            $client = $this->clientService->firstOrCreateClient([
+                'phone' => $request->phone,
+                'name' => $request->name,
+                'company' => $request->company,
+                'email' => $request->email
+            ]);
+            $clientId = $client->id;
+        } else {
+            // Update existing client details
+            $client = Clients::find($clientId);
+            if ($client) {
+                $client->name = $request->name;
+                $client->company = $request->company;
+                $client->mob = $request->phone;
+                $client->email = $request->email;
+                $client->save();
+            }
+        }
 
-        $checkProject = Recoveries::where('project_id', '=', $project->id)->count();
+        // 2. Resolve Project
+        if ($projectId === 'new') {
+            $project = $this->clientService->updateOrCreateProject(array_merge($request->all(), [
+                'client_id' => $clientId,
+                'project_name' => $request->project // Using manual project name
+            ]), null);
+            $projectId = $project->id;
+        } else {
+            $project = Projects::find($projectId);
+            if ($project) {
+                $project->amount = $request->amount; // Update project amount based on form
+                $project->save();
+            }
+        }
 
-        if ($checkProject == 0) {
+        // 3. Handle Recovery (Create or Update)
+        $recovery = null;
+        if ($request->id) {
+            $recovery = Recoveries::find($request->id);
+        }
+
+        if ($recovery) {
+            // Update existing recovery
+            $recovery->client_id = $clientId;
+            $recovery->project_id = $projectId;
+            $recovery->note = $request->note ?? '';
+            $recovery->save();
+            return redirect('recoveries')->with('success', 'Recovery updated successfully.');
+        } else {
+            // Create new recovery
             $this->clientService->recordRecovery([
-                'client_id' => $client->id,
-                'project_id' => $project->id,
+                'client_id' => $clientId,
+                'project_id' => $projectId,
                 'received' => $request->received,
                 'note' => $request->note,
                 'reminderDate' => $request->reminder ?: now(),
-                'status' => $request->status ?: '0'
+                'status' => $request->status ?: '0',
+                'send' => '1' // Send email if needed based on recordRecovery logic
             ]);
-            return redirect('recoveries')->with('success', 'Operation completed successfully.');
+            return redirect('recoveries')->with('success', 'Recovery added successfully.');
         }
-
-        return back()->with('success', 'Recovery details updated successfully.');
     }
 
     public function contracts()
