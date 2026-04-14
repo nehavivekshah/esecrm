@@ -90,19 +90,32 @@
         @yield('content')
         
         @if (Session::has('success'))
-        <div class="response-msg auto-hide" style="position: fixed; top: 20px; right: 20px; z-index: 1050; min-width: 300px;">
-            <div class="alert alert-success shadow alert-dismissible" role="alert">
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                <i class='bx bx-check-circle me-2'></i> {{ Session::get('success') }}
-            </div>
-        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                if (typeof swal !== 'undefined') {
+                    swal({
+                        title: "Excellent!",
+                        text: "{!! addslashes(Session::get('success')) !!}",
+                        icon: "success",
+                        timer: 2500,
+                        buttons: false
+                    });
+                }
+            });
+        </script>
         @elseif (Session::has('error'))
-        <div class="response-msg auto-hide" style="position: fixed; top: 20px; right: 20px; z-index: 1050; min-width: 300px;">
-            <div class="alert alert-danger shadow alert-dismissible" role="alert">
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                <i class='bx bx-error-circle me-2'></i> {{ Session::get('error') }}
-            </div>
-        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                if (typeof swal !== 'undefined') {
+                    swal({
+                        title: "Oops!",
+                        text: "{!! addslashes(Session::get('error')) !!}",
+                        icon: "error",
+                        button: "Okay"
+                    });
+                }
+            });
+        </script>
         @endif
         
         <!-- Js Library -->

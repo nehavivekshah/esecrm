@@ -54,12 +54,7 @@
         </div>
         @endif
 
-        @if(session('success'))
-        <div class="alert alert-success shadow-sm border-0 alert-dismissible" role="alert">
-            <i class="bx bx-check-circle me-2"></i> {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        @endif
+        {{-- Success notifications now handled beautifully by global swal popup in layout.blade.php --}}
 
         <form method="POST" action="/manage-project" id="projectForm">
             @csrf
