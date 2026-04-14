@@ -217,6 +217,15 @@
 
                 </li>
             @endif
+
+            @if(in_array('users_assign', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
+                <li>
+                    <a href="/users" @if(Request::segment(1) == 'users' || Request::segment(1) == 'manage-user') class="active" @endif>
+                        <i class="bx bx-group"></i>
+                        <span class="link_name">Users Management</span>
+                    </a>
+                </li>
+            @endif
         @endif
         
         <li>

@@ -41,7 +41,19 @@
                                 <td class="m-none">{{$user->email ?? '--'}}</td>
                                 <td class="m-none">{{$user->mob ?? '--'}}</td>
                                 <td class="m-none">{{$user->title ?? '--'}} - {{$user->subtitle ?? ''}}</td>
-                                <td width="50px">@if($user->status == '1')<span class="badge bg-success">Active</span>@else<span class="badge bg-danger">Deactive</span>@endif</td>
+                                <td width="50px">
+                                    <div class="form-check form-switch p-0 d-flex justify-content-center">
+                                        <input class="form-check-input status-toggle" type="checkbox" role="switch" 
+                                               id="status_{{ $user->id }}" 
+                                               data-id="{{ $user->id }}"
+                                               style="cursor: pointer; width: 34px; height: 18px;"
+                                               {{ $user->status == '1' ? 'checked' : '' }}
+                                               {{ Auth::id() == $user->id ? 'disabled' : '' }}>
+                                    </div>
+                                    <span class="small text-muted d-block text-center" style="font-size: 0.65rem;">
+                                        {{ $user->status == '1' ? 'Active' : 'Deactive' }}
+                                    </span>
+                                </td>
                                 @if(in_array('users_edit',$roleArray) || in_array('users_delete',$roleArray) || in_array('All',$roleArray))
                                 <td width="50px" class="position-sticky end-0">
                                     <div class="table-btn d-flex align-items-center gap-2">
@@ -63,3 +75,64 @@
         </div>
     </section>
 @endsection
+
+@push('scripts')
+<script>
+$(document).ready(function() {
+    $('.status-toggle').on('change', function() {
+        const userId = $(this).data('id');
+        const isChecked = $(this).is(':checked');
+        const newStatus = isChecked ? 1 : 2;
+        const $label = $(this).closest('td').find('span');
+
+        // Show loading state if needed
+        $(this).prop('disabled', true);
+
+        $.ajax({
+            url: "{{ route('users.toggle_status') }}",
+            method: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                id: userId,
+                status: newStatus
+            },
+            success: function(response) {
+                if (response.success) {
+                    $label.text(newStatus == 1 ? 'Active' : 'Deactive');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Updated!',
+                        text: response.message,
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                } else {
+                    // Revert on failure
+                    $('#status_' + userId).prop('checked', !isChecked);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message
+                    });
+                }
+            },
+            error: function(xhr) {
+                // Revert on error
+                $('#status_' + userId).prop('checked', !isChecked);
+                const msg = xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred while updating status.';
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: msg
+                });
+            },
+            complete: function() {
+                $('#status_' + userId).prop('disabled', false);
+            }
+        });
+    });
+});
+</script>
+@endpush

@@ -128,6 +128,30 @@ class UserController extends Controller
         
         return view('users', ['users' => $users]);
     }
+
+    public function toggleStatus(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|integer|exists:users,id',
+            'status' => 'required|integer|in:1,2'
+        ]);
+
+        $user = User::find($request->id);
+        
+        // Prevent disabling yourself
+        if ($user->id === Auth::id()) {
+            return response()->json(['success' => false, 'message' => 'You cannot disable your own account.'], 403);
+        }
+
+        $user->status = $request->status;
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User status updated successfully.',
+            'new_status' => $user->status
+        ]);
+    }
     
     public function manageUser(Request $request)
     {

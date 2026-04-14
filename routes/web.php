@@ -262,6 +262,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/users', [UserController::class, 'users'])->middleware('permission:users,assign');
     Route::get('/manage-user', [UserController::class, 'manageUser'])->name('manageUser')->middleware('permission:users,add');
     Route::post('/manage-user', [UserController::class, 'manageUserPost'])->name('manageUser')->middleware('permission:users,add');
+    Route::post('/users/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle_status');
 
 
 
