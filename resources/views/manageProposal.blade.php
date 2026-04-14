@@ -627,70 +627,47 @@
             document.getElementById('clientState').value   = state;
             document.getElementById('clientZip').value     = zip;
             document.getElementById('clientCountry').value = country;
+            
+            // Expand client details if collapsed
+            const body = document.getElementById('clientDetailsBody');
+            if (body && !body.classList.contains('show')) {
+                const bsCollapse = bootstrap.Collapse.getInstance(body) || new bootstrap.Collapse(body, { show: false });
+                bsCollapse.show();
+            }
         });
     }
 
-    // ── Auto-populate from URL Context ──
+    // ── Auto-populate from Project Context ──
     @if(request()->has('project_id') && !empty($preloadProject))
         window.addEventListener('load', function() {
             console.log("Auto-populating proposal details from project context...");
             
-            // Set subject
             const subjectField = document.getElementById('subject');
             if(subjectField && !subjectField.value) {
                 subjectField.value = "Proposal for " + @json($preloadProject->name);
             }
 
-            // Set Related to Client (2)
             const relatedSelect = document.getElementById('related');
             if(relatedSelect) {
-                relatedSelect.value = "2";
-                // Trigger change to update the list to show clients
-                const event = new Event('change');
-                relatedSelect.dispatchEvent(event);
+                relatedSelect.value = "2"; // Set to 'Client'
                 
-                // Now find and select the client in the newly populated list
-                setTimeout(function() {
+                // Fetch the client list first
+                updateRelatedList("2", function() {
+                    // After list is updated, select the specific client
                     const clientSelect = document.getElementById('relatedList');
                     if(clientSelect) {
-                        clientSelect.value = @json($preloadProject->client_id);
-                        
-                        // Trigger change on client select to fill billing fields
-                        const changeEvent = new Event('change');
-                        clientSelect.dispatchEvent(changeEvent);
-
-                        // If selectpicker is used, refresh it
+                        $(clientSelect).val(@json($preloadProject->client_id));
+                        $(clientSelect).trigger('change');
                         if($(clientSelect).hasClass('selectpicker')) {
                             $(clientSelect).selectpicker('refresh');
                         }
                     }
-                }, 100);
+                });
             }
         });
     @endif
-                    city    = loc.city || '';
-                    state   = loc.state || '';
-                    zip     = loc.zip || '';
-                    country = loc.country || '';
-                }
-            } catch (e) {
-                address = rawLoc;
-            }
 
-            document.getElementById('clientAddress').value = address;
-            document.getElementById('clientCity').value    = city;
-            document.getElementById('clientState').value   = state;
-            document.getElementById('clientZip').value     = zip;
-            document.getElementById('clientCountry').value = country;
-            // Expand client details if collapsed
-            const body = document.getElementById('clientDetailsBody');
-            if (body && !body.classList.contains('show')) {
-                new bootstrap.Collapse(body, { show: true });
-            }
-        });
-    }
-
-    function updateRelatedList(relatedValue) {
+    function updateRelatedList(relatedValue, callback) {
         const $related = $('#relatedList').empty().append('<option value="">Select\u2026</option>');
         const map = {
             '1': { text: 'Leads List',   url: '/leads-list',   key: 'leads'   },
@@ -712,7 +689,12 @@
                 }).appendTo($related);
             });
             $related.selectpicker('refresh');
-        }).fail(() => { $related.append('<option value="">Error loading data</option>'); $related.selectpicker('refresh'); });
+            if (typeof callback === 'function') callback();
+        }).fail(() => { 
+            $related.append('<option value="">Error loading data</option>'); 
+            $related.selectpicker('refresh'); 
+            if (typeof callback === 'function') callback();
+        });
     }
     document.getElementById('related').addEventListener('change', function () { updateRelatedList(this.value); });
     window.onload = function () { updateRelatedList(document.getElementById('related').value); };

@@ -650,22 +650,18 @@ class LeadController extends Controller
                 try {
                     $this->leadService->sendMail($to, $subject, 'emails.proposal', $viewData);
                     $this->logActivity('Proposal Sent', 'proposals', $proposal->id, $proposal->subject, "Sent proposal: {$proposal->subject}");
-                    $this->logActivity('Proposal Sent', 'proposals', $proposal->id, $proposal->subject, "Sent proposal: {$proposal->subject}");
-                    $redirectUrl = $request->input('previous_url') ?: back()->getTargetUrl();
+                    $redirectUrl = $request->input('previous_url') ?: '/proposals';
                     return redirect($redirectUrl)->with('success', 'Proposal sent successfully!');
                 } catch (\Exception $e) {
                     \Log::error("Failed to send proposal mail: " . $e->getMessage());
-                    return back()->with('success', 'Proposal saved, but email could not be sent. Please check your SMTP settings.')->with('error_detail', $e->getMessage());
+                    $redirectUrl = $request->input('previous_url') ?: '/proposals';
+                    return redirect($redirectUrl)->with('success', 'Proposal saved, but email could not be sent. Please check your SMTP settings.')->with('error_detail', $e->getMessage());
                 }
             }
 
             if ($request->submit == 'Save & Send') {
                 $this->logActivity('Proposal Sent', 'proposals', $proposal->id, $proposal->subject, "Sent proposal: {$proposal->subject}");
-            } else {
-                $this->logActivity('Proposal Saved', 'proposals', $proposal->id, $proposal->subject, "Saved proposal: {$proposal->subject}");
-            }
-
-            $redirectUrl = $request->input('previous_url') ?: back()->getTargetUrl();
+            $redirectUrl = $request->input('previous_url') ?: '/proposals';
             return redirect($redirectUrl)->with('success', 'Proposal saved successfully!');
         }
 
