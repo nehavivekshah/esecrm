@@ -12,7 +12,7 @@
         {{-- ── Page heading bar ── --}}
         <div class="leads-toolbar mb-3">
             <div class="leads-toolbar-left gap-3">
-                <a href="/proposals" class="btn kb-action-btn" title="Back to Proposals"
+                <a href="{{ $previous_url ?? '/proposals' }}" class="btn kb-action-btn" title="Back to Proposals"
                    style="width:34px;height:34px;background:#f1f3f4;color:#5f6368;">
                     <i class="bx bx-arrow-back"></i>
                 </a>
@@ -48,6 +48,21 @@
         <form id="proposalForm" action="/manage-proposal" method="post">
             @csrf
             <input type="hidden" name="id" id="id" value="{{ $proposal->id ?? '' }}">
+            <input type="hidden" name="previous_url" value="{{ $previous_url ?? url()->previous() }}">
+
+            @if(request()->has('project_id') && !empty($preloadProject))
+                <div class="alert alert-info border-0 shadow-sm mb-4 d-flex align-items-center gap-3" style="background:#e8f0fe; border-radius:12px; padding:16px;">
+                    <div style="background:#1a73e8; color:white; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center;">
+                        <i class="bx bx-info-circle fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1 fw-bold text-primary" style="font-size:0.95rem;">Pre-filled from Project Context</h6>
+                        <p class="mb-0 text-muted" style="font-size:0.85rem;">
+                            Auto-populated for <strong>{{ $preloadProject->name }}</strong> and customer <strong>{{ $preloadProject->client_name }}</strong>.
+                        </p>
+                    </div>
+                </div>
+            @endif
 
             <div class="row g-4 align-items-start">
 
@@ -548,7 +563,7 @@
                                         <i class="bx bx-show"></i> View Proposal
                                     </a>
                                     @endif
-                                    <a href="/proposals" class="lb-btn w-100 justify-content-center"
+                                    <a href="{{ $previous_url ?? '/proposals' }}" class="lb-btn w-100 justify-content-center"
                                        style="background:transparent;color:#9aa0a6;border:1px solid #e8eaed;">
                                         <i class="bx bx-x"></i> Cancel
                                     </a>
@@ -598,6 +613,61 @@
                     zip     = loc[4] || '';
                 } else if (typeof loc === 'object' && loc !== null) {
                     address = loc.address || '';
+                    city    = loc.city    || '';
+                    state   = loc.state   || '';
+                    country = loc.country || '';
+                    zip     = loc.zip     || '';
+                }
+            } catch (e) {
+                address = rawLoc;
+            }
+
+            document.getElementById('clientAddress').value = address;
+            document.getElementById('clientCity').value    = city;
+            document.getElementById('clientState').value   = state;
+            document.getElementById('clientZip').value     = zip;
+            document.getElementById('clientCountry').value = country;
+        });
+    }
+
+    // ── Auto-populate from URL Context ──
+    @if(request()->has('project_id') && !empty($preloadProject))
+        window.addEventListener('load', function() {
+            console.log("Auto-populating proposal details from project context...");
+            
+            // Set subject
+            const subjectField = document.getElementById('subject');
+            if(subjectField && !subjectField.value) {
+                subjectField.value = "Proposal for " + @json($preloadProject->name);
+            }
+
+            // Set Related to Client (2)
+            const relatedSelect = document.getElementById('related');
+            if(relatedSelect) {
+                relatedSelect.value = "2";
+                // Trigger change to update the list to show clients
+                const event = new Event('change');
+                relatedSelect.dispatchEvent(event);
+                
+                // Now find and select the client in the newly populated list
+                setTimeout(function() {
+                    const clientSelect = document.getElementById('relatedList');
+                    if(clientSelect) {
+                        clientSelect.value = @json($preloadProject->client_id);
+                        
+                        // Trigger change on client select to fill billing fields
+                        const changeEvent = new Event('change');
+                        clientSelect.dispatchEvent(changeEvent);
+
+                        // If selectpicker is used, refresh it
+                        if($(clientSelect).hasClass('selectpicker')) {
+                            $(clientSelect).selectpicker('refresh');
+                        }
+                    }
+                }, 100);
+            }
+        });
+    @endif
                     city    = loc.city || '';
                     state   = loc.state || '';
                     zip     = loc.zip || '';

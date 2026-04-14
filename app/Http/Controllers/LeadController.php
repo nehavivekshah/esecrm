@@ -25,6 +25,7 @@ use App\Models\Lead_comments;
 use App\Models\Proposals;
 use App\Models\Proposal_items;
 use App\Models\Proposal_signatures;
+use App\Models\Projects;
 use Exception;
 use DateTime;
 
@@ -538,12 +539,23 @@ class LeadController extends Controller
 
         $companies = Companies::where('id', '=', Auth::User()->cid)->first();
 
+        $preloadProject = null;
+        $projectId = $request->project_id;
+        if ($projectId) {
+            $preloadProject = Projects::leftJoin('clients', 'projects.client_id', '=', 'clients.id')
+                ->select('projects.*', 'clients.name as client_name', 'clients.company as client_company', 'clients.email as client_email', 'clients.mob as client_mob', 'clients.whatsapp as client_whatsapp', 'clients.industry as client_industry', 'clients.poc as client_poc', 'clients.location as client_location')
+                ->where('projects.id', $projectId)
+                ->first();
+        }
+
         return view('manageProposal', [
             'proposal' => $proposal,
             'proposalItems' => $proposalItems,
             'leads' => $leads,
             'clients' => $clients,
             'companies' => $companies,
+            'preloadProject' => $preloadProject,
+            'previous_url' => $request->input('previous_url', url()->previous())
         ]);
     }
 
@@ -638,7 +650,9 @@ class LeadController extends Controller
                 try {
                     $this->leadService->sendMail($to, $subject, 'emails.proposal', $viewData);
                     $this->logActivity('Proposal Sent', 'proposals', $proposal->id, $proposal->subject, "Sent proposal: {$proposal->subject}");
-                    return back()->with('success', 'Proposal sent successfully!');
+                    $this->logActivity('Proposal Sent', 'proposals', $proposal->id, $proposal->subject, "Sent proposal: {$proposal->subject}");
+                    $redirectUrl = $request->input('previous_url') ?: back()->getTargetUrl();
+                    return redirect($redirectUrl)->with('success', 'Proposal sent successfully!');
                 } catch (\Exception $e) {
                     \Log::error("Failed to send proposal mail: " . $e->getMessage());
                     return back()->with('success', 'Proposal saved, but email could not be sent. Please check your SMTP settings.')->with('error_detail', $e->getMessage());
@@ -651,7 +665,8 @@ class LeadController extends Controller
                 $this->logActivity('Proposal Saved', 'proposals', $proposal->id, $proposal->subject, "Saved proposal: {$proposal->subject}");
             }
 
-            return back()->with('success', 'Proposal saved successfully!');
+            $redirectUrl = $request->input('previous_url') ?: back()->getTargetUrl();
+            return redirect($redirectUrl)->with('success', 'Proposal saved successfully!');
         }
 
         return back()->with('error', 'Failed to save proposal.');
