@@ -61,7 +61,8 @@
 
             {{-- Tab Nav (Edit mode only) --}}
             @if($isEdit)
-                <ul class="nav nav-tabs mb-4" id="clientTabs" role="tablist">
+                <div class="d-flex justify-content-center justify-content-lg-start">
+                    <ul class="nav nav-pills custom-dash-tabs mb-4" id="clientTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#profile" type="button">
                             <i class="bx bx-user me-1"></i> Profile
@@ -82,7 +83,8 @@
                             <i class="bx bx-file me-1"></i> Documents
                         </button>
                     </li>
-                </ul>
+                    </ul>
+                </div>
             @endif
 
             <div class="tab-content" id="clientTabsContent">
@@ -729,5 +731,49 @@
         });
     </script>
 
+    <style>
+        /* â”€â”€ Premium Dashboard Tabs UI â”€â”€ */
+        .custom-dash-tabs {
+            background: #ffffff;
+            padding: 8px;
+            border-radius: 16px;
+            display: inline-flex;
+            gap: 6px;
+            border: 1px solid #e8eaed;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            flex-wrap: wrap; /* Ensure tabs wrap nicely on mobile screens */
+        }
+        .custom-dash-tabs .nav-link {
+            border-radius: 12px;
+            color: #5f6368;
+            font-weight: 500;
+            padding: 10px 22px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            background: transparent;
+            display: flex;
+            align-items: center;
+        }
+        .custom-dash-tabs .nav-link:hover {
+            color: #1a73e8;
+            background: rgba(26,115,232,0.06);
+            transform: translateY(-1px);
+        }
+        .custom-dash-tabs .nav-link.active {
+            background: #1a73e8;
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(26,115,232,0.3);
+            transform: translateY(-1px);
+        }
+        .custom-dash-tabs .nav-link.active i {
+            color: #ffffff !important;
+        }
+        .custom-dash-tabs .nav-link i {
+            font-size: 1.15rem;
+            color: #9aa0a6;
+            transition: color 0.25s;
+        }
+    </style>
 
 @endsection
