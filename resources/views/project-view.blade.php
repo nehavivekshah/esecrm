@@ -244,10 +244,16 @@
                                 </a>
                                 @endif
                                 @if($project->client_location)
+                                @php
+                                    $locObj = json_decode($project->client_location, true);
+                                    $locStr = is_array($locObj) ? implode(', ', array_filter([$locObj['address'] ?? '', $locObj['city'] ?? '', $locObj['state'] ?? '', $locObj['zip'] ?? '', $locObj['country'] ?? ''])) : $project->client_location;
+                                @endphp
+                                @if(trim($locStr))
                                 <div class="pv-contact-row">
                                     <span class="pv-contact-icon"><i class="bx bx-map"></i></span>
-                                    <span>{{ $project->client_location }}</span>
+                                    <span>{{ $locStr }}</span>
                                 </div>
+                                @endif
                                 @endif
                             </div>
                         </div>
