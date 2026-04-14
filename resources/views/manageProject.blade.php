@@ -200,7 +200,7 @@
                                                 placeholder="Custom category…"
                                                 value="{{ old('type', $project->type ?? '') }}">
                                         </div>
-                                        <div class="d-flex gap-1 flex-wrap mb-2" id="typePills">
+                                        <div class="d-flex gap-1 flex-wrap mt-2" id="typePills">
                                             @foreach(['Web', 'App', 'ERP', 'CRM', 'Design', 'Other'] as $t)
                                                 <button type="button" class="type-pill" data-val="{{ $t }}"
                                                     onclick="selectType('{{ $t }}')">{{ $t }}</button>
