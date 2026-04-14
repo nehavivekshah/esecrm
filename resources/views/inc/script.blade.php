@@ -221,8 +221,8 @@
                                         title: response.success || "Deleted successfully."
                                     }).then(() => {
                                         // Auto-reload to refresh pagination/statistics if necessary
-                                        // Contracts, Proposals, and Clients are handled smoothly without reload
-                                        if(pagename !== 'contractDelete' && pagename !== 'proposalDelete' && pagename !== 'clientDelete') {
+                                        // Specific models are handled smoothly without reload
+                                        if(pagename !== 'contractDelete' && pagename !== 'proposalDelete' && pagename !== 'clientDelete' && pagename !== 'projectDelete') {
                                            location.reload();
                                         }
                                     });
