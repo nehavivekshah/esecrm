@@ -662,6 +662,23 @@
                             $(clientSelect).selectpicker('refresh');
                         }
                     }
+
+                    // Pre-fill Items & Summary
+                    const itemNameField = document.querySelector('textarea[name="proposal_items[0][item_name]"]');
+                    const itemRateField = document.querySelector('input[name="proposal_items[0][rate]"]');
+                    
+                    if (itemNameField && !itemNameField.value) {
+                        itemNameField.value = @json($preloadProject->name);
+                    }
+                    if (itemRateField && !itemRateField.value) {
+                        itemRateField.value = @json($preloadProject->amount);
+                    }
+
+                    // Trigger calculations by firing input event on rate field
+                    if (itemRateField) {
+                        const inputEvent = new Event('input', { bubbles: true });
+                        itemRateField.dispatchEvent(inputEvent);
+                    }
                 });
             }
         });
