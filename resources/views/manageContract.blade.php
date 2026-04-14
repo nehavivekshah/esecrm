@@ -50,6 +50,7 @@
                     @elseif(!empty($contract->id))
                         <input type="hidden" name="id" value="{{ $contract->id }}">
                     @endif
+                    <input type="hidden" name="previous_url" value="{{ $previous_url ?? url()->previous() }}">
 
                     <!-- Client -->
                     <div class="col-md-6">

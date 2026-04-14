@@ -33,6 +33,7 @@
                             <form action="manage-recovery" method="post" enctype="multipart/form-data">
                                 @csrf
                                 <input type="hidden" name="id" value="{{ $_GET['id'] ?? '' }}">
+                                <input type="hidden" name="previous_url" value="{{ $previous_url ?? url()->previous() }}">
 
                                 <div class="row g-4">
                                     {{-- Primary Context --}}

@@ -168,6 +168,7 @@ class ClientController extends Controller
             'recoveries' => $recoveries,
             'clients'    => $clients,
             'projects'   => $projects,
+            'previous_url' => $request->input('previous_url', url()->previous())
         ];
 
         if ($request->has('ajax')) {
@@ -248,7 +249,8 @@ class ClientController extends Controller
             $recovery->project_id = $projectId;
             $recovery->note = $request->note ?? '';
             $recovery->save();
-            return redirect('recoveries')->with('success', 'Recovery updated successfully.');
+            $redirectUrl = $request->input('previous_url') ?: 'recoveries';
+            return redirect($redirectUrl)->with('success', 'Recovery updated successfully.');
         } else {
             // Create new recovery
             $this->clientService->recordRecovery([
@@ -260,7 +262,8 @@ class ClientController extends Controller
                 'status' => $request->status ?: '0',
                 'send' => '1' // Send email if needed based on recordRecovery logic
             ]);
-            return redirect('recoveries')->with('success', 'Recovery added successfully.');
+            $redirectUrl = $request->input('previous_url') ?: 'recoveries';
+            return redirect($redirectUrl)->with('success', 'Recovery added successfully.');
         }
     }
 
@@ -338,6 +341,8 @@ class ClientController extends Controller
             return view('manageContractForm', $viewData);
         }
 
+        $viewData['previous_url'] = $request->input('previous_url', url()->previous());
+
         return view('manageContract', $viewData);
     }
 
@@ -376,7 +381,8 @@ class ClientController extends Controller
 
         $contract->save();
 
-        return redirect('/contracts')->with('success', $request->id ? 'Contract updated successfully.' : 'Contract added successfully.');
+        $redirectUrl = $request->input('previous_url') ?: '/contracts';
+        return redirect($redirectUrl)->with('success', $request->id ? 'Contract updated successfully.' : 'Contract added successfully.');
     }
 
     public function projects(Request $request)
@@ -566,6 +572,7 @@ class ClientController extends Controller
             'projects'       => $projects,
             'project_id'     => $project_id,
             'preloadProject' => $preloadProject,
+            'previous_url'   => $request->input('previous_url', url()->previous()),
         ];
 
         if ($request->has('ajax')) {
@@ -605,7 +612,8 @@ class ClientController extends Controller
         ]);
 
         if ($license->save()) {
-            return redirect('licensing')->with('success', 'License details successfully processed.');
+            $redirectUrl = $request->input('previous_url') ?: 'licensing';
+            return redirect($redirectUrl)->with('success', 'License details successfully processed.');
         }
 
         return back()->with('error', 'Failed to process license.');
@@ -733,7 +741,8 @@ class ClientController extends Controller
             'leadOrigin' => $leadOrigin,
             'proposals' => $proposals,
             'projects' => $projects,
-            'invoices' => $invoices
+            'invoices' => $invoices,
+            'previous_url' => $request->input('previous_url', url()->previous())
         ]);
 
     }
@@ -911,7 +920,8 @@ class ClientController extends Controller
 
                 $this->logActivity('Customer Updated', 'clients', $leadSingle->id, $leadSingle->name, "Updated customer: {$leadSingle->name}");
 
-                return back()->with('success', 'client successfully updated.');
+                $redirectUrl = $request->input('previous_url') ?: back()->getTargetUrl();
+                return redirect($redirectUrl)->with('success', 'client successfully updated.');
             } else {
                 return back()->with('error', 'Failed to update lead.');
             }
@@ -1051,6 +1061,7 @@ class ClientController extends Controller
             'project_id'     => $project_id,
             'preloadProject' => $preloadProject,
             'preloadClient'  => $preloadClient,
+            'previous_url'   => $request->input('previous_url', url()->previous()),
         ]);
     }
 
@@ -1220,9 +1231,8 @@ class ClientController extends Controller
         $this->logActivity('Invoice Saved', 'invoices', $invoice->id, $invoice->invoice_no ?? "#{$invoice->id}", "Invoice #{$invoice->id} saved", (string)($invoice->grand_total ?? ''));
 
         // 6) Redirect or return a response
-        return redirect()
-            ->route('manageInvoice', ('id=' . $invoice->id ?? ''))
-            ->with('success', 'Invoice saved successfully!');
+        $redirectUrl = $request->input('previous_url') ?: route('manageInvoice', ('id=' . $invoice->id ?? ''));
+        return redirect($redirectUrl)->with('success', 'Invoice saved successfully!');
     }
 
     public function manageInvoiceClientPost(Request $request)
@@ -1394,7 +1404,8 @@ class ClientController extends Controller
             'project' => $project,
             'clients' => $clients,
             'users' => $users,
-            'generatedId' => $generatedId
+            'generatedId' => $generatedId,
+            'previous_url' => $request->input('previous_url', url()->previous())
         ]);
     }
 
@@ -1444,7 +1455,8 @@ class ClientController extends Controller
         $project->deployment_url = $request->deployment_url ?? '';
         $project->save();
 
-        return redirect('/projects')->with('success', $request->id
+        $redirectUrl = $request->input('previous_url') ?: '/projects';
+        return redirect($redirectUrl)->with('success', $request->id
             ? 'Project updated successfully.'
             : 'Project created successfully.'
         );

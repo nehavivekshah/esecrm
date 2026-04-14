@@ -152,6 +152,7 @@
         <form id="licenseForm" action="{{ route('manageLicense') }}" method="POST">
             @csrf
             <input type="hidden" name="id" value="{{ $license->id ?? '' }}">
+            <input type="hidden" name="previous_url" value="{{ $previous_url ?? url()->previous() }}">
 
             {{-- ── Project Link ── --}}
             <div class="ml-card mb-4">

@@ -171,6 +171,7 @@
             <form id="invoiceForm" action="/manage-invoice" method="POST">
                 @csrf
                 <input type="hidden" name="id" value="{{ $invoice->id ?? '' }}">
+                <input type="hidden" name="previous_url" value="{{ $previous_url ?? url()->previous() }}">
                 <input type="hidden" name="_action" id="invoiceAction" value="save">
 
 

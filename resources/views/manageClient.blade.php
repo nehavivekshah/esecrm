@@ -120,6 +120,7 @@
                     <form action="manage-client" method="post" class="row g-4" id="profileForm">
                         @csrf
                         <input type="hidden" name="id" value="{{ $_GET['id'] ?? '' }}">
+                        <input type="hidden" name="previous_url" value="{{ $previous_url ?? url()->previous() }}">
 
                         {{-- Primary Information --}}
                         <div class="col-lg-6">

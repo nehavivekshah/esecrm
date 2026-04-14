@@ -60,6 +60,7 @@
 
             <form method="POST" action="/manage-project" id="projectForm">
                 @csrf
+                <input type="hidden" name="previous_url" value="{{ $previous_url ?? url()->previous() }}">
                 @if($project)
                     <input type="hidden" name="id" value="{{ $project->id }}">
                 @endif
