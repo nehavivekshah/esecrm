@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Opportunity extends Model
 {
-    use HasFactory;
+    use HasFactory, \App\Traits\BelongsToCompany;
 
     protected $fillable = [
         'customer_id',

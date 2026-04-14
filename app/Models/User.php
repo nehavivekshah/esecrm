@@ -45,4 +45,20 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * Check if user has admin role.
+     */
+    public function isAdmin()
+    {
+        return $this->role == '0' || $this->role == 'Admin';
+    }
+
+    /**
+     * Check if user has master role.
+     */
+    public function isMaster()
+    {
+        return $this->role == 'master';
+    }
 }

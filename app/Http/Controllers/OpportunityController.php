@@ -11,7 +11,7 @@ class OpportunityController extends Controller
 {
     public function index()
     {
-        $clients = Clients::where('cid', Auth::user()->cid)->get();
+        $clients = Clients::get();
         return view('opportunities_kanban', compact('clients'));
     }
 

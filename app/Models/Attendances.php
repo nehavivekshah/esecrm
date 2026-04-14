@@ -4,9 +4,11 @@
     use Illuminate\Database\Eloquent\Factories\HasFactory;
     use Illuminate\Database\Eloquent\Model;
     
+    use App\Traits\BelongsToCompany;
+
     class Attendances extends Model
     {
-        use HasFactory;
+        use HasFactory, BelongsToCompany;
 
         protected $fillable = [
             'user_id',

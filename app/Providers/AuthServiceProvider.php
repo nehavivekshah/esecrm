@@ -21,6 +21,8 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        \Illuminate\Support\Facades\Gate::define('master-access', function ($user) {
+            return $user->role === 'master';
+        });
     }
 }

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Interaction extends Model
 {
-    use HasFactory;
+    use HasFactory, \App\Traits\BelongsToCompany;
 
     protected $fillable = [
         'user_id',

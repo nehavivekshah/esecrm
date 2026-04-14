@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Enquiry extends Model
 {
-    use HasFactory;
+    use HasFactory, \App\Traits\BelongsToCompany;
 
     protected $fillable = [
         'name',

@@ -64,7 +64,7 @@ class UserController extends Controller
 
         // For admin: allow picking any user in their company
         $users = $isAdmin
-            ? User::select('id', 'name')->where('cid', $authUser->cid)->get()
+            ? User::select('id', 'name')->get()
             : collect([$authUser]);
 
         $viewData = [
@@ -150,7 +150,6 @@ class UserController extends Controller
             
             $username = explode('@',$request->email);
             
-            $user->cid = (Auth::user()->cid ?? '');
             $user->username = $username[0].substr($request->mob,0,3);
             $user->name = ($request->name ?? '');
             $user->email = ($request->email ?? '');
@@ -200,7 +199,6 @@ class UserController extends Controller
             
             $user = User::find($id);
             
-            $user->cid = (Auth::user()->cid ?? '');
             $user->name = ($request->name ?? '');
             $user->email = ($request->email ?? '');
             $user->mob = ($request->mob ?? '');
@@ -246,9 +244,7 @@ class UserController extends Controller
             
             if(!empty($request->file('companyLogo'))):
                 
-                $cid = (Auth::user()->cid ?? '');
-                
-                $company = Companies::find($cid);
+                $company = Companies::find(Auth::user()->cid);
                 
                 // $request->validate([
                 //     'image' => 'required|image|mimes:jpeg,jpg,png,gif,svg|max:2048',
@@ -355,7 +351,7 @@ class UserController extends Controller
         
         $segment = $request->segment(1);
         
-        if($segment == 'my-company'){ $cid = Auth::user()->cid ?? ''; }else{ $cid = $request->id ?? ''; }
+        $cid = ($segment == 'my-company') ? Auth::user()->cid : ($request->id ?? '');
         
         $companies = Companies::where('id','=',$cid)->first();
         $plans = SubscriptionPlan::all();
@@ -405,7 +401,7 @@ class UserController extends Controller
         
         $segment = $request->segment(1);
         //dd($segment);
-        if(!empty($request->id)){ $id = $request->id ?? ''; }else{ $id = Auth::user()->cid ?? ''; }
+        $id = !empty($request->id) ? ($request->id ?? '') : (Auth::user()->cid ?? '');
         
         //dd($id);
         

@@ -28,10 +28,6 @@ class NewLeadController extends Controller
                 // 1. Base Query for Filtering & Counting
                 $query = Leads::query();
 
-                if (Auth::user()->role != 'master') {
-                    $query->where('cid', '=', Auth::user()->cid);
-                }
-
                 // Filter by Status
                 if ($request->filled('status')) {
                     $query->where('status', $request->status);
@@ -126,8 +122,7 @@ class NewLeadController extends Controller
                     ->get();
 
                 // Build a userId → name lookup for the assigned column
-                $userMap = User::where('cid', Auth::user()->cid)
-                    ->pluck('name', 'id')
+                $userMap = User::pluck('name', 'id')
                     ->toArray();
 
                 $data = [];
@@ -262,7 +257,7 @@ class NewLeadController extends Controller
         }
 
         // Logic for Initial Page Load
-        $getUsers = User::where('cid', Auth::user()->cid)->where('status', '1')->get();
+        $getUsers = User::where('status', '1')->get();
         return view('newleads', compact('getUsers'));
     }
 
@@ -334,7 +329,6 @@ class NewLeadController extends Controller
                 if (!Clients::where('commentLeadID', $lead->id)->exists()) {
 
                     $client = new Clients();
-                    $client->cid = Auth::user()->cid ?? '';
                     $client->commentLeadID = $lead->id;
                     $client->name = $request->name;
                     $client->email = $request->email;

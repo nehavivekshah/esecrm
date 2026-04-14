@@ -51,11 +51,9 @@ class TaskController extends Controller
             'assignee_ids.*' => 'exists:users,id',
         ]);
 
-        $tasklist = Task::where('cid', '=', Auth::user()->cid)
-            ->where('uid', '=', $request->uid)->orderBy('position', 'asc')->get();
+        $tasklist = Task::where('uid', '=', $request->uid)->orderBy('position', 'asc')->get();
 
         $task = new Task();
-        $task->cid        = Auth::user()->cid;
         $task->uid        = $request->uid ?: Auth::id();
         $task->project_id = $request->project_id;
         $task->parent_id  = $request->parent_id;
@@ -95,7 +93,7 @@ class TaskController extends Controller
         $data = $this->taskService->getKanbanData($projectId);
 
         $taskSingle = Task::where('id', '=', $request->id)->with('assignees')->get();
-        $userSingle = User::where('cid', '=', Auth::user()->cid)->where('id', '=', $taskSingle[0]->uid)->get();
+        $userSingle = User::where('id', '=', $taskSingle[0]->uid)->get();
 
         $taskHistory = Task_working_hours::where('taskid', '=', $request->id)
             ->orderBy('id', 'DESC')->get();
@@ -141,10 +139,10 @@ class TaskController extends Controller
             ->orderBy('id', 'DESC')->get();
 
         // All users in this company for multi-assign select
-        $allUsers = User::where('cid', Auth::user()->cid)->orderBy('name')->get();
+        $allUsers = User::orderBy('name')->get();
 
         // All projects for project picker in popup
-        $projects = Projects::where('cid', Auth::user()->cid)->orderBy('name')->get();
+        $projects = Projects::orderBy('name')->get();
 
         return view('inc.task.popup', [
             'taskSingle'      => $taskSingle,
@@ -161,11 +159,19 @@ class TaskController extends Controller
     {
         if (!empty($request->deltaskid)) {
 
+            $request->validate(['deltaskid' => 'required|exists:tasks,id']);
             $tasks = Task::find($request->deltaskid);
             $tasks->delete();
             return response(['success' => 'Deleted']);
 
         } else if (!empty($request->userId)) {
+
+            $request->validate([
+                'userId' => 'required|exists:users,id',
+                'updatedPositions' => 'required|array',
+                'updatedPositions.*.taskId' => 'required|exists:tasks,id',
+                'updatedPositions.*.position' => 'required|integer',
+            ]);
 
             if (!empty($request->updatedPositions)) {
                 foreach ($request->updatedPositions as $taskData) {
@@ -181,6 +187,11 @@ class TaskController extends Controller
             return response(['error' => 'No data provided']);
 
         } else if (!empty($request->tskId)) {
+
+            $request->validate([
+                'tskId' => 'required|exists:tasks,id',
+                'label' => 'required|string',
+            ]);
 
             $tasks        = Task::find($request->tskId);
             $tasks->label = $request->label;
@@ -230,6 +241,11 @@ class TaskController extends Controller
 
         } else if (!empty($request->commenttaskid)) {
 
+            $request->validate([
+                'commenttaskid' => 'required|exists:tasks,id',
+                'taskcomment' => 'required|string|max:5000',
+            ]);
+
             $task_comments           = new Task_comments();
             $task_comments->uid      = Auth::user()->id;
             $task_comments->taskid   = $request->commenttaskid;
@@ -272,6 +288,12 @@ class TaskController extends Controller
             return response(['success' => 'Submitted', 'message' => $messages]);
 
         } else if (!empty($request->taskid)) {
+
+            $request->validate([
+                'taskid' => 'required|exists:tasks,id',
+                'tasktitle' => 'nullable|string|max:500',
+                'taskdes' => 'nullable|string|max:5000',
+            ]);
 
             $tskId = $request->taskid ?? '';
             $tasks = Task::find($tskId);

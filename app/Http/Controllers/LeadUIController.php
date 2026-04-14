@@ -15,8 +15,7 @@ class LeadUIController extends Controller
      */
     public function kanbanView()
     {
-        $getUsers = User::where('cid', Auth::user()->cid)
-            ->where('status', '1')
+        $getUsers = User::where('status', '1')
             ->orderBy('name')
             ->get();
 
@@ -44,8 +43,7 @@ class LeadUIController extends Controller
 
         // ── Shared filter builder ──────────────────────────────────────────
         $buildQuery = function ($statusInt) use ($request) {
-            $q = Leads::where('cid', Auth::user()->cid)
-                      ->where('status', $statusInt);
+            $q = Leads::where('status', $statusInt);
 
             if ($s = trim($request->get('search', ''))) {
                 $q->where(function ($sub) use ($s) {

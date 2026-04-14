@@ -168,9 +168,7 @@ class LeadController extends Controller
         $totalPages = (int) ceil($totalLeads / $perPage);
 
         // Active users of the same company
-        $getUsers = User::where('cid', '=', Auth::user()->cid)
-            ->where('status', '=', '1')
-            ->get();
+        $getUsers = User::where('status', '=', '1')->get();
 
         return view('leads', [
             'leads'         => $leads,
@@ -192,11 +190,6 @@ class LeadController extends Controller
 
         $leads = $this->leadService->getPaginatedLeads($search, $status, $perPage);
 
-        // Active users of the same company
-        $getUsers = User::where('cid', '=', Auth::user()->cid)
-            ->where('status', '=', '1')
-            ->get();
-
         return view('leads', [
             'leads' => $leads,
             'reminderTimes' => $leads->map(fn($lead) => $lead->next_date ? Carbon::parse($lead->next_date)->timestamp * 1000 : null),
@@ -205,13 +198,13 @@ class LeadController extends Controller
             'totalLeads' => $leads->total(),
             'perPage' => $perPage,
             'search' => $search,
-            'getUsers' => $getUsers
+            'getUsers' => User::where('status', '1')->get()
         ]);
     }
 
     public function leadList(Request $request)
     {
-        $leads = Leads::select('id', 'name', 'company', 'email', 'mob', 'location')->where('cid', '=', Auth::user()->cid)->where('name', '!=', '')->orderBy('name', 'ASC')->get();
+        $leads = Leads::select('id', 'name', 'company', 'email', 'mob', 'location')->where('name', '!=', '')->orderBy('name', 'ASC')->get();
 
         return json_encode(['leads' => $leads]);
     }
@@ -243,8 +236,7 @@ class LeadController extends Controller
 
         $leadComments = Lead_comments::where('lead_id', '=', ($leads->id ?? ''))->get();
 
-        $salesUsers = User::where('cid', Auth::user()->cid)
-            ->where('status', '1')
+        $salesUsers = User::where('status', '1')
             ->orderBy('name')
             ->get();
 
@@ -511,9 +503,7 @@ class LeadController extends Controller
             proposals.*
         ");
 
-        // Apply filter for current user's company ID
-        $query->where('users.cid', '=', Auth::user()->cid)
-            ->orderBy('proposals.proposal_date', 'DESC')
+        $query->orderBy('proposals.proposal_date', 'DESC')
             ->orderBy('proposals.id', 'DESC');
 
         // Get results
@@ -542,9 +532,9 @@ class LeadController extends Controller
             $proposalItems = collect();
         }
 
-        $leads = Leads::where('cid', '=', Auth::User()->cid)->where('name', '!=', '')->orderBy('name', 'ASC')->get();
+        $leads = Leads::where('name', '!=', '')->orderBy('name', 'ASC')->get();
 
-        $clients = Clients::where('cid', '=', Auth::User()->cid)->where('name', '!=', '')->orderBy('name', 'ASC')->get();
+        $clients = Clients::where('name', '!=', '')->orderBy('name', 'ASC')->get();
 
         $companies = Companies::where('id', '=', Auth::User()->cid)->first();
 
@@ -906,126 +896,62 @@ class LeadController extends Controller
     /*Lead Assign Controller*/
     public function leadsPost(Request $request)
     {
-
-        if (Auth::user()->role == '0') {
-
-            $leads = Leads::leftJoin('lead_comments', function ($join) {
-                $join->on('leads.id', '=', 'lead_comments.lead_id')
-                    ->whereIn('lead_comments.next_date', function ($query) {
-                        $query->select(DB::raw('MAX(next_date)'))
-                            ->from('lead_comments')
-                            ->whereColumn('lead_comments.lead_id', 'leads.id');
-                    });
-            })
-                ->select(
-                    'leads.id',
-                    'leads.cid',
-                    'leads.name',
-                    'leads.company',
-                    'leads.email',
-                    'leads.mob',
-                    'leads.whatsapp',
-                    'leads.location',
-                    'leads.purpose',
-                    'leads.assigned',
-                    'leads.values',
-                    'leads.poc',
-                    'leads.status',
-                    'leads.created_at',
-                    'leads.updated_at',
-                    DB::raw('MAX(lead_comments.next_date) as next_date'), // Get the max next_date
-                    'lead_comments.created_at as last_talk' // Get the msg field
-                )
-                ->groupBy(
-                    'leads.id',
-                    'leads.cid',
-                    'leads.name',
-                    'leads.company',
-                    'leads.email',
-                    'leads.mob',
-                    'leads.whatsapp',
-                    'leads.location',
-                    'leads.purpose',
-                    'leads.assigned',
-                    'leads.values',
-                    'leads.poc',
-                    'leads.status',
-                    'leads.created_at',
-                    'leads.updated_at',
-                    'lead_comments.created_at' // Add msg to groupBy
-                )
-                ->orderByRaw('
-                CASE 
-                    WHEN DATE(lead_comments.next_date) <= CURDATE() THEN 0
-                    ELSE 1
-                END ASC
-            ')
-                ->orderBy('leads.status', 'ASC')
-                ->orderBy('leads.created_at', 'DESC')
-                ->get();
-
-        } else {
-
-            $leads = Leads::leftJoin('lead_comments', function ($join) {
-                $join->on('leads.id', '=', 'lead_comments.lead_id')
-                    ->whereIn('lead_comments.next_date', function ($query) {
-                        $query->select(DB::raw('MAX(next_date)'))
-                            ->from('lead_comments')
-                            ->whereColumn('lead_comments.lead_id', 'leads.id');
-                    });
-            })
-                ->select(
-                    'leads.id',
-                    'leads.cid',
-                    'leads.name',
-                    'leads.company',
-                    'leads.email',
-                    'leads.mob',
-                    'leads.whatsapp',
-                    'leads.location',
-                    'leads.purpose',
-                    'leads.assigned',
-                    'leads.values',
-                    'leads.poc',
-                    'leads.status',
-                    'leads.created_at',
-                    'leads.updated_at',
-                    DB::raw('MAX(lead_comments.next_date) as next_date'), // Get the max next_date
-                    'lead_comments.msg' // Get the msg field
-                )
-                ->where('leads.cid', '=', Auth::user()->cid)
-                ->groupBy(
-                    'leads.id',
-                    'leads.cid',
-                    'leads.name',
-                    'leads.company',
-                    'leads.email',
-                    'leads.mob',
-                    'leads.whatsapp',
-                    'leads.location',
-                    'leads.purpose',
-                    'leads.assigned',
-                    'leads.values',
-                    'leads.poc',
-                    'leads.status',
-                    'leads.created_at',
-                    'leads.updated_at',
-                    'lead_comments.msg' // Add msg to groupBy
-                )
-                ->orderByRaw('
-                CASE 
-                    WHEN DATE(lead_comments.next_date) <= CURDATE() THEN 0
-                    ELSE 1
-                END ASC
-            ')
-                ->orderBy('leads.status', 'ASC')
-                ->orderBy('leads.created_at', 'DESC')
-                ->get();
-
-        }
+        $leads = Leads::leftJoin('lead_comments', function ($join) {
+            $join->on('leads.id', '=', 'lead_comments.lead_id')
+                ->whereIn('lead_comments.next_date', function ($query) {
+                    $query->select(DB::raw('MAX(next_date)'))
+                        ->from('lead_comments')
+                        ->whereColumn('lead_comments.lead_id', 'leads.id');
+                });
+        })
+            ->select(
+                'leads.id',
+                'leads.cid',
+                'leads.name',
+                'leads.company',
+                'leads.email',
+                'leads.mob',
+                'leads.whatsapp',
+                'leads.location',
+                'leads.purpose',
+                'leads.assigned',
+                'leads.values',
+                'leads.poc',
+                'leads.status',
+                'leads.created_at',
+                'leads.updated_at',
+                DB::raw('MAX(lead_comments.next_date) as next_date'),
+                'lead_comments.msg'
+            )
+            ->groupBy(
+                'leads.id',
+                'leads.cid',
+                'leads.name',
+                'leads.company',
+                'leads.email',
+                'leads.mob',
+                'leads.whatsapp',
+                'leads.location',
+                'leads.purpose',
+                'leads.assigned',
+                'leads.values',
+                'leads.poc',
+                'leads.status',
+                'leads.created_at',
+                'leads.updated_at',
+                'lead_comments.msg'
+            )
+            ->orderByRaw('
+            CASE 
+                WHEN DATE(lead_comments.next_date) <= CURDATE() THEN 0
+                ELSE 1
+            END ASC
+        ')
+            ->orderBy('leads.status', 'ASC')
+            ->orderBy('leads.created_at', 'DESC')
+            ->get();
 
         return view('leads', ['leads' => $leads]);
-
     }
 
     public function reminderScript()

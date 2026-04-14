@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Contracts extends Model
 {
-    use HasFactory;
+    use HasFactory, \App\Traits\BelongsToCompany;
     
     public function client() {
         return $this->belongsTo(Clients::class);

@@ -65,34 +65,31 @@ class HomeController extends Controller
         $auth_cid = Auth::user()->cid ?? '';
         $auth_uid = Auth::user()->id ?? '';
 
-        $role = Roles::where('id', Auth::user()->role)->first();
-        $isAdmin = $role ? ($role->title == 'Admin') : (Auth::user()->role == '0');
+        $isAdmin = Auth::user()->isAdmin();
 
         // Basic Counts and Lists
-        $users = User::where('cid', $auth_cid)->get();
-        $leads = Leads::where('cid', $auth_cid)->get();
-        $clients = Clients::where('cid', $auth_cid)->get();
-        $projects = DB::table('projects')->where('cid', $auth_cid)->get();
-        $recoveries = Recoveries::where('cid', $auth_cid)->get();
+        $users = User::all();
+        $leads = Leads::all();
+        $clients = Clients::all();
+        $projects = Projects::all();
+        $recoveries = Recoveries::all();
         $todolists = Todo_lists::where('uid', $auth_uid)->orderBy('position', 'DESC')->get();
 
         // New Lead Notification Logic
         $newLeads = Leads::leftJoin('lead_comments', 'leads.id', '=', 'lead_comments.lead_id')
-            ->where('leads.uid', $auth_uid)
             ->where('leads.status', 1)
             ->where('lead_comments.next_date', '<=', now())
             ->distinct()
             ->get(['leads.id']);
 
         /* --- DASHBOARD WIDGETS DATA --- */
-        $outstandingInvoices = Invoices::where('cid', $auth_cid)->where('status', '!=', 'paid')->sum('total_amount');
-        $pendingProposals = Proposals::where('cid', $auth_cid)->whereIn('status', ['Open', 'Sent'])->count();
-        $myPendingTasks = Task::where('uid', $auth_uid)->where('status', '!=', '4')->count();
-        $totalLeads = Leads::where('cid', $auth_cid)->count();
+        $outstandingInvoices = Invoices::where('status', '!=', 'paid')->sum('total_amount');
+        $pendingProposals = Proposals::whereIn('status', ['Open', 'Sent'])->count();
+        $myPendingTasks = Task::where('status', '!=', '4')->count();
+        $totalLeads = Leads::count();
 
         // --- Action Required Alerts ---
         $overdueLeadsList = Leads::leftJoin('lead_comments', 'leads.id', '=', 'lead_comments.lead_id')
-            ->where('leads.cid', $auth_cid)
             ->where('leads.status', '!=', '5') // Not converted
             ->where('lead_comments.next_date', '<', now())
             ->select('leads.id', 'leads.name', DB::raw('MAX(lead_comments.next_date) as next_date'))
@@ -101,8 +98,7 @@ class HomeController extends Controller
             ->limit(5)
             ->get();
 
-        $expiringProposals = Proposals::where('cid', $auth_cid)
-            ->whereIn('status', ['Open', 'Sent'])
+        $expiringProposals = Proposals::whereIn('status', ['Open', 'Sent'])
             ->where('open_till', '<', now()->addDays(3))
             ->orderBy('open_till', 'ASC')
             ->limit(5)
@@ -113,7 +109,6 @@ class HomeController extends Controller
             DB::raw('SUM(total_amount) as total'),
             DB::raw('MONTH(invoice_date) as month')
         )
-            ->where('cid', $auth_cid)
             ->whereYear('invoice_date', date('Y'))
             ->groupBy('month')
             ->orderBy('month')
@@ -135,9 +130,6 @@ class HomeController extends Controller
         // Get all activities within date range, grouped by user and date
         $activitiesGrouped = DB::table('activities')
             ->join('users', 'activities.user_id', '=', 'users.id')
-            ->when(!$isAdmin, function ($query) use ($auth_cid) {
-                return $query->where('users.cid', $auth_cid);
-            })
             ->whereBetween('activities.created_at', [$startDate, $endDate])
             ->select(
                 'users.id as user_id',

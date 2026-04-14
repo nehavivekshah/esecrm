@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Automation extends Model
 {
-    use HasFactory;
+    use HasFactory, \App\Traits\BelongsToCompany;
 
     protected $fillable = [
         'trigger_event',

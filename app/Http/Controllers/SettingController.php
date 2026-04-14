@@ -18,7 +18,7 @@ class SettingController extends Controller
         
         $roles = Roles::leftjoin('companies','roles.cid','=','companies.id')
             ->select('companies.name','roles.*')
-            ->where('roles.cid','=',(Auth::user()->cid ?? ''))->get();
+            ->get();
         
         return view('roleSettings',['roles'=>$roles]);
     }
@@ -50,7 +50,6 @@ class SettingController extends Controller
             
             $roleSettings = new Roles();
             
-            $roleSettings->cid = (Auth::user()->cid ?? '');
             $roleSettings->title = ($request->role ?? '');
             $roleSettings->subtitle = ($request->subrole ?? '');
             $roleSettings->features = $features;
@@ -69,7 +68,6 @@ class SettingController extends Controller
             
             $roleSettings = Roles::find($id);
             
-            $roleSettings->cid = (Auth::user()->cid ?? '');
             $roleSettings->title = ($request->role ?? '');
             $roleSettings->subtitle = ($request->subrole ?? '');
             $roleSettings->features = $features;
@@ -111,7 +109,6 @@ class SettingController extends Controller
         SmtpSettings::updateOrCreate(
             ['user_id' => Auth::id()],
             $validated + [
-            'cid'     => Auth::user()->cid,
             'user_id' => Auth::id()
         ]
         );

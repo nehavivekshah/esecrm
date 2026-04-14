@@ -267,7 +267,6 @@ class AjaxController extends Controller
     {
         $task = Task::leftjoin('users','tasks.uid','=','users.id')
         ->select('users.name','tasks.*')
-        ->where('tasks.cid','=',Auth::user()->cid)
         ->where('tasks.title','LIKE',($request->updatedPositions ?? '').'%')->get();
         
         $output = '';
@@ -294,13 +293,12 @@ class AjaxController extends Controller
         $like = '%' . $q . '%';
 
         // Search Leads
-        $leads = Leads::where('cid', $cid)
-            ->where(function($query) use ($like) {
-                $query->where('name', 'like', $like)
-                      ->orWhere('company', 'like', $like)
-                      ->orWhere('email', 'like', $like)
-                      ->orWhere('mob', 'like', $like);
-            })
+        $leads = Leads::where(function($query) use ($like) {
+            $query->where('name', 'like', $like)
+                  ->orWhere('company', 'like', $like)
+                  ->orWhere('email', 'like', $like)
+                  ->orWhere('mob', 'like', $like);
+        })
             ->limit(5)
             ->get(['id', 'name', 'company', 'email', 'mob'])
             ->map(fn($l) => [
@@ -310,13 +308,12 @@ class AjaxController extends Controller
             ]);
 
         // Search Clients
-        $clients = Clients::where('cid', $cid)
-            ->where(function($query) use ($like) {
-                $query->where('name', 'like', $like)
-                      ->orWhere('company', 'like', $like)
-                      ->orWhere('email', 'like', $like)
-                      ->orWhere('mob', 'like', $like);
-            })
+        $clients = Clients::where(function($query) use ($like) {
+            $query->where('name', 'like', $like)
+                  ->orWhere('company', 'like', $like)
+                  ->orWhere('email', 'like', $like)
+                  ->orWhere('mob', 'like', $like);
+        })
             ->limit(5)
             ->get(['id', 'name', 'company', 'email', 'mob'])
             ->map(fn($c) => [
@@ -326,12 +323,11 @@ class AjaxController extends Controller
             ]);
 
         // Search Proposals
-        $proposals = Proposals::where('cid', $cid)
-            ->where(function($query) use ($like) {
-                $query->where('subject', 'like', $like)
-                      ->orWhere('client_name', 'like', $like)
-                      ->orWhere('client_email', 'like', $like);
-            })
+        $proposals = Proposals::where(function($query) use ($like) {
+            $query->where('subject', 'like', $like)
+                  ->orWhere('client_name', 'like', $like)
+                  ->orWhere('client_email', 'like', $like);
+        })
             ->limit(5)
             ->get(['id', 'subject', 'client_name', 'status', 'grand_total'])
             ->map(fn($p) => [
@@ -341,8 +337,7 @@ class AjaxController extends Controller
             ]);
 
         // Search Projects
-        $projects = \App\Models\Projects::leftJoin('clients', 'projects.client_id', '=', 'clients.id')
-            ->where('projects.cid', $cid)
+        $projects = Projects::leftJoin('clients', 'projects.client_id', '=', 'clients.id')
             ->where(function($query) use ($like) {
                 $query->where('projects.name', 'like', $like)
                       ->orWhere('clients.name', 'like', $like)

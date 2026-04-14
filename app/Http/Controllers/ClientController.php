@@ -50,7 +50,7 @@ class ClientController extends Controller
 
     public function clientList(Request $request)
     {
-        $clients = Clients::select('id', 'name', 'company', 'email', 'mob', 'location')->where('cid', '=', Auth::user()->cid)->where('name', '!=', '')->orderBy('name', 'ASC')->get();
+        $clients = Clients::select('id', 'name', 'company', 'email', 'mob', 'location')->where('name', '!=', '')->orderBy('name', 'ASC')->get();
 
         return json_encode(['clients' => $clients]);
     }
@@ -158,7 +158,7 @@ class ClientController extends Controller
             }
         }
 
-        $clients = Clients::where('cid', Auth::user()->cid)->orderBy('name', 'ASC')->get();
+        $clients = Clients::orderBy('name', 'ASC')->get();
         $projects = [];
         if ($recoveries && isset($recoveries->client_id)) {
             $projects = Projects::where('client_id', $recoveries->client_id)->get();
@@ -266,28 +266,20 @@ class ClientController extends Controller
 
     public function contracts()
     {
-        if (Auth::user()->role == 'master') {
-            $contracts = Contracts::leftjoin('clients', 'contracts.client_id', '=', 'clients.id')
-                ->select('clients.name', 'clients.email', 'clients.mob', 'clients.whatsapp', 'clients.company', 'contracts.*')
-                ->orderBy('contracts.end_date', 'DESC')
-                ->get();
-        } else {
-            $contracts = Contracts::leftjoin('clients', 'contracts.client_id', '=', 'clients.id')
-                ->select('clients.name', 'clients.email', 'clients.mob', 'clients.whatsapp', 'clients.company', 'contracts.*')
-                ->where('clients.cid', '=', Auth::user()->cid)
-                ->orderByRaw("
-                    CASE contracts.status
-                        WHEN 'Draft' THEN 1
-                        WHEN 'Sent' THEN 2
-                        WHEN 'Accepted' THEN 3
-                        WHEN 'Declined' THEN 4
-                        WHEN 'Expired' THEN 5
-                        ELSE 6
-                    END
-                ")
-                ->orderBy('contracts.end_date', 'DESC')
-                ->get();
-        }
+        $contracts = Contracts::leftjoin('clients', 'contracts.client_id', '=', 'clients.id')
+            ->select('clients.name', 'clients.email', 'clients.mob', 'clients.whatsapp', 'clients.company', 'contracts.*')
+            ->orderByRaw("
+                CASE contracts.status
+                    WHEN 'Draft' THEN 1
+                    WHEN 'Sent' THEN 2
+                    WHEN 'Accepted' THEN 3
+                    WHEN 'Declined' THEN 4
+                    WHEN 'Expired' THEN 5
+                    ELSE 6
+                END
+            ")
+            ->orderBy('contracts.end_date', 'DESC')
+            ->get();
 
         // Add priority and rowClass
         $contracts = $contracts->map(function ($contract) {
@@ -405,10 +397,6 @@ class ClientController extends Controller
                 DB::raw('COALESCE(rec_totals.total_paid, 0) as total_paid')
             );
 
-        if (Auth::user()->role != 'master') {
-            $query->where('projects.cid', '=', Auth::user()->cid);
-        }
-
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('projects.name', 'LIKE', "%{$search}%")
@@ -487,10 +475,6 @@ class ClientController extends Controller
             ->leftjoin('clients', 'projects.client_id', 'clients.id')
             ->select('clients.name as client_name', 'projects.name as project_name', 'projects.deployment_url', 'eselicenses.*');
 
-        if (Auth::user()->role != 'master') {
-            $query->where('projects.cid', '=', Auth::user()->cid);
-        }
-
         $licenses = $query->orderBy('eselicenses.expiry_date', 'ASC')->get();
 
         // Calculate Stats
@@ -519,16 +503,9 @@ class ClientController extends Controller
             ->select('clients.name as client_name', 'clients.company', 'clients.mob', 'clients.email', 'projects.name as project_name', 'projects.deployment_url', 'projects.type', 'projects.amount', 'projects.note', 'eselicenses.*')
             ->where('eselicenses.id', '=', $id)->first();
 
-        if (Auth::user()->role == 'master') {
-            $projects = Projects::leftjoin('clients', 'clients.id', 'projects.client_id')
-                ->select('clients.name as client_name', 'clients.company', 'clients.email', 'clients.mob', 'clients.location', 'projects.*')
-                ->orderBy('projects.name', 'ASC')->get();
-        } else {
-            $projects = Projects::leftjoin('clients', 'clients.id', 'projects.client_id')
-                ->select('clients.name as client_name', 'clients.company', 'clients.email', 'clients.mob', 'clients.location', 'projects.*')
-                ->where('projects.cid', '=', Auth::user()->cid)
-                ->orderBy('projects.name', 'ASC')->get();
-        }
+        $projects = Projects::leftjoin('clients', 'clients.id', 'projects.client_id')
+            ->select('clients.name as client_name', 'clients.company', 'clients.email', 'clients.mob', 'clients.location', 'projects.*')
+            ->orderBy('projects.name', 'ASC')->get();
 
         $viewData = ['license' => $license, 'projects' => $projects];
 
@@ -584,10 +561,6 @@ class ClientController extends Controller
 
         $query = Clients::where('name', '!=', '');
 
-        if (Auth::user()->role != 'master') {
-            $query->where('cid', '=', Auth::user()->cid);
-        }
-
         if ($search) {
             $query->where(function($q) use ($search) {
                 $q->where('name', 'LIKE', "%{$search}%")
@@ -613,9 +586,6 @@ class ClientController extends Controller
         
         // Dynamically fetch available industries for the dropdown
         $industryQuery = Clients::select('industry')->whereNotNull('industry')->where('industry', '!=', '')->distinct();
-        if (Auth::user()->role != 'master') {
-            $industryQuery->where('cid', '=', Auth::user()->cid);
-        }
         $availableIndustries = $industryQuery->pluck('industry');
 
         return view('clients', [
@@ -910,8 +880,7 @@ class ClientController extends Controller
         $type = $request->get('type');
 
         // Fetch distinct types for the filter dropdown
-        $availableTypes = Invoices::where('cid', $cid)
-            ->whereNotNull('invoice')
+        $availableTypes = Invoices::whereNotNull('invoice')
             ->where('invoice', '!=', '')
             ->distinct()
             ->pluck('invoice');
@@ -1292,14 +1261,12 @@ class ClientController extends Controller
         }
 
         // Load clients for the dropdown (only current company)
-        $clients = Clients::where('cid', '=', Auth::user()->cid)
-            ->where('name', '!=', '')
+        $clients = Clients::where('name', '!=', '')
             ->orderBy('name', 'ASC')
             ->get(['id', 'name', 'company']);
 
         // Load users for "Closed by" dropdown (only current company)
-        $users = User::where('cid', '=', Auth::user()->cid)
-            ->where('status', '=', '1')
+        $users = User::where('status', '=', '1')
             ->orderBy('name', 'ASC')
             ->get(['id', 'name']);
 
