@@ -81,6 +81,21 @@
 
             <div class="tab-content" id="clientTabsContent">
 
+                {{-- Validation Errors Display --}}
+                @if ($errors->any())
+                    <div class="alert alert-danger" style="margin-bottom: 20px;">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bx bx-error-circle" style="font-size: 1.25rem; margin-right: 8px;"></i>
+                            <strong>Please correct the following errors:</strong>
+                        </div>
+                        <ul class="mb-0 ps-4">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 {{-- ── PROFILE TAB ── --}}
                 <div class="tab-pane fade show active" id="profile" role="tabpanel">
                     <form action="manage-client" method="post" class="row g-4">

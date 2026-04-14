@@ -706,6 +706,20 @@ class ClientController extends Controller
 
     public function manageClientPost(Request $request)
     {
+        $emailRule = Rule::unique('clients', 'email')->where(function ($query) {
+            return $query->where('cid', Auth::user()->cid);
+        });
+        if (!empty($request->id)) {
+            $emailRule->ignore($request->id);
+        }
+
+        $mobRule = Rule::unique('clients', 'mob')->where(function ($query) {
+            return $query->where('cid', Auth::user()->cid);
+        });
+        if (!empty($request->id)) {
+            $mobRule->ignore($request->id);
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'company' => 'required|string|max:255',
@@ -713,17 +727,13 @@ class ClientController extends Controller
                 'required',
                 'email',
                 'max:255',
-                Rule::unique('clients')->where(function ($query) {
-                    return $query->where('cid', Auth::user()->cid);
-                })->ignore($request->id)
+                $emailRule
             ],
             'mob' => [
                 'required',
                 'string',
                 'max:20',
-                Rule::unique('clients')->where(function ($query) {
-                    return $query->where('cid', Auth::user()->cid);
-                })->ignore($request->id)
+                $mobRule
             ]
         ], [
             'email.unique' => 'This email address is already registered to a customer in your company.',
