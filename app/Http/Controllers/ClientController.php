@@ -130,7 +130,22 @@ class ClientController extends Controller
         if ($id) {
             $recoveries = Recoveries::leftjoin('clients', 'recoveries.client_id', '=', 'clients.id')
                 ->leftjoin('projects', 'recoveries.project_id', '=', 'projects.id')
-                ->select('clients.batchNo', 'clients.name', 'clients.company', 'clients.mob', 'clients.whatsapp', 'clients.industry', 'clients.email', 'clients.poc', 'projects.name as project', 'projects.amount', 'projects.deployment_url', 'projects.note as msg', 'recoveries.*')
+                ->select(
+                    'clients.batchNo', 
+                    'clients.name as client_name', 
+                    'clients.company as client_company', 
+                    'clients.mob as client_mob', 
+                    'clients.whatsapp as client_whatsapp', 
+                    'clients.industry as client_industry', 
+                    'clients.email as client_email', 
+                    'clients.poc as client_poc', 
+                    'projects.name as project_name', 
+                    'projects.amount as project_amount', 
+                    'projects.deployment_url', 
+                    'projects.note as project_note', 
+                    'recoveries.note as recovery_note', 
+                    'recoveries.*'
+                )
                 ->where('recoveries.id', $id)
                 ->first();
         } elseif ($projectId) {
@@ -142,19 +157,20 @@ class ClientController extends Controller
 
             if ($project) {
                 $recoveries = (object)[
-                    'project_id' => $project->id,
-                    'client_id'  => $project->client_id,
-                    'batchNo'    => $project->batchNo,
-                    'name'       => $project->client_name,
-                    'company'    => $project->client_company,
-                    'email'      => $project->client_email,
-                    'mob'        => $project->client_mob,
-                    'whatsapp'   => $project->client_whatsapp,
-                    'industry'   => $project->client_industry,
-                    'poc'        => $project->client_poc,
-                    'project'    => $project->name,
-                    'amount'     => $project->amount,
-                    'msg'        => $project->note,
+                    'project_id'    => $project->id,
+                    'client_id'     => $project->client_id,
+                    'batchNo'       => $project->batchNo,
+                    'client_name'   => $project->client_name,
+                    'client_company' => $project->client_company,
+                    'client_email'  => $project->client_email,
+                    'client_mob'    => $project->client_mob,
+                    'client_whatsapp' => $project->client_whatsapp,
+                    'client_industry' => $project->client_industry,
+                    'client_poc'    => $project->client_poc,
+                    'project_name'  => $project->name,
+                    'project_amount' => $project->amount,
+                    'project_note'  => $project->note,
+                    'recovery_note' => '',
                 ];
             }
         }
