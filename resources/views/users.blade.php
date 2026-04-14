@@ -1,211 +1,231 @@
 @extends('layout')
-@section('title','Users Management - eseCRM')
+@section('title', 'Users Management - eseCRM')
 
 @section('content')
     @php
         $roles = session('roles');
-        $roleArray = explode(',',($roles->permissions ?? ''));
+        $roleArray = explode(',', ($roles->permissions ?? ''));
         
+        $totalUsers = $users->count();
         $activeCount = $users->where('status', '1')->count();
         $deactiveCount = $users->where('status', '2')->count();
+        $adminCount = $users->where('roleFeatures', 'All')->count();
     @endphp
 
     <section class="task__section">
         @include('inc.header', ['title' => 'Users Management'])
 
-        <div class="db-wrap">
-            {{-- ═══════════════════════ USER HERO ═══════════════════════ --}}
-            <div class="db-hero" style="background: linear-gradient(135deg, #004d4d 0%, #006666 100%);">
-                <div class="db-hero-left">
-                    <div class="db-hero-greeting">Team Management</div>
-                    <div class="db-hero-sub">Manage your organization's staff, roles, and system access levels.</div>
-                    
-                    <div class="db-hero-pills mt-3">
-                        <span class="db-pill db-pill-green"><i class="bx bx-check-circle"></i> {{ $activeCount }} Active</span>
-                        <span class="db-pill db-pill-red"><i class="bx bx-x-circle"></i> {{ $deactiveCount }} Deactive</span>
-                        <span class="db-pill db-pill-blue"><i class="bx bx-group"></i> {{ count($users) }} Total Staff</span>
+        <div class="dash-container">
+
+            {{-- ── Stat Cards Row ── --}}
+            <div class="pj-stat-row mb-4">
+                <div class="pj-stat-card">
+                    <div class="pj-stat-icon" style="background:rgba(26,115,232,0.1);color:#1a73e8;">
+                        <i class="bx bx-group"></i>
+                    </div>
+                    <div>
+                        <div class="pj-stat-num">{{ $totalUsers }}</div>
+                        <div class="pj-stat-label">Total Users</div>
                     </div>
                 </div>
-                <div class="db-hero-right">
+                <div class="pj-stat-card">
+                    <div class="pj-stat-icon" style="background:rgba(52,168,83,0.1);color:#34a853;">
+                        <i class="bx bx-check-circle"></i>
+                    </div>
+                    <div>
+                        <div class="pj-stat-num" style="color:#34a853;">{{ $activeCount }}</div>
+                        <div class="pj-stat-label">Active Accounts</div>
+                    </div>
+                </div>
+                <div class="pj-stat-card">
+                    <div class="pj-stat-icon" style="background:rgba(234,67,53,0.1);color:#ea4335;">
+                        <i class="bx bx-x-circle"></i>
+                    </div>
+                    <div>
+                        <div class="pj-stat-num" style="color:#ea4335;">{{ $deactiveCount }}</div>
+                        <div class="pj-stat-label">Suspended</div>
+                    </div>
+                </div>
+                <div class="pj-stat-card">
+                    <div class="pj-stat-icon" style="background:rgba(24bbc04,0.1);color:#fbbc04;">
+                        <i class="bx bx-shield-quarter"></i>
+                    </div>
+                    <div>
+                        <div class="pj-stat-num">{{ $adminCount }}</div>
+                        <div class="pj-stat-label">Super Admins</div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- ── Toolbar ── --}}
+            <div class="leads-toolbar mb-3">
+                <div class="leads-toolbar-left">
+                    <span class="lb-page-count">
+                        {{ $totalUsers }} {{ $totalUsers == 1 ? 'User' : 'Users' }}
+                    </span>
+                </div>
+                <div class="leads-toolbar-right gap-2">
+                    <button class="lb-icon-btn" onclick="location.reload()" title="Refresh">
+                        <i class="bx bx-refresh"></i>
+                    </button>
                     @if(in_array('users_add',$roleArray) || in_array('All',$roleArray))
-                        <a href="/manage-user" class="btn btn-light rounded-pill px-4" style="color:#006666; font-weight:700; border:none; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
-                            <i class="bx bx-plus-circle me-1"></i> Add New User
+                        <a href="/manage-user" class="lb-btn lb-btn-primary">
+                            <i class="bx bx-plus"></i>
+                            <span class="d-none d-sm-inline">Add User</span>
                         </a>
                     @endif
                 </div>
             </div>
 
-            {{-- ═══════════════════════ USER LIST CARD ═══════════════════════ --}}
-            <div class="db-card shadow-sm border-0" style="border-radius: 20px;">
-                <div class="db-card-head d-flex align-items-center justify-content-between p-4">
-                    <div class="d-flex align-items-center gap-3">
-                        <span class="db-card-icon" style="color:#006666; background:rgba(0,102,102,.08); width:40px; height:40px; border-radius:12px;">
-                            <i class="bx bx-list-ul" style="font-size: 1.3rem;"></i>
-                        </span>
-                        <div>
-                            <span class="db-card-title d-block" style="font-size: 1.1rem; line-height: 1.2;">Staff Directory</span>
-                            <span class="db-card-sub text-muted" style="font-size: 0.75rem;">Showing all registered system users</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="p-4 pt-0">
-                    <div class="table-responsive">
-                        <table id="lists" class="table table-hover align-middle custom-table" style="width:100%;">
-                            <thead class="bg-light">
-                                <tr>
-                                    <th class="border-0 ps-4 py-3" style="font-size: 0.8rem; font-weight: 700; color: #5f6368; text-transform: uppercase; letter-spacing: 0.5px;">Staff Member</th>
-                                    <th class="border-0 m-none py-3" style="font-size: 0.8rem; font-weight: 700; color: #5f6368; text-transform: uppercase;">Contact Info</th>
-                                    <th class="border-0 m-none py-3" style="font-size: 0.8rem; font-weight: 700; color: #5f6368; text-transform: uppercase;">Role & Permissions</th>
-                                    <th class="border-0 text-center py-3" style="font-size: 0.8rem; font-weight: 700; color: #5f6368; text-transform: uppercase;" width="120px">Access</th>
-                                    @if(in_array('users_edit',$roleArray) || in_array('users_delete',$roleArray) || in_array('All',$roleArray))
-                                    <th class="border-0 text-end pe-4 py-3" style="font-size: 0.8rem; font-weight: 700; color: #5f6368; text-transform: uppercase;" width="120px">Actions</th>
-                                    @endif
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($users as $user)
-                                <tr style="transition: all 0.2s ease;">
-                                    <td class="ps-4">
-                                        <div class="d-flex align-items-center gap-3">
-                                            <div class="avatar-circle" style="width: 40px; height: 40px; background: #f0f4f4; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #006666; font-weight: 700; font-size: 0.9rem;">
-                                                @if(!empty($user->photo))
-                                                    <img src="{{ asset('assets/images/profile/' . $user->photo) }}" style="width: 100%; height: 100%; border-radius: 12px; object-fit: cover;">
-                                                @else
-                                                    {{ strtoupper(substr($user->name ?? 'S', 0, 1)) }}
-                                                @endif
-                                            </div>
-                                            <div>
-                                                <div style="font-weight: 700; color: #202124; font-size: 0.9rem;">{{$user->name ?? '--'}}</div>
-                                                <div class="text-muted" style="font-size: 0.75rem;">ID: #USR-{{ str_pad($user->id, 4, '0', STR_PAD_LEFT) }}</div>
+            {{-- ════════════════════════════════
+            TABLE VIEW
+            ════════════════════════════════ --}}
+            <div class="dash-card mb-4" style="background: #fff; border: 1px solid #e8eaed; border-radius: 12px; overflow: hidden;">
+                <div class="table-responsive">
+                    <table class="leads-table projects align-middle" id="lists" style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Staff Details</th>
+                                <th class="m-none">Contact Info</th>
+                                <th class="m-none">Role Access</th>
+                                <th class="text-center">System Status</th>
+                                @if(in_array('users_edit',$roleArray) || in_array('users_delete',$roleArray) || in_array('All',$roleArray))
+                                <th class="text-center position-sticky end-0 mw60" data-orderable="false" style="z-index:1;">Action</th>
+                                @endif
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($users as $user)
+                                <tr class="project-row-click" data-url="/manage-user?id={{ $user->id }}">
+                                    <td class="fw-bold text-muted" style="font-size:0.75rem;">
+                                        #USR-{{ str_pad($user->id, 4, '0', STR_PAD_LEFT) }}
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            @if(!empty($user->photo))
+                                                <div class="lb-avatar-sm" style="background: transparent;">
+                                                    <img src="{{ asset('assets/images/profile/' . $user->photo) }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">
+                                                </div>
+                                            @else
+                                                <div class="lb-avatar-sm" style="background:linear-gradient(135deg,#006666,#009688);color:#fff;">
+                                                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                                                </div>
+                                            @endif
+                                            <div class="min-w-0">
+                                                <div class="fw-600 text-truncate" style="max-width:180px;">{{ $user->name ?? '--' }}</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="m-none">
-                                        <div class="d-flex flex-column">
-                                            <span style="font-size: 0.85rem; color: #495057;"><i class="bx bx-envelope me-1 text-muted"></i> {{$user->email ?? '--'}}</span>
-                                            <span style="font-size: 0.85rem; color: #495057;"><i class="bx bx-phone me-1 text-muted"></i> {{$user->mob ?? '--'}}</span>
+                                        <div class="small">
+                                            <i class="bx bx-envelope text-muted"></i> {{ $user->email ?? '--' }}
+                                        </div>
+                                        <div class="small text-muted">
+                                            <i class="bx bx-phone"></i> {{ $user->mob ?? '--' }}
                                         </div>
                                     </td>
                                     <td class="m-none">
-                                        <div class="badge-role" style="display: inline-flex; align-items: center; gap: 5px; background: #eef2ff; color: #4f46e5; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; border: 1px solid #e0e7ff;">
-                                            <i class="bx bx-shield-quarter"></i> {{ $user->title ?? 'Staff' }}
-                                        </div>
-                                        <div class="text-muted mt-1" style="font-size: 0.7rem;">{{ $user->subtitle ?? 'Generic Access' }}</div>
+                                        <span class="pj-type-pill">{{ $user->title ?? 'Staff' }}</span>
+                                        <div class="small text-muted mt-1">{{ $user->subtitle ?? 'General Access' }}</div>
                                     </td>
-                                    <td class="text-center">
-                                        <div class="form-check form-switch p-0 d-flex justify-content-center flex-column align-items-center gap-1">
-                                            <input class="form-check-input status-toggle" type="checkbox" role="switch" 
+                                    <td class="text-center" onclick="event.stopPropagation();">
+                                        <div class="form-check form-switch p-0 d-flex justify-content-center align-items-center flex-column gap-1">
+                                            <input class="form-check-input status-toggle m-0" type="checkbox" role="switch" 
                                                    id="status_{{ $user->id }}" 
                                                    data-id="{{ $user->id }}"
                                                    style="cursor: pointer; width: 34px; height: 18px;"
                                                    {{ $user->status == '1' ? 'checked' : '' }}
                                                    {{ Auth::id() == $user->id ? 'disabled' : '' }}>
-                                            <span class="small text-muted" style="font-size: 0.65rem; font-weight: 600;">
-                                                {{ $user->status == '1' ? 'ACTIVE' : 'DISABLED' }}
+                                            <span class="small text-muted" style="font-size: 0.65rem;">
+                                                {{ $user->status == '1' ? 'Active' : 'Deactive' }}
                                             </span>
                                         </div>
                                     </td>
                                     @if(in_array('users_edit',$roleArray) || in_array('users_delete',$roleArray) || in_array('All',$roleArray))
-                                    <td class="text-end pe-4">
-                                        <div class="d-flex align-items-center justify-content-end gap-2">
+                                    <td class="position-sticky end-0 bg-white" onclick="event.stopPropagation();">
+                                        <div class="d-flex align-items-center justify-content-center gap-1">
                                             @if(in_array('users_edit',$roleArray) || in_array('All',$roleArray))
-                                            <a href="/manage-user?id={{ $user->id }}" class="btn btn-icon-premium edit" title="Edit Profile">
-                                                <i class="bx bx-edit-alt"></i>
+                                            <a href="/manage-user?id={{ $user->id }}" class="btn kb-action-btn kb-action-edit" title="Edit">
+                                                <i class="bx bx-pencil"></i>
                                             </a>
                                             @endif
                                             @if(in_array('users_delete',$roleArray) || in_array('All',$roleArray))
-                                            <a href="javascript:void(0)" class="btn btn-icon-premium delete" id="{{ $user->id }}" date-page="userDelete" title="Delete User">
-                                                <i class="bx bx-trash-alt"></i>
+                                            <a href="javascript:void(0)" class="btn kb-action-btn kb-action-del delete" id="{{ $user->id }}" data-page="userDelete" title="Delete">
+                                                <i class="bx bx-trash"></i>
                                             </a>
                                             @endif
                                         </div>
                                     </td>
                                     @endif
                                 </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                            @empty
+                                <tr>
+                                    <td colspan="7">
+                                        <div class="kb-empty-col" style="padding:40px 0;">
+                                            <i class="bx bx-group" style="font-size:2.5rem;"></i>
+                                            <span>No users found.</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
+
         </div>
     </section>
 
     <style>
-        .custom-table thead th { border-bottom: 2px solid #f8f9fa; }
-        .custom-table tbody tr:hover { background-color: #fcfdfe; transform: scale(1.002); }
-        
-        .btn-icon-premium {
-            width: 32px;
-            height: 32px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-            border: 1px solid #eef2f3;
-            background: #fff;
-            color: #5f6368;
-            padding: 0;
-        }
-        
-        .btn-icon-premium:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-        
-        .btn-icon-premium.edit:hover { background: #eef9f9; color: #006666; border-color: #cdeaea; }
-        .btn-icon-premium.delete:hover { background: #fff5f5; color: #ea4335; border-color: #fcd9d9; }
+        /* ── Project Stat Cards ── */
+        .pj-stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+        @media (max-width: 768px) { .pj-stat-row { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 480px) { .pj-stat-row { grid-template-columns: 1fr; } }
 
-        .form-check-input:checked {
-            background-color: #006666;
-            border-color: #006666;
-        }
+        .pj-stat-card { background: #fff; border: 1px solid #e8eaed; border-radius: 14px; padding: 16px 18px; display: flex; align-items: center; gap: 14px; transition: box-shadow 0.18s; }
+        .pj-stat-card:hover { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); }
+        .pj-stat-icon { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+        .pj-stat-num { font-size: 1.2rem; font-weight: 700; color: #202124; line-height: 1.2; }
+        .pj-stat-label { font-size: 0.72rem; color: #80868b; font-weight: 500; margin-top: 2px; }
 
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .db-wrap { padding: 15px; }
-            .db-hero { padding: 20px; flex-direction: column; text-align: center; gap: 20px; }
-            .db-hero-right { text-align: center; }
-            .m-none { display: none !important; }
-        }
+        .pj-type-pill { display: inline-block; background: rgba(0, 102, 102, 0.08); color: #006666; font-size: 0.68rem; font-weight: 600; border-radius: 20px; padding: 2px 10px; }
+
+        .form-check-input:checked { background-color: #006666; border-color: #006666; }
+
+        /* Row clickable behavior */
+        .project-row-click { cursor: pointer; }
+        .project-row-click:hover { background-color: #f8f9fa; }
     </style>
 @endsection
 
 @push('scripts')
 <script>
 $(document).ready(function() {
+    // Row click navigation (matching projects)
+    $('.project-row-click').on('click', function(e) {
+        if (!$(e.target).closest('.status-toggle, .kb-action-btn').length) {
+            window.location.href = $(this).data('url');
+        }
+    });
+
     $('.status-toggle').on('change', function() {
         const userId = $(this).data('id');
         const isChecked = $(this).is(':checked');
         const newStatus = isChecked ? 1 : 2;
-        const $label = $(this).closest('td').find('span');
+        const $label = $(this).siblings('span');
 
         $(this).prop('disabled', true);
 
         $.ajax({
             url: "{{ route('users.toggle_status') }}",
             method: "POST",
-            data: {
-                _token: "{{ csrf_token() }}",
-                id: userId,
-                status: newStatus
-            },
+            data: { _token: "{{ csrf_token() }}", id: userId, status: newStatus },
             success: function(response) {
                 if (response.success) {
-                    $label.text(newStatus == 1 ? 'ACTIVE' : 'DISABLED');
-                    const Toast = Swal.mixin({
-                        toast: true,
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true
-                    });
-                    Toast.fire({
-                        icon: 'success',
-                        title: response.message
-                    });
+                    $label.text(newStatus == 1 ? 'Active' : 'Deactive');
+                    const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true });
+                    Toast.fire({ icon: 'success', title: response.message });
                 } else {
                     $('#status_' + userId).prop('checked', !isChecked);
                     Swal.fire({ icon: 'error', title: 'Error', text: response.message });
@@ -216,9 +236,7 @@ $(document).ready(function() {
                 const msg = xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred while updating status.';
                 Swal.fire({ icon: 'error', title: 'Oops...', text: msg });
             },
-            complete: function() {
-                $('#status_' + userId).prop('disabled', false);
-            }
+            complete: function() { $('#status_' + userId).prop('disabled', false); }
         });
     });
 });
