@@ -11,6 +11,7 @@ use App\Models\Roles;
 use App\Models\Leads;
 use App\Models\Clients;
 use App\Models\Recoveries;
+use App\Models\Projects;
 use App\Models\Todo_lists;
 use App\Mail\CustomMailable;
 use Illuminate\Support\Facades\Mail;
