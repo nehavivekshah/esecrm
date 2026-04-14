@@ -88,8 +88,8 @@
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bx bx-link"></i></span>
                                         <select name="related" id="related" class="form-select" required>
-                                            <option value="1" @if(($proposal->related ?? '') == '1') selected @endif>Lead</option>
-                                            <option value="2" @if(($proposal->related ?? '') == '2') selected @endif>Client</option>
+                                            <option value="1" {{ ( ($proposal->related ?? '') == '1' || (isset($preloadProject)) ) ? '' : 'selected' }}>Lead</option>
+                                            <option value="2" {{ ( ($proposal->related ?? '') == '2' || (isset($preloadProject)) ) ? 'selected' : '' }}>Client</option>
                                         </select>
                                     </div>
                                     <div class="form-text">Link proposal to a lead or client</div>
@@ -97,12 +97,12 @@
 
                                 {{-- Related list --}}
                                 <div class="col-md-3">
-                                    <label class="ml-label" id="proposalType">Leads List</label>
+                                    <label class="ml-label" id="proposalType">{{ (isset($preloadProject) || ($proposal->related ?? '') == '2') ? 'Clients List' : 'Leads List' }}</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bx bx-list-ul"></i></span>
-                                        @if(($proposal->related ?? '') == '2')
-                                            <select name="lead_id" id="relatedList" class="form-select">
-                                                <option>Select…</option>
+                                        @if(isset($preloadProject) || ($proposal->related ?? '') == '2')
+                                            <select name="lead_id" id="relatedList" class="form-select selectpicker" data-live-search="true">
+                                                <option value="">Select…</option>
                                                 @foreach($clients as $lead)
                                                     <option value="{{ $lead->id ?? '' }}"
                                                         data-name="{{ $lead->name ?? '' }}"
@@ -110,7 +110,7 @@
                                                         data-email="{{ $lead->email ?? '' }}"
                                                         data-mob="{{ $lead->mob ?? '' }}"
                                                         data-loc-raw="{{ $lead->location ?? '' }}"
-                                                        @if(($proposal->lead_id ?? '') == ($lead->id ?? '')) selected @endif>
+                                                        {{ ( ($proposal->lead_id ?? '') == ($lead->id ?? '') || (isset($preloadProject) && $preloadProject->client_id == ($lead->id ?? '')) ) ? 'selected' : '' }}>
                                                         {{ $lead->name ?? '' }}
                                                     </option>
                                                 @endforeach
@@ -118,7 +118,7 @@
                                         @else
                                             <select name="lead_id" id="relatedList"
                                                     class="selectpicker form-select" data-live-search="true">
-                                                <option>Select…</option>
+                                                <option value="">Select…</option>
                                                 @foreach($leads as $lead)
                                                     <option value="{{ $lead->id ?? '' }}"
                                                         data-name="{{ $lead->name ?? '' }}"
@@ -216,7 +216,22 @@
                             </div>
                             <i class="bx bx-chevron-down" style="color:#9aa0a6;font-size:1.1rem;"></i>
                         </div>
-                        <div class="collapse show ml-card-body" id="clientDetailsBody">
+                        @php
+                            $p_addr = ''; $p_city = ''; $p_state = ''; $p_country = ''; $p_zip = '';
+                            if(isset($preloadProject) && !empty($preloadProject->client_location)) {
+                                try {
+                                    $loc = json_decode($preloadProject->client_location, true);
+                                    if(is_array($loc)) {
+                                        if(isset($loc['address'])) {
+                                            $p_addr = $loc['address']; $p_city = $loc['city'] ?? ''; $p_state = $loc['state'] ?? ''; $p_country = $loc['country'] ?? ''; $p_zip = $loc['zip'] ?? '';
+                                        } else {
+                                            $p_addr = $loc[0] ?? ''; $p_city = $loc[1] ?? ''; $p_state = $loc[2] ?? ''; $p_country = $loc[3] ?? ''; $p_zip = $loc[4] ?? '';
+                                        }
+                                    }
+                                } catch(\Exception $e) { $p_addr = $preloadProject->client_location; }
+                            }
+                        @endphp
+                        <div class="collapse {{ (isset($preloadProject) || !empty($proposal->id)) ? 'show' : '' }} ml-card-body" id="clientDetailsBody">
                             <div class="row g-3">
                                 <div class="col-md-3">
                                     <label class="ml-label">Name <span class="text-danger">*</span></label>
@@ -224,7 +239,7 @@
                                         <span class="input-group-text"><i class="bx bx-user"></i></span>
                                         <input type="text" name="client_name" id="clientName" class="form-control"
                                                placeholder="Client Name"
-                                               value="{{ $proposal->client_name ?? '' }}" required>
+                                               value="{{ $proposal->client_name ?? ($preloadProject->client_name ?? '') }}" required>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -233,7 +248,7 @@
                                         <span class="input-group-text"><i class="bx bx-envelope"></i></span>
                                         <input type="email" name="client_email" id="clientEmail" class="form-control"
                                                placeholder="client@example.com"
-                                               value="{{ $proposal->client_email ?? '' }}" required>
+                                               value="{{ $proposal->client_email ?? ($preloadProject->client_email ?? '') }}" required>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -242,7 +257,7 @@
                                         <span class="input-group-text"><i class="bx bx-phone"></i></span>
                                         <input type="tel" name="client_phone" id="clientPhone" class="form-control"
                                                placeholder="+91 XXXXX XXXXX"
-                                               value="{{ $proposal->client_phone ?? '91' }}">
+                                               value="{{ $proposal->client_phone ?? ($preloadProject->client_mob ?? '91') }}">
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -251,7 +266,7 @@
                                         <span class="input-group-text"><i class="bx bx-home"></i></span>
                                         <input type="text" name="client_address" id="clientAddress" class="form-control"
                                                placeholder="Street address"
-                                               value="{{ $proposal->client_address ?? '' }}">
+                                               value="{{ $proposal->client_address ?? ($p_addr ?: '') }}">
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -260,7 +275,7 @@
                                         <span class="input-group-text"><i class="bx bx-map"></i></span>
                                         <input type="text" name="client_city" id="clientCity" class="form-control"
                                                placeholder="City"
-                                               value="{{ $proposal->client_city ?? '' }}">
+                                               value="{{ $proposal->client_city ?? ($p_city ?: '') }}">
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -269,7 +284,7 @@
                                         <span class="input-group-text"><i class="bx bx-map-pin"></i></span>
                                         <input type="text" name="client_state" id="clientState" class="form-control"
                                                placeholder="State"
-                                               value="{{ $proposal->client_state ?? '' }}">
+                                               value="{{ $proposal->client_state ?? ($p_state ?: '') }}">
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -278,7 +293,7 @@
                                         <span class="input-group-text"><i class="bx bx-pin"></i></span>
                                         <input type="text" name="client_zip" id="clientZip" class="form-control"
                                                placeholder="Postal code"
-                                               value="{{ $proposal->client_zip ?? '' }}">
+                                               value="{{ $proposal->client_zip ?? ($p_zip ?: '') }}">
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -287,7 +302,7 @@
                                         <span class="input-group-text"><i class="bx bx-globe"></i></span>
                                         <input type="text" name="client_country" id="clientCountry" class="form-control"
                                                placeholder="Country"
-                                               value="{{ $proposal->client_country ?? '' }}">
+                                               value="{{ $proposal->client_country ?? ($p_country ?: '') }}">
                                     </div>
                                 </div>
                             </div>
