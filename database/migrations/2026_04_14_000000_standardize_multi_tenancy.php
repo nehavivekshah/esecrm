@@ -20,6 +20,8 @@ return new class extends Migration
             'automations',
             'enquiries',
             'todo_lists',
+            'attendances',
+            'holidays',
         ];
 
         foreach ($tables as $tableName) {
@@ -64,6 +66,8 @@ return new class extends Migration
             'automations',
             'enquiries',
             'todo_lists',
+            'attendances',
+            'holidays',
         ];
 
         foreach ($tables as $tableName) {

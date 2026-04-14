@@ -24,7 +24,6 @@ class UserService
 
         if ($isAdmin) {
             $users = User::select('id', 'name', 'working_times')
-                ->where('cid', $user->cid)
                 ->when($selectedUserId, fn($q) => $q->where('id', $selectedUserId))
                 ->get();
         } else {
@@ -184,9 +183,7 @@ class UserService
             ->leftjoin('roles', 'users.role', '=', 'roles.id')
             ->select('companies.name', 'roles.title', 'roles.subtitle', 'users.*');
 
-        if ($authenticatedUser->role != 'master') {
-            $query->where('users.cid', '=', $authenticatedUser->cid);
-            
+        if (!$authenticatedUser->isMaster()) {
             if ($segment == 'admins') {
                 $query->where('roles.features', '=', 'All');
             } elseif ($segment == 'employees') {
@@ -199,7 +196,7 @@ class UserService
 
     public function getRoles(User $authenticatedUser)
     {
-        return \App\Models\Roles::where('cid', '=', $authenticatedUser->cid)->get();
+        return \App\Models\Roles::get();
     }
 
     public function getUserDetails($uid, User $authenticatedUser)
@@ -213,11 +210,9 @@ class UserService
         $allUsers = User::leftjoin('companies', 'users.cid', '=', 'companies.id')
             ->leftjoin('roles', 'users.role', '=', 'roles.id')
             ->select('companies.name', 'roles.title', 'roles.subtitle', 'users.*')
-            ->where('users.cid', '=', $authenticatedUser->cid)
             ->get();
 
-        $roles = \App\Models\Roles::where('cid', '=', $authenticatedUser->cid)
-            ->where('features', '!=', 'All')
+        $roles = \App\Models\Roles::where('features', '!=', 'All')
             ->get();
 
         return [
