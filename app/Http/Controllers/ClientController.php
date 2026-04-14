@@ -581,7 +581,7 @@ class ClientController extends Controller
             $query->where('lifecycle_stage', '=', $lifecycle_stage);
         }
 
-        $clients = $query->orderBy('status', 'DESC')->orderBy('id', 'DESC')->get();
+        $clients = $query->orderBy('created_at', 'DESC')->get();
         
         // Dynamically fetch available industries for the dropdown
         $industryQuery = Clients::select('industry')->whereNotNull('industry')->where('industry', '!=', '')->distinct();
