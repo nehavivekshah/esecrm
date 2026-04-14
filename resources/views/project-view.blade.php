@@ -593,7 +593,7 @@
                         <div class="pv-empty-state">
                             <i class="bx bx-key"></i>
                             <p>No license associated with this project.</p>
-                            <a href="/manage-license" class="pv-add-btn">Add License</a>
+                            <a href="/manage-license?project_id={{ $project->id }}" class="pv-add-btn">Add License</a>
                         </div>
                     @endif
                 </div>
