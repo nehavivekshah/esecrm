@@ -103,7 +103,30 @@
                 }
             });
         </script>
+        -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                if (typeof Swal !== 'undefined') {
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        }
+                    });
+                    Toast.fire({
+                        icon: 'success',
+                        title: "{!! addslashes(Session::get('success')) !!}"
+                    });
+                }
+            });
+        </script>
         @elseif (Session::has('error'))
+        <!-- Legacy Swal
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 if (typeof swal !== 'undefined') {
@@ -112,6 +135,28 @@
                         text: "{!! addslashes(Session::get('error')) !!}",
                         icon: "error",
                         button: "Okay"
+                    });
+                }
+            });
+        </script>
+        -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                if (typeof Swal !== 'undefined') {
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 4000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        }
+                    });
+                    Toast.fire({
+                        icon: 'error',
+                        title: "{!! addslashes(Session::get('error')) !!}"
                     });
                 }
             });
@@ -125,6 +170,7 @@
         <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
         
         <script>

@@ -90,14 +90,23 @@
                 @if ($errors->any())
                     <script>
                         document.addEventListener('DOMContentLoaded', function () {
-                            if (typeof swal !== 'undefined') {
-                                let errorMessages = {!! json_encode(implode('\n', $errors->all())) !!};
-                                swal({
-                                    title: "Hold on!",
-                                    text: errorMessages,
-                                    icon: "warning",
-                                    button: "Review & Fix",
-                                    dangerMode: true,
+                            if (typeof Swal !== 'undefined') {
+                                let errorMessages = {!! json_encode(implode('<br>', $errors->all())) !!};
+                                const Toast = Swal.mixin({
+                                    toast: true,
+                                    position: 'top-end',
+                                    showConfirmButton: false,
+                                    timer: 5000,
+                                    timerProgressBar: true,
+                                    didOpen: (toast) => {
+                                        toast.onmouseenter = Swal.stopTimer;
+                                        toast.onmouseleave = Swal.resumeTimer;
+                                    }
+                                });
+                                Toast.fire({
+                                    icon: 'warning',
+                                    title: "Validation Error",
+                                    html: errorMessages
                                 });
                             }
                         });
