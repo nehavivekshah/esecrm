@@ -16,25 +16,19 @@ class SupportController extends Controller
         $company_session = session('companies');
 
         $companies = collect();
-        if ($user->role == 'master') {
+        if ($user->isMaster()) {
             $companies = Companies::select('id', 'name')->orderBy('name', 'asc')->get();
             $tickets = SupportTicket::with('company')->orderBy('created_at', 'desc')->get();
-            $stats = [
-                'total' => $tickets->count(),
-                'open' => $tickets->where('status', 0)->count(),
-                'processed' => $tickets->where('status', 1)->count(),
-                'closed' => $tickets->where('status', 2)->count(),
-            ];
         } else {
-            $tickets = SupportTicket::where('company_id', $company_session->id)
-                ->orderBy('created_at', 'desc')->get();
-            $stats = [
-                'total' => $tickets->count(),
-                'open' => $tickets->where('status', 0)->count(),
-                'processed' => $tickets->where('status', 1)->count(),
-                'closed' => $tickets->where('status', 2)->count(),
-            ];
+            $tickets = SupportTicket::orderBy('created_at', 'desc')->get();
         }
+
+        $stats = [
+            'total' => $tickets->count(),
+            'open' => $tickets->where('status', 0)->count(),
+            'processed' => $tickets->where('status', 1)->count(),
+            'closed' => $tickets->where('status', 2)->count(),
+        ];
 
         return view('support', compact('tickets', 'stats', 'companies'));
     }
@@ -71,7 +65,7 @@ class SupportController extends Controller
             }
             
             // Allow status update for master
-            if ($user->role == 'master' && isset($request->status)) {
+            if ($user->isMaster() && isset($request->status)) {
                 $ticket->status = $request->status;
             }
 
@@ -86,7 +80,7 @@ class SupportController extends Controller
             
             SupportTicket::create([
                 'ticket_no' => $ticket_no,
-                'company_id' => $company_session->id,
+                'cid' => $company_session->id,
                 'subject' => $request->subject,
                 'description' => $request->description,
                 'priority' => $request->priority,

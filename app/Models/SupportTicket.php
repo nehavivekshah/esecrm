@@ -11,7 +11,7 @@ class SupportTicket extends Model
 
     protected $fillable = [
         'ticket_no',
-        'company_id',
+        'cid',
         'subject',
         'description',
         'priority',
@@ -23,6 +23,6 @@ class SupportTicket extends Model
      */
     public function company()
     {
-        return $this->belongsTo(Companies::class, 'company_id');
+        return $this->belongsTo(Companies::class, 'cid');
     }
 }
