@@ -1,4 +1,4 @@
-﻿@extends('layout')
+@extends('layout')
 @section('title', 'Customers - eseCRM')
 
 @section('content')
@@ -97,6 +97,12 @@
                     <button class="lb-icon-btn" onclick="location.reload()" title="Refresh">
                         <i class="bx bx-refresh"></i>
                     </button>
+                    @if(in_array('client_delete', $roleArray) || in_array('All', $roleArray))
+                        <button id="bulkDeleteBtn" class="lb-btn" style="display:none; background-color: #ea4335; color: white; border: none;">
+                            <i class="bx bx-trash"></i>
+                            <span class="d-none d-sm-inline">Delete Selected</span>
+                        </button>
+                    @endif
                     @if(in_array('clients_add', $roleArray) || in_array('All', $roleArray))
                         <a href="/manage-client" class="lb-btn lb-btn-primary">
                             <i class="bx bx-plus"></i>
@@ -112,6 +118,9 @@
                     <table id="lists" class="leads-table clients" style="width:100%;">
                         <thead>
                             <tr>
+                                <th style="width: 40px; text-align: center;">
+                                    <input type="checkbox" id="selectAllCheckbox" class="form-check-input" style="cursor:pointer;">
+                                </th>
                                 <th>Name</th>
                                 <th class="m-none">Company</th>
                                 <th class="m-none">Email</th>
@@ -124,6 +133,10 @@
                         <tbody>
                             @foreach($clients as $client)
                                 <tr class="view selectrow" id="{{ $client->id ?? '' }}">
+                                    {{-- Checkbox --}}
+                                    <td class="text-center" onclick="event.stopPropagation()">
+                                        <input type="checkbox" class="form-check-input row-checkbox" value="{{ $client->id }}">
+                                    </td>
                                     {{-- Name --}}
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
@@ -368,6 +381,69 @@
                 .finally(() => button.classList.remove('cl-toggling'));
             });
         });
+
+        // Bulk Delete Logic
+        const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+        const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+        const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+
+        function updateBulkDeleteBtn() {
+            const checkedCount = document.querySelectorAll('.row-checkbox:checked').length;
+            if (bulkDeleteBtn) {
+                bulkDeleteBtn.style.display = checkedCount > 0 ? 'inline-flex' : 'none';
+            }
+            if (selectAllCheckbox) {
+                selectAllCheckbox.checked = checkedCount === rowCheckboxes.length && rowCheckboxes.length > 0;
+            }
+        }
+
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                rowCheckboxes.forEach(cb => cb.checked = this.checked);
+                updateBulkDeleteBtn();
+            });
+        }
+
+        rowCheckboxes.forEach(cb => {
+            cb.addEventListener('change', updateBulkDeleteBtn);
+        });
+
+        if (bulkDeleteBtn) {
+            bulkDeleteBtn.addEventListener('click', function() {
+                const selectedIds = Array.from(document.querySelectorAll('.row-checkbox:checked')).map(cb => cb.value);
+                if (selectedIds.length === 0) return;
+
+                if (confirm(`Are you sure you want to delete ${selectedIds.length} customer(s)? This will also delete any related projects and financial recoveries.`)) {
+                    const originalBtnContent = this.innerHTML;
+                    this.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Deleting...';
+                    this.disabled = true;
+
+                    fetch('/clients/bulk-delete', {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json', 
+                            'X-CSRF-TOKEN': CSRF,
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ ids: selectedIds })
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.success);
+                            location.reload();
+                        } else {
+                            throw new Error(data.error || 'Failed to delete selected customers.');
+                        }
+                    })
+                    .catch(err => {
+                        alert(err.message);
+                        this.innerHTML = originalBtnContent;
+                        this.disabled = false;
+                    });
+                }
+            });
+        }
     })();
     </script>
 @endsection
