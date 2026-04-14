@@ -217,6 +217,73 @@
                             </div>
                         </div>
 
+                        {{-- Marketing & Additional --}}
+                        <div class="col-lg-6">
+                            <div class="ml-card h-100">
+                                <div class="ml-card-header">
+                                    <div class="ml-card-icon" style="background:rgba(234,67,53,0.10);color:#ea4335;">
+                                        <i class="bx bx-target-lock"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="ml-card-title">Marketing & Additional</h6>
+                                        <span class="ml-card-sub">Source, values & tagging</span>
+                                    </div>
+                                </div>
+                                <div class="ml-card-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="ml-label">Primary POC</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bx bx-user-voice"></i></span>
+                                                <input type="text" class="form-control" name="poc"
+                                                    placeholder="Main Contact Name" value="{{ $clients->poc ?? '' }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="ml-label">Acquisition Source</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bx bx-download"></i></span>
+                                                <input type="text" class="form-control" name="source"
+                                                    placeholder="e.g. Organic, Referral" value="{{ $clients->source ?? '' }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="ml-label">Relationship Purpose</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bx bx-bullseye"></i></span>
+                                                <input type="text" class="form-control" name="purpose"
+                                                    placeholder="e.g. Reseller, Enterprise" value="{{ $clients->purpose ?? '' }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="ml-label">Est. Value/Score</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bx bx-line-chart"></i></span>
+                                                <input type="text" class="form-control" name="values"
+                                                    placeholder="e.g. High, 100k" value="{{ $clients->values ?? '' }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="ml-label">Language</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bx bx-message-rounded-dots"></i></span>
+                                                <input type="text" class="form-control" name="language"
+                                                    placeholder="e.g. English" value="{{ $clients->language ?? '' }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="ml-label">Tags (Comma separated)</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bx bx-tag"></i></span>
+                                                <input type="text" class="form-control" name="tags"
+                                                    placeholder="e.g. VIP, Tech" value="{{ $clients->tags ?? '' }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         {{-- Location Details --}}
                         <div class="col-lg-6">
                             <div class="ml-card">
@@ -277,7 +344,7 @@
                         </div>
 
                         {{-- Departments & Branches --}}
-                        <div class="col-lg-6">
+                        <div class="col-12">
                             <div class="ml-card">
                                 <div class="ml-card-header">
                                     <div class="ml-card-icon" style="background:rgba(147,52,233,0.10);color:#9334e9;">
