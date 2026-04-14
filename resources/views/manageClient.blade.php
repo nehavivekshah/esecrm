@@ -61,7 +61,7 @@
 
             {{-- Tab Nav (Edit mode only) --}}
             @if($isEdit)
-                <div class="d-flex justify-content-center justify-content-lg-start">
+                <!-- <div class="d-flex justify-content-center justify-content-lg-start">
                     <ul class="nav nav-pills custom-dash-tabs mb-4" id="clientTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#profile" type="button">
@@ -84,7 +84,7 @@
                         </button>
                     </li>
                     </ul>
-                </div>
+                </div> -->
             @endif
 
             <div class="tab-content" id="clientTabsContent">
