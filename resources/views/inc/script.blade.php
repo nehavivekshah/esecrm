@@ -209,7 +209,7 @@
                                     swal("Deleted!", response.success || "The row has been deleted successfully.", "success").then(() => {
                                         // Auto-reload to refresh pagination/statistics if necessary
                                         // Contracts and Proposals are handled smoothly without reload
-                                        if(pagename !== 'contractDelete' && pagename !== 'proposalDelete') {
+                                        if(pagename !== 'contractDelete' && pagename !== 'proposalDelete' && pagename !== 'clientDelete') {
                                            location.reload();
                                         }
                                     });
