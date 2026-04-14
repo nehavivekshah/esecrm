@@ -774,6 +774,13 @@
             color: #9aa0a6;
             transition: color 0.25s;
         }
+
+        /* Fix input-group button border radii */
+        button#copyToWhatsapp {
+            border: 1px solid #dee2e6;
+            border-top-left-radius: 0px !important;
+            border-bottom-left-radius: 0px !important;
+        }
     </style>
 
 @endsection
