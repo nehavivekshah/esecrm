@@ -436,6 +436,9 @@ class ClientController extends Controller
 
     public function viewProject(Request $request, $id)
     {
+        // Multi-tenancy: Projects uses BelongsToCompany (TenantScope), so this
+        // automatically filters to the current tenant's cid. Abort 404 if not found or
+        // if it belongs to a different tenant.
         $project = Projects::leftJoin('clients', 'projects.client_id', '=', 'clients.id')
             ->leftJoin('users as sales', 'projects.closed_by', '=', 'sales.id')
             ->select('projects.*', 'clients.name as client_name', 'clients.company as client_company', 'clients.email as client_email', 'clients.mob as client_mob', 'clients.location as client_location', 'clients.whatsapp as client_whatsapp', 'sales.name as salesperson_name')
@@ -446,24 +449,46 @@ class ClientController extends Controller
             abort(404, 'Project not found');
         }
 
+        // All models below use BelongsToCompany → TenantScope which auto-adds a
+        // `cid` WHERE clause. Filtering by project_id (which is already tenant-owned)
+        // gives us a double-lock: correct project AND correct tenant.
         $recoveries = Recoveries::where('project_id', $id)->orderBy('id', 'DESC')->get();
+
+        // Multi-tenancy: Eselicenses uses TenantScope (cid filter auto-applied).
         $license = Eselicenses::where('project_id', $id)->orderBy('id', 'DESC')->first();
+
+        // Multi-tenancy: Invoices uses TenantScope (cid filter auto-applied).
         $invoices = Invoices::where('project_id', $id)->orderBy('date', 'DESC')->orderBy('id', 'DESC')->get();
 
         // Primary Tasks related to project (parent tasks only, with subtasks eager loaded)
+        // Multi-tenancy: Task uses TenantScope (cid filter auto-applied).
         $tasks = \App\Models\Task::where('project_id', $id)
             ->whereNull('parent_id')
             ->with('subtasks')
             ->orderBy('id', 'asc')
             ->get();
 
-        // Proposals related to client/lead
+        // Proposals: scoped to client_id that belongs to this tenant only.
+        // We use Clients::find() which is also tenant-scoped, so $client will be null
+        // if it doesn't belong to the current tenant — preventing cross-tenant proposal leakage.
         $client = \App\Models\Clients::find($project->client_id);
-        $leadIds = [$project->client_id];
-        if ($client && !empty($client->commentLeadID)) {
-            $leadIds[] = $client->commentLeadID;
+        $leadIds = [];
+        if ($client) {
+            $leadIds[] = $client->id;
+            if (!empty($client->commentLeadID)) {
+                $leadIds[] = (int) $client->commentLeadID;
+            }
         }
-        $proposals = \App\Models\Proposals::whereIn('lead_id', $leadIds)->orderBy('proposal_date', 'DESC')->orderBy('id', 'DESC')->get();
+
+        // Multi-tenancy: Proposals uses TenantScope (cid filter auto-applied).
+        // The additional whereIn('lead_id', $leadIds) further anchors results to
+        // verified tenant-owned client IDs only.
+        $proposals = empty($leadIds)
+            ? collect()
+            : \App\Models\Proposals::whereIn('lead_id', $leadIds)
+                ->orderBy('proposal_date', 'DESC')
+                ->orderBy('id', 'DESC')
+                ->get();
 
         return view('project-view', compact('project', 'recoveries', 'license', 'invoices', 'tasks', 'proposals'));
     }
