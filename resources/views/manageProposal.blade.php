@@ -50,19 +50,7 @@
             <input type="hidden" name="id" id="id" value="{{ $proposal->id ?? '' }}">
             <input type="hidden" name="previous_url" value="{{ $previous_url ?? url()->previous() }}">
 
-            @if(request()->has('project_id') && !empty($preloadProject))
-                <div class="alert alert-info border-0 shadow-sm mb-4 d-flex align-items-center gap-3" style="background:#e8f0fe; border-radius:12px; padding:16px;">
-                    <div style="background:#1a73e8; color:white; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center;">
-                        <i class="bx bx-info-circle fs-4"></i>
-                    </div>
-                    <div>
-                        <h6 class="mb-1 fw-bold text-primary" style="font-size:0.95rem;">Pre-filled from Project Context</h6>
-                        <p class="mb-0 text-muted" style="font-size:0.85rem;">
-                            Auto-populated for <strong>{{ $preloadProject->name }}</strong> and customer <strong>{{ $preloadProject->client_name }}</strong>.
-                        </p>
-                    </div>
-                </div>
-            @endif
+
 
             <div class="row g-4 align-items-start">
 
