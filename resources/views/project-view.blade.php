@@ -602,7 +602,8 @@
                 <div class="tab-pane fade" id="proposals" role="tabpanel">
                     <div class="pv-tab-toolbar">
                         <h2 class="pv-tab-title"><i class="bx bx-paper-plane"></i> Client Proposals</h2>
-                        <a href="/manage-proposal" class="pv-add-btn"><i class="bx bx-plus"></i> Create Proposal</a>
+                        <a href="/manage-proposal?project_id={{ $project->id }}" class="pv-add-btn"><i
+                                class="bx bx-plus"></i> Create Proposal</a>
                     </div>
                     <div class="table-responsive">
                         <table class="leads-table">

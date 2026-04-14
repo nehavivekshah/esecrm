@@ -521,17 +521,52 @@ class ClientController extends Controller
 
     public function manageLicense(Request $request)
     {
-        $id = $request->id ?? '';
-        $license = Eselicenses::leftjoin('projects', 'eselicenses.project_id', 'projects.id')
-            ->leftjoin('clients', 'projects.client_id', 'clients.id')
-            ->select('clients.name as client_name', 'clients.company', 'clients.mob', 'clients.email', 'projects.name as project_name', 'projects.deployment_url', 'projects.type', 'projects.amount', 'projects.note', 'eselicenses.*')
-            ->where('eselicenses.id', '=', $id)->first();
+        $id         = $request->id ?? '';
+        $project_id = $request->project_id ?? null;
+
+        // Load existing license (edit mode)
+        $license = null;
+        if ($id) {
+            $license = Eselicenses::leftjoin('projects', 'eselicenses.project_id', 'projects.id')
+                ->leftjoin('clients', 'projects.client_id', 'clients.id')
+                ->select('clients.name as client_name', 'clients.company', 'clients.mob', 'clients.email', 'projects.name as project_name', 'projects.deployment_url', 'projects.type', 'projects.amount', 'projects.note', 'eselicenses.*')
+                ->where('eselicenses.id', '=', $id)
+                ->first();
+        }
+
+        // If project_id supplied (e.g. from project/view "Add License" button),
+        // fetch project + client for form pre-population (new license only).
+        $preloadProject = null;
+        if ($project_id && !$id) {
+            $preloadProject = Projects::leftJoin('clients', 'projects.client_id', '=', 'clients.id')
+                ->select(
+                    'projects.id as project_id',
+                    'projects.name as project_name',
+                    'projects.amount as project_amount',
+                    'projects.type as project_type',
+                    'projects.note as project_note',
+                    'projects.deployment_url',
+                    'projects.client_id',
+                    'clients.name as client_name',
+                    'clients.company as client_company',
+                    'clients.email as client_email',
+                    'clients.mob as client_mob'
+                )
+                ->where('projects.id', $project_id)
+                ->first();
+        }
 
         $projects = Projects::leftjoin('clients', 'clients.id', 'projects.client_id')
-            ->select('clients.name as client_name', 'clients.company', 'clients.email', 'clients.mob', 'clients.location', 'projects.*')
-            ->orderBy('projects.name', 'ASC')->get();
+            ->select('clients.name as client_name', 'clients.company', 'clients.email', 'clients.mob', 'projects.*')
+            ->orderBy('projects.name', 'ASC')
+            ->get();
 
-        $viewData = ['license' => $license, 'projects' => $projects];
+        $viewData = [
+            'license'        => $license,
+            'projects'       => $projects,
+            'project_id'     => $project_id,
+            'preloadProject' => $preloadProject,
+        ];
 
         if ($request->has('ajax')) {
             return view('manageLicenseForm', $viewData);
