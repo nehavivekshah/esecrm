@@ -706,12 +706,35 @@ class ClientController extends Controller
 
     public function manageClientPost(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'company' => 'required|string|max:255',
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('clients')->where(function ($query) {
+                    return $query->where('cid', Auth::user()->cid);
+                })->ignore($request->id)
+            ],
+            'mob' => [
+                'required',
+                'string',
+                'max:20',
+                Rule::unique('clients')->where(function ($query) {
+                    return $query->where('cid', Auth::user()->cid);
+                })->ignore($request->id)
+            ]
+        ], [
+            'email.unique' => 'This email address is already registered to a customer in your company.',
+            'mob.unique' => 'This mobile number is already registered to a customer in your company.'
+        ]);
+
         $location = json_encode($request->address ?? []);
 
         if (empty($request->id)) {
             // Convert lead to client
             $client = new Clients();
-            $client->cid = Auth::user()->cid ?? '';
             $client->name = $request->name ?? '';
             $client->company = $request->company ?? '';
             $client->gstno = $request->gst ?? '';
@@ -772,7 +795,6 @@ class ClientController extends Controller
             }
 
             // Update existing lead
-            $leadSingle->cid = Auth::user()->cid ?? '';
             $leadSingle->name = $request->name ?? '';
             $leadSingle->company = $request->company ?? '';
             $leadSingle->gstno = $request->gst ?? '';
@@ -1114,7 +1136,6 @@ class ClientController extends Controller
     public function manageInvoiceClientPost(Request $request)
     {
         $client = new Clients();
-        $client->cid = Auth::user()->cid ?? '';
         $client->name = $request->name ?? '';
         $client->company = $request->company ?? '';
         $client->email = $request->email ?? '';
@@ -1292,7 +1313,15 @@ class ClientController extends Controller
     {
         $request->validate([
             'client_id'          => 'required|exists:clients,id',
-            'name'               => 'required|string|max:255',
+            'name'               => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('projects')->where(function ($query) use ($request) {
+                    return $query->where('client_id', $request->client_id)
+                                 ->where('cid', Auth::user()->cid);
+                })->ignore($request->id)
+            ],
             'project_id_custom'  => 'nullable|string|max:100',
             'closed_by'          => 'nullable|exists:users,id',
 
@@ -1308,7 +1337,6 @@ class ClientController extends Controller
 
         $project = $request->id ? Projects::findOrFail($request->id) : new Projects();
 
-        $project->cid                = Auth::user()->cid;
         $project->client_id          = $request->client_id;
         $project->name               = $request->name;
         $project->project_id_custom  = $request->project_id_custom;
