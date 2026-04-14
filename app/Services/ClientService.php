@@ -15,7 +15,7 @@ class ClientService extends BaseService
     /**
      * Get aggregated recovery data for all projects.
      */
-    public function getRecoveriesSummary($companyId)
+    public function getRecoveriesSummary()
     {
         return Recoveries::leftJoin('clients', 'recoveries.client_id', '=', 'clients.id')
             ->leftJoin('projects', 'recoveries.project_id', '=', 'projects.id')

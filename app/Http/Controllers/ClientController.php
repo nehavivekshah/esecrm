@@ -382,11 +382,10 @@ class ClientController extends Controller
     public function projects(Request $request)
     {
         $search = $request->get('search');
-        $cid = Auth::user()->cid;
         $query = Projects::leftJoin('clients', 'projects.client_id', '=', 'clients.id')
             ->leftJoin('users as sales', 'projects.closed_by', '=', 'sales.id')
             ->leftJoin(
-                DB::raw("(SELECT project_id, SUM(paid) as total_paid FROM recoveries WHERE cid = '$cid' GROUP BY project_id) as rec_totals"),
+                DB::raw("(SELECT project_id, SUM(paid) as total_paid FROM recoveries GROUP BY project_id) as rec_totals"),
                 'projects.id', '=', 'rec_totals.project_id'
             )
             ->select(
@@ -886,8 +885,7 @@ class ClientController extends Controller
             ->pluck('invoice');
 
         $query = Invoices::leftJoin('clients', 'invoices.client_id', '=', 'clients.id')
-            ->select('clients.name as client_name', 'clients.company as client_company', 'invoices.*')
-            ->where('clients.cid', '=', $cid);
+            ->select('clients.name as client_name', 'clients.company as client_company', 'invoices.*');
 
         // Apply invoice type filter if provided
         if ($type) {
@@ -930,7 +928,7 @@ class ClientController extends Controller
 
         $clients = Clients::leftJoin('projects', 'clients.id', '=', 'projects.client_id')
             ->select('projects.name as project_name', 'clients.*')
-            ->where('clients.cid', '=', Auth::User()->cid)->get();
+            ->get();
 
         $companies = Companies::where('id', '=', Auth::User()->cid)->first();
 

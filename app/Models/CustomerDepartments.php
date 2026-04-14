@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Traits\BelongsToCompany;
+
 class CustomerDepartments extends Model
 {
-    use HasFactory;
+    use HasFactory, BelongsToCompany;
 
     protected $table = 'customer_departments';
 
