@@ -250,7 +250,7 @@
                                         <span id="avatar-initial" style="display:none;"></span>
                                     @else
                                         <img id="avatar-img" style="display:none; width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">
-                                        <span id="avatar-initial">{{ $users->name ? strtoupper(substr($users->name, 0, 1)) : '?' }}</span>
+                                        <span id="avatar-initial">{{ !empty($users->name) ? strtoupper(substr($users->name, 0, 1)) : '?' }}</span>
                                     @endif
                                     <div class="avatar-edit-overlay"><i class="bx bx-camera"></i></div>
                                 </div>
