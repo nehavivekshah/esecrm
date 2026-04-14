@@ -661,6 +661,9 @@ class LeadController extends Controller
 
             if ($request->submit == 'Save & Send') {
                 $this->logActivity('Proposal Sent', 'proposals', $proposal->id, $proposal->subject, "Sent proposal: {$proposal->subject}");
+            } else {
+                $this->logActivity('Proposal Saved', 'proposals', $proposal->id, $proposal->subject, "Saved proposal: {$proposal->subject}");
+            }
             $redirectUrl = $request->input('previous_url') ?: '/proposals';
             return redirect($redirectUrl)->with('success', 'Proposal saved successfully!');
         }
