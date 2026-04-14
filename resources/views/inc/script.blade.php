@@ -167,16 +167,18 @@
                     return;
                 }
 
-                // Confirmation dialog using SweetAlert
-                swal({
+                // Confirmation dialog using SweetAlert2
+                Swal.fire({
                     title: "Are you sure?",
                     text: "You want to delete this row?",
                     icon: "warning",
-                    buttons: true,
-                    dangerMode: true,
+                    showCancelButton: true,
+                    confirmButtonColor: '#ea4335',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, delete it!'
                 })
-                .then((willDelete) => {
-                    if (willDelete) {
+                .then((result) => {
+                    if (result.isConfirmed) {
                         // Build dynamic AJAX data object
                         var ajaxData = {
                             pagename: pagename,
@@ -206,24 +208,33 @@
                                         card.hide();
                                     }
                                     
-                                    swal("Deleted!", response.success || "The row has been deleted successfully.", "success").then(() => {
+                                    // Make success also a Toast
+                                    const Toast = Swal.mixin({
+                                        toast: true,
+                                        position: 'top-end',
+                                        showConfirmButton: false,
+                                        timer: 2500,
+                                        timerProgressBar: true
+                                    });
+                                    Toast.fire({
+                                        icon: 'success',
+                                        title: response.success || "Deleted successfully."
+                                    }).then(() => {
                                         // Auto-reload to refresh pagination/statistics if necessary
-                                        // Contracts and Proposals are handled smoothly without reload
+                                        // Contracts, Proposals, and Clients are handled smoothly without reload
                                         if(pagename !== 'contractDelete' && pagename !== 'proposalDelete' && pagename !== 'clientDelete') {
                                            location.reload();
                                         }
                                     });
                                 } else {
-                                    swal("Error", response.error || "There was an issue deleting the row.", "error");
+                                    Swal.fire("Error", response.error || "There was an issue deleting the row.", "error");
                                 }
                             },
                             error: function (xhr) {
                                 var errorMsg = xhr.responseJSON ? xhr.responseJSON.error : "An error occurred while processing your request.";
-                                swal("Error", errorMsg, "error");
+                                Swal.fire("Error", errorMsg, "error");
                             }
                         });
-                    } else {
-                        // Optional: swal("This query is safe.");
                     }
                 });
             });
