@@ -162,13 +162,13 @@
 
             {{-- Custom project name --}}
             <div class="col-md-6 cf-field" id="rf_custom_project_wrap"
-                 style="{{ !empty($recoveries->project ?? '') ? '' : 'display:none;' }}">
+                 style="{{ (empty($recoveries->project_id) && !empty($recoveries->project_name)) ? '' : 'display:none;' }}">
                 <label>Custom Project Name</label>
                 <div class="cf-input-box">
                     <span class="cf-icon"><i class="bx bx-box"></i></span>
                     <input type="text" name="project" id="rf_project_name"
                            placeholder="Enter custom project name"
-                           value="{{ $recoveries->project ?? '' }}">
+                           value="{{ $recoveries->project_name ?? '' }}">
                 </div>
             </div>
 
@@ -192,7 +192,7 @@
                 <div class="cf-input-box">
                     <span class="cf-icon"><i class="bx bx-user"></i></span>
                     <input type="text" name="name" placeholder="Full Name"
-                           value="{{ $recoveries->name ?? '' }}" required>
+                           value="{{ $recoveries->client_name ?? '' }}" required>
                 </div>
             </div>
 
@@ -201,7 +201,7 @@
                 <div class="cf-input-box">
                     <span class="cf-icon"><i class="bx bx-buildings"></i></span>
                     <input type="text" name="company" placeholder="Company Name"
-                           value="{{ $recoveries->company ?? '' }}" required>
+                           value="{{ $recoveries->client_company ?? '' }}" required>
                 </div>
             </div>
 
@@ -216,7 +216,7 @@
                 <div class="cf-input-box">
                     <span class="cf-icon" style="font-size:.9rem; font-weight:700;">₹</span>
                     <input type="number" step="0.01" min="0" name="amount" placeholder="0.00"
-                           value="{{ $recoveries->amount ?? '' }}" required>
+                           value="{{ $recoveries->project_amount ?? '' }}" required>
                 </div>
             </div>
 
@@ -235,7 +235,7 @@
                 <div class="cf-input-box">
                     <span class="cf-icon"><i class="bx bx-bell"></i></span>
                     <input type="datetime-local" name="reminder"
-                           value="{{ $recoveries->reminder ?? '' }}">
+                           value="{{ !empty($recoveries->reminder) ? \Carbon\Carbon::parse($recoveries->reminder)->format('Y-m-d\TH:i') : '' }}">
                 </div>
             </div>
             @endif
@@ -251,7 +251,7 @@
                 <div class="cf-input-box">
                     <span class="cf-icon"><i class="bx bx-phone"></i></span>
                     <input type="tel" name="phone" placeholder="+91"
-                           value="{{ $recoveries->mob ?? '91' }}" required>
+                           value="{{ $recoveries->client_mob ?? '91' }}" required>
                 </div>
             </div>
 
@@ -260,7 +260,7 @@
                 <div class="cf-input-box">
                     <span class="cf-icon" style="color:#25D366;"><i class="bx bxl-whatsapp"></i></span>
                     <input type="tel" name="whatsapp" placeholder="+91"
-                           value="{{ $recoveries->whatsapp ?? '91' }}" required>
+                           value="{{ $recoveries->client_whatsapp ?? '91' }}" required>
                 </div>
             </div>
 
@@ -269,7 +269,7 @@
                 <div class="cf-input-box">
                     <span class="cf-icon"><i class="bx bx-user-check"></i></span>
                     <input type="text" name="executive" placeholder="POC Name"
-                           value="{{ $recoveries->poc ?? '' }}">
+                           value="{{ $recoveries->client_poc ?? '' }}">
                 </div>
             </div>
 
@@ -278,7 +278,7 @@
                 <div class="cf-input-box">
                     <span class="cf-icon"><i class="bx bx-cog"></i></span>
                     <input type="text" name="industry" placeholder="e.g. IT"
-                           value="{{ $recoveries->industry ?? '' }}">
+                           value="{{ $recoveries->client_industry ?? '' }}">
                 </div>
             </div>
 
@@ -287,7 +287,7 @@
                 <div class="cf-input-box">
                     <span class="cf-icon"><i class="bx bx-envelope"></i></span>
                     <input type="email" name="email" placeholder="client@example.com"
-                           value="{{ $recoveries->email ?? '' }}">
+                           value="{{ $recoveries->client_email ?? '' }}">
                 </div>
             </div>
 
@@ -307,7 +307,7 @@
         <div class="cf-field">
             <div class="cf-input-box cf-textarea-box">
                 <textarea name="note" rows="3"
-                          placeholder="Add any collection notes or comments...">{{ $recoveries->msg ?? '' }}</textarea>
+                          placeholder="Add any collection notes or comments...">{{ $recoveries->recovery_note ?? '' }}</textarea>
             </div>
         </div>
 
