@@ -104,7 +104,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/edit-task', [TaskController::class, 'taskEdit'])->name('edit-task');
 
     Route::controller(TaskController::class)->group(function () {
-        Route::post('/task/action', 'tasksubmit')->name('tasksubmit');
+        Route::match(['get', 'post'], '/tasksubmit', 'tasksubmit')->name('tasksubmit');
         Route::get('/task-details/{id}', 'getTaskDetailsAjax')->name('task.details.ajax');
         Route::get('/task-details/{id}', 'getTaskDetailsAjax')->name('task.details.ajax');
         Route::post('/task-attachment/upload', 'uploadAttachment')->name('task.attachment.upload');
