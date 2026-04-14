@@ -45,10 +45,16 @@
                         <div class="ml-lead-badge">
                             <i class="bx bx-edit-alt"></i> Editing
                         </div>
+                        <button type="submit" form="profileForm" class="lb-btn lb-btn-primary ms-2 shadow-sm">
+                            <i class="bx bx-check-circle"></i> Update
+                        </button>
                     @else
                         <div class="ml-lead-badge ml-lead-badge-new">
                             <i class="bx bx-plus-circle"></i> New Entry
                         </div>
+                        <button type="submit" form="profileForm" class="lb-btn lb-btn-primary ms-2 shadow-sm">
+                            <i class="bx bx-check-circle"></i> Save Customer
+                        </button>
                     @endif
                 </div>
             </div>
@@ -98,13 +104,13 @@
 
                 {{-- ── PROFILE TAB ── --}}
                 <div class="tab-pane fade show active" id="profile" role="tabpanel">
-                    <form action="manage-client" method="post" class="row g-4">
+                    <form action="manage-client" method="post" class="row g-4" id="profileForm">
                         @csrf
                         <input type="hidden" name="id" value="{{ $_GET['id'] ?? '' }}">
 
                         {{-- Primary Information --}}
                         <div class="col-lg-6">
-                            <div class="ml-card">
+                            <div class="ml-card h-100">
                                 <div class="ml-card-header">
                                     <div class="ml-card-icon" style="background:rgba(26,115,232,0.10);color:#1a73e8;">
                                         <i class="bx bx-user"></i>
@@ -151,9 +157,12 @@
                                         <div class="col-12">
                                             <label class="ml-label">WhatsApp</label>
                                             <div class="input-group">
-                                                <span class="input-group-text" style="color:#25d366;"><i class="bx bxl-whatsapp"></i></span>
+                                                <span class="input-group-text" style="color:#25d366; background: #eafeea; border-color: #c3e6cb;"><i class="bx bxl-whatsapp"></i></span>
                                                 <input type="text" class="form-control" id="whatsapp" name="whatsapp"
                                                     placeholder="91XXXXXXXXXX" value="{{ $clients->whatsapp ?? '91' }}">
+                                                <button type="button" class="btn btn-outline-success px-2" id="copyToWhatsapp" title="Copy from Mobile" data-bs-toggle="tooltip">
+                                                    <i class='bx bx-copy'></i>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -163,7 +172,7 @@
 
                         {{-- Business Details --}}
                         <div class="col-lg-6">
-                            <div class="ml-card">
+                            <div class="ml-card h-100">
                                 <div class="ml-card-header">
                                     <div class="ml-card-icon" style="background:rgba(52,168,83,0.10);color:#34a853;">
                                         <i class="bx bx-briefcase"></i>
@@ -301,7 +310,7 @@
 
                         {{-- Location Details --}}
                         <div class="col-lg-6">
-                            <div class="ml-card">
+                            <div class="ml-card h-100">
                                 <div class="ml-card-header">
                                     <div class="ml-card-icon" style="background:rgba(251,188,4,0.10);color:#f29900;">
                                         <i class="bx bx-map"></i>
@@ -674,6 +683,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Dynamic Department Add
             let deptIndex = {{ isset($clients->departments) ? count($clients->departments) : 1 }};
             document.getElementById('addDepartment').addEventListener('click', function () {
                 const tbody = document.getElementById('departmentBody');
@@ -689,7 +699,24 @@
             document.getElementById('departmentBody').addEventListener('click', function (e) {
                 if (e.target.closest('.remove-dept')) e.target.closest('tr').remove();
             });
+
+            // Sync Mobile to Whatsapp Action
+            const btnCopyWa = document.getElementById('copyToWhatsapp');
+            if(btnCopyWa) {
+                btnCopyWa.addEventListener('click', function() {
+                    const mobVal = document.getElementById('mob').value;
+                    if(mobVal) {
+                        document.getElementById('whatsapp').value = mobVal;
+                        // Flash green background temporarily to show success
+                        const waInput = document.getElementById('whatsapp');
+                        const oldBg = waInput.style.backgroundColor;
+                        waInput.style.backgroundColor = '#e8f5e9';
+                        setTimeout(() => { waInput.style.backgroundColor = oldBg; }, 400);
+                    }
+                });
+            }
         });
     </script>
+
 
 @endsection
