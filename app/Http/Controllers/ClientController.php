@@ -969,34 +969,56 @@ class ClientController extends Controller
 
         // If there's an ID, load one invoice
         if ($id) {
-            // `first()` returns a single model or null (not a collection).
             $invoice = Invoices::where('id', $id)->first();
-            // Alternatively: $invoice = Invoices::find($id);
-
-            // Get items for that single invoice
             $invoiceItems = Invoice_items::where('invoice_id', $id)->get();
         } else {
-            // No ID means we're creating a NEW invoice
-            // You can create a blank model or set $invoice = null
             $invoice = null;
-            // No items for a new invoice
             $invoiceItems = collect();
         }
 
-        $clients = Clients::leftJoin('projects', 'clients.id', '=', 'projects.client_id')
-            ->select('projects.name as project_name', 'clients.*')
-            ->get();
+        // If project_id supplied (e.g. from project/view "Create Invoice" button),
+        // fetch the project and its client so we can pre-populate the form.
+        $preloadProject = null;
+        $preloadClient  = null;
+        if ($project_id && !$id) {
+            $preloadProject = Projects::leftJoin('clients', 'projects.client_id', '=', 'clients.id')
+                ->select(
+                    'projects.id as project_id',
+                    'projects.name as project_name',
+                    'projects.amount as project_amount',
+                    'projects.type as project_type',
+                    'projects.note as project_note',
+                    'projects.client_id',
+                    'clients.name as client_name',
+                    'clients.company as client_company',
+                    'clients.email as client_email',
+                    'clients.mob as client_mob',
+                    'clients.gstno as client_gstno',
+                    'clients.location as client_location'
+                )
+                ->where('projects.id', $project_id)
+                ->first();
+
+            if ($preloadProject) {
+                $preloadClient = Clients::find($preloadProject->client_id);
+            }
+        }
+
+        $clients = Clients::orderBy('name', 'ASC')->get();
 
         $companies = Companies::where('id', '=', Auth::User()->cid)->first();
 
         return view('manageInvoice', [
-            'invoice' => $invoice,
-            'invoiceItems' => $invoiceItems,
-            'clients' => $clients,
-            'companies' => $companies,
-            'project_id' => $project_id,
+            'invoice'        => $invoice,
+            'invoiceItems'   => $invoiceItems,
+            'clients'        => $clients,
+            'companies'      => $companies,
+            'project_id'     => $project_id,
+            'preloadProject' => $preloadProject,
+            'preloadClient'  => $preloadClient,
         ]);
     }
+
 
     public function manageInvoicePost(Request $request)
     {

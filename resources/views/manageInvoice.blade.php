@@ -335,8 +335,11 @@
                                                             data-phone="{{ $client->mob ?? '' }}"
                                                             data-gstno="{{ $client->gstno ?? '' }}"
                                                             data-loc-raw="{{ $client->location ?? '' }}"
-                                                            @if((old('client_id', $invoice->client_id ?? '') == $client->id) || (!empty($project_id) && $client->project_id == $project_id)) selected @endif>
-                                                        {{ $client->name }} ({{ $client->company }})
+                                                            @if(
+                                                                old('client_id', $invoice->client_id ?? '') == $client->id
+                                                                || (!empty($preloadClient) && $preloadClient->id == $client->id)
+                                                            ) selected @endif>
+                                                        {{ $client->name }} ({{ $client->company ?? '—' }})
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -351,16 +354,24 @@
                                         <div class="cf-input-box">
                                             <span class="cf-icon"><i class="bx bx-folder-open"></i></span>
                                             <select name="project_id" id="projectDropdown" style="color:#5f6368;">
-                                                <option value="">— Select Client First —</option>
                                                 @if(!empty($invoice->project_id))
                                                     <option value="{{ $invoice->project_id }}" selected>Loading…</option>
+                                                @elseif(!empty($preloadProject))
+                                                    {{-- Pre-populated from URL project_id param --}}
+                                                    <option value="{{ $preloadProject->project_id }}" selected
+                                                            data-amount="{{ $preloadProject->project_amount ?? '' }}">
+                                                        {{ $preloadProject->project_name }}
+                                                    </option>
+                                                @else
+                                                    <option value="">— Select Client First —</option>
                                                 @endif
                                             </select>
                                         </div>
-                                        <div id="projectValueBadge" class="mt-1" style="display:none;">
+                                        <div id="projectValueBadge" class="mt-1"
+                                             style="display:{{ !empty($preloadProject->project_amount) ? 'block' : 'none' }};">
                                             <span style="font-size:0.72rem;color:#006666;font-weight:600;">
                                                 <i class="bx bx-rupee"></i>
-                                                <span id="projectValueText">0</span> — Contract Value
+                                                <span id="projectValueText">{{ !empty($preloadProject->project_amount) ? number_format($preloadProject->project_amount, 0) : '0' }}</span> — Contract Value
                                             </span>
                                         </div>
                                     </div>
@@ -1189,17 +1200,20 @@
             $(document).on('input', '.item-qty, .item-price, #discountValue, #adjustment', recalculateTotals);
             $(document).on('change', '.item-tax, #discountApplicationType, #discountValueType', recalculateTotals);
 
-            // Initial calc
+            // ─── Initial Setup ───────────────────────────────────────────────────
             setTimeout(() => {
                 $('.selectpicker').selectpicker('refresh');
-                // Force the Bootstrap-Select button to fill its flex container
                 $('#client_id').next('.bootstrap-select').css({ 'flex': '1', 'min-width': '0', 'border': 'none' });
                 recalculateTotals();
 
-                // Edit mode: if client already selected, pre-load projects
-                const existingClientId = $('#client_id').val();
+                const existingClientId  = $('#client_id').val();
                 const existingProjectId = '{{ $invoice->project_id ?? "" }}';
-                if (existingClientId) {
+                @php $preloadProjId = $preloadProject->project_id ?? ''; @endphp
+                const preloadProjectId  = '{{ $preloadProjId }}';
+
+                // ── CASE 1: Editing an existing invoice ──────────────────────
+                // Re-load all projects for that client and re-select the saved project
+                if (existingClientId && existingProjectId) {
                     $.getJSON('/get-projects/' + existingClientId, function(data) {
                         let opts = '<option value="">— No Project (General Invoice) —</option>';
                         if (data.projects && data.projects.length > 0) {
@@ -1209,18 +1223,66 @@
                             });
                         }
                         $('#projectDropdown').html(opts).prop('disabled', false);
-
-                        // Show badge if project pre-selected
                         const preselected = $('#projectDropdown').find(':selected');
-                        const preAmount = preselected.data('amount');
+                        const preAmount   = preselected.data('amount');
+                        if (preselected.val() && preAmount) {
+                            $('#projectValueText').text(parseFloat(preAmount).toLocaleString('en-IN'));
+                            $('#projectValueBadge').show();
+                        }
+                    });
+
+                // ── CASE 2: New invoice pre-loaded from project_id URL param ──
+                // Auto-fill address, GST, reference; load full project list and select the right one
+                } else if (existingClientId && preloadProjectId) {
+                    // 1. Fill address from the selected client option
+                    const opt    = $('#client_id').find('option:selected');
+                    const rawLoc = opt.attr('data-loc-raw') || '';
+                    let addr = '';
+                    try {
+                        const loc = JSON.parse(rawLoc);
+                        if (Array.isArray(loc)) {
+                            addr = loc.filter(Boolean).join(', ');
+                        } else if (typeof loc === 'object' && loc !== null) {
+                            addr = [loc.address, loc.city, loc.state, loc.zip, loc.country].filter(Boolean).join(', ');
+                        } else { addr = rawLoc; }
+                    } catch (e) { addr = rawLoc; }
+                    if (addr) {
+                        $('#billing_address').val(addr);
+                        $('#shipping_address').val(addr);
+                    }
+
+                    // 2. Fill GST
+                    const gst = opt.attr('data-gstno') || '';
+                    if (gst) $('#client_gst').val(gst);
+
+                    // 3. Fill reference with project name (pre-rendered by server)
+                    @if(!empty($preloadProject))
+                    if (!$('#invoiceReference').val()) {
+                        $('#invoiceReference').val('{{ addslashes($preloadProject->project_name ?? '') }}');
+                    }
+                    @endif
+
+                    // 4. Load all projects for this client, then select the preloaded one
+                    $.getJSON('/get-projects/' + existingClientId, function(data) {
+                        let opts = '<option value="">— No Project (General Invoice) —</option>';
+                        if (data.projects && data.projects.length > 0) {
+                            data.projects.forEach(function(p) {
+                                const sel = (String(p.id) === String(preloadProjectId)) ? ' selected' : '';
+                                opts += `<option value="${p.id}" data-amount="${p.amount}"${sel}>${p.name}</option>`;
+                            });
+                        }
+                        $('#projectDropdown').html(opts).prop('disabled', false);
+                        const preselected = $('#projectDropdown').find(':selected');
+                        const preAmount   = preselected.data('amount');
                         if (preselected.val() && preAmount) {
                             $('#projectValueText').text(parseFloat(preAmount).toLocaleString('en-IN'));
                             $('#projectValueBadge').show();
                         }
                     });
                 }
-            }, 300);
+            }, 350);
         });
+
         } // end invoiceScriptInit
         invoiceScriptInit();
     </script>
