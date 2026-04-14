@@ -136,7 +136,7 @@ class ClientController extends Controller
         } elseif ($projectId) {
             // Mock a recovery object structure pre-filled with project/client data
             $project = Projects::leftJoin('clients', 'projects.client_id', '=', 'clients.id')
-                ->select('projects.*', 'clients.name as client_name', 'clients.company as client_company', 'clients.email as client_email', 'clients.mob as client_mob', 'clients.whatsapp as client_whatsapp', 'clients.industry as client_industry', 'clients.poc as client_poc')
+                ->select('projects.*', 'clients.batchNo', 'clients.name as client_name', 'clients.company as client_company', 'clients.email as client_email', 'clients.mob as client_mob', 'clients.whatsapp as client_whatsapp', 'clients.industry as client_industry', 'clients.poc as client_poc')
                 ->where('projects.id', $projectId)
                 ->first();
 
@@ -144,6 +144,7 @@ class ClientController extends Controller
                 $recoveries = (object)[
                     'project_id' => $project->id,
                     'client_id'  => $project->client_id,
+                    'batchNo'    => $project->batchNo,
                     'name'       => $project->client_name,
                     'company'    => $project->client_company,
                     'email'      => $project->client_email,
@@ -168,7 +169,7 @@ class ClientController extends Controller
             'recoveries' => $recoveries,
             'clients'    => $clients,
             'projects'   => $projects,
-            'previous_url' => $request->input('previous_url', url()->previous())
+            'previous_url' => $request->input('previous_url') ?: url()->previous()
         ];
 
         if ($request->has('ajax')) {

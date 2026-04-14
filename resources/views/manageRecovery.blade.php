@@ -19,7 +19,7 @@
                     <div class="ml-card">
                         <div class="ml-card-header d-flex justify-content-between align-items-center">
                             <div class="d-flex align-items-center gap-2">
-                                <a href="{{ url()->previous() == url()->current() ? '/recoveries' : url()->previous() }}" class="btn btn-light btn-sm rounded-circle">
+                                <a href="{{ $previous_url ?? '/recoveries' }}" class="btn btn-light btn-sm rounded-circle">
                                     <i class="bx bx-arrow-back"></i>
                                 </a>
                                 <h5 class="mb-0">{{ $title }}</h5>
@@ -92,7 +92,7 @@
                                         <input type="text" class="form-control" id="company" name="company" placeholder="Company Name" value="{{ $recoveries->company ?? '' }}" required>
                                     </div>
 
-                                    <div class="col-md-6" id="pDiv" style="display: {{ !empty($recoveries->project) ? 'block' : 'none' }}">
+                                    <div class="col-md-6" id="pDiv" style="display: {{ (empty($recoveries->project_id) && !empty($recoveries->project)) ? 'block' : 'none' }}">
                                         <label class="form-label">Manual Project Name*</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-light"><i class='bx bx-box'></i></span>

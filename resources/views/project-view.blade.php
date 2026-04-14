@@ -307,7 +307,7 @@
                 <div class="tab-pane fade" id="billing" role="tabpanel">
                     <div class="pv-tab-toolbar">
                         <h2 class="pv-tab-title"><i class="bx bx-receipt"></i> Recovery History</h2>
-                        <a href="/manage-recovery?project_id={{ $project->id }}" class="pv-add-btn">
+                        <a href="/manage-recovery?project_id={{ $project->id }}&previous_url={{ urlencode(url()->current()) }}" class="pv-add-btn">
                             <i class="bx bx-plus"></i> Add Recovery
                         </a>
                     </div>
@@ -350,12 +350,18 @@
                             <span class="pv-badge {{ $rec->status == '1' ? 'pv-badge-success' : 'pv-badge-warn' }}">
                                 {{ $rec->status == '1' ? 'Paid' : 'Pending' }}
                             </span>
+                            <div class="pv-rec-actions ms-2">
+                                <a href="/manage-recovery?id={{ $rec->id }}&previous_url={{ urlencode(url()->current()) }}" 
+                                   class="btn btn-sm btn-light border" title="Edit Recovery">
+                                    <i class="bx bx-edit-alt text-muted"></i>
+                                </a>
+                            </div>
                         </div>
                     @empty
                         <div class="pv-empty-state">
                             <i class="bx bx-receipt"></i>
                             <p>No recovery records yet.</p>
-                            <a href="/manage-recovery?project_id={{ $project->id }}" class="pv-add-btn">Add First Recovery</a>
+                            <a href="/manage-recovery?project_id={{ $project->id }}&previous_url={{ urlencode(url()->current()) }}" class="pv-add-btn">Add First Recovery</a>
                         </div>
                     @endforelse
                 </div>
