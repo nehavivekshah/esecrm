@@ -143,7 +143,7 @@
                                         </div>
                                     </td>
                                     @if(in_array('users_edit',$roleArray) || in_array('users_delete',$roleArray) || in_array('All',$roleArray))
-                                    <td class="position-sticky end-0 bg-white" onclick="event.stopPropagation();">
+                                    <td class="position-sticky end-0 bg-white">
                                         <div class="d-flex align-items-center justify-content-center gap-1">
                                             @if(in_array('users_edit',$roleArray) || in_array('All',$roleArray))
                                             <a href="/manage-user?id={{ $user->id }}" class="btn kb-action-btn kb-action-edit" title="Edit">
@@ -241,63 +241,77 @@ $(document).ready(function() {
         });
     });
 
-    // ── Delete User (event delegation — survives DataTable pagination redraws) ──
-    $(document).on('click', '.delete[data-page="userDelete"]', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
+    // ── Delete User ──
+    // Direct binding (not delegation) because the td has inline onclick="event.stopPropagation()"
+    // which kills bubbling before it reaches document. All rows are in the DOM at render time
+    // (client-side DataTable only shows/hides them), so direct binding works across all pages.
+    function bindDeleteHandlers() {
+        $('.delete[data-page="userDelete"]').off('click.userDelete').on('click.userDelete', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
 
-        const userId   = $(this).attr('id');
-        const $row     = $(this).closest('tr');
-        const userName = $row.find('.fw-600').first().text().trim() || 'this user';
+            const userId   = $(this).attr('id');
+            const $row     = $(this).closest('tr');
+            const userName = $row.find('.fw-600').first().text().trim() || 'this user';
 
-        Swal.fire({
-            title: 'Delete User?',
-            html: `Are you sure you want to permanently delete <strong>${userName}</strong>?<br><small class="text-muted">This action cannot be undone.</small>`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#ea4335',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: '<i class="bx bx-trash me-1"></i> Yes, Delete',
-            cancelButtonText: 'Cancel',
-            reverseButtons: true,
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: '/ajax-send',
-                    method: 'GET',
-                    data: {
-                        rowid:      userId,
-                        userDelete: 'userDelete',
-                        _token:     "{{ csrf_token() }}"
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            // Remove row from DataTable cleanly
-                            if ($.fn.DataTable.isDataTable('#lists')) {
-                                $('#lists').DataTable().row($row).remove().draw(false);
+            Swal.fire({
+                title: 'Delete User?',
+                html: `Are you sure you want to permanently delete <strong>${userName}</strong>?<br><small class="text-muted">This action cannot be undone.</small>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ea4335',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '<i class="bx bx-trash me-1"></i> Yes, Delete',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/ajax-send',
+                        method: 'GET',
+                        data: {
+                            rowid:      userId,
+                            userDelete: 'userDelete',
+                            _token:     "{{ csrf_token() }}"
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                // Remove row from DataTable cleanly
+                                if ($.fn.DataTable.isDataTable('#lists')) {
+                                    $('#lists').DataTable().row($row).remove().draw(false);
+                                } else {
+                                    $row.fadeOut(300, function() { $(this).remove(); });
+                                }
+                                const Toast = Swal.mixin({
+                                    toast: true, position: 'top-end',
+                                    showConfirmButton: false, timer: 3000, timerProgressBar: true
+                                });
+                                Toast.fire({ icon: 'success', title: 'User deleted successfully.' });
                             } else {
-                                $row.fadeOut(300, function() { $(this).remove(); });
+                                Swal.fire({ icon: 'error', title: 'Error', text: response.error || 'Could not delete user.' });
                             }
-
-                            const Toast = Swal.mixin({
-                                toast: true, position: 'top-end',
-                                showConfirmButton: false, timer: 3000, timerProgressBar: true
-                            });
-                            Toast.fire({ icon: 'success', title: 'User deleted successfully.' });
-                        } else {
-                            Swal.fire({ icon: 'error', title: 'Error', text: response.error || 'Could not delete user.' });
+                        },
+                        error: function(xhr) {
+                            const msg = (xhr.responseJSON && xhr.responseJSON.error)
+                                ? xhr.responseJSON.error
+                                : 'An unexpected error occurred. Please try again.';
+                            Swal.fire({ icon: 'error', title: 'Oops...', text: msg });
                         }
-                    },
-                    error: function(xhr) {
-                        const msg = (xhr.responseJSON && xhr.responseJSON.error)
-                            ? xhr.responseJSON.error
-                            : 'An unexpected error occurred. Please try again.';
-                        Swal.fire({ icon: 'error', title: 'Oops...', text: msg });
-                    }
-                });
-            }
+                    });
+                }
+            });
         });
-    });
+    }
+
+    // Bind on initial load
+    bindDeleteHandlers();
+
+    // Re-bind after every DataTable redraw (search / sort / page change)
+    if ($.fn.DataTable.isDataTable('#lists')) {
+        $('#lists').DataTable().on('draw', function() {
+            bindDeleteHandlers();
+        });
+    }
 });
 </script>
 @endpush
