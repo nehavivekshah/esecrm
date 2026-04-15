@@ -209,6 +209,7 @@ $(document).ready(function() {
         }
     });
 
+    // ── Status Toggle ──
     $('.status-toggle').on('change', function() {
         const userId = $(this).data('id');
         const isChecked = $(this).is(':checked');
@@ -237,6 +238,64 @@ $(document).ready(function() {
                 Swal.fire({ icon: 'error', title: 'Oops...', text: msg });
             },
             complete: function() { $('#status_' + userId).prop('disabled', false); }
+        });
+    });
+
+    // ── Delete User (event delegation — survives DataTable pagination redraws) ──
+    $(document).on('click', '.delete[data-page="userDelete"]', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const userId   = $(this).attr('id');
+        const $row     = $(this).closest('tr');
+        const userName = $row.find('.fw-600').first().text().trim() || 'this user';
+
+        Swal.fire({
+            title: 'Delete User?',
+            html: `Are you sure you want to permanently delete <strong>${userName}</strong>?<br><small class="text-muted">This action cannot be undone.</small>`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ea4335',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: '<i class="bx bx-trash me-1"></i> Yes, Delete',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/ajax-send',
+                    method: 'GET',
+                    data: {
+                        rowid:      userId,
+                        userDelete: 'userDelete',
+                        _token:     "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Remove row from DataTable cleanly
+                            if ($.fn.DataTable.isDataTable('#lists')) {
+                                $('#lists').DataTable().row($row).remove().draw(false);
+                            } else {
+                                $row.fadeOut(300, function() { $(this).remove(); });
+                            }
+
+                            const Toast = Swal.mixin({
+                                toast: true, position: 'top-end',
+                                showConfirmButton: false, timer: 3000, timerProgressBar: true
+                            });
+                            Toast.fire({ icon: 'success', title: 'User deleted successfully.' });
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'Error', text: response.error || 'Could not delete user.' });
+                        }
+                    },
+                    error: function(xhr) {
+                        const msg = (xhr.responseJSON && xhr.responseJSON.error)
+                            ? xhr.responseJSON.error
+                            : 'An unexpected error occurred. Please try again.';
+                        Swal.fire({ icon: 'error', title: 'Oops...', text: msg });
+                    }
+                });
+            }
         });
     });
 });
