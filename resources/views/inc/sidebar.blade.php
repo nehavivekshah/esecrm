@@ -9,8 +9,7 @@
 <div class="sidebar @if(isset($_COOKIE['sidebarOpen']) && $_COOKIE['sidebarOpen'] == 'open') open @endif">
     <div class="logo_details sidebar-toggle-trigger">
         @if(!empty($company->logo))
-            <img src="{{ asset('assets/images/company/logos/' . ($company->logo ?? '')) }}"
-                alt="{{$company->name ?? ''}}">
+            <img src="{{ asset('assets/images/company/logos/' . ($company->logo ?? '')) }}" alt="{{$company->name ?? ''}}">
         @else
             <div class="logo_name text-white">{{ $company->name ?? 'Admin Panel' }}</div>
         @endif
@@ -113,7 +112,8 @@
 
             @if(in_array('projects', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
                 <li>
-                    <a href="/projects" @if(Request::segment(1) == 'projects' || Request::segment(1) == 'manage-project') class="active" @endif>
+                    <a href="/projects" @if(Request::segment(1) == 'projects' || Request::segment(1) == 'manage-project')
+                    class="active" @endif>
                         <i class="bx bx-briefcase"></i>
                         <span class="link_name">Projects</span>
                     </a>
@@ -220,18 +220,19 @@
 
             @if(in_array('users_assign', $roleArray) || (in_array('All', $roleArray) && in_array(($company->plan ?? ''), $standard)))
                 <li>
-                    <a href="/users" @if(Request::segment(1) == 'users' || Request::segment(1) == 'manage-user') class="active" @endif>
+                    <a href="/users" @if(Request::segment(1) == 'users' || Request::segment(1) == 'manage-user') class="active"
+                    @endif>
                         <i class="bx bx-group"></i>
-                        <span class="link_name">Users Management</span>
+                        <span class="link_name">Users</span>
                     </a>
                 </li>
             @endif
         @endif
-        
+
         <li>
             <a href="/support" @if(Request::segment(1) == 'support') class="active" @endif>
                 <i class="bx bx-help-circle"></i>
-                <span class="link_name">Customer Support</span>
+                <span class="link_name">Support</span>
             </a>
         </li>
 
