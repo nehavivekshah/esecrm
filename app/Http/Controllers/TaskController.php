@@ -33,6 +33,37 @@ class TaskController extends Controller
             : null;
 
         $data = $this->taskService->getKanbanData($projectId);
+
+        // If ?id= is present the blade will @include('inc.task.popup'),
+        // which requires taskSingle/userSingle/taskHistory/taskComments/taskAttachments.
+        // Load them here so the include doesn't crash with "Undefined variable".
+        if ($request->filled('id')) {
+            $taskId     = (int) $request->id;
+            $taskSingle = Task::where('id', $taskId)->with('assignees')->get();
+
+            if ($taskSingle->isNotEmpty()) {
+                $userSingle      = User::where('id', $taskSingle[0]->uid)->get();
+                $taskHistory     = Task_working_hours::where('taskid', $taskId)
+                                        ->orderBy('id', 'DESC')->get();
+                $taskComments    = Task_comments::leftJoin('users', 'users.id', '=', 'task_comments.uid')
+                                        ->select('users.name', 'task_comments.*')
+                                        ->where('task_comments.taskid', $taskId)
+                                        ->orderBy('task_comments.id', 'DESC')->get();
+                $taskAttachments = \App\Models\TaskAttachment::where('task_id', $taskId)
+                                        ->orderBy('id', 'DESC')->get();
+                $allUsers        = User::orderBy('name')->get();
+
+                $data = array_merge($data, [
+                    'taskSingle'      => $taskSingle,
+                    'userSingle'      => $userSingle,
+                    'taskHistory'     => $taskHistory,
+                    'taskComments'    => $taskComments,
+                    'taskAttachments' => $taskAttachments,
+                    'allUsers'        => $allUsers,
+                ]);
+            }
+        }
+
         return view('task', $data);
     }
 
