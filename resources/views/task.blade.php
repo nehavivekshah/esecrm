@@ -245,9 +245,7 @@
         </div>
     </section>
 
-    @if(isset($_GET['id']))
-        @include('inc.task.popup')
-    @endif
+    {{-- Task popup is loaded exclusively via AJAX (openTaskAjax) to avoid duplicate rendering --}}
 
     <div id="taskAjaxContainer"></div>
 
