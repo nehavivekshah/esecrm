@@ -55,11 +55,17 @@
                             </a>
                         @endif
                         @if($project->client_whatsapp || $project->client_mob)
-                            @php $waNum = $project->client_whatsapp ?? $project->client_mob; @endphp
-                            <a href="https://api.whatsapp.com/send/?phone={{ $waNum }}&text=Regarding Project: {{ urlencode($project->name) }}"
-                                target="_blank" class="pv-action-btn pv-wa" title="WhatsApp">
-                                <i class="bx bxl-whatsapp"></i>
-                            </a>
+                            @php 
+                                $waRaw = $project->client_whatsapp ?? $project->client_mob; 
+                                $waNum = preg_replace('/[^0-9]/', '', $waRaw ?? '');
+                                if (strlen($waNum) == 10) { $waNum = '91' . $waNum; }
+                            @endphp
+                            @if(!empty($waNum))
+                                <a href="https://wa.me/{{ $waNum }}?text=Regarding Project: {{ urlencode($project->name) }}"
+                                    target="_blank" class="pv-action-btn pv-wa" title="WhatsApp">
+                                    <i class="bx bxl-whatsapp"></i>
+                                </a>
+                            @endif
                         @endif
                         @if($project->client_email)
                             <a href="mailto:{{ $project->client_email }}" class="pv-action-btn" title="Email">

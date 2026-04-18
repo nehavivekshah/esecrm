@@ -9,7 +9,9 @@
         $totalCount = $recoveries->count();
         $paidCount = $recoveries->where('status', '1')->count();
         $unpaidCount = $recoveries->where('status', '0')->count();
-        $totalPending = $recoveries->sum('remaining_amount');
+        $totalPending = $recoveries->reduce(function ($carry, $item) {
+            return $carry + max(0, $item->remaining_amount ?? 0);
+        }, 0);
         $overdueCount = $recoveries->filter(function ($r) {
             return $r->status == '0' && !empty($r->reminder) &&
                 date('Y-m-d', strtotime($r->reminder)) <= date('Y-m-d');
@@ -196,10 +198,15 @@
                                                 <i class="bx bx-rupee"></i>
                                             </button>
                                             {{-- WhatsApp --}}
-                                            @if(!empty($recovery->whatsapp))
-                                                <a href="https://api.whatsapp.com/send/?phone={{ $recovery->whatsapp }}&text=Hi&type=phone_number&app_absent=0"
-                                                    class="btn kb-action-btn" target="_blank" title="WhatsApp"
-                                                    style="background:rgba(37,211,102,0.10);color:#25D366;">
+                                            @php
+                                                $waRaw = !empty($recovery->whatsapp) && $recovery->whatsapp !== '-' ? $recovery->whatsapp : $recovery->mob;
+                                                $waNum = preg_replace('/[^0-9]/', '', $waRaw ?? '');
+                                                if (strlen($waNum) == 10) { $waNum = '91' . $waNum; }
+                                            @endphp
+                                            @if(!empty($waNum))
+                                                <a href="https://wa.me/{{ $waNum }}" target="_blank" class="btn kb-action-btn" title="WhatsApp" 
+                                                   style="background:rgba(37,211,102,0.10);color:#25D366;"
+                                                   onclick="event.stopPropagation();">
                                                     <i class="bx bxl-whatsapp"></i>
                                                 </a>
                                             @endif

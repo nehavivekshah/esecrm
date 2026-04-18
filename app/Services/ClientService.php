@@ -33,9 +33,9 @@ class ClientService extends BaseService
                 DB::raw('MAX(projects.amount) as project_amount'),
                 DB::raw('MAX(projects.note) as project_note'),
                 DB::raw('MAX(projects.deployment_url) as deployment_url'),
-                DB::raw('MAX(projects.amount) - SUM(recoveries.paid) as remaining_amount'),
+                DB::raw('MAX(projects.amount) - COALESCE(SUM(recoveries.paid), 0) as remaining_amount'),
                 DB::raw('MAX(recoveries.reminder) as reminder'),
-                'recoveries.status'
+                DB::raw('CASE WHEN MAX(projects.amount) - COALESCE(SUM(recoveries.paid), 0) <= 0 THEN 1 ELSE 0 END as status')
             )
             ->groupBy(
                 'projects.id',
@@ -46,14 +46,12 @@ class ClientService extends BaseService
                 'clients.whatsapp',
                 'clients.industry',
                 'clients.email',
-                'clients.poc',
-                'recoveries.status'
+                'clients.poc'
             )
             ->orderByRaw("
                 CASE
-                    WHEN MAX(projects.amount) - SUM(recoveries.paid) = 0 THEN 2
-                    WHEN recoveries.status = 0 
-                         AND DATE(MAX(recoveries.reminder)) <= CURDATE() 
+                    WHEN MAX(projects.amount) - COALESCE(SUM(recoveries.paid), 0) <= 0 THEN 2
+                    WHEN DATE(MAX(recoveries.reminder)) <= CURDATE() 
                          AND TIME(MAX(recoveries.reminder)) <= CURTIME() THEN 0
                     ELSE 1
                 END,

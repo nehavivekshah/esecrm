@@ -258,7 +258,9 @@
             <div class="col-md-3 cf-field">
                 <label>WhatsApp <span class="req">*</span></label>
                 <div class="cf-input-box">
-                    <span class="cf-icon" style="color:#25D366;"><i class="bx bxl-whatsapp"></i></span>
+                    <a href="#" class="cf-icon waClickIcon" style="color:#25D366; text-decoration:none;" title="Click to message">
+                        <i class="bx bxl-whatsapp"></i>
+                    </a>
                     <input type="tel" name="whatsapp" placeholder="+91"
                            value="{{ $recoveries->client_whatsapp ?? '91' }}" required>
                 </div>
@@ -416,6 +418,16 @@
         if ($client.val()) {
             $client.trigger('change');
         }
+
+        // ── Handle WA click icon ──
+        $('.waClickIcon').on('click', function(e) {
+            e.preventDefault();
+            var val = $('input[name="whatsapp"]').val() || $('input[name="phone"]').val();
+            if(!val) return;
+            var waNum = val.replace(/[^0-9]/g, '');
+            if(waNum.length === 10) { waNum = '91' + waNum; }
+            if(waNum) { window.open('https://wa.me/' + waNum, '_blank'); }
+        });
     }
 
     // Ensure Select2 JS is loaded before init
