@@ -124,7 +124,7 @@
                                         !empty($recovery->reminder) &&
                                         date('Y-m-d', strtotime($recovery->reminder)) <= date('Y-m-d');
                                     $isFullyPaid = ($recovery->remaining_amount ?? 0) <= 0;
-                                    
+
                                     $totalAmt = $recovery->project_amount ?? 0;
                                     $pendingAmt = $recovery->remaining_amount ?? 0;
                                     $paidAmt = $totalAmt - $pendingAmt;
@@ -143,8 +143,10 @@
                                                 {{ strtoupper(substr($recovery->name ?? 'R', 0, 1)) }}
                                             </div>
                                             <div class="min-w-0">
-                                                <div class="fw-600 text-truncate" style="max-width:180px;">{{ $recovery->name ?? '—' }}</div>
-                                                <div class="text-muted d-flex align-items-center gap-1" style="font-size:0.72rem;">
+                                                <div class="fw-600 text-truncate" style="max-width:180px;">
+                                                    {{ $recovery->name ?? '—' }}</div>
+                                                <div class="text-muted d-flex align-items-center gap-1"
+                                                    style="font-size:0.72rem;">
                                                     <i class="bx bx-briefcase" style="font-size:0.8rem;"></i>
                                                     <span class="text-truncate">{{ $recovery->project ?? 'General' }}</span>
                                                 </div>
@@ -154,20 +156,26 @@
                                     <td class="m-none text-muted">{{ $recovery->company ?? '—' }}</td>
                                     <td>
                                         @if($isFullyPaid)
-                                            <div class="fw-bold" style="color:#34a853; font-size:0.85rem;">₹{{ number_format($totalAmt, 0) }}</div>
+                                            <div class="fw-bold" style="color:#34a853; font-size:0.85rem;">
+                                                ₹{{ number_format($totalAmt, 0) }}</div>
                                             <span class="rv-amount-badge rv-paid mt-1">
                                                 <i class="bx bx-check-circle"></i> Cleared
                                             </span>
                                         @else
                                             <div class="d-flex justify-content-between align-items-center mb-1">
-                                                <span class="rv-amount text-danger" style="font-size:0.85rem;">₹{{ number_format($pendingAmt, 0) }}</span>
-                                                <span class="text-muted" style="font-size:0.65rem;">of ₹{{ number_format($totalAmt, 0) }}</span>
+                                                <span class="rv-amount text-danger"
+                                                    style="font-size:0.85rem;">₹{{ number_format($pendingAmt, 0) }}</span>
+                                                <span class="text-muted" style="font-size:0.65rem;">of
+                                                    ₹{{ number_format($totalAmt, 0) }}</span>
                                             </div>
                                             <div class="d-flex align-items-center gap-1">
-                                                <div style="flex:1; height:4px; background:#f0f0f0; border-radius:2px; overflow:hidden;">
-                                                    <div style="width:{{ $recPct }}%; height:100%; background:{{ $recColor }};"></div>
+                                                <div
+                                                    style="flex:1; height:4px; background:#f0f0f0; border-radius:2px; overflow:hidden;">
+                                                    <div style="width:{{ $recPct }}%; height:100%; background:{{ $recColor }};">
+                                                    </div>
                                                 </div>
-                                                <span style="font-size:0.65rem; font-weight:700; color:{{ $recColor }};">{{ $recPct }}%</span>
+                                                <span
+                                                    style="font-size:0.65rem; font-weight:700; color:{{ $recColor }};">{{ $recPct }}%</span>
                                             </div>
                                         @endif
                                     </td>
@@ -188,25 +196,29 @@
                                     <td class="position-sticky end-0">
                                         <div class="d-flex align-items-center justify-content-center gap-1">
                                             {{-- Reminder --}}
-                                            <button class="btn kb-action-btn reminder" data-id="{{ $recovery->id ?? '' }}" data-type="Reminder"
-                                                title="Set Reminder" style="background:rgba(251,188,4,0.10);color:#f9a825;">
+                                            <button class="btn kb-action-btn reminder" data-id="{{ $recovery->id ?? '' }}"
+                                                data-type="Reminder" title="Set Reminder"
+                                                style="background:rgba(251,188,4,0.10);color:#f9a825;">
                                                 <i class="bx bx-alarm"></i>
                                             </button>
                                             {{-- Mark Received --}}
-                                            <button class="btn kb-action-btn received" data-id="{{ $recovery->id ?? '' }}" data-type="Received"
-                                                title="Mark Received" style="background:rgba(52,168,83,0.10);color:#34a853;">
+                                            <button class="btn kb-action-btn received" data-id="{{ $recovery->id ?? '' }}"
+                                                data-type="Received" title="Mark Received"
+                                                style="background:rgba(52,168,83,0.10);color:#34a853;">
                                                 <i class="bx bx-rupee"></i>
                                             </button>
                                             {{-- WhatsApp --}}
                                             @php
                                                 $waRaw = !empty($recovery->whatsapp) && $recovery->whatsapp !== '-' ? $recovery->whatsapp : $recovery->mob;
                                                 $waNum = preg_replace('/[^0-9]/', '', $waRaw ?? '');
-                                                if (strlen($waNum) == 10) { $waNum = '91' . $waNum; }
+                                                if (strlen($waNum) == 10) {
+                                                    $waNum = '91' . $waNum;
+                                                }
                                             @endphp
                                             @if(!empty($waNum))
-                                                <a href="https://wa.me/{{ $waNum }}" target="_blank" class="btn kb-action-btn" title="WhatsApp" 
-                                                   style="background:rgba(37,211,102,0.10);color:#25D366;"
-                                                   onclick="event.stopPropagation();">
+                                                <a href="https://wa.me/{{ $waNum }}" target="_blank" class="btn kb-action-btn"
+                                                    title="WhatsApp" style="background:rgba(37,211,102,0.10);color:#25D366;"
+                                                    onclick="event.stopPropagation();">
                                                     <i class="bx bxl-whatsapp"></i>
                                                 </a>
                                             @endif
@@ -221,12 +233,13 @@
                                             <button type="button" class="btn kb-action-btn open-recovery-modal"
                                                 data-url="/manage-recovery?project_id={{ $recovery->id ?? '' }}&ajax=1"
                                                 title="Add Recovery" style="background:rgba(0,102,102,0.10);color:#006666;">
-                                                <i class="bx bx-plus"></i>
+                                                <i class="bx bx-pencil"></i>
                                             </button>
                                             {{-- Delete --}}
                                             @if(in_array('recoveries_delete', $roleArray) || in_array('All', $roleArray))
                                                 <a href="javascript:void(0)" class="btn kb-action-btn kb-action-del delete"
-                                                    id="{{ $recovery->id ?? '' }}" data-page="recoveryAmountDelete" title="Delete" style="background:rgba(234,67,53,0.10);color:#ea4335;">
+                                                    id="{{ $recovery->id ?? '' }}" data-page="recoveryAmountDelete" title="Delete"
+                                                    style="background:rgba(234,67,53,0.10);color:#ea4335;">
                                                     <i class="bx bx-trash"></i>
                                                 </a>
                                             @endif
@@ -277,75 +290,92 @@
 
     {{-- Shared cf-modal-header style (used by reminder/received/edit partials) --}}
     <style>
-    .cf-modal-header {
-        display:flex; align-items:center; justify-content:space-between;
-        padding:16px 20px;
-        background:linear-gradient(135deg,#005757,#007e7e);
-        border-radius:16px 16px 0 0;
-    }
-    .cf-modal-header-title { font-size:.975rem; font-weight:700; color:#fff; margin:0; }
-    .cf-modal-header-sub   { font-size:.73rem; color:rgba(255,255,255,.72); margin:0; }
-    .cf-modal-header .btn-close { filter:invert(1); opacity:.8; }
+        .cf-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: linear-gradient(135deg, #005757, #007e7e);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .cf-modal-header-title {
+            font-size: .975rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 0;
+        }
+
+        .cf-modal-header-sub {
+            font-size: .73rem;
+            color: rgba(255, 255, 255, .72);
+            margin: 0;
+        }
+
+        .cf-modal-header .btn-close {
+            filter: invert(1);
+            opacity: .8;
+        }
     </style>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function () {
 
-        // Execute scripts found inside a container (innerHTML doesn't run them natively)
-        function execScripts(container) {
-            container.querySelectorAll('script').forEach(function (oldScript) {
-                var newScript = document.createElement('script');
-                Array.from(oldScript.attributes).forEach(function (attr) {
-                    newScript.setAttribute(attr.name, attr.value);
+            // Execute scripts found inside a container (innerHTML doesn't run them natively)
+            function execScripts(container) {
+                container.querySelectorAll('script').forEach(function (oldScript) {
+                    var newScript = document.createElement('script');
+                    Array.from(oldScript.attributes).forEach(function (attr) {
+                        newScript.setAttribute(attr.name, attr.value);
+                    });
+                    newScript.textContent = oldScript.textContent;
+                    document.body.appendChild(newScript);
+                    oldScript.remove();
                 });
-                newScript.textContent = oldScript.textContent;
-                document.body.appendChild(newScript);
-                oldScript.remove();
-            });
-        }
+            }
 
-        function loadModal(modalEl, contentEl, url) {
-            contentEl.innerHTML = '<div class="d-flex align-items-center justify-content-center" style="height:160px;"><div class="spinner-border text-secondary" style="width:1.5rem;height:1.5rem;"></div></div>';
-            bootstrap.Modal.getOrCreateInstance(modalEl).show();
-            fetch(url)
-                .then(function (r) { return r.text(); })
-                .then(function (html) {
-                    contentEl.innerHTML = html;
-                    execScripts(contentEl);  // ← run <script> blocks from the partial
-                })
-                .catch(function () {
-                    contentEl.innerHTML = '<div class="p-4 text-center text-danger"><i class="bx bx-error" style="font-size:1.5rem;"></i><p class="mt-2">Failed to load. Please try again.</p></div>';
+            function loadModal(modalEl, contentEl, url) {
+                contentEl.innerHTML = '<div class="d-flex align-items-center justify-content-center" style="height:160px;"><div class="spinner-border text-secondary" style="width:1.5rem;height:1.5rem;"></div></div>';
+                bootstrap.Modal.getOrCreateInstance(modalEl).show();
+                fetch(url)
+                    .then(function (r) { return r.text(); })
+                    .then(function (html) {
+                        contentEl.innerHTML = html;
+                        execScripts(contentEl);  // ← run <script> blocks from the partial
+                    })
+                    .catch(function () {
+                        contentEl.innerHTML = '<div class="p-4 text-center text-danger"><i class="bx bx-error" style="font-size:1.5rem;"></i><p class="mt-2">Failed to load. Please try again.</p></div>';
+                    });
+            }
+
+            // ── Edit ──
+            document.querySelectorAll('.open-recovery-modal').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    loadModal(
+                        document.getElementById('manageRecoveryModal'),
+                        document.getElementById('manageRecoveryModalContent'),
+                        this.dataset.url
+                    );
                 });
-        }
-
-        // ── Edit ──
-        document.querySelectorAll('.open-recovery-modal').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                loadModal(
-                    document.getElementById('manageRecoveryModal'),
-                    document.getElementById('manageRecoveryModalContent'),
-                    this.dataset.url
-                );
             });
-        });
 
-        // ── Reminder & Received ──
-        document.querySelectorAll('.reminder, .received').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                const id   = this.dataset.id;
-                const type = this.dataset.type;   // 'Reminder' or 'Received'
-                const url  = '/recovery/' + id + '/' + type;
-                loadModal(
-                    document.getElementById('recoveryModal'),
-                    document.getElementById('recoveryModalContent'),
-                    url
-                );
+            // ── Reminder & Received ──
+            document.querySelectorAll('.reminder, .received').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    const id = this.dataset.id;
+                    const type = this.dataset.type;   // 'Reminder' or 'Received'
+                    const url = '/recovery/' + id + '/' + type;
+                    loadModal(
+                        document.getElementById('recoveryModal'),
+                        document.getElementById('recoveryModalContent'),
+                        url
+                    );
+                });
             });
+
+
+
         });
-
-
-
-    });
     </script>
 
     <style>
