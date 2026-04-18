@@ -78,26 +78,26 @@ class ClientController extends Controller
 
         if ($title == "Received") {
             // Fetch all recoveries for the given project ID
-            $recoveries = Recoveries::where('project_id', $id)->where('paid', '!=', '0')->get();
+            $recoveries = Recoveries::where('id', $id)->where('paid', '!=', '0')->get();
 
             // Fetch project details
             $project = Projects::find($id); // More concise than where('id', $id)->first()
 
             // Calculate the total paid amount
-            $totalPaid = Recoveries::where('project_id', $id)->sum('paid');
+            $totalPaid = Recoveries::where('id', $id)->sum('paid');
             $client = Clients::where('id', ($project->client_id ?? ''))->first();
 
             // Return the view with the recoveries data, project details, and total paid amount
             return view('inc.recovery.received', compact('recoveries', 'project', 'totalPaid', 'client'));
         } else {
             // Fetch all recoveries for the given project ID
-            $recoveries = Recoveries::where('project_id', $id)->get();
+            $recoveries = Recoveries::where('id', $id)->get();
 
             // Fetch project details
             $project = Projects::find($id); // More concise than where('id', $id)->first()
 
             // Calculate the total paid amount
-            $totalPaid = Recoveries::where('project_id', $id)->sum('paid');
+            $totalPaid = Recoveries::where('id', $id)->sum('paid');
             $client = Clients::where('id', ($project->client_id ?? ''))->first();
 
             // Return the view with the recoveries data, project details, and total paid amount
@@ -131,19 +131,19 @@ class ClientController extends Controller
             $recoveries = Recoveries::leftjoin('clients', 'recoveries.client_id', '=', 'clients.id')
                 ->leftjoin('projects', 'recoveries.project_id', '=', 'projects.id')
                 ->select(
-                    'clients.batchNo', 
-                    'clients.name as client_name', 
-                    'clients.company as client_company', 
-                    'clients.mob as client_mob', 
-                    'clients.whatsapp as client_whatsapp', 
-                    'clients.industry as client_industry', 
-                    'clients.email as client_email', 
-                    'clients.poc as client_poc', 
-                    'projects.name as project_name', 
-                    'projects.amount as project_amount', 
-                    'projects.deployment_url', 
-                    'projects.note as project_note', 
-                    'recoveries.note as recovery_note', 
+                    'clients.batchNo',
+                    'clients.name as client_name',
+                    'clients.company as client_company',
+                    'clients.mob as client_mob',
+                    'clients.whatsapp as client_whatsapp',
+                    'clients.industry as client_industry',
+                    'clients.email as client_email',
+                    'clients.poc as client_poc',
+                    'projects.name as project_name',
+                    'projects.amount as project_amount',
+                    'projects.deployment_url',
+                    'projects.note as project_note',
+                    'recoveries.note as recovery_note',
                     'recoveries.*'
                 )
                 ->where('recoveries.id', $id)
@@ -156,20 +156,20 @@ class ClientController extends Controller
                 ->first();
 
             if ($project) {
-                $recoveries = (object)[
-                    'project_id'    => $project->id,
-                    'client_id'     => $project->client_id,
-                    'batchNo'       => $project->batchNo,
-                    'client_name'   => $project->client_name,
+                $recoveries = (object) [
+                    'project_id' => $project->id,
+                    'client_id' => $project->client_id,
+                    'batchNo' => $project->batchNo,
+                    'client_name' => $project->client_name,
                     'client_company' => $project->client_company,
-                    'client_email'  => $project->client_email,
-                    'client_mob'    => $project->client_mob,
+                    'client_email' => $project->client_email,
+                    'client_mob' => $project->client_mob,
                     'client_whatsapp' => $project->client_whatsapp,
                     'client_industry' => $project->client_industry,
-                    'client_poc'    => $project->client_poc,
-                    'project_name'  => $project->name,
+                    'client_poc' => $project->client_poc,
+                    'project_name' => $project->name,
                     'project_amount' => $project->amount,
-                    'project_note'  => $project->note,
+                    'project_note' => $project->note,
                     'recovery_note' => '',
                 ];
             }
@@ -183,8 +183,8 @@ class ClientController extends Controller
 
         $viewData = [
             'recoveries' => $recoveries,
-            'clients'    => $clients,
-            'projects'   => $projects,
+            'clients' => $clients,
+            'projects' => $projects,
             'previous_url' => $request->input('previous_url') ?: url()->previous()
         ];
 
@@ -350,7 +350,7 @@ class ClientController extends Controller
 
         $viewData = [
             'contract' => $contract,
-            'clients'  => $clients,
+            'clients' => $clients,
         ];
 
         // If called as AJAX modal request, return pure partial — no layout, no DataTables scripts
@@ -409,7 +409,9 @@ class ClientController extends Controller
             ->leftJoin('users as sales', 'projects.closed_by', '=', 'sales.id')
             ->leftJoin(
                 DB::raw("(SELECT project_id, SUM(paid) as total_paid FROM recoveries GROUP BY project_id) as rec_totals"),
-                'projects.id', '=', 'rec_totals.project_id'
+                'projects.id',
+                '=',
+                'rec_totals.project_id'
             )
             ->select(
                 'projects.*',
@@ -424,8 +426,8 @@ class ClientController extends Controller
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('projects.name', 'LIKE', "%{$search}%")
-                  ->orWhere('clients.name', 'LIKE', "%{$search}%")
-                  ->orWhere('clients.company', 'LIKE', "%{$search}%");
+                    ->orWhere('clients.name', 'LIKE', "%{$search}%")
+                    ->orWhere('clients.company', 'LIKE', "%{$search}%");
             });
         }
 
@@ -535,7 +537,7 @@ class ClientController extends Controller
             'active' => $licenses->where('expiry_date', '>=', $today)->count(),
             'expired' => $licenses->where('expiry_date', '<', $today)->count(),
             'expiring_soon' => $licenses->where('expiry_date', '>=', $today)
-                                       ->where('expiry_date', '<=', $thirtyDays)->count(),
+                ->where('expiry_date', '<=', $thirtyDays)->count(),
         ];
 
         return view('licenses', [
@@ -546,7 +548,7 @@ class ClientController extends Controller
 
     public function manageLicense(Request $request)
     {
-        $id         = $request->id ?? '';
+        $id = $request->id ?? '';
         $project_id = $request->project_id ?? null;
 
         // Load existing license (edit mode)
@@ -587,11 +589,11 @@ class ClientController extends Controller
             ->get();
 
         $viewData = [
-            'license'        => $license,
-            'projects'       => $projects,
-            'project_id'     => $project_id,
+            'license' => $license,
+            'projects' => $projects,
+            'project_id' => $project_id,
             'preloadProject' => $preloadProject,
-            'previous_url'   => $request->input('previous_url', url()->previous()),
+            'previous_url' => $request->input('previous_url', url()->previous()),
         ];
 
         if ($request->has('ajax')) {
@@ -648,11 +650,11 @@ class ClientController extends Controller
         $query = Clients::where('name', '!=', '');
 
         if ($search) {
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'LIKE', "%{$search}%")
-                  ->orWhere('company', 'LIKE', "%{$search}%")
-                  ->orWhere('email', 'LIKE', "%{$search}%")
-                  ->orWhere('mob', 'LIKE', "%{$search}%");
+                    ->orWhere('company', 'LIKE', "%{$search}%")
+                    ->orWhere('email', 'LIKE', "%{$search}%")
+                    ->orWhere('mob', 'LIKE', "%{$search}%");
             });
         }
 
@@ -669,7 +671,7 @@ class ClientController extends Controller
         }
 
         $clients = $query->orderBy('created_at', 'DESC')->get();
-        
+
         // Dynamically fetch available industries for the dropdown
         $industryQuery = Clients::select('industry')->whereNotNull('industry')->where('industry', '!=', '')->distinct();
         $availableIndustries = $industryQuery->pluck('industry');
@@ -711,8 +713,8 @@ class ClientController extends Controller
 
         return response()->json([
             'success' => true,
-            'status'  => $client->status,
-            'label'   => $label,
+            'status' => $client->status,
+            'label' => $label,
         ]);
     }
 
@@ -955,7 +957,8 @@ class ClientController extends Controller
         if ($page == 'client') {
 
             $client = Clients::with('departments')->where('id', '=', $id)->first();
-            if (!$client) return response()->json(['error' => 'Client not found'], 404);
+            if (!$client)
+                return response()->json(['error' => 'Client not found'], 404);
 
             $interactions = \App\Models\Interaction::where('rel_type', 'Client')
                 ->where('rel_id', $id)
@@ -968,7 +971,8 @@ class ClientController extends Controller
             }
 
             $leadIds = [$client->id];
-            if ($leadOrigin) $leadIds[] = $leadOrigin->id;
+            if ($leadOrigin)
+                $leadIds[] = $leadOrigin->id;
 
             $proposals = \App\Models\Proposals::whereIn('lead_id', $leadIds)
                 ->orderBy('proposal_date', 'desc')
@@ -1043,7 +1047,7 @@ class ClientController extends Controller
         // If project_id supplied (e.g. from project/view "Create Invoice" button),
         // fetch the project and its client so we can pre-populate the form.
         $preloadProject = null;
-        $preloadClient  = null;
+        $preloadClient = null;
         if ($project_id && !$id) {
             $preloadProject = Projects::leftJoin('clients', 'projects.client_id', '=', 'clients.id')
                 ->select(
@@ -1073,14 +1077,14 @@ class ClientController extends Controller
         $companies = Companies::where('id', '=', Auth::User()->cid)->first();
 
         return view('manageInvoice', [
-            'invoice'        => $invoice,
-            'invoiceItems'   => $invoiceItems,
-            'clients'        => $clients,
-            'companies'      => $companies,
-            'project_id'     => $project_id,
+            'invoice' => $invoice,
+            'invoiceItems' => $invoiceItems,
+            'clients' => $clients,
+            'companies' => $companies,
+            'project_id' => $project_id,
             'preloadProject' => $preloadProject,
-            'preloadClient'  => $preloadClient,
-            'previous_url'   => $request->input('previous_url', url()->previous()),
+            'preloadClient' => $preloadClient,
+            'previous_url' => $request->input('previous_url', url()->previous()),
         ]);
     }
 
@@ -1247,7 +1251,7 @@ class ClientController extends Controller
             }
         }
 
-        $this->logActivity('Invoice Saved', 'invoices', $invoice->id, $invoice->invoice_no ?? "#{$invoice->id}", "Invoice #{$invoice->id} saved", (string)($invoice->grand_total ?? ''));
+        $this->logActivity('Invoice Saved', 'invoices', $invoice->id, $invoice->invoice_no ?? "#{$invoice->id}", "Invoice #{$invoice->id} saved", (string) ($invoice->grand_total ?? ''));
 
         // 6) Redirect or return a response
         $redirectUrl = $request->input('previous_url') ?: route('manageInvoice', ('id=' . $invoice->id ?? ''));
@@ -1434,48 +1438,50 @@ class ClientController extends Controller
     public function manageProjectPost(Request $request)
     {
         $request->validate([
-            'client_id'          => 'required|exists:clients,id',
-            'name'               => [
+            'client_id' => 'required|exists:clients,id',
+            'name' => [
                 'required',
                 'string',
                 'max:255',
                 Rule::unique('projects')->where(function ($query) use ($request) {
                     return $query->where('client_id', $request->client_id)
-                                 ->where('cid', Auth::user()->cid);
+                        ->where('cid', Auth::user()->cid);
                 })->ignore($request->id)
             ],
-            'project_id_custom'  => 'nullable|string|max:100',
-            'closed_by'          => 'nullable|exists:users,id',
+            'project_id_custom' => 'nullable|string|max:100',
+            'closed_by' => 'nullable|exists:users,id',
 
-            'start_date'     => 'nullable|date',
-            'deadline'       => 'nullable|date',
-            'type'           => 'nullable|string|max:100',
-            'amount'         => 'nullable|numeric|min:0',
-            'status'         => 'nullable|integer',
-            'note'           => 'nullable|string',
-            'tags'           => 'nullable|string',
+            'start_date' => 'nullable|date',
+            'deadline' => 'nullable|date',
+            'type' => 'nullable|string|max:100',
+            'amount' => 'nullable|numeric|min:0',
+            'status' => 'nullable|integer',
+            'note' => 'nullable|string',
+            'tags' => 'nullable|string',
             'deployment_url' => 'nullable|url|max:255',
         ]);
 
         $project = $request->id ? Projects::findOrFail($request->id) : new Projects();
 
-        $project->client_id          = $request->client_id;
-        $project->name               = $request->name;
-        $project->project_id_custom  = $request->project_id_custom;
-        $project->closed_by          = $request->closed_by;
+        $project->client_id = $request->client_id;
+        $project->name = $request->name;
+        $project->project_id_custom = $request->project_id_custom;
+        $project->closed_by = $request->closed_by;
 
-        $project->start_date     = $request->start_date;
-        $project->deadline       = $request->deadline;
-        $project->type           = $request->type ?? '';
-        $project->amount         = $request->amount ?? 0;
-        $project->status         = $request->status ?? 1;
-        $project->note           = $request->note ?? '';
-        $project->tags           = $request->tags ?? '';
+        $project->start_date = $request->start_date;
+        $project->deadline = $request->deadline;
+        $project->type = $request->type ?? '';
+        $project->amount = $request->amount ?? 0;
+        $project->status = $request->status ?? 1;
+        $project->note = $request->note ?? '';
+        $project->tags = $request->tags ?? '';
         $project->deployment_url = $request->deployment_url ?? '';
         $project->save();
 
         $redirectUrl = $request->input('previous_url') ?: '/projects';
-        return redirect($redirectUrl)->with('success', $request->id
+        return redirect($redirectUrl)->with(
+            'success',
+            $request->id
             ? 'Project updated successfully.'
             : 'Project created successfully.'
         );
