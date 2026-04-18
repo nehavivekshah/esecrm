@@ -76,33 +76,7 @@ class ClientController extends Controller
     public function recovery($id = null, $title = null)
     {
 
-        if ($title == "Received") {
-            // Fetch all recoveries for the given project ID
-            $recoveries = Recoveries::where('id', $id)->where('paid', '!=', '0')->get();
 
-            // Fetch project details
-            $project = Projects::find($id); // More concise than where('id', $id)->first()
-
-            // Calculate the total paid amount
-            $totalPaid = Recoveries::where('id', $id)->sum('paid');
-            $client = Clients::where('id', ($project->client_id ?? ''))->first();
-
-            // Return the view with the recoveries data, project details, and total paid amount
-            return view('inc.recovery.received', compact('recoveries', 'project', 'totalPaid', 'client'));
-        } else {
-            // Fetch all recoveries for the given project ID
-            $recoveries = Recoveries::where('id', $id)->get();
-
-            // Fetch project details
-            $project = Projects::find($id); // More concise than where('id', $id)->first()
-
-            // Calculate the total paid amount
-            $totalPaid = Recoveries::where('id', $id)->sum('paid');
-            $client = Clients::where('id', ($project->client_id ?? ''))->first();
-
-            // Return the view with the recoveries data, project details, and total paid amount
-            return view('inc.recovery.reminder', compact('recoveries', 'project', 'totalPaid', 'client'));
-        }
     }
 
     public function recoveryPost(Request $request)
