@@ -217,11 +217,11 @@
                                                     <i class="bx bx-phone"></i>
                                                 </a>
                                             @endif
-                                            {{-- Edit --}}
+                                            {{-- Add Recovery (Edit icon) --}}
                                             <button type="button" class="btn kb-action-btn open-recovery-modal"
-                                                data-url="/manage-recovery?id={{ $recovery->id ?? '' }}&ajax=1"
-                                                title="Edit" style="background:rgba(0,102,102,0.10);color:#006666;">
-                                                <i class="bx bx-edit"></i>
+                                                data-url="/manage-recovery?project_id={{ $recovery->id ?? '' }}&ajax=1"
+                                                title="Add Recovery" style="background:rgba(0,102,102,0.10);color:#006666;">
+                                                <i class="bx bx-plus"></i>
                                             </button>
                                             {{-- Delete --}}
                                             @if(in_array('recoveries_delete', $roleArray) || in_array('All', $roleArray))
