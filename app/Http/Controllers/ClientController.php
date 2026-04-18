@@ -415,6 +415,8 @@ class ClientController extends Controller
                 'projects.*',
                 'clients.name as client_name',
                 'clients.company as client_company',
+                'clients.mob as client_mob',
+                'clients.whatsapp as client_whatsapp',
                 'sales.name as salesperson_name',
                 DB::raw('COALESCE(rec_totals.total_paid, 0) as total_paid')
             );

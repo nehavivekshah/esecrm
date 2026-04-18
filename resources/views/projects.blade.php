@@ -131,14 +131,28 @@
                                 </div>
                             </div>
                             <div class="pj-card-actions">
+                                @php
+                                    $waRaw = !empty($project->client_whatsapp) && $project->client_whatsapp !== '-' ? $project->client_whatsapp : $project->client_mob;
+                                    $waNum = preg_replace('/[^0-9]/', '', $waRaw ?? '');
+                                    if (strlen($waNum) == 10) { $waNum = '91' . $waNum; }
+                                @endphp
+                                @if(!empty($waNum))
+                                    <a href="https://wa.me/{{ $waNum }}" target="_blank" class="btn kb-action-btn" title="WhatsApp" 
+                                       style="background:rgba(37,211,102,0.08);color:#25D366;"
+                                       onclick="event.stopPropagation();">
+                                        <i class="bx bxl-whatsapp"></i>
+                                    </a>
+                                @endif
                                 @if($project->deployment_url)
                                     <a href="{{ $project->deployment_url }}" target="_blank" class="btn kb-action-btn"
-                                        title="Visit Site" style="background:rgba(26,115,232,0.08);color:#1a73e8;">
+                                        title="Visit Site" style="background:rgba(26,115,232,0.08);color:#1a73e8;"
+                                        onclick="event.stopPropagation();">
                                         <i class="bx bx-link-external"></i>
                                     </a>
                                 @endif
                                 <a href="/manage-project?id={{ $project->id }}" class="btn kb-action-btn" title="Edit"
-                                    style="background:rgba(0,102,102,0.08);color:#006666;">
+                                    style="background:rgba(0,102,102,0.08);color:#006666;"
+                                    onclick="event.stopPropagation();">
                                     <i class="bx bx-pencil"></i>
                                 </a>
                                 @if(in_array('projects_delete', $roleArray) || in_array('All', $roleArray))
@@ -319,8 +333,21 @@
                                     </td>
                                     <td class="position-sticky end-0 bg-white">
                                         <div class="d-flex align-items-center justify-content-center gap-1">
+                                            @php
+                                                $waRaw = !empty($project->client_whatsapp) && $project->client_whatsapp !== '-' ? $project->client_whatsapp : $project->client_mob;
+                                                $waNum = preg_replace('/[^0-9]/', '', $waRaw ?? '');
+                                                if (strlen($waNum) == 10) { $waNum = '91' . $waNum; }
+                                            @endphp
+                                            @if(!empty($waNum))
+                                                <a href="https://wa.me/{{ $waNum }}" target="_blank" class="btn kb-action-btn" title="WhatsApp" 
+                                                   style="color:#25D366; background:rgba(37,211,102,0.08);"
+                                                   onclick="event.stopPropagation();">
+                                                    <i class="bx bxl-whatsapp"></i>
+                                                </a>
+                                            @endif
                                             <a href="/manage-project?id={{ $project->id }}"
-                                                class="btn kb-action-btn kb-action-edit" title="Edit">
+                                                class="btn kb-action-btn kb-action-edit" title="Edit"
+                                                onclick="event.stopPropagation();">
                                                 <i class="bx bx-pencil"></i>
                                             </a>
                                             @if(in_array('projects_delete', $roleArray) || in_array('All', $roleArray))
