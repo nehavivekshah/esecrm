@@ -249,5 +249,59 @@
         });
     });
 
+    // ── Double Click to Edit Recovery Amount ──
+    document.querySelectorAll('.editableInputs').forEach(function(input) {
+        let originalValue = input.value;
+
+        input.addEventListener('dblclick', function() {
+            this.removeAttribute('readonly');
+            // Remove commas for easier editing
+            this.value = this.value.replace(/,/g, '');
+            this.focus();
+            this.select();
+        });
+
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                this.blur();
+            }
+        });
+
+        input.addEventListener('blur', function() {
+            this.setAttribute('readonly', true);
+            let newValue = this.value.replace(/,/g, '');
+            let id = this.dataset.id;
+            
+            let floatVal = parseFloat(newValue);
+            if(isNaN(floatVal)) floatVal = 0;
+            
+            let origFloat = parseFloat(originalValue.replace(/,/g, ''));
+            if(isNaN(origFloat)) origFloat = 0;
+
+            if (floatVal !== origFloat) {
+                $.ajax({
+                    url: '/update-recovery-amount',
+                    type: 'GET',
+                    data: {
+                        id: id,
+                        amount: floatVal
+                    },
+                    success: function(response) {
+                        originalValue = floatVal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                        input.value = originalValue;
+                        // Reload parent page to reflect balance change
+                        location.reload(); 
+                    },
+                    error: function() {
+                        swal("Error", "Failed to update amount.", "error");
+                        input.value = originalValue;
+                    }
+                });
+            } else {
+                input.value = originalValue;
+            }
+        });
+    });
+
 })();
 </script>
