@@ -398,6 +398,7 @@ table.dataTable tbody tr:last-child td {
     color: var(--text-main);
     background: #f8fafc;
     transition: var(--transition-snappy);
+    max-width: 200px !important;
 }
 
 .lb-select:focus {
