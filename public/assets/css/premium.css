@@ -353,7 +353,6 @@ body {
 .sidebar.open .sb_submenu li a:hover::before,
 .sidebar.open .sb_submenu li a.active::before {
     background: #ffffff;
-    transform: translateY(-50%) scale(1.15);
     box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.15);
 }
 
