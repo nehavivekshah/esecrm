@@ -61,6 +61,9 @@ class LeadUIController extends Controller
             if ($to = $request->get('date_to')) {
                 $q->whereDate('created_at', '<=', $to);
             }
+            if ($industry = $request->get('industry')) {
+                $q->where('industry', $industry);
+            }
             return $q;
         };
 
@@ -116,5 +119,19 @@ class LeadUIController extends Controller
         }
 
         return response()->json(['success' => false, 'message' => 'Lead not found'], 404);
+    }
+
+    /**
+     * Get a unique list of industries from the leads table for filtering.
+     */
+    public function getLeadIndustries()
+    {
+        $industries = Leads::whereNotNull('industry')
+            ->where('industry', '!=', '')
+            ->distinct()
+            ->orderBy('industry')
+            ->pluck('industry');
+
+        return response()->json(['industries' => $industries]);
     }
 }

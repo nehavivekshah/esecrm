@@ -171,6 +171,13 @@
                         <label class="kb-filter-label"><i class="bx bx-calendar-check"></i> Date To</label>
                         <input type="date" id="kbDateTo" class="kb-filter-input">
                     </div>
+                    {{-- Industry --}}
+                    <div class="kb-filter-field">
+                        <label class="kb-filter-label"><i class="bx bx-building"></i> Industry</label>
+                        <select id="kbIndustry" class="kb-filter-select">
+                            <option value="">— All Industries —</option>
+                        </select>
+                    </div>
                     {{-- Actions --}}
                     <div class="kb-filter-field kb-filter-actions">
                         <button class="lb-btn lb-btn-primary" id="kbApplyFilter">
@@ -547,7 +554,19 @@
                 assigned: $('#kbAssigned').val(),
                 date_from: $('#kbDateFrom').val(),
                 date_to: $('#kbDateTo').val(),
+                industry: $('#kbIndustry').val(),
             };
+        }
+
+        // Populate Industry dropdown from unique lead values
+        function loadIndustryOptions() {
+            $.get('/get-lead-industries', function(res) {
+                var sel = $('#kbIndustry');
+                sel.find('option:not(:first)').remove();
+                (res.industries || []).forEach(function(ind) {
+                    if (ind) sel.append('<option value="' + ind + '">' + ind + '</option>');
+                });
+            });
         }
 
         // Load (or append) cards for one stage
@@ -627,6 +646,7 @@
         }
 
         $(document).ready(function () {
+            loadIndustryOptions();
             initBoard();
 
             // Refresh button
@@ -648,6 +668,7 @@
                 $('#kbAssigned').val('');
                 $('#kbDateFrom').val('');
                 $('#kbDateTo').val('');
+                $('#kbIndustry').val('');
                 initBoard();
             });
         });
@@ -673,6 +694,7 @@
 
             $.get('/get-lead-details/' + id, function (data) {
                 $('#kb_card_id').val(id);
+                window._activeLeadId = id; // expose for WA message template
                 var l = data.lead;
                 var loc = {};
                 try { loc = JSON.parse(l.location) || {}; } catch (e) { }

@@ -47,6 +47,11 @@ class NewLeadController extends Controller
                 if ($request->filled('tags')) {
                     $query->where('tags', 'like', '%' . $request->tags . '%');
                 }
+                
+                // Filter by Industry
+                if ($request->filled('industry')) {
+                    $query->where('industry', $request->industry);
+                }
 
                 // Global Search Logic
                 $searchData = $request->input('search');

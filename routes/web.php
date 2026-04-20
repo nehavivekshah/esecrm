@@ -119,6 +119,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/leads', [LeadController::class, 'leads'])->middleware('permission:leads,assign');
     Route::get('/leads/kanban', [\App\Http\Controllers\LeadUIController::class, 'kanbanView'])->name('leads.kanban')->middleware('permission:leads,assign');
     Route::get('/leads/kanban-data', [\App\Http\Controllers\LeadUIController::class, 'kanbanData'])->name('leads.kanban_data');
+    Route::get('/get-lead-industries', [\App\Http\Controllers\LeadUIController::class, 'getLeadIndustries']);
     Route::post('/leads/update-status', [\App\Http\Controllers\LeadUIController::class, 'updateStatus'])->name('leads.update_status')->middleware('permission:leads,edit');
     Route::get('/view-single-lead', [LeadController::class, 'singleLeadsGet'])->name('singleLead');
 

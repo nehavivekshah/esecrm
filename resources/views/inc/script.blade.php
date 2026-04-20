@@ -1778,6 +1778,9 @@
                   <div class="modal-header" style="background:#25D366;color:white;border-bottom:none;padding:16px 20px;">
                     <h5 class="modal-title" id="waModalLabel" style="font-weight:600;font-size:1rem;display:flex;align-items:center;gap:8px;">
                         <i class="bx bxl-whatsapp" style="font-size:1.4rem;"></i> Compose Message
+                        <span id="waSavedBadge" style="display:none;font-size:0.68rem;font-weight:700;background:rgba(255,255,255,0.25);color:#fff;border-radius:20px;padding:2px 9px;letter-spacing:0.3px;">
+                            <i class="bx bx-bookmark-check"></i> Template Saved
+                        </span>
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
@@ -1787,12 +1790,18 @@
                         placeholder="Hi, I wanted to follow up about..."
                         style="border-radius:8px;border:1px solid #dadce0;padding:12px;font-size:0.93rem;resize:none;"></textarea>
                     <input type="hidden" id="waTargetNumber">
+                    <input type="hidden" id="waTargetLeadId">
                     <p style="font-size:0.75rem;color:#9aa0a6;margin-top:8px;margin-bottom:0;">
-                        <i class="bx bx-info-circle"></i> Leave blank to open WhatsApp with no pre-filled message.
+                        <i class="bx bx-info-circle"></i> Save a template to auto-load it next time for this lead.
                     </p>
                   </div>
-                  <div class="modal-footer" style="border-top:1px solid #f1f3f4;padding:12px 20px;background:#f8f9fa;gap:8px;">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius:8px;font-weight:500;">Cancel</button>
+                  <div class="modal-footer" style="border-top:1px solid #f1f3f4;padding:12px 20px;background:#f8f9fa;gap:8px;justify-content:space-between;">
+                    <div style="display:flex;gap:8px;">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius:8px;font-weight:500;">Cancel</button>
+                        <button type="button" id="waSaveTemplateBtn" class="btn btn-outline-secondary" style="border-radius:8px;font-weight:500;display:flex;align-items:center;gap:5px;font-size:0.85rem;">
+                            <i class="bx bx-bookmark"></i> Save Template
+                        </button>
+                    </div>
                     <button type="button" id="waSendBtn" class="btn" style="background:#25D366;color:white;border-radius:8px;font-weight:600;display:flex;align-items:center;gap:6px;padding:8px 18px;">
                         <i class="bx bx-send"></i> Open WhatsApp
                     </button>
@@ -1817,9 +1826,49 @@
                     number = href.split('wa.me/')[1] || '';
                 }
 
+                // Get lead ID from nearest parent with data-lead-id, or from current active lead
+                let leadId = $(this).closest('[data-id]').data('id')
+                           || $(this).data('lead-id')
+                           || $('#waTargetLeadId').val()
+                           || window._activeLeadId
+                           || '';
+
                 $('#waTargetNumber').val(number);
-                $('#waMessageText').val('');
+                $('#waTargetLeadId').val(leadId);
+
+                // Load saved message for this lead from localStorage
+                let savedMsg = leadId ? (localStorage.getItem('wa_msg_lead_' + leadId) || '') : '';
+                $('#waMessageText').val(savedMsg);
+
+                // Show saved indicator
+                if (savedMsg) {
+                    $('#waSavedBadge').show();
+                } else {
+                    $('#waSavedBadge').hide();
+                }
+
                 new bootstrap.Modal(document.getElementById('waCustomMessageModal')).show();
+            }
+        });
+
+        // Save message template for this lead
+        $(document).on('click', '#waSaveTemplateBtn', function() {
+            let leadId = $('#waTargetLeadId').val();
+            let text   = $('#waMessageText').val().trim();
+            if (!leadId) {
+                alert('Cannot save — lead ID not found.'); return;
+            }
+            if (text) {
+                localStorage.setItem('wa_msg_lead_' + leadId, text);
+                $('#waSavedBadge').show();
+                // Brief visual feedback on the button
+                $(this).html('<i class="bx bx-check"></i> Saved!').prop('disabled', true);
+                setTimeout(() => {
+                    $('#waSaveTemplateBtn').html('<i class="bx bx-bookmark"></i> Save Template').prop('disabled', false);
+                }, 1500);
+            } else {
+                localStorage.removeItem('wa_msg_lead_' + leadId);
+                $('#waSavedBadge').hide();
             }
         });
 
