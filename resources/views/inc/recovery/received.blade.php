@@ -261,6 +261,13 @@
             this.select();
         });
 
+        // Proactively restrict to numbers and a single decimal during editing
+        input.addEventListener('input', function() {
+            if (!this.hasAttribute('readonly')) {
+                this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
+            }
+        });
+
         input.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 this.blur();
@@ -273,7 +280,13 @@
             let id = this.dataset.id;
             
             let floatVal = parseFloat(newValue);
-            if(isNaN(floatVal)) floatVal = 0;
+            
+            // Validate the parsed number
+            if(isNaN(floatVal) || floatVal < 0 || newValue.trim() === "") {
+                swal("Invalid Amount", "Please enter a valid positive number.", "warning");
+                this.value = originalValue;
+                return;
+            }
             
             let origFloat = parseFloat(originalValue.replace(/,/g, ''));
             if(isNaN(origFloat)) origFloat = 0;
