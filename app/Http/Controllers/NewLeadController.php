@@ -278,8 +278,7 @@ class NewLeadController extends Controller
     public function getLeadDetails($id)
     {
         $lead = Leads::findOrFail($id);
-        $comments = DB::table('lead_comments')
-            ->where('lead_id', $id)
+        $comments = Lead_comments::where('lead_id', $id)
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -409,12 +408,10 @@ class NewLeadController extends Controller
             'next_date' => 'nullable|date'
         ]);
 
-        DB::table('lead_comments')->insert([
+        Lead_comments::create([
             'lead_id' => $request->lead_id,
             'msg' => $request->msg,
             'next_date' => $request->next_date,
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
 
         // Update lead status to "Follow Up" (1) if it was Fresh (0)
