@@ -83,7 +83,8 @@ class LeadUIController extends Controller
         $total = $query->count();
 
         $leads = (clone $query)
-            ->orderBy('updated_at', 'asc')
+            ->orderByRaw('CASE WHEN assigned IS NULL OR assigned = 0 THEN 0 ELSE 1 END ASC')
+            ->orderBy('updated_at', 'desc')
             ->skip($offset)
             ->take($limit)
             ->get(['id', 'name', 'company', 'mob', 'whatsapp', 'email', 'values', 'poc', 'source', 'purpose', 'score', 'status', 'assigned']);
