@@ -257,6 +257,9 @@
             <button class="ld-tab" onclick="ldShowTab('tab-assign', this)">
                 <i class="bx bx-user-plus"></i> Assign
             </button>
+            <button class="ld-tab" onclick="ldShowTab('tab-wp-template', this)">
+                <i class="bx bxl-whatsapp"></i> Wp Template
+            </button>
         </div>
 
         <!-- ── Tab Content ── -->
@@ -654,6 +657,31 @@
                                 <i class="bx bx-check-circle"></i> Assign Now
                             </button>
                             <div id="quickAssignMsg" class="mt-2 text-center" style="font-size:0.82rem;"></div>
+                        </div>
+                    </div>
+                <!-- ══ WP TEMPLATE TAB ══ -->
+                <div class="ld-tab-pane" id="tab-wp-template" style="display:none;">
+                    <div style="padding:28px 20px;">
+                        <div class="ld-assign-card">
+                            <div class="ld-assign-icon" style="background:rgba(37,211,102,0.1);color:#25d366;"><i class="bx bxl-whatsapp"></i></div>
+                            <h6 class="mb-1" style="font-weight:700;color:#202124;font-size:0.95rem;">WhatsApp Template</h6>
+                            <p style="font-size:0.78rem;color:#5f6368;margin-bottom:18px;">Customize the WhatsApp message for this lead.</p>
+                            
+                            <div class="form-group mb-3">
+                                <textarea id="waMessageTextTabbed" class="form-control" rows="6" placeholder="Hi, I wanted to follow up about..." style="border-radius:8px;border:1px solid #dadce0;padding:12px;font-size:0.93rem;resize:none;"></textarea>
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <button type="button" class="ld-btn ld-btn-primary w-100" id="saveWpTemplateBtn" style="background:#f8f9fa;color:#444;border-color:#dadce0;">
+                                    <i class="bx bx-bookmark"></i> Save Template
+                                </button>
+                                <button type="button" class="ld-btn ld-btn-primary w-100" id="sendWpTemplateBtn" style="background:#25d366;border-color:#25d366;">
+                                    <i class="bx bx-send"></i> Open WhatsApp
+                                </button>
+                            </div>
+                            <div id="wpTemplateStatusMsg" class="mt-2 text-center" style="font-size:0.82rem;font-weight:600;color:#25D366;display:none;">
+                                <i class="bx bx-check-circle"></i> Template Saved!
+                            </div>
                         </div>
                     </div>
                 </div>

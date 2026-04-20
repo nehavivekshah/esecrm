@@ -557,6 +557,10 @@
                         $('#clientCity').val(city);
                         $('#clientState').val(state);
                         $('#clientZip').val(lead.zipcode);
+                        
+                        // Populate the WhatsApp Templates Tab with stored value
+                        let savedMsg = localStorage.getItem('wa_msg_lead_' + lead.id) || '';
+                        $('#waMessageTextTabbed').val(savedMsg);
 
                         // Assuming `parsedData` is the response object
                         renderProposals(proposals);
@@ -583,7 +587,9 @@
         });
 
         document.addEventListener('DOMContentLoaded', function () {
-            const itemsTableBody = document.getElementById('items-table').querySelector('tbody');
+            const itemsTable = document.getElementById('items-table');
+            if (!itemsTable) return;
+            const itemsTableBody = itemsTable.querySelector('tbody');
             const addItemBtn = document.querySelector('.add-item-btn');
             const currencySelect = document.getElementById('currency');
             const adjustmentInput = document.getElementById('adjustment');
@@ -1851,34 +1857,41 @@
             }
         });
 
-        // Save message template for this lead
-        $(document).on('click', '#waSaveTemplateBtn', function() {
-            let leadId = $('#waTargetLeadId').val();
-            let text   = $('#waMessageText').val().trim();
+        // Save message template for this lead (Tab version)
+        $(document).on('click', '#saveWpTemplateBtn', function() {
+            let leadId = $('#lead_id').val();
+            let text   = $('#waMessageTextTabbed').val().trim();
             if (!leadId) {
                 alert('Cannot save — lead ID not found.'); return;
             }
             if (text) {
                 localStorage.setItem('wa_msg_lead_' + leadId, text);
-                $('#waSavedBadge').show();
-                // Brief visual feedback on the button
+                $('#wpTemplateStatusMsg').show();
+                
                 $(this).html('<i class="bx bx-check"></i> Saved!').prop('disabled', true);
                 setTimeout(() => {
-                    $('#waSaveTemplateBtn').html('<i class="bx bx-bookmark"></i> Save Template').prop('disabled', false);
-                }, 1500);
+                    $('#wpTemplateStatusMsg').hide();
+                    $('#saveWpTemplateBtn').html('<i class="bx bx-bookmark"></i> Save Template').prop('disabled', false);
+                }, 2000);
             } else {
                 localStorage.removeItem('wa_msg_lead_' + leadId);
-                $('#waSavedBadge').hide();
+                $('#wpTemplateStatusMsg').hide();
             }
         });
 
-        // Send: build final URL and open in new tab
-        $(document).on('click', '#waSendBtn', function() {
-            let number = $('#waTargetNumber').val();
-            let text   = $('#waMessageText').val().trim();
+        // Send WhatsApp from Tab
+        $(document).on('click', '#sendWpTemplateBtn', function() {
+            let number = $('#whatsapp').val() || $('#mob').val();
+            let text   = $('#waMessageTextTabbed').val().trim();
+            // Fallback to strip out non-digits from number
+            if(number) number = number.replace(/\D/g,'');
+            
             let url    = 'https://wa.me/' + number + (text ? '?text=' + encodeURIComponent(text) : '');
-            window.open(url, '_blank');
-            bootstrap.Modal.getInstance(document.getElementById('waCustomMessageModal'))?.hide();
+            if(number) {
+                window.open(url, '_blank');
+            } else {
+                alert('No valid WhatsApp number found for this lead.');
+            }
         });
 
     });
