@@ -1572,6 +1572,7 @@ li.nav-title {
     cursor: pointer;
     transition: border-color 0.15s;
     min-width: 120px;
+    max-width: 200px;
 }
 
 .lb-select:focus {
