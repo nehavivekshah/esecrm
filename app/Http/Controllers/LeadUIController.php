@@ -83,7 +83,7 @@ class LeadUIController extends Controller
         $total = $query->count();
 
         $leads = (clone $query)
-            ->orderBy('updated_at', 'desc')
+            ->orderBy('updated_at', 'asc')
             ->skip($offset)
             ->take($limit)
             ->get(['id', 'name', 'company', 'mob', 'whatsapp', 'email', 'values', 'poc', 'source', 'purpose', 'score', 'status', 'assigned']);
