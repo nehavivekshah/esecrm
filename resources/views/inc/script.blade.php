@@ -1768,6 +1768,70 @@
         tooltipTriggerList.forEach(function (tooltipTriggerEl) {
             new bootstrap.Tooltip(tooltipTriggerEl);
         });
+
+        // ── WhatsApp Custom Message Modal ──────────────────────────────────
+        if ($('#waCustomMessageModal').length === 0) {
+            $('body').append(`
+            <div class="modal fade" id="waCustomMessageModal" tabindex="-1" aria-labelledby="waModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" style="max-width:480px;">
+                <div class="modal-content" style="border-radius:14px;border:none;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.18);">
+                  <div class="modal-header" style="background:#25D366;color:white;border-bottom:none;padding:16px 20px;">
+                    <h5 class="modal-title" id="waModalLabel" style="font-weight:600;font-size:1rem;display:flex;align-items:center;gap:8px;">
+                        <i class="bx bxl-whatsapp" style="font-size:1.4rem;"></i> Compose Message
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body" style="padding:20px;">
+                    <label style="font-size:0.82rem;font-weight:600;color:#5f6368;margin-bottom:8px;display:block;">Personalize your WhatsApp message:</label>
+                    <textarea id="waMessageText" class="form-control" rows="5"
+                        placeholder="Hi, I wanted to follow up about..."
+                        style="border-radius:8px;border:1px solid #dadce0;padding:12px;font-size:0.93rem;resize:none;"></textarea>
+                    <input type="hidden" id="waTargetNumber">
+                    <p style="font-size:0.75rem;color:#9aa0a6;margin-top:8px;margin-bottom:0;">
+                        <i class="bx bx-info-circle"></i> Leave blank to open WhatsApp with no pre-filled message.
+                    </p>
+                  </div>
+                  <div class="modal-footer" style="border-top:1px solid #f1f3f4;padding:12px 20px;background:#f8f9fa;gap:8px;">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius:8px;font-weight:500;">Cancel</button>
+                    <button type="button" id="waSendBtn" class="btn" style="background:#25D366;color:white;border-radius:8px;font-weight:600;display:flex;align-items:center;gap:6px;padding:8px 18px;">
+                        <i class="bx bx-send"></i> Open WhatsApp
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>`);
+        }
+
+        // Intercept WhatsApp link clicks on lead pages
+        $(document).on('click', '#ld_btn_wa, #kb_btnWa', function(e) {
+            let href = $(this).attr('href');
+            if (href && href !== '#' && href.includes('wa.me')) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                // Extract number from URL
+                let number = '';
+                try {
+                    number = new URL(href).pathname.replace('/', '');
+                } catch(_) {
+                    number = href.split('wa.me/')[1] || '';
+                }
+
+                $('#waTargetNumber').val(number);
+                $('#waMessageText').val('');
+                new bootstrap.Modal(document.getElementById('waCustomMessageModal')).show();
+            }
+        });
+
+        // Send: build final URL and open in new tab
+        $(document).on('click', '#waSendBtn', function() {
+            let number = $('#waTargetNumber').val();
+            let text   = $('#waMessageText').val().trim();
+            let url    = 'https://wa.me/' + number + (text ? '?text=' + encodeURIComponent(text) : '');
+            window.open(url, '_blank');
+            bootstrap.Modal.getInstance(document.getElementById('waCustomMessageModal'))?.hide();
+        });
+
     });
 </script>
 
