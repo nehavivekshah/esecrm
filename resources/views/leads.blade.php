@@ -1092,6 +1092,16 @@
                     });
                     $('#commentHistory').html(html || '<p class="text-muted text-center p-4" style="font-size:0.82rem">No conversations yet.</p>');
 
+                    // ── WhatsApp Template Auto-load ──
+                    window._activeLeadId = l.id;
+                    var defaultMsg = '🚀 *Grow Your Business with Our Digital Solutions*\n\n✅ Website Design & Development\n✅ ERP & CRM Solutions\n✅ Mobile App Development\n✅ SEO & Digital Growth Services\n\n🎁 *FREE with Our Services (Limited-Time Value Add):*\n🔹 SMS Pilot – Reach your customers instantly with promotional & transactional SMS\n🔹 Digital Visiting Card – Share your professional profile anytime, anywhere with one click\n🔹 Sales Lead Management – Track, manage, and convert leads more efficiently\n\n📞 *Call / WhatsApp:*\n+91 95945 45556 | +91 96197 75533\n\n🌐 *Learn more:*\nhttps://webbrella.com/website-design-and-development';
+                    var savedMsg = localStorage.getItem('wa_msg_lead_' + l.id) || defaultMsg;
+                    $('#waMessageTextTabbed').val(savedMsg);
+
+                    // Reset save button state
+                    $('#saveWpTemplateBtn').html('<i class="bx bx-bookmark"></i> Save Template').prop('disabled', false);
+                    $('#wpTemplateStatusMsg').hide();
+
                     var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('leadModal'));
                     modal.show();
                 });
