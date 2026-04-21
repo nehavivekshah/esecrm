@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Leads;
 use App\Models\Clients;
 use App\Models\Proposals;
+use App\Models\Lead_comments;
 use Exception;
 use App\Traits\ActivityLogger;
 
