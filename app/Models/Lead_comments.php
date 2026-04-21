@@ -10,4 +10,6 @@ use App\Traits\BelongsToCompany;
 class Lead_comments extends Model
 {
     use HasFactory, BelongsToCompany;
+
+    protected $guarded = [];
 }
