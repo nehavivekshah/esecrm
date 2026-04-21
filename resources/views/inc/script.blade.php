@@ -1885,7 +1885,7 @@ https://webbrella.com/website-design-and-development`;
 
         // Save message template for this lead (Tab version)
         $(document).on('click', '#saveWpTemplateBtn', function() {
-            let leadId = $('#lead_id').val();
+            let leadId = window._activeLeadId || $('#m_id').val() || $('#c_lead_id').val() || $('#lead_id').val();
             let text   = $('#waMessageTextTabbed').val().trim();
             if (!leadId) {
                 alert('Cannot save — lead ID not found.'); return;
