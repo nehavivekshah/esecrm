@@ -423,8 +423,16 @@
                         let leadComments = parsedData.leadComments || [];
                         const proposals = parsedData.proposals || [];
                         let location = lead.location || '';
+                        let locationParts = [];
 
-                        if (location != '') { locationParts = JSON.parse(location) ?? []; }
+                        if (location != '') { 
+                            try {
+                                locationParts = JSON.parse(location) ?? []; 
+                            } catch (e) {
+                                console.error('Error parsing location JSON:', e);
+                                locationParts = [];
+                            }
+                        }
 
                         let address = locationParts[0] ? locationParts[0].trim() : '';
                         let city = locationParts[1] ? locationParts[1].trim() : '';
@@ -558,8 +566,26 @@
                         $('#clientState').val(state);
                         $('#clientZip').val(lead.zipcode);
                         
-                        // Populate the WhatsApp Templates Tab with stored value
-                        let savedMsg = localStorage.getItem('wa_msg_lead_' + lead.id) || '';
+                        // Populate the WhatsApp Templates Tab with stored value or default template
+                        let defaultMsg = `🚀 *Grow Your Business with Our Digital Solutions*
+
+✅ Website Design & Development
+✅ ERP & CRM Solutions
+✅ Mobile App Development
+✅ SEO & Digital Growth Services
+
+🎁 *FREE with Our Services (Limited-Time Value Add):*
+🔹 SMS Pilot – Reach your customers instantly with promotional & transactional SMS
+🔹 Digital Visiting Card – Share your professional profile anytime, anywhere with one click
+🔹 Sales Lead Management – Track, manage, and convert leads more efficiently
+
+📞 *Call / WhatsApp:*
++91 95945 45556 | +91 96197 75533
+
+🌐 *Learn more:*
+https://webbrella.com/website-design-and-development`;
+
+                        let savedMsg = localStorage.getItem('wa_msg_lead_' + lead.id) || defaultMsg;
                         $('#waMessageTextTabbed').val(savedMsg);
 
                         // Assuming `parsedData` is the response object
