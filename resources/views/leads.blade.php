@@ -1150,6 +1150,7 @@
                 e.preventDefault();
                 $.post("{{ route('leads.storeComment') }}", $(this).serialize(), function () {
                     alert('Comment Saved');
+                    $('#addCommentForm')[0].reset();
                     bootstrap.Modal.getOrCreateInstance(document.getElementById('leadModal')).hide();
                     table.ajax.reload(null, false);
                 });
