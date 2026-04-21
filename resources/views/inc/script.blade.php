@@ -1907,10 +1907,14 @@ https://webbrella.com/website-design-and-development`;
 
         // Send WhatsApp from Tab
         $(document).on('click', '#sendWpTemplateBtn', function() {
-            let number = $('#whatsapp').val() || $('#mob').val();
+            let number = $('#m_whatsapp').val() || $('#m_mob').val() || $('#whatsapp').val() || $('#mob').val();
             let text   = $('#waMessageTextTabbed').val().trim();
             // Fallback to strip out non-digits from number
-            if(number) number = number.replace(/\D/g,'');
+            if(number && number !== '—') {
+                number = number.toString().replace(/\D/g,'');
+            } else {
+                number = '';
+            }
             
             let url    = 'https://wa.me/' + number + (text ? '?text=' + encodeURIComponent(text) : '');
             if(number) {
