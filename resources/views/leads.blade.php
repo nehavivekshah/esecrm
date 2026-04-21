@@ -264,8 +264,8 @@
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════
-             LEAD DETAILS MODAL — Contract-Style Popup
-        ════════════════════════════════════════════════════════════ -->
+                                         LEAD DETAILS MODAL — Contract-Style Popup
+                                    ════════════════════════════════════════════════════════════ -->
     <div class="modal fade" id="leadModal" tabindex="-1" aria-labelledby="leadModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" style="max-width:900px;">
             <div class="modal-content" style="border-radius:16px; border:none; overflow:hidden;">
@@ -771,6 +771,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <!-- ══ WP TEMPLATE TAB ══ -->
                         <div class="ld-tab-pane" id="tab-wp-template" style="display:none;">
                             <div style="padding:28px 20px;">
@@ -785,18 +786,17 @@
                                     <div class="form-group mb-3">
                                         <textarea id="waMessageTextTabbed" class="form-control" rows="6"
                                             placeholder="Hi, I wanted to follow up about..."
-                                            style="border-radius:8px;border:1px solid #dadce0;padding:12px;font-size:0.93rem;resize:none;"></textarea>
+                                            style="border-radius:8px;border:1px solid #dadce0;padding:12px;font-size:0.93rem;resize:none;height:auto!important;"></textarea>
                                     </div>
 
                                     <div class="d-flex gap-2">
-                                        <button type="button" class="ld-btn ld-btn-primary w-100" id="saveWpTemplateBtn"
-                                            style="background:#f8f9fa;color:#444;border-color:#dadce0;">
+                                        <button type="button" class="ld-btn ld-btn-primary w-100" id="saveWpTemplateBtn">
                                             <i class="bx bx-bookmark"></i> Save Template
                                         </button>
-                                        <button type="button" class="ld-btn ld-btn-primary w-100" id="sendWpTemplateBtn"
-                                            style="background:#25d366;border-color:#25d366;">
-                                            <i class="bx bx-send"></i> Open WhatsApp
-                                        </button>
+                                        <!-- <button type="button" class="ld-btn ld-btn-primary w-100" id="sendWpTemplateBtn"
+                                                            style="background:#25d366;border-color:#25d366;">
+                                                            <i class="bx bx-send"></i> Open WhatsApp
+                                                        </button> -->
                                     </div>
                                     <div id="wpTemplateStatusMsg" class="mt-2 text-center"
                                         style="font-size:0.82rem;font-weight:600;color:#25D366;display:none;">
@@ -1091,28 +1091,6 @@
                             + '</div></div>';
                     });
                     $('#commentHistory').html(html || '<p class="text-muted text-center p-4" style="font-size:0.82rem">No conversations yet.</p>');
-
-                    // ── WhatsApp Template Auto-load ──
-                    let defaultMsg = `🚀 *Grow Your Business with Our Digital Solutions*
-
-✅ Website Design & Development
-✅ ERP & CRM Solutions
-✅ Mobile App Development
-✅ SEO & Digital Growth Services
-
-🎁 *FREE with Our Services (Limited-Time Value Add):*
-🔹 SMS Pilot – Reach your customers instantly with promotional & transactional SMS
-🔹 Digital Visiting Card – Share your professional profile anytime, anywhere with one click
-🔹 Sales Lead Management – Track, manage, and convert leads more efficiently
-
-📞 *Call / WhatsApp:*
-+91 95945 45556 | +91 96197 75533
-
-🌐 *Learn more:*
-https://webbrella.com/website-design-and-development`;
-
-                    let savedMsg = localStorage.getItem('wa_msg_lead_' + l.id) || defaultMsg;
-                    $('#waMessageTextTabbed').val(savedMsg);
 
                     var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('leadModal'));
                     modal.show();
