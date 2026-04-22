@@ -119,6 +119,17 @@
                                         </div>
                                     </div>
 
+                                    {{-- Batch No. --}}
+                                    <div class="col-md-6">
+                                        <label class="ml-label" for="batchNo">Batch No.</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bx bx-barcode-reader"></i></span>
+                                            <input type="text" id="batchNo" name="batchNo"
+                                                class="form-control" placeholder="e.g. B-001, BATCH-2026…"
+                                                value="{{ old('batchNo', $project->batchNo ?? '') }}">
+                                        </div>
+                                    </div>
+
                                     {{-- Closed By (Sales) --}}
                                     <div class="col-md-6">
                                         <label class="ml-label" for="closed_by">Closed By (Sales)</label>

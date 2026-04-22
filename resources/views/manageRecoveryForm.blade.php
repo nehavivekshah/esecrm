@@ -182,7 +182,7 @@
                 <label>Batch No. <span class="req">*</span></label>
                 <div class="cf-input-box">
                     <span class="cf-icon"><i class="bx bx-barcode-reader"></i></span>
-                    <input type="text" name="btno" placeholder="Batch Number"
+                    <input type="text" id="btno" name="btno" placeholder="Batch Number"
                            value="{{ $recoveries->batchNo ?? '' }}" required>
                 </div>
             </div>

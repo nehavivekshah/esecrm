@@ -42,7 +42,7 @@ class ClientController extends Controller
     public function getProjects($clientId)
     {
         // Fetch projects for the given client ID
-        $projects = Projects::where('client_id', $clientId)->select('id', 'name', 'amount')->get();
+        $projects = Projects::where('client_id', $clientId)->select('id', 'name', 'amount', 'batchNo')->get();
 
         // Return projects as JSON
         return response()->json(['projects' => $projects]);
@@ -61,7 +61,6 @@ class ClientController extends Controller
         if ($client) {
             return response()->json([
                 'client' => [
-                    'batchNo' => $client->batchNo,
                     'name' => $client->name,
                     'company' => $client->company,
                     'mobile' => $client->mob,
@@ -131,7 +130,7 @@ class ClientController extends Controller
             $recoveries = Recoveries::leftjoin('clients', 'recoveries.client_id', '=', 'clients.id')
                 ->leftjoin('projects', 'recoveries.project_id', '=', 'projects.id')
                 ->select(
-                    'clients.batchNo',
+                    'projects.batchNo',
                     'clients.name as client_name',
                     'clients.company as client_company',
                     'clients.mob as client_mob',
@@ -151,7 +150,7 @@ class ClientController extends Controller
         } elseif ($projectId) {
             // Mock a recovery object structure pre-filled with project/client data
             $project = Projects::leftJoin('clients', 'projects.client_id', '=', 'clients.id')
-                ->select('projects.*', 'clients.batchNo', 'clients.name as client_name', 'clients.company as client_company', 'clients.email as client_email', 'clients.mob as client_mob', 'clients.whatsapp as client_whatsapp', 'clients.industry as client_industry', 'clients.poc as client_poc')
+                ->select('projects.*', 'clients.name as client_name', 'clients.company as client_company', 'clients.email as client_email', 'clients.mob as client_mob', 'clients.whatsapp as client_whatsapp', 'clients.industry as client_industry', 'clients.poc as client_poc')
                 ->where('projects.id', $projectId)
                 ->first();
 
@@ -250,6 +249,7 @@ class ClientController extends Controller
             $project = Projects::find($projectId);
             if ($project) {
                 $project->amount = $request->amount; // Update project amount based on form
+                $project->batchNo = $request->btno ?? $project->batchNo; // Update batch number
                 $project->save();
             }
         }
@@ -1466,6 +1466,7 @@ class ClientController extends Controller
 
         $project->client_id = $request->client_id;
         $project->name = $request->name;
+        $project->batchNo = $request->batchNo ?? '';
         $project->project_id_custom = $request->project_id_custom;
         $project->closed_by = $request->closed_by;
 

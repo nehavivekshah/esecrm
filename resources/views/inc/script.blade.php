@@ -1262,7 +1262,6 @@ https://webbrella.com/website-design-and-development`;
                     })
                     .then(data => {
                         if (data.client) {
-                            document.getElementById('btno').value = data.client.batchNo || '';
                             document.getElementById('name').value = data.client.name || '';
                             document.getElementById('company').value = data.client.company || '';
                             document.getElementById('phone').value = data.client.mobile || '';
@@ -1293,6 +1292,7 @@ https://webbrella.com/website-design-and-development`;
                                 const option = document.createElement('option');
                                 option.value = project.id;
                                 option.textContent = `${project.name} - ${project.amount}`;
+                                option.dataset.batchno = project.batchNo || '';
                                 projectDropdown.appendChild(option);
                             });
                         } else {
@@ -1324,6 +1324,7 @@ https://webbrella.com/website-design-and-development`;
             const clearProjectFields = () => {
                 document.getElementById('project').value = '';
                 document.getElementById('amount').value = '';
+                document.getElementById('btno').value = '';
             };
 
             if (projectId === 'new' || projectId === '') {
@@ -1336,7 +1337,13 @@ https://webbrella.com/website-design-and-development`;
             if (project) {
                 document.getElementById('project').value = project.name || '';
                 document.getElementById('amount').value = project.amount || '';
+                document.getElementById('btno').value = project.batchNo || '';
             } else {
+                // Fallback: project loaded via AJAX — read from option data attributes
+                const selectedOption = document.getElementById('projectId').selectedOptions[0];
+                if (selectedOption) {
+                    document.getElementById('btno').value = selectedOption.dataset.batchno || '';
+                }
                 clearProjectFields();
             }
         });

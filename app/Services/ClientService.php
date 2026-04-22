@@ -21,7 +21,7 @@ class ClientService extends BaseService
             ->leftJoin('projects', 'recoveries.project_id', '=', 'projects.id')
             ->select(
                 'projects.id',
-                'clients.batchNo',
+                'projects.batchNo',
                 'clients.name',
                 'clients.company',
                 'clients.mob',
@@ -39,7 +39,7 @@ class ClientService extends BaseService
             )
             ->groupBy(
                 'projects.id',
-                'clients.batchNo',
+                'projects.batchNo',
                 'clients.name',
                 'clients.company',
                 'clients.mob',
@@ -129,6 +129,7 @@ class ClientService extends BaseService
         
         $project->client_id = $data['client_id'];
         $project->name = $data['project_name'] ?? $data['project'] ?? '';
+        $project->batchNo = $data['btno'] ?? $data['batchNo'] ?? '';
         $project->type = $data['type'] ?? '';
         $project->amount = $data['amount'] ?? $data['cost'] ?? 0;
         $project->note = $data['note'] ?? '';

@@ -78,7 +78,7 @@
                                         <label class="form-label">Batch No.*</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-light"><i class='bx bx-barcode-reader'></i></span>
-                                            <input type="text" class="form-control" name="btno" placeholder="Batch Number" value="{{ $recoveries->batchNo ?? '' }}" required>
+                                            <input type="text" class="form-control" id="btno" name="btno" placeholder="Batch Number" value="{{ $recoveries->batchNo ?? '' }}" required>
                                         </div>
                                     </div>
 
