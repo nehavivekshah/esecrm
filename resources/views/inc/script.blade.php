@@ -187,9 +187,22 @@
                         ajaxData[pagename] = pagename; // Automatically append the expected action name
 
                         // Perform the AJAX request
+                        // Route deletes through permission-protected endpoints
+                        var deleteRouteMap = {
+                            'recoveryAmountDelete': '/delete-recovery-amount',
+                            'projectDelete': '/delete-project',
+                            'invoiceDelete': '/delete-invoice',
+                            'proposalDelete': '/delete-proposal',
+                            'clientDelete': '/delete-client',
+                            'contractDelete': '/delete-contract',
+                            'userDelete': '/delete-user',
+                            'leadDelete': '/delete-lead-ajax',
+                            'attendanceDelete': '/delete-attendance'
+                        };
+                        var deleteUrl = deleteRouteMap[pagename] || '/ajax-send';
                         $.ajax({
                             type: 'GET',
-                            url: "/ajax-send",
+                            url: deleteUrl,
                             data: ajaxData,
                             success: function (response) {
                                 if (response.success) {
@@ -882,7 +895,7 @@ https://webbrella.com/website-design-and-development`;
                             // Perform the AJAX request
                             $.ajax({
                                 type: 'GET',  // Use GET request as per your code, but ideally this should be POST or DELETE for deletion
-                                url: "/ajax-send",
+                                url: "/delete-lead-ajax",
                                 data: {
                                     pagename: pagename,
                                     rowid: rowid,

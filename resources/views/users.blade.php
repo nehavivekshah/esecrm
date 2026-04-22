@@ -267,7 +267,7 @@ $(document).ready(function() {
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: '/ajax-send',
+                        url: '/delete-user',
                         method: 'GET',
                         data: {
                             rowid:      userId,

@@ -320,6 +320,16 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('email-templates/{id}/toggle', [SettingController::class, 'toggle'])
         ->name('email-templates.toggle');
 
+    /*── Permission-Protected Delete Routes ──*/
+    Route::get('/delete-project', [AjaxController::class, 'ajaxSend'])->middleware('permission:projects,delete');
+    Route::get('/delete-invoice', [AjaxController::class, 'ajaxSend'])->middleware('permission:invoice,delete');
+    Route::get('/delete-proposal', [AjaxController::class, 'ajaxSend'])->middleware('permission:proposals,delete');
+    Route::get('/delete-client', [AjaxController::class, 'ajaxSend'])->middleware('permission:clients,delete');
+    Route::get('/delete-contract', [AjaxController::class, 'ajaxSend'])->middleware('permission:contracts,delete');
+    Route::get('/delete-user', [AjaxController::class, 'ajaxSend'])->middleware('permission:users,delete');
+    Route::get('/delete-lead-ajax', [AjaxController::class, 'ajaxSend'])->middleware('permission:leads,delete');
+    Route::get('/delete-attendance', [AjaxController::class, 'ajaxSend'])->middleware('permission:attendances,delete');
+
     Route::get('/ajax-send', [AjaxController::class, 'ajaxSend']);
     Route::get('/task-search', [AjaxController::class, 'taskSearch'])->name('taskSearch');
     Route::get('/global-search', [AjaxController::class, 'globalSearch'])->name('globalSearch');

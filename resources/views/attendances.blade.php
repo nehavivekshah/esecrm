@@ -548,7 +548,7 @@
                         if (!willDelete) { swal('Cancelled', '', 'info'); return; }
                         $.ajax({
                             type: 'GET',
-                            url: '/ajax-send',
+                            url: '/delete-attendance',
                             data: { rowid: rowid, attendanceDelete: 'attendanceDelete' },
                             success: function (response) {
                                 if (response.success) {

@@ -168,11 +168,13 @@
                             </span>
                         </td>
                         <td class="text-center">
+                            @if(in_array('recoveries_delete', $roleArray) || in_array('All', $roleArray))
                             <a href="javascript:void(0)" class="btn kb-action-btn recoveryAmountDelete"
                                 data-id="{{ $recovery->id ?? '' }}" data-page="recoveryAmountDelete"
                                 title="Delete" style="background:rgba(234,67,53,.1);color:#ea4335;">
                                 <i class="bx bx-trash"></i>
                             </a>
+                            @endif
                         </td>
                     </tr>
                 @endforeach
@@ -221,7 +223,7 @@
                 if (willDelete) {
                     $.ajax({
                         type: 'GET',
-                        url: "/ajax-send",
+                        url: "/delete-recovery-amount",
                         data: {
                             pagename: pagename,
                             rowid: rowid,
