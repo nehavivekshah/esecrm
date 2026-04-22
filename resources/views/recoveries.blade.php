@@ -195,18 +195,20 @@
                                     <td class="m-none text-muted" style="font-size:0.82rem;">{{ $recovery->poc ?? '—' }}</td>
                                     <td class="position-sticky end-0">
                                         <div class="d-flex align-items-center justify-content-center gap-1">
+                                            @if(!empty($recovery->id))
                                             {{-- Reminder --}}
-                                            <button class="btn kb-action-btn reminder" data-id="{{ $recovery->id ?? '' }}"
+                                            <button class="btn kb-action-btn reminder" data-id="{{ $recovery->id }}"
                                                 data-type="Reminder" title="Set Reminder"
                                                 style="background:rgba(251,188,4,0.10);color:#f9a825;">
                                                 <i class="bx bx-alarm"></i>
                                             </button>
                                             {{-- Mark Received --}}
-                                            <button class="btn kb-action-btn received" data-id="{{ $recovery->id ?? '' }}"
+                                            <button class="btn kb-action-btn received" data-id="{{ $recovery->id }}"
                                                 data-type="Received" title="Mark Received"
                                                 style="background:rgba(52,168,83,0.10);color:#34a853;">
                                                 <i class="bx bx-rupee"></i>
                                             </button>
+                                            @endif
                                             {{-- WhatsApp --}}
                                             @php
                                                 $waRaw = !empty($recovery->whatsapp) && $recovery->whatsapp !== '-' ? $recovery->whatsapp : $recovery->mob;

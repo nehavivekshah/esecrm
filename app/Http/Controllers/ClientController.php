@@ -74,32 +74,21 @@ class ClientController extends Controller
 
     public function recovery($id = null, $title = null)
     {
+        // Validate project exists
+        $project = Projects::find($id);
+        if (!$project) {
+            return response('<div class="p-4 text-center text-danger"><i class="bx bx-error" style="font-size:1.5rem;"></i><p class="mt-2">Project not found. The associated project may have been deleted.</p></div>', 404);
+        }
+
+        $client = Clients::where('id', $project->client_id)->first();
+        $recoveries = Recoveries::where('project_id', $id);
+        $totalPaid = Recoveries::where('project_id', $id)->sum('paid');
 
         if ($title == "Received") {
-            // Fetch all recoveries for the given project ID
-            $recoveries = Recoveries::where('project_id', $id)->where('paid', '!=', '0')->get();
-
-            // Fetch project details
-            $project = Projects::find($id); // More concise than where('id', $id)->first()
-
-            // Calculate the total paid amount
-            $totalPaid = Recoveries::where('project_id', $id)->sum('paid');
-            $client = Clients::where('id', ($project->client_id ?? ''))->first();
-
-            // Return the view with the recoveries data, project details, and total paid amount
+            $recoveries = $recoveries->where('paid', '!=', '0')->get();
             return view('inc.recovery.received', compact('recoveries', 'project', 'totalPaid', 'client'));
         } else {
-            // Fetch all recoveries for the given project ID
-            $recoveries = Recoveries::where('project_id', $id)->get();
-
-            // Fetch project details
-            $project = Projects::find($id); // More concise than where('id', $id)->first()
-
-            // Calculate the total paid amount
-            $totalPaid = Recoveries::where('project_id', $id)->sum('paid');
-            $client = Clients::where('id', ($project->client_id ?? ''))->first();
-
-            // Return the view with the recoveries data, project details, and total paid amount
+            $recoveries = $recoveries->get();
             return view('inc.recovery.reminder', compact('recoveries', 'project', 'totalPaid', 'client'));
         }
     }
