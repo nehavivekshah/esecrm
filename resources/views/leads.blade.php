@@ -289,8 +289,9 @@
                             <a class="ld-quick-btn" id="ld_btn_call" href="#" title="Call">
                                 <i class="bx bx-phone"></i>
                             </a>
-                            <a class="ld-quick-btn" id="ld_btn_wa" href="#" target="_blank" title="WhatsApp"
-                                style="background:rgba(37,211,102,0.2);color:#25D366 !important;border-color:rgba(37,211,102,0.3);">
+                            <a class="ld-quick-btn" id="ld_btn_wa" href="#" title="WhatsApp"
+                                style="background:rgba(37,211,102,0.2);color:#25D366 !important;border-color:rgba(37,211,102,0.3);"
+                                onclick="event.preventDefault(); directSendLeadWa();">
                                 <i class="bx bxl-whatsapp"></i>
                             </a>
                             <a class="ld-quick-btn" id="ld_btn_mail" href="#" title="Email">
@@ -1210,6 +1211,24 @@
             if (viewMode) viewMode.style.display = '';
             if (editMode) editMode.style.display = 'none';
         });
+
+        // ── Direct WhatsApp Send from Leads List Modal (no popup) ──
+        var _ldDefaultTemplate = '🚀 *Grow Your Business with Our Digital Solutions*\n\n✅ Website Design & Development\n✅ ERP & CRM Solutions\n✅ Mobile App Development\n✅ SEO & Digital Growth Services\n\n🎁 *FREE with Our Services (Limited-Time Value Add):*\n🔹 SMS Pilot – Reach your customers instantly with promotional & transactional SMS\n🔹 Digital Visiting Card – Share your professional profile anytime, anywhere with one click\n🔹 Sales Lead Management – Track, manage, and convert leads more efficiently\n\n📞 *Call / WhatsApp:*\n+91 95945 45556 | +91 96197 75533\n\n🌐 *Learn more:*\nhttps://webbrella.com/website-design-and-development';
+
+        function directSendLeadWa() {
+            var waHref = $('#ld_btn_wa').attr('href') || '';
+            var number = '';
+            if (waHref && waHref.includes('wa.me')) {
+                try { number = new URL(waHref).pathname.replace('/', ''); } catch(_) { number = waHref.split('wa.me/')[1] || ''; }
+            }
+            number = String(number).replace(/\D/g, '');
+            if (!number) { alert('No valid WhatsApp number found for this lead.'); return; }
+
+            var leadId = window._activeLeadId || $('#m_id').val() || $('#c_lead_id').val() || '';
+            var text = (leadId ? localStorage.getItem('wa_msg_lead_' + leadId) : null) || _ldDefaultTemplate;
+            var url = 'https://wa.me/' + number + '?text=' + encodeURIComponent(text);
+            window.open(url, '_blank');
+        }
     </script>
 
     {{-- Hidden form for CSV import (required by #importFile button handler) --}}
