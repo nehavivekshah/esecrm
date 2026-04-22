@@ -30,7 +30,13 @@ class SupportController extends Controller
             'closed' => $tickets->where('status', 2)->count(),
         ];
 
-        return view('support', compact('tickets', 'stats', 'companies'));
+        $roles = session('roles');
+        $roleArray = explode(',', ($roles->permissions ?? ''));
+        if($user->isMaster()) {
+            $roleArray[] = 'All';
+        }
+
+        return view('support', compact('tickets', 'stats', 'companies', 'roleArray'));
     }
 
     public function manageSupport(Request $request)

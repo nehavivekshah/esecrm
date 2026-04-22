@@ -1,7 +1,13 @@
 @php
     $company = session('companies');
     $roles = session('roles');
-    $roleArray = explode(',', ($roles->features ?? ''));
+    $features = explode(',', ($roles->features ?? ''));
+    $permissions = explode(',', ($roles->permissions ?? ''));
+    $roleArray = array_merge($features, $permissions);
+    
+    if(Auth::user()->isMaster()) {
+        $roleArray[] = 'All';
+    }
     $standard = ["standard", "premium", "pro"];
     $premium = ["premium", "pro"];
     $pro = ["premium", "pro"];
