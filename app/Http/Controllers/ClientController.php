@@ -796,18 +796,20 @@ class ClientController extends Controller
 
     public function manageClientPost(Request $request)
     {
+        $editId = $request->id; // from hidden field
+
         $emailRule = Rule::unique('clients', 'email')->where(function ($query) {
             return $query->where('cid', Auth::user()->cid);
         });
-        if (!empty($request->id)) {
-            $emailRule->ignore($request->id);
+        if ($editId) {
+            $emailRule->ignore($editId);
         }
 
         $mobRule = Rule::unique('clients', 'mob')->where(function ($query) {
             return $query->where('cid', Auth::user()->cid);
         });
-        if (!empty($request->id)) {
-            $mobRule->ignore($request->id);
+        if ($editId) {
+            $mobRule->ignore($editId);
         }
 
         $request->validate([
@@ -832,7 +834,7 @@ class ClientController extends Controller
 
         $location = json_encode($request->address ?? []);
 
-        if (empty($request->id)) {
+        if (empty($editId)) {
             // Convert lead to client
             $client = new Clients();
             $client->name = $request->name ?? '';
@@ -905,7 +907,7 @@ class ClientController extends Controller
             $leadSingle->source = $request->source ?? '';
             $leadSingle->poc = $request->poc ?? '';
             $leadSingle->purpose = $request->purpose ?? '';
-            $leadSingle->status = $request->status ?? '10';
+            $leadSingle->status = $request->status ?? $leadSingle->status;
             $leadSingle->whatsapp = $request->whatsapp ?? '';
             $leadSingle->industry = $request->industry ?? '';
             $leadSingle->position = $request->position ?? '';

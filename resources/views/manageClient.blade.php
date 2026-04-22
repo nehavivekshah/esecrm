@@ -119,7 +119,7 @@
                 <div class="tab-pane fade show active" id="profile" role="tabpanel">
                     <form action="manage-client" method="post" class="row g-4" id="profileForm">
                         @csrf
-                        <input type="hidden" name="id" value="{{ $_GET['id'] ?? '' }}">
+                        <input type="hidden" name="id" value="{{ $clients->id ?? '' }}">
                         <input type="hidden" name="previous_url" value="{{ $previous_url ?? url()->previous() }}">
 
                         {{-- Primary Information --}}
