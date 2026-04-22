@@ -81,11 +81,13 @@
                             <i class="bx bx-list-ul"></i>
                         </button>
                     </div>
+                    @if(in_array('support_add', $roleArray) || in_array('All', $roleArray))
                     <button class="btn btn-teal px-3 open-support-modal"
                         style="background:#006666; color:white; border-radius:20px; font-size: 0.85rem;"
                         data-url="/manage-support">
                         <i class="bx bx-plus me-1"></i> New Ticket
                     </button>
+                    @endif
                     <button class="lb-icon-btn" onclick="location.reload()" title="Refresh">
                         <i class="bx bx-refresh"></i>
                     </button>
@@ -114,10 +116,12 @@
                                 </div>
                             </div>
                             <div class="pj-card-actions">
+                                @if(in_array('support_add', $roleArray) || in_array('All', $roleArray))
                                 <button type="button" class="btn kb-action-btn open-support-modal"
                                     data-url="/manage-support?id={{ $ticket->id }}">
                                     <i class="bx bx-pencil"></i>
                                 </button>
+                                @endif
                             </div>
                         </div>
 
@@ -148,9 +152,12 @@
                             @else
                                 <span class="pv-badge pv-badge-success">Resolved</span>
                             @endif
+                            
+                            @if(in_array('support_delete', $roleArray) || in_array('All', $roleArray))
                             <button class="btn btn-sm text-danger border-0 p-0 delete-support-btn" data-id="{{ $ticket->id }}">
                                 <i class="bx bx-trash"></i>
                             </button>
+                            @endif
                         </div>
                     </div>
                 @empty
@@ -211,14 +218,18 @@
                                     </td>
                                     <td class="position-sticky end-0 bg-white">
                                         <div class="d-flex align-items-center justify-content-center gap-1">
+                                            @if(in_array('support_add', $roleArray) || in_array('All', $roleArray))
                                             <button type="button" class="btn kb-action-btn open-support-modal"
                                                 data-url="/manage-support?id={{ $ticket->id }}" title="Edit">
                                                 <i class="bx bx-pencil"></i>
                                             </button>
+                                            @endif
+                                            @if(in_array('support_delete', $roleArray) || in_array('All', $roleArray))
                                             <button class="btn kb-action-btn kb-action-del delete-support-btn"
                                                 data-id="{{ $ticket->id }}" title="Delete">
                                                 <i class="bx bx-trash"></i>
                                             </button>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>

@@ -21,6 +21,7 @@
         'campaigns'   => ['label' => 'Campaigns',       'icon' => 'bx-broadcast',         'color' => '#f57c00'],
         'automations' => ['label' => 'Automations',     'icon' => 'bx-git-branch',        'color' => '#00838f'],
         'reports'     => ['label' => 'Reports',         'icon' => 'bx-line-chart',        'color' => '#1565c0'],
+        'support'     => ['label' => 'Support',         'icon' => 'bx-help-circle',       'color' => '#006666'],
         'users'       => ['label' => 'Users / Staff',   'icon' => 'bx-group',             'color' => '#4a148c'],
         'company'     => ['label' => 'Company Profile', 'icon' => 'bx-building',          'color' => '#37474f'],
         'smtp'        => ['label' => 'SMTP & Email',    'icon' => 'bx-envelope-open',     'color' => '#5f6368'],

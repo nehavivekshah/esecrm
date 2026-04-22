@@ -229,12 +229,14 @@
             @endif
         @endif
 
+        @if(in_array('support_assign', $roleArray) || in_array('All', $roleArray))
         <li>
             <a href="/support" @if(Request::segment(1) == 'support') class="active" @endif>
                 <i class="bx bx-help-circle"></i>
                 <span class="link_name">Support</span>
             </a>
         </li>
+        @endif
 
         <li class="nav-title">SYSTEM</li>
 

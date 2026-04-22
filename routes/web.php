@@ -284,10 +284,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/delete-enquiry', [UserController::class, 'deleteEnquiry']);
 
     // Support Routes
-    Route::get('/support', [App\Http\Controllers\SupportController::class, 'index'])->name('support');
-    Route::get('/manage-support', [App\Http\Controllers\SupportController::class, 'manageSupport']);
-    Route::post('/manage-support', [App\Http\Controllers\SupportController::class, 'storeSupport']);
-    Route::get('/delete-support', [App\Http\Controllers\SupportController::class, 'deleteSupport']);
+    Route::get('/support', [App\Http\Controllers\SupportController::class, 'index'])->name('support')->middleware('permission:support,assign');
+    Route::get('/manage-support', [App\Http\Controllers\SupportController::class, 'manageSupport'])->middleware('permission:support,add');
+    Route::post('/manage-support', [App\Http\Controllers\SupportController::class, 'storeSupport'])->middleware('permission:support,add');
+    Route::get('/delete-support', [App\Http\Controllers\SupportController::class, 'deleteSupport'])->middleware('permission:support,delete');
 
     Route::post('/manage-company', [UserController::class, 'manageCompanyPost'])->name('manageCompany');
 
