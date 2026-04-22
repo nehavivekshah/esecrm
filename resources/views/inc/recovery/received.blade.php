@@ -212,15 +212,17 @@
             var pagename = this.getAttribute("data-page");
             var clickedBtn = this;
 
-            swal({
+            Swal.fire({
                 title: "Are you sure?",
                 text: "You want to delete this payment record?",
                 icon: "warning",
-                buttons: true,
-                dangerMode: true,
+                showCancelButton: true,
+                confirmButtonColor: '#ea4335',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!'
             })
-            .then((willDelete) => {
-                if (willDelete) {
+            .then((result) => {
+                if (result.isConfirmed) {
                     $.ajax({
                         type: 'GET',
                         url: "/delete-recovery-amount",
@@ -232,20 +234,17 @@
                         success: function (response) {
                             if (response.success) {
                                 clickedBtn.closest('tr').style.display = 'none';
-                                swal("Deleted!", "The record has been deleted.", "success").then(() => {
-                                    // Optional: Reload parent page to reflect balance change
+                                Swal.fire("Deleted!", "The record has been deleted.", "success").then(() => {
                                     location.reload(); 
                                 });
                             } else {
-                                swal("Error", response.error || "There was an issue deleting this record.", "error");
+                                Swal.fire("Error", response.error || "There was an issue deleting this record.", "error");
                             }
                         },
                         error: function () {
-                            swal("Error", "An error occurred while processing your request.", "error");
+                            Swal.fire("Error", "An error occurred while processing your request.", "error");
                         }
                     });
-                } else {
-                    swal("This record is safe.");
                 }
             });
         });
@@ -285,7 +284,7 @@
             
             // Validate the parsed number
             if(isNaN(floatVal) || floatVal < 0 || newValue.trim() === "") {
-                swal("Invalid Amount", "Please enter a valid positive number.", "warning");
+                Swal.fire("Invalid Amount", "Please enter a valid positive number.", "warning");
                 this.value = originalValue;
                 return;
             }
@@ -308,7 +307,7 @@
                         location.reload(); 
                     },
                     error: function() {
-                        swal("Error", "Failed to update amount.", "error");
+                        Swal.fire("Error", "Failed to update amount.", "error");
                         input.value = originalValue;
                     }
                 });
