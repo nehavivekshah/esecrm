@@ -300,6 +300,9 @@
                         <button class="ld-tab" onclick="kbTab(this,'kb-tab-assign')">
                             <i class="bx bx-user-plus"></i> Assign
                         </button>
+                        <button class="ld-tab" onclick="kbTab(this,'kb-tab-wp-template')">
+                            <i class="bx bxl-whatsapp"></i> Wp Template
+                        </button>
                     </div>
 
                     <div id="kb-tab-info" style="padding:16px;">
@@ -445,6 +448,38 @@
                             <i class="bx bx-check-circle"></i> Assign Lead
                         </button>
                         <div id="kb_assignMsg" class="mt-3 text-center small"></div>
+                    </div>
+
+                    {{-- Wp Template Tab --}}
+                    <div id="kb-tab-wp-template" style="display:none; padding:28px 20px;">
+                        <div class="ld-assign-card">
+                            <div class="ld-assign-icon" style="background:rgba(37,211,102,0.1);color:#25d366;"><i
+                                    class="bx bxl-whatsapp"></i></div>
+                            <h6 class="mb-1" style="font-weight:700;color:#202124;font-size:0.95rem;">WhatsApp
+                                Template</h6>
+                            <p style="font-size:0.78rem;color:#5f6368;margin-bottom:18px;">Customize the WhatsApp
+                                message for this lead.</p>
+
+                            <div class="form-group mb-3">
+                                <textarea id="kb_waMessageTextTabbed" class="form-control" rows="6"
+                                    placeholder="Hi, I wanted to follow up about..."
+                                    style="border-radius:8px;border:1px solid #dadce0;padding:12px;font-size:0.93rem;resize:none;height:auto!important;"></textarea>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button type="button" class="ld-btn ld-btn-primary w-100" id="kb_saveWpTemplateBtn">
+                                    <i class="bx bx-bookmark"></i> Save Template
+                                </button>
+                                <button type="button" class="ld-btn ld-btn-primary w-100" id="kb_sendWpTemplateBtn"
+                                    style="background:#25d366;border-color:#25d366;">
+                                    <i class="bx bx-send"></i> Open WhatsApp
+                                </button>
+                            </div>
+                            <div id="kb_wpTemplateStatusMsg" class="mt-2 text-center"
+                                style="font-size:0.82rem;font-weight:600;color:#25D366;display:none;">
+                                <i class="bx bx-check-circle"></i> Template Saved!
+                            </div>
+                        </div>
                     </div>
 
                 </div>
@@ -774,6 +809,15 @@
                         + '</div></div>';
                 });
                 $('#kb_timeline').html(html || '<p class="text-muted text-center py-3" style="font-size:0.82rem;">No conversations yet.</p>');
+
+                // ── WhatsApp Template Auto-load ──
+                var defaultMsg = '🚀 *Grow Your Business with Our Digital Solutions*\n\n✅ Website Design & Development\n✅ ERP & CRM Solutions\n✅ Mobile App Development\n✅ SEO & Digital Growth Services\n\n🎁 *FREE with Our Services (Limited-Time Value Add):*\n🔹 SMS Pilot – Reach your customers instantly with promotional & transactional SMS\n🔹 Digital Visiting Card – Share your professional profile anytime, anywhere with one click\n🔹 Sales Lead Management – Track, manage, and convert leads more efficiently\n\n📞 *Call / WhatsApp:*\n+91 95945 45556 | +91 96197 75533\n\n🌐 *Learn more:*\nhttps://webbrella.com/website-design-and-development';
+                var savedMsg = localStorage.getItem('wa_msg_lead_' + l.id) || defaultMsg;
+                $('#kb_waMessageTextTabbed').val(savedMsg);
+
+                // Reset save button state
+                $('#kb_saveWpTemplateBtn').html('<i class="bx bx-bookmark"></i> Save Template').prop('disabled', false);
+                $('#kb_wpTemplateStatusMsg').hide();
             });
         });
 
@@ -800,9 +844,49 @@
         function kbTab(btn, tabId) {
             $('.ld-tab').removeClass('active');
             $(btn).addClass('active');
-            $('#kb-tab-info, #kb-tab-conv, #kb-tab-props, #kb-tab-assign').hide();
+            $('#kb-tab-info, #kb-tab-conv, #kb-tab-props, #kb-tab-assign, #kb-tab-wp-template').hide();
             $('#' + tabId).show();
         }
+
+        // ── WhatsApp Template Save (Kanban) ──
+        $(document).on('click', '#kb_saveWpTemplateBtn', function() {
+            let leadId = window._activeLeadId || $('#kb_card_id').val();
+            let text   = $('#kb_waMessageTextTabbed').val().trim();
+            if (!leadId) {
+                alert('Cannot save — lead ID not found.'); return;
+            }
+            if (text) {
+                localStorage.setItem('wa_msg_lead_' + leadId, text);
+                $('#kb_wpTemplateStatusMsg').show();
+                $(this).html('<i class="bx bx-check"></i> Saved!').prop('disabled', true);
+                setTimeout(() => {
+                    $('#kb_wpTemplateStatusMsg').hide();
+                    $('#kb_saveWpTemplateBtn').html('<i class="bx bx-bookmark"></i> Save Template').prop('disabled', false);
+                }, 2000);
+            } else {
+                localStorage.removeItem('wa_msg_lead_' + leadId);
+                $('#kb_wpTemplateStatusMsg').hide();
+            }
+        });
+
+        // ── WhatsApp Template Send (Kanban) ──
+        $(document).on('click', '#kb_sendWpTemplateBtn', function() {
+            let leadId = window._activeLeadId || $('#kb_card_id').val();
+            // Try to get number from the header WA button href, or use stored lead data
+            let waHref = $('#kb_btnWa').attr('href') || '';
+            let number = '';
+            if (waHref && waHref.includes('wa.me')) {
+                try { number = new URL(waHref).pathname.replace('/', ''); } catch(_) { number = waHref.split('wa.me/')[1] || ''; }
+            }
+            let text = $('#kb_waMessageTextTabbed').val().trim();
+            if (number) {
+                number = number.replace(/\D/g, '');
+                let url = 'https://wa.me/' + number + (text ? '?text=' + encodeURIComponent(text) : '');
+                window.open(url, '_blank');
+            } else {
+                alert('No valid WhatsApp number found for this lead.');
+            }
+        });
 
         /* ── Drag & Drop ─────────────────────────────────────────── */
         function allowDrop(ev) {
