@@ -240,6 +240,11 @@ table.dataTable tbody tr:hover td {
     color: var(--primary-color) !important;
 }
 
+.leads-table .bg-alert:hover {
+    background-color: #ff818d !important;
+    border-left: 3px solid #ea4335;
+}
+
 table.dataTable tbody tr:last-child td {
     border-bottom: none !important;
 }
