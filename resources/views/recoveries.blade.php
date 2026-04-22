@@ -238,7 +238,7 @@
                                             {{-- Delete --}}
                                             @if(in_array('recoveries_delete', $roleArray) || in_array('All', $roleArray))
                                                 <a href="javascript:void(0)" class="btn kb-action-btn kb-action-del delete"
-                                                    id="{{ $recovery->id ?? '' }}" data-page="recoveryAmountDelete" title="Delete"
+                                                    id="{{ $recovery->id ?? '' }}" data-page="recoveryProjectDelete" title="Delete"
                                                     style="background:rgba(234,67,53,0.10);color:#ea4335;">
                                                     <i class="bx bx-trash"></i>
                                                 </a>

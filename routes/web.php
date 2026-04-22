@@ -214,6 +214,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/recovery', [ClientController::class, 'recoveryPost'])->name('recovery')->middleware('permission:recoveries,edit');
     Route::get('/update-recovery-amount', [ClientController::class, 'updateRecoveryAmount'])->name('recovery')->middleware('permission:recoveries,edit');
     Route::get('/delete-recovery-amount', [AjaxController::class, 'ajaxSend'])->middleware('permission:recoveries,delete');
+    Route::get('/delete-recovery-project', [AjaxController::class, 'ajaxSend'])->middleware('permission:recoveries,delete');
 
 
 

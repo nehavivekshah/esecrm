@@ -221,26 +221,23 @@ class AjaxController extends Controller
             } else {
                 return response()->json(['error' => 'Invoice not found.'], 404);
             }
+        }elseif (($request->recoveryProjectDelete ?? '') == 'recoveryProjectDelete') {
+            // Delete ALL recovery records for a given project
+            $deleted = Recoveries::where('project_id', $id)->delete();
+            if ($deleted) {
+                return response()->json(['success' => 'All recovery records for this project deleted successfully.']);
+            } else {
+                return response()->json(['error' => 'No recovery records found for this project.'], 404);
+            }
         }elseif (($request->recoveryAmountDelete ?? '') == 'recoveryAmountDelete') {
-            // Find the user by ID
+            // Delete a single recovery payment record
             $recovery = Recoveries::find($id);
     
-            // Check if the user exists
             if ($recovery) {
-                
-                $project_id = $recovery->project_id ?? '';
-                $project_paid = $recovery->paid ?? 0;
-                
-                // Delete the user
-                //$recovery->delete();
                 if($recovery->delete()){
-                    // $project = Projects::find($project_id);
-                    // $project->amount = (($project->amount ?? 0)+$project_paid);
-                    // $project->update();
-                    
-                    return response()->json(['success' => 'User deleted successfully.']);
+                    return response()->json(['success' => 'Recovery record deleted successfully.']);
                 }else{
-                    return response()->json(['error' => 'Opps somethings went worng.'], 500);
+                    return response()->json(['error' => 'Something went wrong.'], 500);
                 }
             } else {
                 return response()->json(['error' => 'Recovery not found.'], 404);

@@ -190,6 +190,7 @@
                         // Route deletes through permission-protected endpoints
                         var deleteRouteMap = {
                             'recoveryAmountDelete': '/delete-recovery-amount',
+                            'recoveryProjectDelete': '/delete-recovery-project',
                             'projectDelete': '/delete-project',
                             'invoiceDelete': '/delete-invoice',
                             'proposalDelete': '/delete-proposal',
