@@ -39,9 +39,9 @@
     ];
 
     // Which modules do NOT support import
-    $noImport = ['proposals', 'company', 'smtp', 'settings', 'reports', 'automations', 'campaigns'];
+    $noImport = ['proposals', 'company', 'smtp', 'settings', 'reports', 'automations', 'campaigns', 'support'];
     // Which modules do NOT support export
-    $noExport = ['smtp', 'settings', 'automations'];
+    $noExport = ['smtp', 'settings', 'automations', 'support'];
     // Which modules do NOT support assign
     $noAssign = ['company', 'smtp', 'settings', 'reports', 'automations', 'campaigns'];
 @endphp

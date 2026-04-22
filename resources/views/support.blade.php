@@ -99,7 +99,7 @@
                 @forelse($tickets as $ticket)
                     <div class="pj-card ticket-card-wrapper open-support-modal" data-url="/manage-support?id={{ $ticket->id }}"
                         data-status="{{ $ticket->status }}"
-                        data-company-id="{{ $ticket->company_id }}"
+                        data-company-id="{{ $ticket->cid }}"
                         data-search="{{ strtolower($ticket->ticket_no . ' ' . $ticket->subject . ' ' . ($ticket->company->name ?? '')) }}">
 
                         <div class="pj-card-accent"
@@ -188,7 +188,7 @@
                                 <tr class="pointer-cursor ticket-card-wrapper open-support-modal"
                                     data-url="/manage-support?id={{ $ticket->id }}" 
                                     data-status="{{ $ticket->status }}"
-                                    data-company-id="{{ $ticket->company_id }}"
+                                    data-company-id="{{ $ticket->cid }}"
                                     data-search="{{ strtolower($ticket->ticket_no . ' ' . $ticket->subject . ' ' . ($ticket->company->name ?? '')) }}">
                                     <td class="small fw-bold text-muted">{{ $k + 1 }}</td>
                                     <td>
@@ -477,22 +477,37 @@
             if (statusFilter) statusFilter.addEventListener('change', applyFilters);
             if (companyFilter) companyFilter.addEventListener('change', applyFilters);
 
-            // Modal Delegate
+            // Modal & Delete Delegate
             document.addEventListener('click', function (e) {
-                if (e.target.closest('.delete-support-btn') || e.target.closest('.btn-close')) return;
+                // Handle delete button FIRST
+                const delBtn = e.target.closest('.delete-support-btn');
+                if (delBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    Swal.fire({
+                        title: 'Delete Ticket?',
+                        text: 'This action cannot be undone.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d93025',
+                        cancelButtonColor: '#5f6368',
+                        confirmButtonText: 'Yes, delete it'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/delete-support?id=' + delBtn.dataset.id;
+                        }
+                    });
+                    return;
+                }
 
+                // Skip modal open for close button clicks
+                if (e.target.closest('.btn-close')) return;
+
+                // Handle modal open
                 const trigger = e.target.closest('.open-support-modal');
                 if (trigger) {
                     e.preventDefault();
                     loadSupportModal(trigger.dataset.url);
-                }
-
-                const delBtn = e.target.closest('.delete-support-btn');
-                if (delBtn) {
-                    e.preventDefault();
-                    if (confirm('Are you sure you want to delete this ticket?')) {
-                        window.location.href = '/delete-support?id=' + delBtn.dataset.id;
-                    }
                 }
             });
         });
