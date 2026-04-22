@@ -212,41 +212,49 @@
             var pagename = this.getAttribute("data-page");
             var clickedBtn = this;
 
-            Swal.fire({
-                title: "Are you sure?",
-                text: "You want to delete this payment record?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: '#ea4335',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Yes, delete it!'
-            })
-            .then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        type: 'GET',
-                        url: "/delete-recovery-amount",
-                        data: {
-                            pagename: pagename,
-                            rowid: rowid,
-                            recoveryAmountDelete: 'recoveryAmountDelete'
-                        },
-                        success: function (response) {
-                            if (response.success) {
-                                clickedBtn.closest('tr').style.display = 'none';
-                                Swal.fire("Deleted!", "The record has been deleted.", "success").then(() => {
-                                    location.reload(); 
-                                });
-                            } else {
-                                Swal.fire("Error", response.error || "There was an issue deleting this record.", "error");
+            // Hide the parent modal so SweetAlert2 is not blocked
+            var parentModal = clickedBtn.closest('.modal');
+            if (parentModal) { $(parentModal).modal('hide'); }
+
+            setTimeout(function() {
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You want to delete this payment record?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: '#ea4335',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, delete it!'
+                })
+                .then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: 'GET',
+                            url: "/delete-recovery-amount",
+                            data: {
+                                pagename: pagename,
+                                rowid: rowid,
+                                recoveryAmountDelete: 'recoveryAmountDelete'
+                            },
+                            success: function (response) {
+                                if (response.success) {
+                                    Swal.fire("Deleted!", "The record has been deleted.", "success").then(() => {
+                                        location.reload(); 
+                                    });
+                                } else {
+                                    Swal.fire("Error", response.error || "There was an issue deleting this record.", "error");
+                                }
+                            },
+                            error: function () {
+                                Swal.fire("Error", "An error occurred while processing your request.", "error");
                             }
-                        },
-                        error: function () {
-                            Swal.fire("Error", "An error occurred while processing your request.", "error");
-                        }
-                    });
-                }
-            });
+                        });
+                    } else {
+                        // Re-show modal if user cancelled
+                        if (parentModal) { $(parentModal).modal('show'); }
+                    }
+                });
+            }, 300);
         });
     });
 
