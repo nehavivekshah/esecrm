@@ -5549,6 +5549,7 @@ th.text-center.position-sticky.end-0.bg-default.mw60.sorting {
 .ld-header-content {
     position: relative;
     display: flex;
+    justify-content: space-between;
     align-items: center;
     gap: 12px;
 }
