@@ -133,7 +133,7 @@ h6 {
 
 .btn-primary {
     background-color: var(--primary-color) !important;
-    border-color: var(--primary-color) !important;
+    border-color: var(--primary-light) !important;
     color: #fff !important;
     box-shadow: 0 2px 4px var(--primary-glow) !important;
 }
