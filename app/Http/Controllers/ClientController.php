@@ -889,8 +889,7 @@ class ClientController extends Controller
             }
         } else {
             // Updating an existing lead or converting to a client
-            $id = $request->id ?? '';
-            $leadSingle = Clients::find($id);
+            $leadSingle = Clients::find($editId);
 
             if (!$leadSingle) {
                 return back()->with('error', 'Client not found.');
