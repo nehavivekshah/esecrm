@@ -183,6 +183,12 @@
                                         </div>
                                     </div>
                                     <div class="pv-info-item">
+                                        <div class="pv-info-label"><i class="bx bx-hash"></i> Batch No.</div>
+                                        <div class="pv-info-val fw-bold" style="color:#006666;">
+                                            {{ $project->batchNo ?: '—' }}
+                                        </div>
+                                    </div>
+                                    <div class="pv-info-item">
                                         <div class="pv-info-label"><i class="bx bx-money"></i> Budget</div>
                                         <div class="pv-info-val fw-bold" style="color:#006666;font-size:1.05rem;">
                                             ₹{{ number_format($totalAmount, 2) }}

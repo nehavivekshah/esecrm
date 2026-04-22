@@ -128,6 +128,10 @@
                                     @else
                                         #PROU-{{ str_pad($project->id, 4, '0', STR_PAD_LEFT) }}
                                     @endif
+                                    @if($project->batchNo)
+                                        <span class="badge bg-info text-white border-0 ms-1"
+                                            style="font-size:0.55rem; background: #006666 !important;">{{ $project->batchNo }}</span>
+                                    @endif
                                 </div>
                             </div>
                             <div class="pj-card-actions">
@@ -237,6 +241,7 @@
                         <thead>
                             <tr>
                                 <th>Project ID</th>
+                                <th>Batch No.</th>
                                 <th>Project Details</th>
                                 <th class="m-none">Service Category</th>
                                 <th class="m-none">Project Timeline</th>
@@ -264,6 +269,9 @@
                                         @else
                                             #PROJ-{{ str_pad($project->id, 4, '0', STR_PAD_LEFT) }}
                                         @endif
+                                    </td>
+                                    <td class="fw-600" style="font-size:0.8rem; color:#006666;">
+                                        {{ $project->batchNo ?? '—' }}
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
