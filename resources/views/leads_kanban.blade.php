@@ -536,7 +536,7 @@
             const assignedHtml = `<div class="kb-card-poc mt-2"><i class="bx bx-user-circle"></i> ${escHtml(assignedName)}</div>`;
 
             const waBtn = lead.whatsapp
-                ? `<a href="https://api.whatsapp.com/send/?phone=${encodeURIComponent(lead.whatsapp)}&text=Hi&type=phone_number&app_absent=0" target="_blank" class="btn kb-action-btn kb-action-wa" title="WhatsApp" onclick="event.stopPropagation();"><i class="bx bxl-whatsapp"></i></a>` : '';
+                ? `<a href="javascript:void(0)" class="btn kb-action-btn kb-action-wa kb-card-wa-btn" data-wa="${escHtml(lead.whatsapp)}" data-lead-id="${lead.id}" title="WhatsApp" onclick="event.stopPropagation(); openKbWaCompose(this);"><i class="bx bxl-whatsapp"></i></a>` : '';
             const callBtn = lead.mob
                 ? `<a href="tel:+${encodeURIComponent(lead.mob)}" class="btn kb-action-btn kb-action-call" title="Call ${escHtml(lead.mob)}" onclick="event.stopPropagation();"><i class="bx bx-phone"></i></a>` : '';
             const emailBtn = lead.email
@@ -887,6 +887,36 @@
                 alert('No valid WhatsApp number found for this lead.');
             }
         });
+
+        // ── Open WhatsApp Compose Modal from Kanban Card Button ──
+        function openKbWaCompose(el) {
+            let number = $(el).data('wa') || '';
+            let leadId = $(el).data('lead-id') || '';
+            number = String(number).replace(/\D/g, '');
+
+            // Set global lead ID
+            window._activeLeadId = leadId;
+
+            // Default template
+            var defaultMsg = '🚀 *Grow Your Business with Our Digital Solutions*\n\n✅ Website Design & Development\n✅ ERP & CRM Solutions\n✅ Mobile App Development\n✅ SEO & Digital Growth Services\n\n🎁 *FREE with Our Services (Limited-Time Value Add):*\n🔹 SMS Pilot – Reach your customers instantly with promotional & transactional SMS\n🔹 Digital Visiting Card – Share your professional profile anytime, anywhere with one click\n🔹 Sales Lead Management – Track, manage, and convert leads more efficiently\n\n📞 *Call / WhatsApp:*\n+91 95945 45556 | +91 96197 75533\n\n🌐 *Learn more:*\nhttps://webbrella.com/website-design-and-development';
+
+            // Load saved message or default
+            let savedMsg = leadId ? localStorage.getItem('wa_msg_lead_' + leadId) : null;
+            let msgToShow = savedMsg || defaultMsg;
+
+            // Populate compose modal
+            $('#waTargetNumber').val(number);
+            $('#waTargetLeadId').val(leadId);
+            $('#waMessageText').val(msgToShow);
+
+            if (savedMsg) {
+                $('#waSavedBadge').show();
+            } else {
+                $('#waSavedBadge').hide();
+            }
+
+            new bootstrap.Modal(document.getElementById('waCustomMessageModal')).show();
+        }
 
         /* ── Drag & Drop ─────────────────────────────────────────── */
         function allowDrop(ev) {

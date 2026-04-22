@@ -1843,6 +1843,9 @@ https://webbrella.com/website-design-and-development`;
             </div>`);
         }
 
+        // ── Default WhatsApp Template (shared across all modals) ──
+        var _waDefaultTemplate = '🚀 *Grow Your Business with Our Digital Solutions*\n\n✅ Website Design & Development\n✅ ERP & CRM Solutions\n✅ Mobile App Development\n✅ SEO & Digital Growth Services\n\n🎁 *FREE with Our Services (Limited-Time Value Add):*\n🔹 SMS Pilot – Reach your customers instantly with promotional & transactional SMS\n🔹 Digital Visiting Card – Share your professional profile anytime, anywhere with one click\n🔹 Sales Lead Management – Track, manage, and convert leads more efficiently\n\n📞 *Call / WhatsApp:*\n+91 95945 45556 | +91 96197 75533\n\n🌐 *Learn more:*\nhttps://webbrella.com/website-design-and-development';
+
         // Intercept WhatsApp link clicks on lead pages
         $(document).on('click', '#ld_btn_wa, #kb_btnWa', function(e) {
             let href = $(this).attr('href');
@@ -1868,9 +1871,10 @@ https://webbrella.com/website-design-and-development`;
                 $('#waTargetNumber').val(number);
                 $('#waTargetLeadId').val(leadId);
 
-                // Load saved message for this lead from localStorage
-                let savedMsg = leadId ? (localStorage.getItem('wa_msg_lead_' + leadId) || '') : '';
-                $('#waMessageText').val(savedMsg);
+                // Load saved message for this lead from localStorage (fall back to default template)
+                let savedMsg = leadId ? localStorage.getItem('wa_msg_lead_' + leadId) : null;
+                let msgToShow = savedMsg || _waDefaultTemplate;
+                $('#waMessageText').val(msgToShow);
 
                 // Show saved indicator
                 if (savedMsg) {
@@ -1883,7 +1887,45 @@ https://webbrella.com/website-design-and-development`;
             }
         });
 
-        // Save message template for this lead (Tab version)
+        // ── Compose Modal: Save Template ──
+        $(document).on('click', '#waSaveTemplateBtn', function() {
+            let leadId = $('#waTargetLeadId').val() || window._activeLeadId;
+            let text   = $('#waMessageText').val().trim();
+            if (!leadId) {
+                alert('Cannot save — lead ID not found.'); return;
+            }
+            if (text) {
+                localStorage.setItem('wa_msg_lead_' + leadId, text);
+                $(this).html('<i class="bx bx-check"></i> Saved!').prop('disabled', true);
+                $('#waSavedBadge').show();
+                // Also sync back to the Wp Template tab textarea if it exists
+                if ($('#waMessageTextTabbed').length) $('#waMessageTextTabbed').val(text);
+                if ($('#kb_waMessageTextTabbed').length) $('#kb_waMessageTextTabbed').val(text);
+                setTimeout(() => {
+                    $('#waSaveTemplateBtn').html('<i class="bx bx-bookmark"></i> Save Template').prop('disabled', false);
+                }, 2000);
+            } else {
+                localStorage.removeItem('wa_msg_lead_' + leadId);
+                $('#waSavedBadge').hide();
+            }
+        });
+
+        // ── Compose Modal: Open WhatsApp ──
+        $(document).on('click', '#waSendBtn', function() {
+            let number = $('#waTargetNumber').val();
+            let text   = $('#waMessageText').val().trim();
+            if (number) {
+                number = number.toString().replace(/\D/g, '');
+                let url = 'https://wa.me/' + number + (text ? '?text=' + encodeURIComponent(text) : '');
+                window.open(url, '_blank');
+                // Close the modal after sending
+                bootstrap.Modal.getInstance(document.getElementById('waCustomMessageModal'))?.hide();
+            } else {
+                alert('No valid WhatsApp number found for this lead.');
+            }
+        });
+
+        // Save message template for this lead (Tab version — leads list modal)
         $(document).on('click', '#saveWpTemplateBtn', function() {
             let leadId = window._activeLeadId || $('#m_id').val() || $('#c_lead_id').val() || $('#lead_id').val();
             let text   = $('#waMessageTextTabbed').val().trim();
@@ -1905,7 +1947,7 @@ https://webbrella.com/website-design-and-development`;
             }
         });
 
-        // Send WhatsApp from Tab
+        // Send WhatsApp from Tab (leads list modal)
         $(document).on('click', '#sendWpTemplateBtn', function() {
             let number = $('#m_whatsapp').val() || $('#m_mob').val() || $('#whatsapp').val() || $('#mob').val();
             let text   = $('#waMessageTextTabbed').val().trim();

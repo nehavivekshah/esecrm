@@ -793,10 +793,10 @@
                                         <button type="button" class="ld-btn ld-btn-primary w-100" id="saveWpTemplateBtn">
                                             <i class="bx bx-bookmark"></i> Save Template
                                         </button>
-                                        <!-- <button type="button" class="ld-btn ld-btn-primary w-100" id="sendWpTemplateBtn"
-                                                            style="background:#25d366;border-color:#25d366;">
-                                                            <i class="bx bx-send"></i> Open WhatsApp
-                                                        </button> -->
+                                        <button type="button" class="ld-btn ld-btn-primary w-100" id="sendWpTemplateBtn"
+                                            style="background:#25d366;border-color:#25d366;">
+                                            <i class="bx bx-send"></i> Open WhatsApp
+                                        </button>
                                     </div>
                                     <div id="wpTemplateStatusMsg" class="mt-2 text-center"
                                         style="font-size:0.82rem;font-weight:600;color:#25D366;display:none;">
