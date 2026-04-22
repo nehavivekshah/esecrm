@@ -1847,7 +1847,7 @@ https://webbrella.com/website-design-and-development`;
         var _waDefaultTemplate = '🚀 *Grow Your Business with Our Digital Solutions*\n\n✅ Website Design & Development\n✅ ERP & CRM Solutions\n✅ Mobile App Development\n✅ SEO & Digital Growth Services\n\n🎁 *FREE with Our Services (Limited-Time Value Add):*\n🔹 SMS Pilot – Reach your customers instantly with promotional & transactional SMS\n🔹 Digital Visiting Card – Share your professional profile anytime, anywhere with one click\n🔹 Sales Lead Management – Track, manage, and convert leads more efficiently\n\n📞 *Call / WhatsApp:*\n+91 95945 45556 | +91 96197 75533\n\n🌐 *Learn more:*\nhttps://webbrella.com/website-design-and-development';
 
         // Intercept WhatsApp link clicks on lead pages
-        $(document).on('click', '#ld_btn_wa, #kb_btnWa', function(e) {
+        $(document).on('click', '#ld_btn_wa', function(e) {
             let href = $(this).attr('href');
             if (href && href !== '#' && href.includes('wa.me')) {
                 e.preventDefault();
