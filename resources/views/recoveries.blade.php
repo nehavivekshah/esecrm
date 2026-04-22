@@ -89,7 +89,7 @@
                     <button class="lb-icon-btn" onclick="location.reload()" title="Refresh">
                         <i class="bx bx-refresh"></i>
                     </button>
-                    @if(in_array('users_add', $roleArray) || in_array('All', $roleArray))
+                    @if(in_array('recoveries_add', $roleArray) || in_array('All', $roleArray))
                         <button type="button" class="lb-btn lb-btn-primary open-recovery-modal"
                             data-url="/manage-recovery?ajax=1">
                             <i class="bx bx-plus"></i>

@@ -91,7 +91,7 @@
                     <button class="lb-icon-btn" onclick="location.reload()" title="Refresh">
                         <i class="bx bx-refresh"></i>
                     </button>
-                    @if(in_array('clients_add', $roleArray) || in_array('All', $roleArray))
+                    @if(in_array('projects_add', $roleArray) || in_array('All', $roleArray))
                         <a href="/manage-project" class="lb-btn lb-btn-primary">
                             <i class="bx bx-plus"></i>
                             <span class="d-none d-sm-inline">Add Project</span>
@@ -224,7 +224,7 @@
                     <div class="pj-empty" style="grid-column:1/-1;">
                         <i class="bx bx-layer"></i>
                         <p>No projects found. Create your first project!</p>
-                        @if(in_array('clients_add', $roleArray) || in_array('All', $roleArray))
+                        @if(in_array('projects_add', $roleArray) || in_array('All', $roleArray))
                             <a href="/manage-project" class="lb-btn lb-btn-primary mt-2"><i class="bx bx-plus"></i> Add Project</a>
                         @endif
                     </div>

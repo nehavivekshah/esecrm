@@ -12,6 +12,9 @@
         $paidInvoices = $invoices->where('status', 'paid')->count();
         $unpaidInvoices = $invoices->where('status', '!=', 'paid')->count();
         $pendingTasks = $tasks->where('status', '!=', 'Completed')->count();
+
+        $roles = session('roles');
+        $roleArray = explode(',', ($roles->permissions ?? ''));
     @endphp
 
     <section class="task__section">
@@ -77,9 +80,11 @@
                                 <i class="bx bx-globe"></i>
                             </a>
                         @endif
-                        <a href="/manage-project?id={{ $project->id }}" class="pv-edit-btn">
-                            <i class="bx bx-edit"></i> Edit Project
-                        </a>
+                        @if(in_array('projects_edit', $roleArray) || in_array('All', $roleArray))
+                            <a href="/manage-project?id={{ $project->id }}" class="pv-edit-btn">
+                                <i class="bx bx-edit"></i> Edit Project
+                            </a>
+                        @endif
                         <a href="{{ url('/projects') }}" class="pv-back-btn">
                             <i class="bx bx-arrow-back"></i> Back
                         </a>
@@ -319,9 +324,11 @@
                 <div class="tab-pane fade" id="billing" role="tabpanel">
                     <div class="pv-tab-toolbar">
                         <h2 class="pv-tab-title"><i class="bx bx-receipt"></i> Recovery History</h2>
-                        <a href="/manage-recovery?project_id={{ $project->id }}&previous_url={{ urlencode(url()->current()) }}" class="pv-add-btn">
-                            <i class="bx bx-plus"></i> Add Recovery
-                        </a>
+                        @if(in_array('recoveries_add', $roleArray) || in_array('All', $roleArray))
+                            <a href="/manage-recovery?project_id={{ $project->id }}&previous_url={{ urlencode(url()->current()) }}" class="pv-add-btn">
+                                <i class="bx bx-plus"></i> Add Recovery
+                            </a>
+                        @endif
                     </div>
 
                     {{-- Summary strip --}}
@@ -362,18 +369,22 @@
                             <span class="pv-badge {{ $rec->status == '1' ? 'pv-badge-success' : 'pv-badge-warn' }}">
                                 {{ $rec->status == '1' ? 'Paid' : 'Pending' }}
                             </span>
-                            <div class="pv-rec-actions ms-2">
-                                <a href="/manage-recovery?id={{ $rec->id }}&previous_url={{ urlencode(url()->current()) }}" 
-                                   class="btn btn-sm btn-light border" title="Edit Recovery">
-                                    <i class="bx bx-edit-alt text-muted"></i>
-                                </a>
-                            </div>
+                            @if(in_array('recoveries_edit', $roleArray) || in_array('All', $roleArray))
+                                <div class="pv-rec-actions ms-2">
+                                    <a href="/manage-recovery?id={{ $rec->id }}&previous_url={{ urlencode(url()->current()) }}" 
+                                       class="btn btn-sm btn-light border" title="Edit Recovery">
+                                        <i class="bx bx-edit-alt text-muted"></i>
+                                    </a>
+                                </div>
+                            @endif
                         </div>
                     @empty
                         <div class="pv-empty-state">
                             <i class="bx bx-receipt"></i>
                             <p>No recovery records yet.</p>
-                            <a href="/manage-recovery?project_id={{ $project->id }}&previous_url={{ urlencode(url()->current()) }}" class="pv-add-btn">Add First Recovery</a>
+                            @if(in_array('recoveries_add', $roleArray) || in_array('All', $roleArray))
+                                <a href="/manage-recovery?project_id={{ $project->id }}&previous_url={{ urlencode(url()->current()) }}" class="pv-add-btn">Add First Recovery</a>
+                            @endif
                         </div>
                     @endforelse
                 </div>
@@ -382,8 +393,10 @@
                 <div class="tab-pane fade" id="invoices" role="tabpanel">
                     <div class="pv-tab-toolbar">
                         <h2 class="pv-tab-title"><i class="bx bx-file"></i> Client Invoices</h2>
-                        <a href="/manage-invoice?project_id={{ $project->id }}" class="pv-add-btn"><i
-                                class="bx bx-plus"></i> Create Invoice</a>
+                        @if(in_array('invoice_add', $roleArray) || in_array('All', $roleArray))
+                            <a href="/manage-invoice?project_id={{ $project->id }}" class="pv-add-btn"><i
+                                    class="bx bx-plus"></i> Create Invoice</a>
+                        @endif
                     </div>
                     <div class="table-responsive">
                         <table class="leads-table">
@@ -438,8 +451,10 @@
                                             <div class="pv-empty-state">
                                                 <i class="bx bx-file"></i>
                                                 <p>No invoices found.</p>
-                                                <a href="/manage-invoice?project_id={{ $project->id }}"
-                                                    class="pv-add-btn">Create Invoice</a>
+                                                @if(in_array('invoice_add', $roleArray) || in_array('All', $roleArray))
+                                                    <a href="/manage-invoice?project_id={{ $project->id }}"
+                                                        class="pv-add-btn">Create Invoice</a>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>
@@ -454,14 +469,16 @@
                     <div class="pv-tab-toolbar">
                         <h2 class="pv-tab-title"><i class="bx bx-task"></i> Project Tasks</h2>
 
-                        @if($tasks->count() > 0)
-                            <a href="/task?id={{ $tasks->first()->id }}&project_id={{ $project->id }}" class="pv-add-btn">
-                                <i class="bx bx-edit-alt"></i> Manage Tasks
-                            </a>
-                        @else
-                            <a href="/task?action=add&project_id={{ $project->id }}" class="pv-add-btn">
-                                <i class="bx bx-plus"></i> Manage Tasks
-                            </a>
+                        @if(in_array('tasks_add', $roleArray) || in_array('All', $roleArray))
+                            @if($tasks->count() > 0)
+                                <a href="/task?id={{ $tasks->first()->id }}&project_id={{ $project->id }}" class="pv-add-btn">
+                                    <i class="bx bx-edit-alt"></i> Manage Tasks
+                                </a>
+                            @else
+                                <a href="/task?action=add&project_id={{ $project->id }}" class="pv-add-btn">
+                                    <i class="bx bx-plus"></i> Manage Tasks
+                                </a>
+                            @endif
                         @endif
                     </div>
                     @forelse($tasks as $t)
@@ -495,10 +512,12 @@
                                     @else
                                         <span class="text-muted small">No due date</span>
                                     @endif
-                                    <a href="/task?project_id={{ $project->id }}&parent_id={{ $t->id }}"
-                                        class="ms-2 text-primary small" title="Add Subtask">
-                                        <i class="bx bx-plus-circle"></i> Subtask
-                                    </a>
+                                    @if(in_array('tasks_add', $roleArray) || in_array('All', $roleArray))
+                                        <a href="/task?project_id={{ $project->id }}&parent_id={{ $t->id }}"
+                                            class="ms-2 text-primary small" title="Add Subtask">
+                                            <i class="bx bx-plus-circle"></i> Subtask
+                                        </a>
+                                    @endif
                                 </div>
                             </div>
                             <div class="task-status-badge-container">
