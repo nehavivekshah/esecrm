@@ -987,11 +987,8 @@
 
 
 
-            // 4. Modal Open & Row Click
-            $(document).on('click', '#leadslists tbody tr', function (e) {
-                // Prevent modal opening when clicking the checkbox or bulk-action elements
-                if ($(e.target).closest('input.lead-row-cb, input.lead-cb, a, button, select').length) return;
-                var id = $(this).attr('data-id');
+            // 4. Modal Open Function
+            function openLeadModal(id) {
                 if (!id) return;
 
                 // Always reset to view mode on open
@@ -1106,6 +1103,21 @@
                     var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('leadModal'));
                     modal.show();
                 });
+            }
+
+            // Handle URL param ?id=X to auto-open modal
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlLeadId = urlParams.get('id');
+            if (urlLeadId) {
+                openLeadModal(urlLeadId);
+            }
+
+            // Row Click
+            $(document).on('click', '#leadslists tbody tr', function (e) {
+                // Prevent modal opening when clicking the checkbox or bulk-action elements
+                if ($(e.target).closest('input.lead-row-cb, input.lead-cb, a, button, select').length) return;
+                var id = $(this).attr('data-id');
+                openLeadModal(id);
             });
 
 
