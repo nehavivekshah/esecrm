@@ -264,7 +264,7 @@ class NewLeadController extends Controller
 
         // Logic for Initial Page Load
         $getUsers = User::where('status', '1')->get();
-        return view('newleads', compact('getUsers'));
+        return view('leads', compact('getUsers'));
     }
 
     public function bulkAssign(Request $request)
