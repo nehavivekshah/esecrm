@@ -124,16 +124,14 @@ class AuthController extends Controller
 
             return redirect('/login')->with('success', 'Registration successful! Please check your email to verify your account before logging in.');
 
-        } catch (Illuminate\Database\QueryException $e) {
+        } catch (\Throwable $e) {
+            Log::error('Registration Error: ' . $e->getMessage());
 
-            $errorCode = $e->errorInfo[1];
-
-            if ($errorCode == 1062) {
-                return back()->with('error', 'Duplicate Entry.');
+            if (isset($e->errorInfo) && $e->errorInfo[1] == 1062) {
+                return back()->with('error', 'Duplicate Entry. This email or mobile number is already registered.');
             }
 
-            return back()->with('error', 'Oops, Somethings went worng.');
-
+            return back()->with('error', 'Registration failed: ' . $e->getMessage());
         }
 
     }
@@ -145,51 +143,56 @@ class AuthController extends Controller
 
     public function loginPost(Request $request)
     {
-        $credentials = [
-            'email' => $request->login_email,
-            'password' => $request->login_password,
-        ];
+        try {
+            $credentials = [
+                'email' => $request->login_email,
+                'password' => $request->login_password,
+            ];
 
-        if (Auth::attempt($credentials)) {
+            if (Auth::attempt($credentials)) {
 
-            // Get the authenticated user
-            $user = Auth::user();
+                // Get the authenticated user
+                $user = Auth::user();
 
-            // Check if the user account is active
-            if ($user->status == 0) {
-                Auth::logout();
-                return back()->with('error', 'Your email address is not verified. Please check your inbox for the verification link.');
+                // Check if the user account is active
+                if ($user->status == 0) {
+                    Auth::logout();
+                    return back()->with('error', 'Your email address is not verified. Please check your inbox for the verification link.');
+                }
+
+                if ($user->status != 1) {
+                    Auth::logout();
+                    return back()->with('error', 'Your account has been deactivated. Please contact the support team for assistance.');
+                }
+
+                // Retrieve related company and role information
+                $company = Companies::find($user->cid);
+                $role = Roles::find($user->role);
+
+                // Store information in session
+                session([
+                    'companies' => $company,
+                    'roles' => $role,
+                ]);
+
+                // Start PHP session if not already started and store credentials
+                if (session_status() == PHP_SESSION_NONE) {
+                    session_start();
+                }
+
+                $_SESSION['loginEmail'] = $request->login_email ?? '';
+
+                $this->logLogin();
+
+                return redirect('/home')->with('success', 'Successfully logged in.');
             }
 
-            if ($user->status != 1) {
-                Auth::logout();
-                return back()->with('error', 'Your account has been deactivated. Please contact the support team for assistance.');
-            }
+            return back()->with('error', 'Invalid login credentials.');
 
-            // Retrieve related company and role information
-            $company = Companies::find($user->cid);
-            $role = Roles::find($user->role);
-
-            // Store information in session
-            session([
-                'companies' => $company,
-                'roles' => $role,
-            ]);
-
-            // Start PHP session if not already started and store credentials (not recommended for passwords)
-            if (session_status() == PHP_SESSION_NONE) {
-                session_start();
-            }
-
-            $_SESSION['loginEmail'] = $request->login_email ?? '';
-            // Plaintext password storage removed for security.
-
-            $this->logLogin();
-
-            return redirect('/home')->with('success', 'Successfully logged in.');
+        } catch (\Throwable $e) {
+            Log::error('Login Error: ' . $e->getMessage());
+            return back()->with('error', 'An error occurred during login. Please try again.');
         }
-
-        return back()->with('error', 'Invalid login credentials.');
     }
 
     public function forgotPassword()
@@ -199,48 +202,51 @@ class AuthController extends Controller
 
     public function forgotPasswordPost(Request $request)
     {
+        try {
+            $to = $request->forgot_email;
 
-        $to = $request->forgot_email;
+            $getUser = User::where('email', '=', $to)->first();
 
-        $getUser = User::where('email', '=', $to)->first();
+            if (!$getUser) {
+                return back()->with('error', 'No user found with this email address.');
+            }
 
-        if (!$getUser) {
-            return back()->with('error', 'No user found with this email address.');
+            $getSociety = Companies::where('id', '=', $getUser->cid)->first();
+
+            // Generate a secure random token and store it
+            $token = \Illuminate\Support\Str::random(64);
+            \DB::table('password_reset_tokens')->updateOrInsert(
+                ['email' => $to],
+                ['email' => $to, 'token' => Hash::make($token), 'created_at' => now()]
+            );
+
+            $resetUrl = url('/new-password?token=' . $token . '&email=' . urlencode($to));
+
+            $subject = 'Reset Your Password for Your CRM Account';
+
+            $message = "Dear " . $getUser->name . ",<br><br>
+            We received a request to reset your password for your CRM account. If you did not make this request, please ignore this email. Otherwise, follow the instructions below to reset your password.<br><br>
+            <b>Reset Your Password:</b><br>
+            <ul>
+                <li>Click on the following link or copy and paste it into your browser: <a href='" . $resetUrl . "'>Password Reset Link</a></li>
+                <li>Enter your new password in the provided field.</li>
+                <li>Confirm your new password by re-entering it.</li>
+                <li>Click the <b>Submit</b> button to complete the process.</li>
+            </ul><br>
+            For your security, this link will expire in 24 hours.<br><br>
+            Thank you for being a valued member of the Webbrella community!<br><br>
+            <b>Best regards,</b><br>" . ($getSociety->name ?? 'ESECRM');
+
+            $viewName = 'emails.welcome';
+            $viewData = ["name" => $getUser->name, "messages" => $message];
+
+            $this->leadService->sendMail($to, $subject, $viewName, $viewData, $getUser->id, $getUser->cid);
+
+            return back()->with('success', 'Reset password link has been sent to your registered email address!');
+        } catch (\Throwable $e) {
+            Log::error('Forgot Password Error: ' . $e->getMessage());
+            return back()->with('error', 'Failed to send reset link. Please check your SMTP settings.');
         }
-
-        $getSociety = Companies::where('id', '=', $getUser->cid)->first();
-
-        // Generate a secure random token and store it
-        $token = \Illuminate\Support\Str::random(64);
-        \DB::table('password_reset_tokens')->updateOrInsert(
-            ['email' => $to],
-            ['email' => $to, 'token' => Hash::make($token), 'created_at' => now()]
-        );
-
-        $resetUrl = url('/new-password?token=' . $token . '&email=' . urlencode($to));
-
-        $subject = 'Reset Your Password for Your CRM Account';
-
-        $message = "Dear " . $getUser->name . ",<br><br>
-        We received a request to reset your password for your CRM account. If you did not make this request, please ignore this email. Otherwise, follow the instructions below to reset your password.<br><br>
-        <b>Reset Your Password:</b><br>
-        <ul>
-            <li>Click on the following link or copy and paste it into your browser: <a href='" . $resetUrl . "'>Password Reset Link</a></li>
-            <li>Enter your new password in the provided field.</li>
-            <li>Confirm your new password by re-entering it.</li>
-            <li>Click the <b>Submit</b> button to complete the process.</li>
-        </ul><br>
-        For your security, this link will expire in 24 hours.<br><br>
-        Thank you for being a valued member of the Webbrella community!<br><br>
-        <b>Best regards,</b><br>" . ($getSociety->name ?? 'ESECRM');
-
-        $viewName = 'emails.welcome';
-        $viewData = ["name" => $getUser->name, "messages" => $message];
-
-        $this->leadService->sendMail($to, $subject, $viewName, $viewData, $getUser->id, $getUser->cid);
-
-        return back()->with('success', 'Reset password link has been sent to your registered email address!');
-
     }
 
     public function newPassword(Request $request)
@@ -266,21 +272,25 @@ class AuthController extends Controller
 
     public function newPasswordPost(Request $request)
     {
-        $request->validate([
-            'new_password' => 'required|min:8',
-            'uid'          => 'required|exists:users,id',
-        ]);
+        try {
+            $request->validate([
+                'new_password' => 'required|min:8',
+                'uid'          => 'required|exists:users,id',
+            ]);
 
-        $id = $request->uid ?? '';
-        $user = User::findOrFail($id);
-        $user->password = Hash::make($request->new_password);
-        $user->update();
+            $id = $request->uid ?? '';
+            $user = User::findOrFail($id);
+            $user->password = Hash::make($request->new_password);
+            $user->update();
 
-        // Invalidate the token
-        \DB::table('password_reset_tokens')->where('email', $user->email)->delete();
+            // Invalidate the token
+            \DB::table('password_reset_tokens')->where('email', $user->email)->delete();
 
-        return redirect('login')->with('success', 'Your password has been successfully updated! You can now log in using your new password.');
-
+            return redirect('login')->with('success', 'Your password has been successfully updated! You can now log in using your new password.');
+        } catch (\Throwable $e) {
+            Log::error('New Password Error: ' . $e->getMessage());
+            return back()->with('error', 'Failed to update password. Please try again.');
+        }
     }
 
     public function logout(Request $request)
@@ -330,30 +340,35 @@ class AuthController extends Controller
 
     public function verifyEmail(Request $request)
     {
-        $token = $request->token;
-        $email = $request->email;
+        try {
+            $token = $request->token;
+            $email = $request->email;
 
-        $verifyToken = EmailVerificationToken::where('token', $token)->first();
+            $verifyToken = EmailVerificationToken::where('token', $token)->first();
 
-        if (!$verifyToken) {
-            return redirect('/login')->with('error', 'Invalid or expired verification link.');
+            if (!$verifyToken) {
+                return redirect('/login')->with('error', 'Invalid or expired verification link.');
+            }
+
+            $user = User::where('id', $verifyToken->user_id)->where('email', $email)->first();
+
+            if (!$user) {
+                return redirect('/login')->with('error', 'User not found.');
+            }
+
+            // Activate User
+            $user->status = 1;
+            $user->email_verified_at = now();
+            $user->update();
+
+            // Delete Token
+            $verifyToken->delete();
+
+            return redirect('/login')->with('success', 'Email verified successfully! You can now log in.');
+        } catch (\Throwable $e) {
+            Log::error('Verify Email Error: ' . $e->getMessage());
+            return redirect('/login')->with('error', 'Verification failed: ' . $e->getMessage());
         }
-
-        $user = User::where('id', $verifyToken->user_id)->where('email', $email)->first();
-
-        if (!$user) {
-            return redirect('/login')->with('error', 'User not found.');
-        }
-
-        // Activate User
-        $user->status = 1;
-        $user->email_verified_at = now();
-        $user->update();
-
-        // Delete Token
-        $verifyToken->delete();
-
-        return redirect('/login')->with('success', 'Email verified successfully! You can now log in.');
     }
 
     private function sendCurlRequest($url, $data)

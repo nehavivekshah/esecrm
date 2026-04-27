@@ -27,4 +27,23 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+    /**
+     * Render an exception into an HTTP response.
+     */
+    public function render($request, Throwable $e)
+    {
+        // If the request is a standard web request (not AJAX/JSON)
+        if (!$request->expectsJson()) {
+            // Ignore standard validation and auth exceptions which have their own handling
+            if (!($e instanceof \Illuminate\Validation\ValidationException) && 
+                !($e instanceof \Illuminate\Auth\AuthenticationException) &&
+                !($e instanceof \Symfony\Component\HttpKernel\Exception\HttpException)) {
+                
+                return back()->with('error', 'An unexpected error occurred: ' . $e->getMessage())->withInput();
+            }
+        }
+
+        return parent::render($request, $e);
+    }
 }
