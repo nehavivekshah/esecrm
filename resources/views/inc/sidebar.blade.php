@@ -135,6 +135,7 @@
 
             <li class="nav-title">SALES</li>
             <li>
+                @if(in_array(($company->plan ?? ''), $premium))
                 <span class="divider" data-bs-toggle="collapse" data-bs-target="#sales-menu">
                     <span class="divider-left"><i class="bx bx-trending-up"></i><label>Sales Pipeline</label></span>
                     <i class="bx bx-chevron-down"></i>
@@ -217,6 +218,11 @@
                         @endif
                     </ul>
                 </div>
+                @else
+                <span class="divider cursor-pointer" onclick="upgradeAlert('Sales Pipeline')">
+                    <span class="divider-left"><i class="bx bx-lock text-warning"></i><label class="text-muted" style="cursor:pointer">Sales Pipeline</label></span>
+                </span>
+                @endif
             </li>
 
             <li class="nav-title">MARKETING</li>
@@ -336,6 +342,7 @@
         @endif
 
         <li>
+            @if(in_array(($company->plan ?? ''), $premium))
             <span class="divider" data-bs-toggle="collapse" data-bs-target="#s">
                 <span class="divider-left"><i class="bx bx-cog"></i><label>Settings</label></span>
                 <i class="bx bx-chevron-down"></i>
@@ -422,6 +429,11 @@
                 </ul>
 
             </div>
+            @else
+            <span class="divider cursor-pointer" onclick="upgradeAlert('Settings')">
+                <span class="divider-left"><i class="bx bx-lock text-warning"></i><label class="text-muted" style="cursor:pointer">Settings</label></span>
+            </span>
+            @endif
         </li>
     </ul>
 </div>
