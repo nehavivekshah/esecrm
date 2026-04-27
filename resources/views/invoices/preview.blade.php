@@ -355,7 +355,11 @@
                     <tbody>
                         @php
                             $subTotal = 0;
-                            $initialTaxTotal = 0;
+                            $totalTax = 0;
+                            $cgstTotal = 0;
+                            $sgstTotal = 0;
+                            $igstTotal = 0;
+                            $vatTotal = 0;
                         @endphp
                         @foreach($invoice_items as $k => $item)
                             @php
@@ -365,10 +369,13 @@
                                 $sgst = $item->sgst_percent;
                                 $igst = $item->igst_percent;
                                 $vat = $item->vat_percent;
-                                
                                 $lineTotal = $quantity * $price;
+
                                 $subTotal += $lineTotal;
-                                $initialTaxTotal += $lineTotal * (($cgst + $sgst + $igst + $vat) / 100);
+                                $cgstTotal += ($lineTotal * $cgst / 100);
+                                $sgstTotal += ($lineTotal * $sgst / 100);
+                                $igstTotal += ($lineTotal * $igst / 100);
+                                $vatTotal += ($lineTotal * $vat / 100);
                             @endphp
                             <tr>
                                 <td class="text-center">{{ $k + 1 }}</td>
@@ -400,54 +407,14 @@
                     </tr>
 
                     @php
-                        $discountAppType = $invoice->discount_type ?? 'none';
                         $discountType = $invoice->discount_mode ?? 'flat';
                         $discountVal = floatval($invoice->discount ?? 0);
-
-                        // Calculate correct discount amount
-                        $discountBase = ($discountAppType === 'before-tax') ? $subTotal : ($subTotal + $initialTaxTotal);
-                        $discount = ($discountType === 'percentage') ? ($discountBase * ($discountVal / 100)) : $discountVal;
-                        $discount = min($discount, $discountBase);
-
-                        // Calculate Taxes correctly (distributing before-tax discount if needed)
-                        $cgstTotal = 0;
-                        $sgstTotal = 0;
-                        $igstTotal = 0;
-                        $vatTotal = 0;
-                        $totalTax = 0;
-                        
-                        foreach($invoice_items as $item) {
-                            $lineTotal = $item->quantity * $item->price;
-                            $taxableAmount = $lineTotal;
-                            
-                            if ($discountAppType === 'before-tax' && $subTotal > 0) {
-                                $rowRatio = $lineTotal / $subTotal;
-                                $rowDiscount = $discount * $rowRatio;
-                                $taxableAmount = $lineTotal - $rowDiscount;
-                            }
-                            
-                            $cgstAmt = $taxableAmount * ($item->cgst_percent / 100);
-                            $sgstAmt = $taxableAmount * ($item->sgst_percent / 100);
-                            $igstAmt = $taxableAmount * ($item->igst_percent / 100);
-                            $vatAmt = $taxableAmount * ($item->vat_percent / 100);
-                            
-                            $cgstTotal += $cgstAmt;
-                            $sgstTotal += $sgstAmt;
-                            $igstTotal += $igstAmt;
-                            $vatTotal += $vatAmt;
-                            $totalTax += ($cgstAmt + $sgstAmt + $igstAmt + $vatAmt);
-                        }
+                        $discount = ($discountType === 'percentage')
+                            ? ($subTotal + $totalTax) * ($discountVal / 100)
+                            : $discountVal;
 
                         $adjustment = floatval($invoice->adjustment ?? 0);
-                        
-                        // Grand Total
-                        if ($discountAppType === 'before-tax') {
-                            $grandTotal = max(0, ($subTotal - $discount) + $totalTax - $adjustment);
-                        } elseif ($discountAppType === 'after-tax') {
-                            $grandTotal = max(0, $subTotal + $totalTax - $discount - $adjustment);
-                        } else {
-                            $grandTotal = max(0, $subTotal + $totalTax - $adjustment);
-                        }
+                        $grandTotal = $subTotal + $cgstTotal + $sgstTotal + $igstTotal + $vatTotal - $discount - $adjustment;
                     @endphp
 
                     @if($discount > 0 && $invoice->discount_type == 'before-tax')

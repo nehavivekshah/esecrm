@@ -553,10 +553,10 @@
                                                             <option value="{{ $index . ':' . $calTax }}"
                                                                 @php
                                                                     $isSel = false;
-                                                                    if($index == 0 && !empty($item->cgst_percent)) $isSel = true;
-                                                                    elseif($index == 1 && !empty($item->sgst_percent)) $isSel = true;
-                                                                    elseif($index == 2 && !empty($item->igst_percent)) $isSel = true;
-                                                                    elseif($index == 3 && !empty($item->vat_percent)) $isSel = true;
+                                                                    if($index == 0 && $item->cgst_percent > 0) $isSel = true;
+                                                                    elseif($index == 1 && $item->sgst_percent > 0) $isSel = true;
+                                                                    elseif($index == 2 && $item->igst_percent > 0) $isSel = true;
+                                                                    elseif($index == 3 && $item->vat_percent > 0) $isSel = true;
                                                                 @endphp
                                                                 @if($isSel) selected @endif>
                                                                 {{ ['CGST','SGST','IGST','VAT'][$index] ?? 'Tax' }} {{ $tax }}%
@@ -951,7 +951,6 @@
                 // Final Taxes & Subtotal
                 let finalSubTotal = initialSubTotal;
                 totalTax = 0;
-                taxBreakdown = {}; // Reset for correct calculation
 
                 if (discountAppType === 'before-tax') {
                     finalSubTotal = initialSubTotal - calculatedDiscountAmount;
@@ -965,27 +964,12 @@
                         if (selectedTares) {
                             selectedTares.forEach(val => {
                                 const rate = parseFloat(val.split(':')[1]);
-                                const amt = rowFinalSub * rate;
-                                totalTax += amt;
-                                const label = $(this).find(`.item-tax option[value="${val}"]`).text().trim();
-                                taxBreakdown[label] = (taxBreakdown[label] || 0) + amt;
+                                totalTax += rowFinalSub * rate;
                             });
                         }
                     });
                 } else {
-                    $rows.each(function() {
-                        const rowSub = parseFloat($(this).data('initialSubtotal') || 0);
-                        const selectedTares = $(this).find('.item-tax').val();
-                        if (selectedTares) {
-                            selectedTares.forEach(val => {
-                                const rate = parseFloat(val.split(':')[1]);
-                                const amt = rowSub * rate;
-                                totalTax += amt;
-                                const label = $(this).find(`.item-tax option[value="${val}"]`).text().trim();
-                                taxBreakdown[label] = (taxBreakdown[label] || 0) + amt;
-                            });
-                        }
-                    });
+                    $rows.each(function() { totalTax += parseFloat($(this).data('initialTax') || 0); });
                 }
 
                 const grandTotal = Math.max(0, (discountAppType === 'before-tax') ? (finalSubTotal + totalTax - adjustment) : 
