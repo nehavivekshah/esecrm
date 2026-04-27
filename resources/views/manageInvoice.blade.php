@@ -253,7 +253,7 @@
                                         <div class="cf-input-box">
                                             <span class="cf-icon"><i class="bx bx-hash"></i></span>
                                             <input type="text" name="invoice_number" id="invoice_number"
-                                                   value="{{ old('invoice_number', $invoice->invoice_number ?? '') }}" required placeholder="e.g. INV-001">
+                                                   value="{{ old('invoice_number', $invoice->invoice_number ?? $generatedInvoiceNumber) }}" required placeholder="e.g. INV-001">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -301,6 +301,15 @@
                                             <input type="text" name="reference" id="invoiceReference"
                                                    placeholder="Order or Reference Number"
                                                    value="{{ old('reference', $invoice->reference ?? '') }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="ml-label">Sales Agent</label>
+                                        <div class="cf-input-box">
+                                            <span class="cf-icon"><i class="bx bx-user-voice"></i></span>
+                                            <input type="text" name="sales_agent" id="sales_agent"
+                                                   placeholder="Name of agent"
+                                                   value="{{ old('sales_agent', $invoice->sales_agent ?? Auth::user()->name) }}">
                                         </div>
                                     </div>
                                 </div>

@@ -129,7 +129,13 @@
                             <tr class="inv-row" data-status="{{ $st }}">
                                 <td class="m-none text-muted" style="font-size:0.78rem;">{{ $k + 1 }}</td>
                                 <td>
-                                    <span class="inv-number">INV-{{ $invoice->invoice_number }}</span>
+                                    <span class="inv-number">
+                                        @if(str_starts_with($invoice->invoice_number, 'INV-'))
+                                            {{ $invoice->invoice_number }}
+                                        @else
+                                            INV-{{ $invoice->invoice_number }}
+                                        @endif
+                                    </span>
                                 </td>
                                 <td>
                                     <span class="pr-client-cell">
