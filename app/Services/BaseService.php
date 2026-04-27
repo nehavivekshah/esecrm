@@ -63,20 +63,26 @@ class BaseService
      */
     public function sendMail($to, $subject, $viewName, $viewData, $userId = null, $companyId = null)
     {
-        $settings = $this->getSmtpSettings($userId, $companyId);
-        $this->applySmtpSettings($settings);
+        try {
+            $settings = $this->getSmtpSettings($userId, $companyId);
+            $this->applySmtpSettings($settings);
 
-        $fromAddress = $settings?->from_address;
-        $fromName = $settings?->from_name;
+            $fromAddress = $settings?->from_address;
+            $fromName = $settings?->from_name;
 
-        $mailable = new CustomMailable(
-            $subject,
-            $viewName,
-            $viewData,
-            $fromAddress,
-            $fromName
-        );
+            $mailable = new CustomMailable(
+                $subject,
+                $viewName,
+                $viewData,
+                $fromAddress,
+                $fromName
+            );
 
-        return Mail::to($to)->send($mailable);
+            Mail::to($to)->send($mailable);
+            return true;
+        } catch (\Exception $e) {
+            \Log::error('SMTP Mail Error: ' . $e->getMessage());
+            return false;
+        }
     }
 }
