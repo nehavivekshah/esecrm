@@ -21,6 +21,8 @@ use App\Mail\CustomMailable;
 use App\Models\Companies;
 use App\Models\Roles;
 use App\Models\SmtpSettings;
+use App\Models\User;
+use App\Models\Eselicenses;
 use App\Models\EmailVerificationToken;
 use Illuminate\Support\Str;
 use App\Traits\ActivityLogger;
