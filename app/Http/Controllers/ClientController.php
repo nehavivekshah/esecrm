@@ -1000,7 +1000,7 @@ class ClientController extends Controller
             ->pluck('invoice');
 
         $query = Invoices::leftJoin('clients', 'invoices.client_id', '=', 'clients.id')
-            ->select('clients.name as client_name', 'clients.company as client_company', 'invoices.*');
+            ->select('clients.name as client_name', 'clients.company as client_company', 'clients.email as client_email', 'invoices.*');
 
         // Apply invoice type filter if provided
         if ($type) {
@@ -1101,7 +1101,7 @@ class ClientController extends Controller
             'shipping_address' => 'nullable|string',
 
             'discount_mode' => 'nullable|in:flat,percentage',
-            'discount_value' => 'nullable|numeric',
+            'discount' => 'nullable|numeric',
             'adjustment' => 'nullable|numeric',
 
             'admin_note' => 'nullable|string',
@@ -1144,7 +1144,7 @@ class ClientController extends Controller
         $invoice->shipping_address = $validatedData['shipping_address'] ?? null;
 
         $invoice->discount_mode = $validatedData['discount_mode'] ?? 'flat';
-        $invoice->discount = $validatedData['discount_value'] ?? 0;
+        $invoice->discount = $validatedData['discount'] ?? 0;
         $invoice->adjustment = $validatedData['adjustment'] ?? 0;
         $invoice->total_amount = $request->gtAmount ?? 0;
 

@@ -138,12 +138,12 @@
 </head>
 <body>
     @php
-        $symbol = match($proposal->currency_symbol ?? 'INR') {
+        $symbol = match($invoice->currency ?? 'INR') {
             'INR' => '₹',
             'USD' => '$',
             'EUR' => '€',
             'GBP' => '£',
-            default => $proposal->currency_symbol ?? 'INR'
+            default => $invoice->currency ?? 'INR'
         };
         
         function amountToWords($amount, string $locale = 'en_IN'): string
