@@ -523,7 +523,7 @@
                                                         style="width:28px;height:28px;" title="Remove item">
                                                     <i class="bx bx-trash"></i>
                                                 </button>
-                                            </div   >
+                                            </div>
                                             <div class="mp-item-row-body">
                                                 <div class="mp-item-field" style="grid-column: span 2;">
                                                     <label class="mp-item-label">Item Name</label>
@@ -1008,6 +1008,13 @@
         $(document).ready(function() {
         $(document).on('click', '#addItemButton, #addItemButtonSecondary', function() {
                 const index = $('.mp-item-row').length;
+                // Ensure unique index if items were deleted
+                let maxIndex = -1;
+                $('.mp-item-row').each(function() {
+                    const idx = parseInt($(this).attr('data-item-row'));
+                    if (idx > maxIndex) maxIndex = idx;
+                });
+                const newIndex = maxIndex + 1;
                 let taxOptions = '';
                 if (Array.isArray(availableTaxes)) {
                     availableTaxes.forEach((val, i) => {
@@ -1017,7 +1024,7 @@
                 }
 
                 const html = `
-                    <div class="mp-item-row shadow-sm animate__animated animate__fadeInUp" data-item-row="${index}">
+                    <div class="mp-item-row shadow-sm animate__animated animate__fadeInUp" data-item-row="${newIndex}">
                         <div class="mp-item-row-header">
                             <span class="mp-item-num">${index + 1}</span>
                             <span class="mp-item-row-title">Item ${index + 1}</span>
@@ -1026,27 +1033,27 @@
                         <div class="mp-item-row-body">
                             <div class="mp-item-field" style="grid-column: span 2;">
                                 <label class="mp-item-label">Item Name</label>
-                                <textarea class="form-control form-control-sm item-name mp-autoresize" name="invoice_items[${index}][short_description]" rows="1" required></textarea>
+                                <textarea class="form-control form-control-sm item-name mp-autoresize" name="invoice_items[${newIndex}][short_description]" rows="1" required></textarea>
                             </div>
                             <div class="mp-item-field" style="grid-column: span 2;">
                                 <label class="mp-item-label">Description</label>
-                                <textarea class="form-control form-control-sm item-longdesc mp-autoresize" name="invoice_items[${index}][long_description]" rows="1"></textarea>
+                                <textarea class="form-control form-control-sm item-longdesc mp-autoresize" name="invoice_items[${newIndex}][long_description]" rows="1"></textarea>
                             </div>
                             <div class="mp-item-field">
                                 <label class="mp-item-label">SAC/HSN</label>
-                                <input type="text" class="form-control form-control-sm item-sac" name="invoice_items[${index}][sac_code]">
+                                <input type="text" class="form-control form-control-sm item-sac" name="invoice_items[${newIndex}][sac_code]">
                             </div>
                             <div class="mp-item-field">
                                 <label class="mp-item-label">Qty</label>
-                                <input type="number" class="form-control form-control-sm item-qty text-center" name="invoice_items[${index}][quantity]" value="1" min="1">
+                                <input type="number" class="form-control form-control-sm item-qty text-center" name="invoice_items[${newIndex}][quantity]" value="1" min="1">
                             </div>
                             <div class="mp-item-field">
                                 <label class="mp-item-label">Rate (₹)</label>
-                                <input type="number" class="form-control form-control-sm item-price text-end" name="invoice_items[${index}][price]" placeholder="0.00" required>
+                                <input type="number" class="form-control form-control-sm item-price text-end" name="invoice_items[${newIndex}][price]" placeholder="0.00" required>
                             </div>
                             <div class="mp-item-field">
                                 <label class="mp-item-label">Tax</label>
-                                <select class="selectpicker form-control form-control-sm item-tax" multiple data-container="body" name="invoice_items[${index}][tax_rate][]" title="No Tax">
+                                <select class="selectpicker form-control form-control-sm item-tax" multiple data-container="body" name="invoice_items[${newIndex}][tax_rate][]" title="No Tax">
                                     ${taxOptions}
                                 </select>
                             </div>
@@ -1213,8 +1220,8 @@
             // ─── Initial Setup ───────────────────────────────────────────────────
             setTimeout(() => {
                 $('.selectpicker').selectpicker('refresh');
-                $('#client_id').next('.bootstrap-select').css({ 'flex': '1', 'min-width': '0', 'border': 'none' });
                 recalculateTotals();
+                $('#client_id').next('.bootstrap-select').css({ 'flex': '1', 'min-width': '0', 'border': 'none' });
 
                 const existingClientId  = $('#client_id').val();
                 const existingProjectId = '{{ $invoice->project_id ?? "" }}';
@@ -1222,7 +1229,6 @@
                 const preloadProjectId  = '{{ $preloadProjId }}';
 
                 // ── CASE 1: Editing an existing invoice ──────────────────────
-                // Re-load all projects for that client and re-select the saved project
                 if (existingClientId && existingProjectId) {
                     $.getJSON('/get-projects/' + existingClientId, function(data) {
                         let opts = '<option value="">— No Project (General Invoice) —</option>';
@@ -1242,9 +1248,7 @@
                     });
 
                 // ── CASE 2: New invoice pre-loaded from project_id URL param ──
-                // Auto-fill address, GST, reference; load full project list and select the right one
                 } else if (existingClientId && preloadProjectId) {
-                    // 1. Fill address from the selected client option
                     const opt    = $('#client_id').find('option:selected');
                     const rawLoc = opt.attr('data-loc-raw') || '';
                     let addr = '';
@@ -1261,18 +1265,15 @@
                         $('#shipping_address').val(addr);
                     }
 
-                    // 2. Fill GST
                     const gst = opt.attr('data-gstno') || '';
                     if (gst) $('#client_gst').val(gst);
 
-                    // 3. Fill reference with project name (pre-rendered by server)
                     @if(!empty($preloadProject))
                     if (!$('#invoiceReference').val()) {
                         $('#invoiceReference').val('{{ addslashes($preloadProject->project_name ?? '') }}');
                     }
                     @endif
 
-                    // 4. Load all projects for this client, then select the preloaded one
                     $.getJSON('/get-projects/' + existingClientId, function(data) {
                         let opts = '<option value="">— No Project (General Invoice) —</option>';
                         if (data.projects && data.projects.length > 0) {
@@ -1290,7 +1291,7 @@
                         }
                     });
                 }
-            }, 350);
+            }, 500);
         });
 
         } // end invoiceScriptInit
