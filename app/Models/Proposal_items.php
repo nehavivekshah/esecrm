@@ -9,5 +9,5 @@ use App\Traits\BelongsToCompany;
 
 class Proposal_items extends Model
 {
-    use HasFactory;
+    use HasFactory, BelongsToCompany;
 }

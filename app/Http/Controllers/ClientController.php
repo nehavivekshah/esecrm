@@ -1029,15 +1029,9 @@ class ClientController extends Controller
         if ($id) {
             $invoice = Invoices::where('id', $id)->first();
             $invoiceItems = Invoice_items::where('invoice_id', $id)->get();
-            $generatedInvoiceNumber = $invoice->invoice_number;
         } else {
             $invoice = null;
             $invoiceItems = collect();
-            
-            // Auto-generate Invoice Number for NEW invoices
-            $year = date('Y');
-            $count = Invoices::whereYear('date', $year)->count() + 1;
-            $generatedInvoiceNumber = 'INV-' . $year . '-' . str_pad($count, 3, '0', STR_PAD_LEFT);
         }
 
         // If project_id supplied (e.g. from project/view "Create Invoice" button),
@@ -1080,7 +1074,6 @@ class ClientController extends Controller
             'project_id' => $project_id,
             'preloadProject' => $preloadProject,
             'preloadClient' => $preloadClient,
-            'generatedInvoiceNumber' => $generatedInvoiceNumber,
             'previous_url' => $request->input('previous_url', url()->previous()),
         ]);
     }
@@ -1108,7 +1101,7 @@ class ClientController extends Controller
             'shipping_address' => 'nullable|string',
 
             'discount_mode' => 'nullable|in:flat,percentage',
-            'discount' => 'nullable|numeric',
+            'discount_value' => 'nullable|numeric',
             'adjustment' => 'nullable|numeric',
 
             'admin_note' => 'nullable|string',
@@ -1151,7 +1144,7 @@ class ClientController extends Controller
         $invoice->shipping_address = $validatedData['shipping_address'] ?? null;
 
         $invoice->discount_mode = $validatedData['discount_mode'] ?? 'flat';
-        $invoice->discount = $validatedData['discount'] ?? 0;
+        $invoice->discount = $validatedData['discount_value'] ?? 0;
         $invoice->adjustment = $validatedData['adjustment'] ?? 0;
         $invoice->total_amount = $request->gtAmount ?? 0;
 
@@ -1248,42 +1241,10 @@ class ClientController extends Controller
             }
         }
 
-        $this->logActivity('Invoice Saved', 'invoices', $invoice->id, $invoice->invoice_number ?? "#{$invoice->id}", "Invoice #{$invoice->id} saved", (string) ($invoice->total_amount ?? ''));
-
-        // 5) Handle "Save & Send" logic
-        if ($request->input('_action') == 'send') {
-            $client = Clients::find($invoice->client_id);
-            if ($client && $client->email) {
-                $to = $client->email;
-                $subject = 'Invoice #' . $invoice->invoice_number . ' from ' . (session('companies')->name ?? 'eseCRM');
-                
-                $message = "Please find the attached invoice for your reference.<br><br>
-                            <b>Invoice Number:</b> #" . $invoice->invoice_number . "<br>
-                            <b>Date:</b> " . Carbon::parse($invoice->date)->format('d M, Y') . "<br>
-                            <b>Total Amount:</b> " . ($invoice->currency ?? 'INR') . " " . number_format($invoice->total_amount, 2) . "<br><br>
-                            You can view the full invoice online at the following link: <a href='" . url('/invoices/preview/' . $invoice->id) . "'>View Invoice</a><br><br>
-                            Thank you for your business!<br><br>";
-
-                $viewData = [
-                    "name" => $client->name,
-                    "messages" => $message,
-                    "company" => (session('companies')->name ?? 'eseCRM'),
-                    "signature" => nl2br(Auth::user()->esign ?? "Regards<br>Team eseCRM")
-                ];
-
-                try {
-                    // Use the sendMail method from BaseService (available via ClientService)
-                    $this->clientService->sendMail($to, $subject, 'emails.welcome', $viewData);
-                    $this->logActivity('Invoice Sent', 'invoices', $invoice->id, $invoice->invoice_number, "Sent invoice: {$invoice->invoice_number}");
-                } catch (\Exception $e) {
-                    \Log::error("Failed to send invoice mail: " . $e->getMessage());
-                    // We still saved it, so we can continue but with a warning in session if we want.
-                }
-            }
-        }
+        $this->logActivity('Invoice Saved', 'invoices', $invoice->id, $invoice->invoice_no ?? "#{$invoice->id}", "Invoice #{$invoice->id} saved", (string) ($invoice->grand_total ?? ''));
 
         // 6) Redirect or return a response
-        $redirectUrl = $request->input('previous_url') ?: route('manageInvoice', ['id' => $invoice->id]);
+        $redirectUrl = $request->input('previous_url') ?: route('manageInvoice', ('id=' . $invoice->id ?? ''));
         return redirect($redirectUrl)->with('success', 'Invoice saved successfully!');
     }
 
