@@ -951,6 +951,7 @@
                 // Final Taxes & Subtotal
                 let finalSubTotal = initialSubTotal;
                 totalTax = 0;
+                taxBreakdown = {}; // Reset for correct calculation
 
                 if (discountAppType === 'before-tax') {
                     finalSubTotal = initialSubTotal - calculatedDiscountAmount;
@@ -964,12 +965,27 @@
                         if (selectedTares) {
                             selectedTares.forEach(val => {
                                 const rate = parseFloat(val.split(':')[1]);
-                                totalTax += rowFinalSub * rate;
+                                const amt = rowFinalSub * rate;
+                                totalTax += amt;
+                                const label = $(this).find(`.item-tax option[value="${val}"]`).text().trim();
+                                taxBreakdown[label] = (taxBreakdown[label] || 0) + amt;
                             });
                         }
                     });
                 } else {
-                    $rows.each(function() { totalTax += parseFloat($(this).data('initialTax') || 0); });
+                    $rows.each(function() {
+                        const rowSub = parseFloat($(this).data('initialSubtotal') || 0);
+                        const selectedTares = $(this).find('.item-tax').val();
+                        if (selectedTares) {
+                            selectedTares.forEach(val => {
+                                const rate = parseFloat(val.split(':')[1]);
+                                const amt = rowSub * rate;
+                                totalTax += amt;
+                                const label = $(this).find(`.item-tax option[value="${val}"]`).text().trim();
+                                taxBreakdown[label] = (taxBreakdown[label] || 0) + amt;
+                            });
+                        }
+                    });
                 }
 
                 const grandTotal = Math.max(0, (discountAppType === 'before-tax') ? (finalSubTotal + totalTax - adjustment) : 
