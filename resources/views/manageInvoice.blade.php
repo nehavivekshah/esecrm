@@ -919,14 +919,14 @@
                     const lineSubTotal = qty * price;
                     
                     let lineTaxAmount = 0;
-                    const $taxSelect = $row.find('.item-tax');
+                    const $taxSelect = $row.find('select.item-tax');
                     const selectedTaxValues = $taxSelect.val();
                     if (selectedTaxValues) {
                         selectedTaxValues.forEach(val => {
                             const rate = parseFloat(val.split(':')[1]);
                             const amt = lineSubTotal * rate;
                             lineTaxAmount += amt;
-                            const label = $row.find(`.item-tax option[value="${val}"]`).text().trim();
+                            const label = $row.find(`select.item-tax option[value="${val}"]`).text().trim();
                             taxBreakdown[label] = (taxBreakdown[label] || 0) + amt;
                         });
                     }
@@ -960,7 +960,7 @@
                         const rowDiscount = calculatedDiscountAmount * rowRatio;
                         const rowFinalSub = rowSub - rowDiscount;
                         
-                        const selectedTares = $(this).find('.item-tax').val();
+                        const selectedTares = $(this).find('select.item-tax').val();
                         if (selectedTares) {
                             selectedTares.forEach(val => {
                                 const rate = parseFloat(val.split(':')[1]);
@@ -1199,7 +1199,7 @@
 
             // Event Listeners for calculations
             $(document).on('input', '.item-qty, .item-price, #discountValue, #adjustment', recalculateTotals);
-            $(document).on('change', '.item-tax, #discountApplicationType, #discountValueType', recalculateTotals);
+            $(document).on('change', 'select.item-tax, #discountApplicationType, #discountValueType', recalculateTotals);
 
             // ─── Initial Setup ───────────────────────────────────────────────────
             setTimeout(() => {
