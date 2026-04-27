@@ -13,7 +13,7 @@ $replacements = [
         'feature' => 'proposals',
         'label' => 'Proposals',
         'icon' => 'bx bx-briefcase',
-        'url' => '/proposals',
+        'url' => '/ ',
         'active' => "Request::segment(1) == 'proposals' || Request::segment(1) == 'manage-proposal'"
     ],
     [
@@ -112,12 +112,12 @@ foreach ($replacements as $rep) {
     //         <a href="/projects" ...> ... </a>
     //     </li>
     // @endif
-    
+
     // Some features like Contracts have Auth::user()->role == 'master' in the if condition.
     // So let's write a generic block replacement.
-    
+
     $extra = isset($rep['extra']) ? "\n                            " . $rep['extra'] : "";
-    
+
     $newBlock = "
         @if(in_array('{$f}', \$roleArray) || in_array('All', \$roleArray))
             @if(in_array((\$company->plan ?? ''), \$premium))
@@ -140,7 +140,7 @@ foreach ($replacements as $rep) {
     // Regex to match the old block
     // We look for @if(in_array('FEATURE', ... ) until @endif
     $pattern = '/@if\(\s*in_array\(\'' . $f . '\'(?:.*?\))(?:\s*\|\|\s*.*?\))*\s*\)[\s\S]*?@endif/u';
-    
+
     // For SMTP edit, there are two inside one @if block!
     // Wait, the original code has smtp_edit and email-templates inside ONE @if block:
     /*
