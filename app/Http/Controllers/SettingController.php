@@ -115,6 +115,26 @@ class SettingController extends Controller
     
         return redirect()->back()->with('success', 'SMTP settings saved successfully!');
     }
+
+    public function smtpTest(Request $request)
+    {
+        $request->validate([
+            'to' => 'required|email'
+        ]);
+
+        try {
+            $baseService = new \App\Services\BaseService();
+            $success = $baseService->sendMail($request->to, 'SMTP Configuration Test', 'emails.test', ['body' => 'Your SMTP configuration is working correctly!']);
+
+            if ($success) {
+                return response()->json(['success' => true]);
+            } else {
+                return response()->json(['success' => false, 'message' => 'Check your SMTP credentials. The connection failed.']);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+        }
+    }
     public function index()
     {
         $templates = EmailTemplate::orderBy('module')->get();

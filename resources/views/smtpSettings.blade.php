@@ -509,14 +509,22 @@ document.addEventListener('DOMContentLoaded', function () {
 @if(session('success'))
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    if (typeof swal !== 'undefined') swal("Saved!", "{{ session('success') }}", "success");
+    if (typeof Swal !== 'undefined') {
+        Swal.fire("Saved!", "{!! addslashes(session('success')) !!}", "success");
+    } else if (typeof swal !== 'undefined') {
+        swal("Saved!", "{!! addslashes(session('success')) !!}", "success");
+    }
 });
 </script>
 @endif
 @if(session('error'))
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    if (typeof swal !== 'undefined') swal("Error", "{{ session('error') }}", "error");
+    if (typeof Swal !== 'undefined') {
+        Swal.fire("Error", "{!! addslashes(session('error')) !!}", "error");
+    } else if (typeof swal !== 'undefined') {
+        swal("Error", "{!! addslashes(session('error')) !!}", "error");
+    }
 });
 </script>
 @endif

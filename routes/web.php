@@ -338,6 +338,7 @@ Route::group(['middleware' => ['auth', 'checkplan']], function () {
     //SMTP Email Setup
     Route::get('/smtp-settings', [SettingController::class, 'smtpSetup'])->name('smtpSetup')->middleware('permission:smtp,edit');
     Route::post('/smtp-settings', [SettingController::class, 'smtpSetupPost'])->name('smtpSetup')->middleware('permission:smtp,edit');
+    Route::post('/smtp-test', [SettingController::class, 'smtpTest'])->name('smtpTest')->middleware('permission:smtp,edit');
 
     //Notification Reminders
     Route::get('/reminders', [LeadController::class, 'reminderScript'])->name('reminderScript');
