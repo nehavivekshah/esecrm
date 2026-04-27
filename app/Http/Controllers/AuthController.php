@@ -21,8 +21,8 @@ use App\Mail\CustomMailable;
 use App\Models\Companies;
 use App\Models\Roles;
 use App\Models\SmtpSettings;
-use App\Models\User;
-use App\Models\Eselicenses;
+use App\Models\EmailVerificationToken;
+use Illuminate\Support\Str;
 use App\Traits\ActivityLogger;
 use App\Services\LeadService;
 
@@ -92,13 +92,35 @@ class AuthController extends Controller
             $user->role = $roles->id ?? '';
             $user->save();
 
+            // --- Email Verification Logic ---
+            $token = Str::random(64);
+            EmailVerificationToken::create([
+                'user_id' => $user->id,
+                'token' => $token
+            ]);
+
+            $verifyUrl = url('/verify-email?token=' . $token . '&email=' . urlencode($user->email));
+            
+            $subject = 'Verify Your Email - eseCRM';
+            $message = "Dear " . $user->name . ",<br><br>
+            Thank you for registering! Please verify your email address to activate your account.<br><br>
+            <a href='" . $verifyUrl . "' style='padding: 10px 20px; background: #006666; color: #fff; text-decoration: none; border-radius: 5px;'>Verify Email Address</a><br><br>
+            If the button above doesn't work, copy and paste this link into your browser:<br>" . $verifyUrl . "<br><br>
+            <b>Your login details (Active after verification):</b><br>
+            <b>Username:</b> " . $user->email . "<br>
+            <b>Password:</b> " . $request->reg_password . "<br><br>
+            Best regards,<br>eseCRM Team";
+
+            $viewName = 'emails.welcome';
+            $viewData = ["name" => $user->name, "messages" => $message];
+
             try {
                 $this->leadService->sendMail($to, $subject, $viewName, $viewData, $user->id, $user->cid);
             } catch (\Exception $e) {
                 Log::error('Registration Email Failed: ' . $e->getMessage());
             }
 
-            return redirect('/login')->with('success', 'Successfully registered your business on our platform! To complete the setup, please verify your email and fill out your business profile to start reaching potential customers.');
+            return redirect('/login')->with('success', 'Registration successful! Please check your email to verify your account before logging in.');
 
         } catch (Illuminate\Database\QueryException $e) {
 
@@ -132,6 +154,11 @@ class AuthController extends Controller
             $user = Auth::user();
 
             // Check if the user account is active
+            if ($user->status == 0) {
+                Auth::logout();
+                return back()->with('error', 'Your email address is not verified. Please check your inbox for the verification link.');
+            }
+
             if ($user->status != 1) {
                 Auth::logout();
                 return back()->with('error', 'Your account has been deactivated. Please contact the support team for assistance.');
@@ -297,6 +324,34 @@ class AuthController extends Controller
 
         // Handle response
         return response()->json($response);
+    }
+
+    public function verifyEmail(Request $request)
+    {
+        $token = $request->token;
+        $email = $request->email;
+
+        $verifyToken = EmailVerificationToken::where('token', $token)->first();
+
+        if (!$verifyToken) {
+            return redirect('/login')->with('error', 'Invalid or expired verification link.');
+        }
+
+        $user = User::where('id', $verifyToken->user_id)->where('email', $email)->first();
+
+        if (!$user) {
+            return redirect('/login')->with('error', 'User not found.');
+        }
+
+        // Activate User
+        $user->status = 1;
+        $user->email_verified_at = now();
+        $user->update();
+
+        // Delete Token
+        $verifyToken->delete();
+
+        return redirect('/login')->with('success', 'Email verified successfully! You can now log in.');
     }
 
     private function sendCurlRequest($url, $data)

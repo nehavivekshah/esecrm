@@ -37,6 +37,7 @@ Route::post('/send', [HomeController::class, 'send']);
 Route::group(['middleware' => 'guest'], function () {
     Route::get('/register', [AuthController::class, 'register'])->name('register');
     Route::post('/register', [AuthController::class, 'registerPost'])->name('register');
+    Route::get('/verify-email', [AuthController::class, 'verifyEmail'])->name('verifyEmail');
     Route::get('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/login', [AuthController::class, 'loginPost'])->name('login');
     Route::get('/forgot-password', [AuthController::class, 'forgotPassword']);

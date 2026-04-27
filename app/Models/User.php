@@ -24,6 +24,8 @@ class User extends Authenticatable
         'mob',
         'email',
         'password',
+        'status',
+        'email_verified_at',
     ];
 
     /**
