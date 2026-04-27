@@ -212,8 +212,9 @@ class AjaxController extends Controller
     
             // Check if the invoice exists
             if ($invoice) {
-                // Delete related items
-                \App\Models\Invoice_items::where('invoice_id', $id)->delete();
+                // Delete related items — bypass TenantScope for items with NULL cid
+                \App\Models\Invoice_items::withoutGlobalScope(\App\Scopes\TenantScope::class)
+                    ->where('invoice_id', $id)->delete();
                 // Delete the invoice
                 $invoice->delete();
                 

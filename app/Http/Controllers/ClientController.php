@@ -1028,7 +1028,10 @@ class ClientController extends Controller
         // If there's an ID, load one invoice
         if ($id) {
             $invoice = Invoices::where('id', $id)->first();
-            $invoiceItems = Invoice_items::where('invoice_id', $id)->get();
+            // Bypass TenantScope for invoice_items — old items may have cid=NULL
+            // The parent invoice is already tenant-scoped, so invoice_id is safe
+            $invoiceItems = Invoice_items::withoutGlobalScope(\App\Scopes\TenantScope::class)
+                ->where('invoice_id', $id)->get();
         } else {
             $invoice = null;
             $invoiceItems = collect();
@@ -1156,9 +1159,10 @@ class ClientController extends Controller
         $invoice->save();
 
         if ($request->has('invoice_items')) {
-            // Remove old items if updating (optional)
+            // Remove old items if updating — bypass TenantScope to catch items with NULL cid
             if (!empty($validatedData['id'])) {
-                Invoice_items::where('invoice_id', $invoice->id)->delete();
+                Invoice_items::withoutGlobalScope(\App\Scopes\TenantScope::class)
+                    ->where('invoice_id', $invoice->id)->delete();
             }
 
             foreach ($request->input('invoice_items', []) as $itemData) {
@@ -1286,8 +1290,9 @@ class ClientController extends Controller
             ->where('invoices.id', '=', $id)
             ->first();
 
-        // Fetch the invoice items
-        $invoice_items = Invoice_items::where('invoice_id', '=', $id)->get(); // Corrected query
+        // Fetch the invoice items — bypass TenantScope for items with NULL cid
+        $invoice_items = Invoice_items::withoutGlobalScope(\App\Scopes\TenantScope::class)
+            ->where('invoice_id', '=', $id)->get();
 
         // Check if invoice exists before proceeding
         if (!$invoice) {
@@ -1307,8 +1312,9 @@ class ClientController extends Controller
             ->where('invoices.id', '=', $id)
             ->first();
 
-        // Fetch the invoice items
-        $invoice_items = Invoice_items::where('invoice_id', '=', $id)->get();
+        // Fetch the invoice items — bypass TenantScope for items with NULL cid
+        $invoice_items = Invoice_items::withoutGlobalScope(\App\Scopes\TenantScope::class)
+            ->where('invoice_id', '=', $id)->get();
 
         // Get company logo in base64
         $imagePath = public_path('assets/images/company/' . $invoice->img);
@@ -1348,8 +1354,9 @@ class ClientController extends Controller
             ->where('invoices.id', '=', $id)
             ->first();
 
-        // Fetch the invoice items
-        $invoice_items = Invoice_items::where('invoice_id', '=', $id)->get();
+        // Fetch the invoice items — bypass TenantScope for items with NULL cid
+        $invoice_items = Invoice_items::withoutGlobalScope(\App\Scopes\TenantScope::class)
+            ->where('invoice_id', '=', $id)->get();
 
         // Get company logo in base64
         $imagePath = public_path('assets/images/company/' . $invoice->img);
