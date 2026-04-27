@@ -92,6 +92,7 @@ class AuthController extends Controller
             $user->email = $request->reg_email ?? '';
             $user->password = Hash::make($request->reg_password);
             $user->role = $roles->id ?? '';
+            $user->status = 0; // Inactive until verified
             $user->save();
 
             // --- Email Verification Logic ---
@@ -102,7 +103,7 @@ class AuthController extends Controller
             ]);
 
             $verifyUrl = url('/verify-email?token=' . $token . '&email=' . urlencode($user->email));
-            
+
             $subject = 'Verify Your Email - eseCRM';
             $message = "Dear " . $user->name . ",<br><br>
             Thank you for registering! Please verify your email address to activate your account.<br><br>
@@ -251,8 +252,8 @@ class AuthController extends Controller
 
     public function newPassword(Request $request)
     {
-        $token   = $request->token ?? '';
-        $email   = $request->email ?? '';
+        $token = $request->token ?? '';
+        $email = $request->email ?? '';
 
         $record = \DB::table('password_reset_tokens')->where('email', $email)->first();
 
@@ -275,7 +276,7 @@ class AuthController extends Controller
         try {
             $request->validate([
                 'new_password' => 'required|min:8',
-                'uid'          => 'required|exists:users,id',
+                'uid' => 'required|exists:users,id',
             ]);
 
             $id = $request->uid ?? '';
