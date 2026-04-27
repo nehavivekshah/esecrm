@@ -207,6 +207,20 @@
             tooltipTriggerList.forEach(function (tooltipTriggerEl) {
                 new bootstrap.Tooltip(tooltipTriggerEl);
             });
+            
+            function upgradeAlert(featureName) {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Upgrade Required',
+                        text: 'The ' + (featureName ? featureName + ' ' : '') + 'feature is only available on our Premium or Pro plans. Please upgrade your subscription to unlock it.',
+                        confirmButtonText: 'Understood',
+                        confirmButtonColor: '#1a73e8'
+                    });
+                } else {
+                    alert('The ' + (featureName ? featureName + ' ' : '') + 'feature is only available on Premium. Please upgrade your subscription to unlock it.');
+                }
+            }
         </script>
         
         <script>
