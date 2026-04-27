@@ -52,7 +52,7 @@ Route::group(['middleware' => 'guest'], function () {
     Route::post('/enquiry-submit', [AjaxController::class, 'storeEnquiry'])->name('enquiry.submit');
 });
 
-Route::group(['middleware' => 'auth'], function () {
+Route::group(['middleware' => ['auth', 'checkplan']], function () {
     Route::get('/home', [HomeController::class, 'home']);
 
 
