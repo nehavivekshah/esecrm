@@ -1319,7 +1319,7 @@ class ClientController extends Controller
         // Get company logo in base64
         $imagePath = public_path('assets/images/company/' . $invoice->img);
         $base64 = '';
-        if (file_exists($imagePath)) {
+        if (!empty($invoice->img) && is_file($imagePath)) {
             $type = pathinfo($imagePath, PATHINFO_EXTENSION);
             $data = file_get_contents($imagePath);
             $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
@@ -1329,7 +1329,7 @@ class ClientController extends Controller
         $userSign = Auth::user()->imgsign ?? 'default.png';
         $signPath = public_path('assets/images/signs/' . $userSign);
         $signBase64 = '';
-        if (file_exists($signPath)) {
+        if (!empty($userSign) && is_file($signPath)) {
             $signData = file_get_contents($signPath);
             $signType = pathinfo($signPath, PATHINFO_EXTENSION);
             $signBase64 = 'data:image/' . $signType . ';base64,' . base64_encode($signData);
@@ -1361,7 +1361,7 @@ class ClientController extends Controller
         // Get company logo in base64
         $imagePath = public_path('assets/images/company/' . $invoice->img);
         $base64 = '';
-        if (file_exists($imagePath)) {
+        if (!empty($invoice->img) && is_file($imagePath)) {
             $type = pathinfo($imagePath, PATHINFO_EXTENSION);
             $data = file_get_contents($imagePath);
             $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
@@ -1371,7 +1371,7 @@ class ClientController extends Controller
         $userSign = Auth::user()->imgsign ?? 'default.png';
         $signPath = public_path('assets/images/signs/' . $userSign);
         $signBase64 = '';
-        if (file_exists($signPath)) {
+        if (!empty($userSign) && is_file($signPath)) {
             $signData = file_get_contents($signPath);
             $signType = pathinfo($signPath, PATHINFO_EXTENSION);
             $signBase64 = 'data:image/' . $signType . ';base64,' . base64_encode($signData);

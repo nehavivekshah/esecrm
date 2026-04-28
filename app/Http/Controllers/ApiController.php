@@ -167,6 +167,11 @@ class ApiController extends Controller
 
         // Check if provided IP matches client IP
         if ($request->userIp !== $clientIp) {
+            Log::warning('Attendance IP Mismatch', [
+                'user_id' => $request->user_id,
+                'request_ip' => $request->userIp,
+                'detected_ip' => $clientIp
+            ]);
             return response()->json([
                 'message' => 'Unauthorized device or IP address.',
                 'client_ip' => $clientIp
@@ -185,7 +190,12 @@ class ApiController extends Controller
         ;
 
         $user = User::where('email', $request->user_id)
+            ->orWhere('id', $request->user_id)
             ->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found.'], 404);
+        }
 
         $workingTimes = json_decode($request->working_times ?? null);
 
@@ -236,6 +246,7 @@ class ApiController extends Controller
             // New attendance check-in
             $attendance = new Attendances();
             $attendance->user_id = $user->id;
+            $attendance->cid = $user->cid; // Explicitly set cid as Auth::check() is false in API
             $attendance->date = $request->date;
             $attendance->check_in = $request->check_in;
             $attendance->check_out = $request->check_out;
